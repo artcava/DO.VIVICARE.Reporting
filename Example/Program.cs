@@ -16,18 +16,19 @@ namespace Example
             foreach (var file in Directory.GetFiles(assemblyFile.Directory.FullName + "\\Documents"))
             {
                 FileInfo f = new FileInfo(file);
+                if (!f.Exists) continue;
 
-                if (f.Exists && f.Name.StartsWith("DO.VIVICARE"))
+                var a = Assembly.LoadFile(f.FullName);
+                var obj = (from type in a.GetExportedTypes()
+                           where type.BaseType.Name.Equals("BaseDocument")
+                           select (BaseDocument)a.CreateInstance(type.FullName)).FirstOrDefault();
+
+                var vippa = Manager.GetDocumentColumns(obj);
+
+                var ua = (DocumentReferenceAttribute)obj.GetType().GetCustomAttribute(typeof(DocumentReferenceAttribute));
+                if (ua != null)
                 {
-                    var a = Assembly.LoadFile(f.FullName);
-                    var obj = (from type in a.GetExportedTypes()
-                               where type.Name.Equals("Report16")
-                               select (BaseDocument)a.CreateInstance(type.FullName)).FirstOrDefault();
-                    var ua = (DocumentReferenceAttribute)obj.GetType().GetCustomAttribute(typeof(DocumentReferenceAttribute));
-                    if (ua != null)
-                    {
-                        list.Add($"{ua.Name}|{ua.FileName}|{ua.Description}");
-                    }
+                    list.Add($"{ua.Name}|{ua.FileName}|{ua.Description}");
                 }
             }
 
@@ -36,6 +37,9 @@ namespace Example
                 Console.WriteLine(n);
             }
             Console.Read();
+
+            var cippa = Manager.GetDocuments(assemblyFile.Directory.FullName + "\\Documents");
+            var lippa = Manager.GetReports(assemblyFile.Directory.FullName + "\\Reports");
         }
     }
 }
