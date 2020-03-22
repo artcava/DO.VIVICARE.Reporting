@@ -50,9 +50,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DO.VIVICARE.Reporting\DO.VIVICARE.Reporting.csproj">
+    <ProjectReference Include="..\DO.VIVICARE.Reporting\DO.VIVICARE.Reporter.csproj">
       <Project>{1EB5F145-261E-4A49-9196-8C4580B7BFB7}</Project>
-      <Name>DO.VIVICARE.Reporting</Name>
+      <Name>DO.VIVICARE.Reporter</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,4 @@
-﻿using DO.VIVICARE.Reporting;
+﻿using DO.VIVICARE.Reporter;
 using System;
 
 namespace DO.VIVICARE.Document.Report16

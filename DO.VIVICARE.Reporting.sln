@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.757
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DO.VIVICARE.Reporting", "DO.VIVICARE.Reporting\DO.VIVICARE.Reporting.csproj", "{1EB5F145-261E-4A49-9196-8C4580B7BFB7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DO.VIVICARE.Reporter", "DO.VIVICARE.Reporter\DO.VIVICARE.Reporter.csproj", "{1EB5F145-261E-4A49-9196-8C4580B7BFB7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example", "Example\Example.csproj", "{6A17CDB1-5299-4351-A2E2-9A79DF8EB955}"
 EndProject

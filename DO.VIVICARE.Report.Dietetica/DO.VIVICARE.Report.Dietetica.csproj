@@ -45,9 +45,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DO.VIVICARE.Reporting\DO.VIVICARE.Reporting.csproj">
-      <Project>{1EB5F145-261E-4A49-9196-8C4580B7BFB7}</Project>
-      <Name>DO.VIVICARE.Reporting</Name>
+    <ProjectReference Include="..\DO.VIVICARE.Reporter\DO.VIVICARE.Reporter.csproj">
+      <Project>{1eb5f145-261e-4a49-9196-8c4580b7bfb7}</Project>
+      <Name>DO.VIVICARE.Reporter</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,15 +1,14 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // Le informazioni generali relative a un assembly sono controllate dal seguente 
 // set di attributi. Modificare i valori di questi attributi per modificare le informazioni
 // associate a un assembly.
-[assembly: AssemblyTitle("DO.VIVICARE.Document")]
+[assembly: AssemblyTitle("DO.VIVICARE.Reporter")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DO.VIVICARE.Document")]
+[assembly: AssemblyProduct("DO.VIVICARE.Reporting")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // Se il progetto viene esposto a COM, il GUID seguente verrà utilizzato come ID della libreria dei tipi
-[assembly: Guid("db748ce3-8a87-48a6-93b9-ae6496b8d144")]
+[assembly: Guid("1eb5f145-261e-4a49-9196-8c4580b7bfb7")]
 
 // Le informazioni sulla versione di un assembly sono costituite dai seguenti quattro valori:
 //

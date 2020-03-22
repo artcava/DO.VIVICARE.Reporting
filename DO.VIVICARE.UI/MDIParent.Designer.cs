@@ -77,6 +77,7 @@
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.documentiToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
@@ -212,7 +213,8 @@
             // documentiToolStripMenuItem
             // 
             this.documentiToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.archivioToolStripMenuItem});
+            this.archivioToolStripMenuItem,
+            this.documentiToolStripMenuItem1});
             this.documentiToolStripMenuItem.Name = "documentiToolStripMenuItem";
             this.documentiToolStripMenuItem.Size = new System.Drawing.Size(78, 20);
             this.documentiToolStripMenuItem.Text = "&Documenti";
@@ -220,7 +222,7 @@
             // archivioToolStripMenuItem
             // 
             this.archivioToolStripMenuItem.Name = "archivioToolStripMenuItem";
-            this.archivioToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
+            this.archivioToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.archivioToolStripMenuItem.Text = "&Archivio";
             this.archivioToolStripMenuItem.Click += new System.EventHandler(this.archivioToolStripMenuItem_Click);
             // 
@@ -482,6 +484,13 @@
             this.toolStripStatusLabel.Size = new System.Drawing.Size(34, 17);
             this.toolStripStatusLabel.Text = "Stato";
             // 
+            // documentiToolStripMenuItem1
+            // 
+            this.documentiToolStripMenuItem1.Name = "documentiToolStripMenuItem1";
+            this.documentiToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.documentiToolStripMenuItem1.Text = "Documenti";
+            this.documentiToolStripMenuItem1.Click += new System.EventHandler(this.documentiToolStripMenuItem1_Click);
+            // 
             // MDIParent
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -551,6 +560,7 @@
         private System.Windows.Forms.ToolStripMenuItem reportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem archivioToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem archivioToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem documentiToolStripMenuItem1;
     }
 }
 

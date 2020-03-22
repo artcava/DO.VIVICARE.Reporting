@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace DO.VIVICARE.Reporting
+namespace DO.VIVICARE.Reporter
 {
     public static class Manager
     {

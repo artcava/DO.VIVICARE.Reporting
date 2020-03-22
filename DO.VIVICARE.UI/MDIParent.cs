@@ -138,5 +138,20 @@ namespace DO.VIVICARE.UI
             frmInputReport f = new frmInputReport { MdiParent = this };
             f.Show();
         }
+
+        private void documentiToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            foreach (Form childForm in MdiChildren)
+            {
+                if (childForm.GetType() == typeof(frmDocuments))
+                {
+                    childForm.Focus();
+                    return;
+                }
+            }
+
+            frmDocuments f = new frmDocuments { MdiParent = this };
+            f.Show();
+        }
     }
 }

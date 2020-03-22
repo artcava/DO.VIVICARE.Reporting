@@ -1,4 +1,4 @@
-﻿using DO.VIVICARE.Reporting;
+﻿using DO.VIVICARE.Reporter;
 using System.IO;
 using System.Linq;
 using System.Reflection;

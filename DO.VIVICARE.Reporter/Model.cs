@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 
-namespace DO.VIVICARE.Reporting
+namespace DO.VIVICARE.Reporter
 {
     /// <summary>
     /// Classe base per la gestione dei Documenti
