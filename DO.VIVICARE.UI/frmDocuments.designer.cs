@@ -84,7 +84,7 @@
             this.Controls.Add(this.cmbChoose);
             this.Controls.Add(this.lvReport);
             this.Name = "frmDocuments";
-            this.Text = "REPORT";
+            this.Text = "DOCUMENTI";
             this.Load += new System.EventHandler(this.frmDocuments_Load);
             this.ResumeLayout(false);
 
