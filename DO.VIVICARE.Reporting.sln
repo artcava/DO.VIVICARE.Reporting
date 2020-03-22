@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DO.VIVICARE.Document.Report
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DO.VIVICARE.Report.Dietetica", "DO.VIVICARE.Report.Dietetica\DO.VIVICARE.Report.Dietetica.csproj", "{E37A849A-74E8-4FA3-9D80-14989EB8DDBD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DO.VIVICARE.Document.ZSDFatture", "DO.VIVICARE.Document.ZSDFatture\DO.VIVICARE.Document.ZSDFatture.csproj", "{2E13A747-3ED2-4495-8D51-A59350B1EDDB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{E37A849A-74E8-4FA3-9D80-14989EB8DDBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E37A849A-74E8-4FA3-9D80-14989EB8DDBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E37A849A-74E8-4FA3-9D80-14989EB8DDBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E13A747-3ED2-4495-8D51-A59350B1EDDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E13A747-3ED2-4495-8D51-A59350B1EDDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E13A747-3ED2-4495-8D51-A59350B1EDDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E13A747-3ED2-4495-8D51-A59350B1EDDB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -50,6 +56,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{42157491-DA90-4D27-A8A4-BDD1589B7302} = {CF0D1BB6-3DC1-4C9C-95A9-FB78AE14ABD9}
 		{E37A849A-74E8-4FA3-9D80-14989EB8DDBD} = {46B923FB-940C-482C-8EA5-3596748A404B}
+		{2E13A747-3ED2-4495-8D51-A59350B1EDDB} = {CF0D1BB6-3DC1-4C9C-95A9-FB78AE14ABD9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {250B184B-3AED-4916-AF41-CD73298383DC}
