@@ -8,6 +8,7 @@ namespace DO.VIVICARE.Reporter
     /// </summary>
     public class BaseDocument
     {
+        public string UserPathReport { get; set; }
     }
     /// <summary>
     /// Attributo a livello di classe per indicare a quale file facciamo riferimento

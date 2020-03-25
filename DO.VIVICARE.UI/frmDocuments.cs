@@ -47,8 +47,8 @@ namespace DO.VIVICARE.UI
         {
             cmbChoose.SelectedIndex = 0;
 
-            FileInfo assemblyFile = new FileInfo(Assembly.GetExecutingAssembly().Location);
-            foreach (var f in Manager.GetDocuments(assemblyFile.Directory.FullName + "\\Libraries"))
+            //FileInfo assemblyFile = new FileInfo(Assembly.GetExecutingAssembly().Location);
+            foreach (var f in Manager.GetDocuments(Properties.Settings.Default["UserPathReport"].ToString()))
             {
                 lvReport.AddRow(0, f.Name, "param1", "param2", "param3", "param4");
             }
