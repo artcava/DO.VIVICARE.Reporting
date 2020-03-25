@@ -22,5 +22,17 @@ namespace DO.VIVICARE.UI.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string UserPathReport {
+            get {
+                return ((string)(this["UserPathReport"]));
+            }
+            set {
+                this["UserPathReport"] = value;
+            }
+        }
     }
 }

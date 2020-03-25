@@ -128,14 +128,14 @@ namespace DO.VIVICARE.UI
         {
             foreach (Form childForm in MdiChildren)
             {
-                if (childForm.GetType() == typeof(frmInputReport))
+                if (childForm.GetType() == typeof(frmDocuments))
                 {
+                    
                     childForm.Focus();
                     return;
                 }
             }
-
-            frmInputReport f = new frmInputReport { MdiParent = this };
+            frmDocuments f = new frmDocuments("report") { MdiParent = this };
             f.Show();
         }
 
@@ -149,8 +149,7 @@ namespace DO.VIVICARE.UI
                     return;
                 }
             }
-
-            frmDocuments f = new frmDocuments { MdiParent = this };
+            frmDocuments f = new frmDocuments("document") { MdiParent = this };
             f.Show();
         }
     }

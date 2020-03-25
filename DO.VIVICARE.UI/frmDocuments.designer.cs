@@ -34,6 +34,13 @@
             this.cmbChoose = new System.Windows.Forms.ComboBox();
             this.imageListGrandi = new System.Windows.Forms.ImageList(this.components);
             this.imageListPiccole = new System.Windows.Forms.ImageList(this.components);
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.apriFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.caricaFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.groupBox1.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // lvReport
@@ -41,13 +48,14 @@
             this.lvReport.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvReport.BackColor = System.Drawing.SystemColors.InactiveCaption;
+            this.lvReport.BackColor = System.Drawing.Color.White;
             this.lvReport.HideSelection = false;
-            this.lvReport.Location = new System.Drawing.Point(12, 39);
+            this.lvReport.Location = new System.Drawing.Point(12, 72);
             this.lvReport.Name = "lvReport";
-            this.lvReport.Size = new System.Drawing.Size(776, 399);
+            this.lvReport.Size = new System.Drawing.Size(1004, 494);
             this.lvReport.TabIndex = 14;
             this.lvReport.UseCompatibleStateImageBehavior = false;
+            this.lvReport.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lvReport_MouseClick);
             // 
             // cmbChoose
             // 
@@ -57,10 +65,11 @@
             this.cmbChoose.FormattingEnabled = true;
             this.cmbChoose.Items.AddRange(new object[] {
             "ICONE GRANDI",
-            "ICONE PICCOLE"});
-            this.cmbChoose.Location = new System.Drawing.Point(510, 12);
+            "ICONE PICCOLE",
+            "DETTAGLI"});
+            this.cmbChoose.Location = new System.Drawing.Point(780, 19);
             this.cmbChoose.Name = "cmbChoose";
-            this.cmbChoose.Size = new System.Drawing.Size(278, 21);
+            this.cmbChoose.Size = new System.Drawing.Size(218, 21);
             this.cmbChoose.TabIndex = 13;
             this.cmbChoose.SelectionChangeCommitted += new System.EventHandler(this.cmbChoose_SelectionChangeCommitted);
             // 
@@ -76,16 +85,65 @@
             this.imageListPiccole.TransparentColor = System.Drawing.Color.Transparent;
             this.imageListPiccole.Images.SetKeyName(0, "iconSmall.png");
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.cmbChoose);
+            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(1004, 54);
+            this.groupBox1.TabIndex = 15;
+            this.groupBox1.TabStop = false;
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(711, 22);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(63, 13);
+            this.label1.TabIndex = 14;
+            this.label1.Text = "Visualizza";
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.apriFileToolStripMenuItem,
+            this.caricaFileToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(129, 48);
+            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
+            // 
+            // apriFileToolStripMenuItem
+            // 
+            this.apriFileToolStripMenuItem.Name = "apriFileToolStripMenuItem";
+            this.apriFileToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.apriFileToolStripMenuItem.Text = "&Apri File";
+            this.apriFileToolStripMenuItem.Click += new System.EventHandler(this.apriFileToolStripMenuItem_Click);
+            // 
+            // caricaFileToolStripMenuItem
+            // 
+            this.caricaFileToolStripMenuItem.Name = "caricaFileToolStripMenuItem";
+            this.caricaFileToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.caricaFileToolStripMenuItem.Text = "&Carica File";
+            this.caricaFileToolStripMenuItem.Click += new System.EventHandler(this.caricaFileToolStripMenuItem_Click);
+            // 
             // frmDocuments
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.cmbChoose);
+            this.ClientSize = new System.Drawing.Size(1028, 578);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.lvReport);
             this.Name = "frmDocuments";
             this.Text = "DOCUMENTI";
             this.Load += new System.EventHandler(this.frmDocuments_Load);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -95,6 +153,11 @@
         private System.Windows.Forms.ComboBox cmbChoose;
         private System.Windows.Forms.ImageList imageListGrandi;
         private System.Windows.Forms.ImageList imageListPiccole;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem apriFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem caricaFileToolStripMenuItem;
     }
 }
 
