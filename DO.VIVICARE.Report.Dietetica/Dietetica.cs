@@ -18,9 +18,10 @@ namespace DO.VIVICARE.Report.Dietetica
         {
             string[] docs = new string[] { "Report16" };
             FileInfo assemblyFile = new FileInfo(Assembly.GetExecutingAssembly().Location);
-            foreach (var file in Directory.GetFiles(assemblyFile.Directory.FullName + "\\Documents"))
-            {
-                FileInfo f = new FileInfo(file);
+            foreach (var file in Directory.GetFiles(assemblyFile.Directory.FullName))
+                //foreach (var file in Directory.GetFiles(assemblyFile.Directory.FullName + "\\Documents"))
+                {
+                    FileInfo f = new FileInfo(file);
 
                 if (f.Exists && f.Name.StartsWith("DO.VIVICARE"))
                 {

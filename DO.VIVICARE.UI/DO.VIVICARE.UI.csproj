@@ -95,17 +95,11 @@
     <Compile Include="frmAbout.Designer.cs">
       <DependentUpon>frmAbout.cs</DependentUpon>
     </Compile>
-    <Compile Include="frmArchivioDocumenti.cs">
+    <Compile Include="frmReports.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmArchivioDocumenti.Designer.cs">
-      <DependentUpon>frmArchivioDocumenti.cs</DependentUpon>
-    </Compile>
-    <Compile Include="frmInputReport.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmInputReport.Designer.cs">
-      <DependentUpon>frmInputReport.cs</DependentUpon>
+    <Compile Include="frmReports.Designer.cs">
+      <DependentUpon>frmReports.cs</DependentUpon>
     </Compile>
     <Compile Include="frmSettings.cs">
       <SubType>Form</SubType>
@@ -133,11 +127,8 @@
     <EmbeddedResource Include="frmAbout.resx">
       <DependentUpon>frmAbout.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmArchivioDocumenti.resx">
-      <DependentUpon>frmArchivioDocumenti.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmInputReport.resx">
-      <DependentUpon>frmInputReport.cs</DependentUpon>
+    <EmbeddedResource Include="frmReports.resx">
+      <DependentUpon>frmReports.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmSettings.resx">
       <DependentUpon>frmSettings.cs</DependentUpon>
@@ -193,8 +184,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DO-logo-2.ico" />
-    <Content Include="iconLarge.png" />
-    <Content Include="iconSmall.png" />
+    <Content Include="Resources\iconLarge.png" />
+    <Content Include="Resources\iconReportLarge.png" />
+    <Content Include="Resources\iconReportSmall.png" />
+    <Content Include="Resources\iconSmall.png" />
+    <None Include="Resources\execute.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Libraries\" />

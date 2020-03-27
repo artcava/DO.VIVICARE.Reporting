@@ -39,6 +39,8 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.apriFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.caricaFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.btnExit = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -52,7 +54,7 @@
             this.lvReport.HideSelection = false;
             this.lvReport.Location = new System.Drawing.Point(12, 72);
             this.lvReport.Name = "lvReport";
-            this.lvReport.Size = new System.Drawing.Size(1004, 494);
+            this.lvReport.Size = new System.Drawing.Size(1004, 448);
             this.lvReport.TabIndex = 14;
             this.lvReport.UseCompatibleStateImageBehavior = false;
             this.lvReport.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lvReport_MouseClick);
@@ -131,11 +133,28 @@
             this.caricaFileToolStripMenuItem.Text = "&Carica File";
             this.caricaFileToolStripMenuItem.Click += new System.EventHandler(this.caricaFileToolStripMenuItem_Click);
             // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
+            // btnExit
+            // 
+            this.btnExit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnExit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnExit.Image = global::DO.VIVICARE.UI.Properties.Resources.logout;
+            this.btnExit.Location = new System.Drawing.Point(946, 526);
+            this.btnExit.Name = "btnExit";
+            this.btnExit.Size = new System.Drawing.Size(70, 50);
+            this.btnExit.TabIndex = 211;
+            this.btnExit.UseVisualStyleBackColor = true;
+            this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
+            // 
             // frmDocuments
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1028, 578);
+            this.ClientSize = new System.Drawing.Size(1028, 583);
+            this.Controls.Add(this.btnExit);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.lvReport);
             this.Name = "frmDocuments";
@@ -158,6 +177,8 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem apriFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem caricaFileToolStripMenuItem;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.Button btnExit;
     }
 }
 

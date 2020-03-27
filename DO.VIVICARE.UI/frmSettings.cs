@@ -4,7 +4,6 @@ using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Threading;
-using System.Web;
 using System.Windows.Forms;
 
 namespace DO.VIVICARE.UI
@@ -13,7 +12,9 @@ namespace DO.VIVICARE.UI
     {
         WebClient client;
         private const string _path = "http://www.netsasa.it/Libraries/";
-        private const string _file = "list.txt";
+
+        private const string _fileDocuments = "listDocuments.txt";
+        private const string _fileReports = "listReports.txt";
         private const string _voce = "Scarica";
 
         public frmSettings()
@@ -24,47 +25,50 @@ namespace DO.VIVICARE.UI
 
         private void SetDataGrid()
         {
-            dgvElenco.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvElenco.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold);
+            dgvElencoDocuments.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvElencoDocuments.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold);
+            dgvElencoDocuments.Columns["NomeFileDocument"].FillWeight = 150;
 
+            dgvElencoReports.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvElencoReports.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold);
+            dgvElencoReports.Columns["NomeFileReport"].FillWeight = 150;
         }
+
         private void btnChoose_Click(object sender, System.EventArgs e)
         {
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
-            {
-                textBox1.Text = folderBrowserDialog1.SelectedPath;
-            }
+                txtPath.Text = folderBrowserDialog1.SelectedPath;
         }
 
         private void btnAddNew_Click(object sender, System.EventArgs e)
         {
-            Properties.Settings.Default["UserPathReport"] = textBox1.Text;
+            Properties.Settings.Default["UserPathDefault"] = txtPath.Text;
             Properties.Settings.Default.Save();
         }
 
-        private void GetListUpdated()
+        private void GetListDocumentsUpdated()
         {
             using (client = new WebClient())
             {
                 try
                 {
-                    // occhio se https, usare altro metodo
                     WebClient client = new WebClient();
-                    Stream stream = client.OpenRead(_path + _file);
+                    Stream stream = client.OpenRead(_path + _fileDocuments);
                     StreamReader reader = new StreamReader(stream);
                     string content = reader.ReadToEnd();
 
                     string[] sep = new string[] { "\r\n" };
                     string[] lines = content.Split(sep, StringSplitOptions.None);
 
+                    dgvElencoDocuments.Rows.Clear();
                     foreach (var dll in lines)
                     {
                         string[] nome = dll.Split(';');
                         var row = new DataGridViewRow();
-                        var i = dgvElenco.Rows.Add(row);
-                        dgvElenco.Rows[i].Cells["NomeFile"].Value = nome[0];
-                        dgvElenco.Rows[i].Cells["NomeFileCompleto"].Value = nome[1];
-                        dgvElenco.Rows[i].Cells["Download"].Value = _voce;
+                        var i = dgvElencoDocuments.Rows.Add(row);
+                        dgvElencoDocuments.Rows[i].Cells["NomeFileDocument"].Value = nome[0];
+                        dgvElencoDocuments.Rows[i].Cells["NomeFileDocumentCompleto"].Value = nome[1];
+                        dgvElencoDocuments.Rows[i].Cells["DownloadDocument"].Value = _voce;
                     }
                 }
                 catch (Exception ex)
@@ -74,34 +78,44 @@ namespace DO.VIVICARE.UI
             }
         }
 
-        private void dgvElenco_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void GetListReportsUpdated()
         {
-            if (e.ColumnIndex < 0) return;
-            DataGridViewRow row = dgvElenco.Rows[dgvElenco.CurrentCell.RowIndex];
-
-            switch (dgvElenco.Columns[e.ColumnIndex].Name)
+            using (client = new WebClient())
             {
-                case "Download":
-                    lblResult.Text = string.Empty;
+                try
+                {
+                    WebClient client = new WebClient();
+                    Stream stream = client.OpenRead(_path + _fileReports);
+                    StreamReader reader = new StreamReader(stream);
+                    string content = reader.ReadToEnd();
 
-                    Thread thread = new Thread(() =>
+                    string[] sep = new string[] { "\r\n" };
+                    string[] lines = content.Split(sep, StringSplitOptions.None);
+
+                    dgvElencoReports.Rows.Clear();
+                    foreach (var dll in lines)
                     {
-                        client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
-                        client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
-
-                        Uri URL = new Uri(_path + row.Cells["NomeFileCompleto"].Value.ToString());
-                        client.DownloadFileAsync(URL, Properties.Settings.Default["UserPathReport"] + "/" + row.Cells["NomeFileCompleto"].Value.ToString());
-
-                    });
-                    thread.Start();
-                    break;
+                        string[] nome = dll.Split(';');
+                        var row = new DataGridViewRow();
+                        var i = dgvElencoReports.Rows.Add(row);
+                        dgvElencoReports.Rows[i].Cells["NomeFileReport"].Value = nome[0];
+                        dgvElencoReports.Rows[i].Cells["NomeFileReportCompleto"].Value = nome[1];
+                        dgvElencoReports.Rows[i].Cells["DownloadReport"].Value = _voce;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
         }
+
         private void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
             if (e.Error == null)
             {
-                BeginInvoke((MethodInvoker)delegate {
+                BeginInvoke((MethodInvoker)delegate
+                {
                     lblResult.Text = "Aggiornamento completato!";
                 });
             }
@@ -120,8 +134,9 @@ namespace DO.VIVICARE.UI
 
         private void LoadDefault()
         {
-            textBox1.Text = Properties.Settings.Default["UserPathReport"].ToString();
+            txtPath.Text = Properties.Settings.Default["UserPathDefault"].ToString();
         }
+
         private void btnExit_Click(object sender, System.EventArgs e)
         {
             this.Close();
@@ -130,8 +145,91 @@ namespace DO.VIVICARE.UI
         private void frmSettings_Shown(object sender, EventArgs e)
         {
             LoadDefault();
-            GetListUpdated();
+            GetListDocumentsUpdated();
         }
 
+        private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tabControl.SelectedTab == tabControl.TabPages["tabPageDocuments"])
+            {
+                GetListDocumentsUpdated();
+            }
+            else if (tabControl.SelectedTab == tabControl.TabPages["tabPageReports"])
+            {
+                GetListReportsUpdated();
+            }
+        }
+
+        public bool CheckFolder(string folder)
+        {
+            string path = Path.Combine(
+                                    Properties.Settings.Default["UserPathDefault"].ToString(),
+                                    folder);
+            try
+            {
+                if (Directory.Exists(path)) return true;
+
+                DirectoryInfo di = Directory.CreateDirectory(path);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        private void dgvElencoDocuments_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            string cartella = Properties.Settings.Default["UserFolderDocuments"].ToString();
+            lblResult.Text = string.Empty;
+            if (e.ColumnIndex < 0 || string.IsNullOrEmpty(txtPath.Text) || !CheckFolder(cartella)) return;
+            DataGridViewRow row = dgvElencoDocuments.Rows[dgvElencoDocuments.CurrentCell.RowIndex];
+
+            switch (dgvElencoDocuments.Columns[e.ColumnIndex].Name)
+            {
+                case "DownloadDocument":
+                    Thread thread = new Thread(() =>
+                    {
+                        client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
+                        client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
+
+                        Uri URL = new Uri(_path + cartella + "/" + row.Cells["NomeFileDocumentCompleto"].Value.ToString());
+                        client.DownloadFileAsync(URL, Path.Combine(
+                                                            Properties.Settings.Default["UserPathDefault"].ToString(),
+                                                            cartella,
+                                                            row.Cells["NomeFileDocumentCompleto"].Value.ToString()));
+                    });
+                    thread.Start();
+                    break;
+            }
+        }
+
+        private void dgvElencoReports_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            string cartella = Properties.Settings.Default["UserFolderReports"].ToString();
+            lblResult.Text = string.Empty;
+            if (e.ColumnIndex < 0 || string.IsNullOrEmpty(txtPath.Text) || !CheckFolder(cartella)) return;
+            DataGridViewRow row = dgvElencoReports.Rows[dgvElencoReports.CurrentCell.RowIndex];
+
+            switch (dgvElencoReports.Columns[e.ColumnIndex].Name)
+            {
+                case "DownloadReport":
+
+                    Thread thread = new Thread(() =>
+                    {
+                        client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
+                        client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
+
+                        Uri URL = new Uri(_path + cartella + "/" + row.Cells["NomeFileReportCompleto"].Value.ToString());
+                        client.DownloadFileAsync(URL, Path.Combine(
+                                                            Properties.Settings.Default["UserPathDefault"].ToString(),
+                                                            cartella,
+                                                            row.Cells["NomeFileReportCompleto"].Value.ToString()));
+                    });
+                    thread.Start();
+                    break;
+            }
+
+        }
     }
 }

@@ -216,6 +216,7 @@
             this.documentiToolStripMenuItem.Name = "documentiToolStripMenuItem";
             this.documentiToolStripMenuItem.Size = new System.Drawing.Size(78, 20);
             this.documentiToolStripMenuItem.Text = "&Documenti";
+            this.documentiToolStripMenuItem.Click += new System.EventHandler(this.documentiToolStripMenuItem_Click);
             // 
             // documentiToolStripMenuItem1
             // 

@@ -108,34 +108,19 @@ namespace DO.VIVICARE.UI
             frmSettings f = new frmSettings();
             f.ShowDialog();
         }
-
-        private void archivioToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Form childForm in MdiChildren)
-            {
-                if (childForm.GetType() == typeof(frmArchivioDocumenti))
-                {
-                    childForm.Focus();
-                    return;
-                }
-            }
-
-            frmArchivioDocumenti f = new frmArchivioDocumenti { MdiParent = this };
-            f.Show();
-        }
-
+       
         private void archivioToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             foreach (Form childForm in MdiChildren)
             {
-                if (childForm.GetType() == typeof(frmDocuments))
+                if (childForm.GetType() == typeof(frmReports))
                 {
                     
                     childForm.Focus();
                     return;
                 }
             }
-            frmDocuments f = new frmDocuments("report") { MdiParent = this };
+            frmReports f = new frmReports() { MdiParent = this };
             f.Show();
         }
 
@@ -149,8 +134,13 @@ namespace DO.VIVICARE.UI
                     return;
                 }
             }
-            frmDocuments f = new frmDocuments("document") { MdiParent = this };
+            frmDocuments f = new frmDocuments() { MdiParent = this };
             f.Show();
+        }
+
+        private void documentiToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

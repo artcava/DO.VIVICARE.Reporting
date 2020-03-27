@@ -26,12 +26,36 @@ namespace DO.VIVICARE.UI.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string UserPathReport {
+        public string UserPathDefault {
             get {
-                return ((string)(this["UserPathReport"]));
+                return ((string)(this["UserPathDefault"]));
             }
             set {
-                this["UserPathReport"] = value;
+                this["UserPathDefault"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Doc")]
+        public string UserFolderDocuments {
+            get {
+                return ((string)(this["UserFolderDocuments"]));
+            }
+            set {
+                this["UserFolderDocuments"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Rep")]
+        public string UserFolderReports {
+            get {
+                return ((string)(this["UserFolderReports"]));
+            }
+            set {
+                this["UserFolderReports"] = value;
             }
         }
     }

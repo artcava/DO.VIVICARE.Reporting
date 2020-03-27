@@ -9,23 +9,11 @@ namespace DO.VIVICARE.UI
 {
     public partial class frmDocuments : Form
     { 
-
-        public string Type { get; set; }
-         
-        public frmDocuments(string t)
+        public frmDocuments()
         {
-
             InitializeComponent();
-            Type = t;
-            Text = "GESTIONE " + t.ToUpper();
-
-            if (Type == "report")
-                lvReport.BackColor = Color.SkyBlue;
-            else if (Type == "document")
-                lvReport.BackColor = Color.DarkSeaGreen;
+            lvReport.BackColor = Color.DarkSeaGreen;
         }
-
-
 
         private void cmbChoose_SelectionChangeCommitted(object sender, EventArgs e)
         {
@@ -46,9 +34,10 @@ namespace DO.VIVICARE.UI
         private void frmDocuments_Load(object sender, EventArgs e)
         {
             cmbChoose.SelectedIndex = 0;
-
             //FileInfo assemblyFile = new FileInfo(Assembly.GetExecutingAssembly().Location);
-            foreach (var f in Manager.GetDocuments(Properties.Settings.Default["UserPathReport"].ToString()))
+
+            foreach (var f in Manager.GetDocuments(Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(),
+                                                    Properties.Settings.Default["UserFolderDocuments"].ToString())))
             {
                 lvReport.AddRow(0, f.Name, "param1", "param2", "param3", "param4");
             }
@@ -65,8 +54,6 @@ namespace DO.VIVICARE.UI
 
         private void contextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (this.Type == "report") e.Cancel = true;
-
             if (lvReport.SelectedItems.Count == 0)
                 e.Cancel = true;
         }
@@ -88,6 +75,24 @@ namespace DO.VIVICARE.UI
         private void caricaFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // UPLOAD NUOVO FILE IN ARCHIVIO.. SOVRASCRIVENDOLO
+            var nome = lvReport.SelectedItems[0];
+            openFileDialog1.Title = "Excel File";
+            openFileDialog1.FileName = "";
+            openFileDialog1.Filter = "Excel File|*.xlsx;*.xls";
+
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                var nomeFile = openFileDialog1.FileName;
+                if (nomeFile.Trim() != "")
+                {
+                    File.Copy(nomeFile, Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(), nome.Text + Path.GetExtension(nomeFile)), true);
+                }
+            }
+        }
+
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }
