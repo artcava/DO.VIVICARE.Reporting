@@ -2,8 +2,8 @@
 using System;
 
 namespace DO.VIVICARE.Document.Report16
-{
-    [DocumentReference(FileName = "Report16.xlsx", Name = "Report16", Description = "Una descriione del File")]
+{    [DocumentReference(FileName = "Report16.xlsx", Name = "Report16", Description = "Una descrizione del file")]
+
     public class Report16 : BaseDocument
     {
         [DocumentMemberReference(Column = "E", Position = 4)]
