@@ -104,32 +104,33 @@
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(711, 22);
+            this.label1.Location = new System.Drawing.Point(693, 23);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(63, 13);
+            this.label1.Size = new System.Drawing.Size(81, 17);
             this.label1.TabIndex = 14;
             this.label1.Text = "Visualizza";
             // 
             // contextMenuStrip1
             // 
+            this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.apriFileToolStripMenuItem,
             this.caricaFileToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(129, 48);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(147, 52);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // apriFileToolStripMenuItem
             // 
             this.apriFileToolStripMenuItem.Name = "apriFileToolStripMenuItem";
-            this.apriFileToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.apriFileToolStripMenuItem.Size = new System.Drawing.Size(146, 24);
             this.apriFileToolStripMenuItem.Text = "&Apri File";
             this.apriFileToolStripMenuItem.Click += new System.EventHandler(this.apriFileToolStripMenuItem_Click);
             // 
             // caricaFileToolStripMenuItem
             // 
             this.caricaFileToolStripMenuItem.Name = "caricaFileToolStripMenuItem";
-            this.caricaFileToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.caricaFileToolStripMenuItem.Size = new System.Drawing.Size(146, 24);
             this.caricaFileToolStripMenuItem.Text = "&Carica File";
             this.caricaFileToolStripMenuItem.Click += new System.EventHandler(this.caricaFileToolStripMenuItem_Click);
             // 
