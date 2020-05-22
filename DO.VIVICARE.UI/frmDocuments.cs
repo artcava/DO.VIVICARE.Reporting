@@ -39,7 +39,7 @@ namespace DO.VIVICARE.UI
             foreach (var f in Manager.GetDocuments(Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(),
                                                     Properties.Settings.Default["UserFolderDocuments"].ToString())))
             {
-                lvReport.AddRow(0, f.Name, "param1", "param2", "param3", "param4");
+                lvReport.AddRow(0, f.Name, f.Description, f.FileName, "param3", "param4");
             }
             
             lvReport.SmallImageList = imageListPiccole;

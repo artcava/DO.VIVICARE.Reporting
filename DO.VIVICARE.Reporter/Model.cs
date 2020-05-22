@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace DO.VIVICARE.Reporter
 {
@@ -9,7 +11,70 @@ namespace DO.VIVICARE.Reporter
     public class BaseDocument
     {
         public string UserPathReport { get; set; }
+
+        public List<Tuple<string, string,string>> CheckFields(string path)
+        {
+            try
+            {
+                var list = new List<Tuple<string, string, string>>();
+
+                Excel.Application appXls = new Excel.Application();
+                Excel.Workbook cartellaXls = appXls.Workbooks.Open(path);
+                Excel._Worksheet foglioXls = cartellaXls.Sheets[1];
+                Excel.Range rangeXls = foglioXls.UsedRange;
+
+                int rowCount = rangeXls.Rows.Count;
+                int colCount = rangeXls.Columns.Count;
+
+                // Excel comincia a contare da 1
+                for (int i = 1; i <= rowCount; i++)
+                {
+                    for (int j = 1; j <= colCount; j++)
+                    {
+                        if (rangeXls.Cells[i, j] != null && rangeXls.Cells[i, j].ValoreCella != null)
+                        {
+                            var t = rangeXls.Cells[i, j].ValoreCella.ToString() + "\t";
+                        }
+                    }
+                }
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+
+                Marshal.ReleaseComObject(rangeXls);
+                Marshal.ReleaseComObject(foglioXls);
+
+                cartellaXls.Close();
+                Marshal.ReleaseComObject(cartellaXls);
+
+                appXls.Quit();
+                Marshal.ReleaseComObject(appXls);
+
+                return list;
+
+
+                // QUESTO PEZZO GLIELO METTI AL CHIAMANTE DI QUESTA FUNZIONE
+                //=======================================================================================
+                //var res = CheckFields("pathxxxxxxxx");
+                //if (res.Count != 0)
+                //{
+                //    var msg = "CHECK VALUE!";
+                //    foreach (var m in res)
+                //    {
+                //        msg += "\n" + m;
+                //    }
+                //    MessageBox.Show("xxxxx", msg, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                //}
+                //=======================================================================================
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
     }
+
     /// <summary>
     /// Attributo a livello di classe per indicare a quale file facciamo riferimento
     /// </summary>
