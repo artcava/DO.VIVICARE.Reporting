@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -12,23 +13,38 @@ namespace DO.VIVICARE.Reporter
     {
         public string UserPathReport { get; set; }
 
-        public List<Tuple<string, string,string>> CheckFields(string path)
+        public List<Tuple<string, string,string>> CheckFields()
         {
+            var list = new List<Tuple<string, string, string>>();
+            if (string.IsNullOrEmpty(UserPathReport))
+            {
+                list.Add(Tuple.Create($"Riga: 0", $"Colonna: 0", $"File inesistente o campo [UserPathReport] vuoto"));
+            }
             try
             {
-                var list = new List<Tuple<string, string, string>>();
-
                 Excel.Application appXls = new Excel.Application();
-                Excel.Workbook cartellaXls = appXls.Workbooks.Open(path);
+                Excel.Workbook cartellaXls = appXls.Workbooks.Open(UserPathReport);
                 Excel._Worksheet foglioXls = cartellaXls.Sheets[1];
                 Excel.Range rangeXls = foglioXls.UsedRange;
 
                 int rowCount = rangeXls.Rows.Count;
                 int colCount = rangeXls.Columns.Count;
 
+                var columns = Manager.GetDocumentColumns(this);
+
                 // Excel comincia a contare da 1
                 for (int i = 1; i <= rowCount; i++)
                 {
+                    foreach(var col in columns)
+                    {
+                        if (rangeXls.Cells[i, col.Position] != null && rangeXls.Cells[i, col.Position].ValoreCella != null)
+                        {
+                            var t = rangeXls.Cells[i, col.Position].ValoreCella.ToString() + "\t";
+                        }
+                        else
+                            list.Add(Tuple.Create($"Riga: {i}", $"Colonna: {col.Column}", $"Colonna inesistente o campo vuoto"));
+                    }
+
                     for (int j = 1; j <= colCount; j++)
                     {
                         if (rangeXls.Cells[i, j] != null && rangeXls.Cells[i, j].ValoreCella != null)
@@ -70,7 +86,8 @@ namespace DO.VIVICARE.Reporter
             }
             catch (Exception ex)
             {
-                return null;
+                list.Add(Tuple.Create("Riga: 0", "Colonna: 0", $"Errore interno: {ex.Message}"));
+                return list;
             }
         }
     }
@@ -92,6 +109,20 @@ namespace DO.VIVICARE.Reporter
     {
         public string Column { get; set; }
         public int Position { get; set; }
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    public class ReportingDocument
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public BaseDocument Document { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public DocumentReferenceAttribute Attribute { get; set; }
     }
     /// <summary>
     /// Classe base per la gestione dei Report

@@ -12,9 +12,9 @@ namespace DO.VIVICARE.Reporter
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static List<DocumentReferenceAttribute> GetDocuments(string path)
+        public static List<ReportingDocument> GetDocuments(string path)
         {
-            var list = new List<DocumentReferenceAttribute>();
+            var list = new List<ReportingDocument>();
             foreach (var file in Directory.GetFiles(path))
             {
                 FileInfo f = new FileInfo(file);
@@ -29,7 +29,7 @@ namespace DO.VIVICARE.Reporter
                 {
                     var ua = (DocumentReferenceAttribute)obj.GetType().GetCustomAttribute(typeof(DocumentReferenceAttribute));
                     if (ua == null) continue;
-                    list.Add(ua);
+                    list.Add(new ReportingDocument { Document = obj, Attribute = ua });
                 }
             }
             return list;

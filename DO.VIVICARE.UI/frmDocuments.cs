@@ -2,6 +2,7 @@
 using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -39,7 +40,8 @@ namespace DO.VIVICARE.UI
             foreach (var f in Manager.GetDocuments(Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(),
                                                     Properties.Settings.Default["UserFolderDocuments"].ToString())))
             {
-                lvReport.AddRow(0, f.Name, f.Description, f.FileName, "param3", "param4");
+                lvReport.AddRow(0, f.Attribute.Name, f.Attribute.Description, f.Attribute.FileName);
+                lvReport.Items[f.Attribute.Name].Tag = f.Document;
             }
             
             lvReport.SmallImageList = imageListPiccole;
@@ -85,7 +87,18 @@ namespace DO.VIVICARE.UI
                 var nomeFile = openFileDialog1.FileName;
                 if (nomeFile.Trim() != "")
                 {
-                    File.Copy(nomeFile, Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(), nome.Text + Path.GetExtension(nomeFile)), true);
+                    ((BaseDocument)nome.Tag).UserPathReport = Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(), nome.SubItems[1].Text);
+                    var res = ((BaseDocument)nome.Tag).CheckFields();
+                    if (res.Count != 0)
+                    {
+                        var msg = "CHECK VALUE!";
+                        foreach (var m in res)
+                        {
+                            msg += "\n" + m;
+                        }
+                        MessageBox.Show("xxxxx", msg, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    }
+                    File.Copy(nomeFile, Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(), nome.SubItems[1].Text), true);
                 }
             }
         }
