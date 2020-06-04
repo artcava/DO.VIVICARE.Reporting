@@ -41,7 +41,7 @@ namespace DO.VIVICARE.UI
                                                     Properties.Settings.Default["UserFolderDocuments"].ToString())))
             {
                 lvReport.AddRow(0, f.Attribute.Name, f.Attribute.Description, f.Attribute.FileName);
-                lvReport.Items[f.Attribute.Name].Tag = f.Document;
+                lvReport.Items[lvReport.Items.Count - 1].Tag = f.Document;
             }
             
             lvReport.SmallImageList = imageListPiccole;
@@ -87,18 +87,18 @@ namespace DO.VIVICARE.UI
                 var nomeFile = openFileDialog1.FileName;
                 if (nomeFile.Trim() != "")
                 {
-                    ((BaseDocument)nome.Tag).UserPathReport = Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(), nome.SubItems[1].Text);
+                    ((BaseDocument)nome.Tag).UserPathReport = openFileDialog1.FileName;
                     var res = ((BaseDocument)nome.Tag).CheckFields();
                     if (res.Count != 0)
                     {
                         var msg = "CHECK VALUE!";
                         foreach (var m in res)
                         {
-                            msg += "\n" + m;
+                            msg += "\n" + m.ToString();
                         }
-                        MessageBox.Show("xxxxx", msg, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        MessageBox.Show(msg, "Errore!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     }
-                    File.Copy(nomeFile, Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(), nome.SubItems[1].Text), true);
+                    File.Copy(nomeFile, Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(), nome.SubItems[2].Text), true);
                 }
             }
         }
