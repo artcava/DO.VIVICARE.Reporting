@@ -11,7 +11,7 @@ namespace DO.VIVICARE.UI
     public partial class frmSettings : Form
     {
         WebClient client;
-        private const string _path = "http://www.netsasa.it/Libraries/";
+        private const string _path = "http://artcava.net/reporting/";
 
         private const string _fileDocuments = "listDocuments.txt";
         private const string _fileReports = "listReports.txt";

@@ -34,24 +34,34 @@ namespace DO.VIVICARE.UI
 
         private void frmDocuments_Load(object sender, EventArgs e)
         {
-            cmbChoose.SelectedIndex = 0;
-            //FileInfo assemblyFile = new FileInfo(Assembly.GetExecutingAssembly().Location);
-
-            foreach (var f in Manager.GetDocuments(Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(),
-                                                    Properties.Settings.Default["UserFolderDocuments"].ToString())))
+            try
             {
-                lvReport.AddRow(0, f.Attribute.Name, f.Attribute.Description, f.Attribute.FileName);
-                lvReport.Items[lvReport.Items.Count - 1].Tag = f.Document;
+                cmbChoose.SelectedIndex = 0;
+
+                if (Properties.Settings.Default["UserPathDefault"] != null)
+                {
+                    foreach (var f in Manager.GetDocuments(Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(),
+                                                            Properties.Settings.Default["UserFolderDocuments"].ToString())))
+                    {
+                        lvReport.AddRow(0, f.Attribute.Name, f.Attribute.Description, f.Attribute.FileName);
+                        lvReport.Items[lvReport.Items.Count - 1].Tag = f.Document;
+                    }
+
+                    lvReport.SmallImageList = imageListPiccole;
+                    lvReport.LargeImageList = imageListGrandi;
+                    lvReport.MountHeaders(
+                            "File", 180, HorizontalAlignment.Left,
+                            "Altro1", 120, HorizontalAlignment.Left,
+                            "Altro2", 120, HorizontalAlignment.Left,
+                            "Altro3", 120, HorizontalAlignment.Left,
+                            "Altro4", 120, HorizontalAlignment.Left);
+                }
+                MessageBox.Show("Devi specificare il Percorso libreria in Strumenti\\Opzioni");
             }
-            
-            lvReport.SmallImageList = imageListPiccole;
-            lvReport.LargeImageList = imageListGrandi;
-            lvReport.MountHeaders(
-                    "File", 180, HorizontalAlignment.Left,
-                    "Altro1", 120, HorizontalAlignment.Left,
-                    "Altro2", 120, HorizontalAlignment.Left,
-                    "Altro3", 120, HorizontalAlignment.Left,
-                    "Altro4", 120, HorizontalAlignment.Left);
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void contextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)

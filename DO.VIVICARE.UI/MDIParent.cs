@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Deployment.Application;
 using System.Windows.Forms;
 
 namespace DO.VIVICARE.UI
@@ -141,6 +142,12 @@ namespace DO.VIVICARE.UI
         private void documentiToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void MDIParent_Load(object sender, EventArgs e)
+        {
+            if (ApplicationDeployment.IsNetworkDeployed)
+                Text = $"Reporting [{ApplicationDeployment.CurrentDeployment.CurrentVersion}]";
         }
     }
 }

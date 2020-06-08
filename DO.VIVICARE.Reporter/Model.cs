@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -31,27 +32,32 @@ namespace DO.VIVICARE.Reporter
                 int colCount = rangeXls.Columns.Count;
 
                 var columns = Manager.GetDocumentColumns(this);
+                int rowStart = 1;
+                var ua = (DocumentReferenceAttribute)GetType().GetCustomAttribute(typeof(DocumentReferenceAttribute));
+                if (ua != null)
+                    rowStart = ua.RowStart;
+
 
                 // Excel comincia a contare da 1
-                for (int i = 1; i <= rowCount; i++)
+                for (int i = rowStart; i <= rowCount; i++)
                 {
                     foreach(var col in columns)
                     {
-                        if (rangeXls.Cells[i, col.Position] != null && rangeXls.Cells[i, col.Position].ValoreCella != null)
+                        if (rangeXls.Cells[i, col.Position] != null && rangeXls.Cells[i, col.Position].Value != null)
                         {
-                            var t = rangeXls.Cells[i, col.Position].ValoreCella.ToString() + "\t";
+                            var t = rangeXls.Cells[i, col.Position].Value.ToString() + "\t";
                         }
                         else
                             list.Add(Tuple.Create($"Riga: {i}", $"Colonna: {col.Column}", $"Colonna inesistente o campo vuoto"));
                     }
 
-                    for (int j = 1; j <= colCount; j++)
-                    {
-                        if (rangeXls.Cells[i, j] != null && rangeXls.Cells[i, j].ValoreCella != null)
-                        {
-                            var t = rangeXls.Cells[i, j].ValoreCella.ToString() + "\t";
-                        }
-                    }
+                    //for (int j = 1; j <= colCount; j++)
+                    //{
+                    //    if (rangeXls.Cells[i, j] != null && rangeXls.Cells[i, j].Value != null)
+                    //    {
+                    //        var t = rangeXls.Cells[i, j].Value.ToString() + "\t";
+                    //    }
+                    //}
                 }
 
                 GC.Collect();
@@ -100,6 +106,12 @@ namespace DO.VIVICARE.Reporter
         public string Name { get; set; }
         public string FileName { get; set; }
         public string Description { get; set; }
+        public int RowStart { get; set; }
+
+        public DocumentReferenceAttribute()
+        {
+            RowStart = 1;
+        }
     }
     /// <summary>
     /// Attributo a livello di membro per indicare la colonna da cui prelevare i dati

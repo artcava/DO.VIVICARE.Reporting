@@ -56,24 +56,28 @@ namespace DO.VIVICARE.UI
             {
                 cmbChoose.SelectedIndex = 0;
 
-                foreach (var f in Manager.GetReports(Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(),
-                                                                  Properties.Settings.Default["UserFolderReports"].ToString())))
+                if (string.IsNullOrEmpty(Properties.Settings.Default["UserPathDefault"].ToString()))
                 {
-                    lvReport.AddRow(0, f.Name, "param1", "param2", "param3", "param4");
+                    foreach (var f in Manager.GetReports(Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(),
+                                                                  Properties.Settings.Default["UserFolderReports"].ToString())))
+                    {
+                        lvReport.AddRow(0, f.Name, "param1", "param2", "param3", "param4");
+                    }
+
+                    lvReport.SmallImageList = imageListPiccole;
+                    lvReport.LargeImageList = imageListGrandi;
+                    lvReport.MountHeaders(
+                            "File", 180, HorizontalAlignment.Left,
+                            "Altro1", 120, HorizontalAlignment.Left,
+                            "Altro2", 120, HorizontalAlignment.Left,
+                            "Altro3", 120, HorizontalAlignment.Left,
+                            "Altro4", 120, HorizontalAlignment.Left);
                 }
-
-                lvReport.SmallImageList = imageListPiccole;
-                lvReport.LargeImageList = imageListGrandi;
-                lvReport.MountHeaders(
-                        "File", 180, HorizontalAlignment.Left,
-                        "Altro1", 120, HorizontalAlignment.Left,
-                        "Altro2", 120, HorizontalAlignment.Left,
-                        "Altro3", 120, HorizontalAlignment.Left,
-                        "Altro4", 120, HorizontalAlignment.Left);
-
+                MessageBox.Show("Devi specificare il Percorso libreria in Strumenti\\Opzioni");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                MessageBox.Show(ex.Message);
             }
         }
 
