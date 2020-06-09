@@ -2,8 +2,6 @@
 using System;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 
 namespace DO.VIVICARE.UI
@@ -50,13 +48,12 @@ namespace DO.VIVICARE.UI
                     lvReport.SmallImageList = imageListPiccole;
                     lvReport.LargeImageList = imageListGrandi;
                     lvReport.MountHeaders(
-                            "File", 180, HorizontalAlignment.Left,
-                            "Altro1", 120, HorizontalAlignment.Left,
-                            "Altro2", 120, HorizontalAlignment.Left,
-                            "Altro3", 120, HorizontalAlignment.Left,
-                            "Altro4", 120, HorizontalAlignment.Left);
+                            "Nome File", 180, HorizontalAlignment.Left,
+                            "Descrizione", 180, HorizontalAlignment.Left,
+                            "File", 180, HorizontalAlignment.Left);
                 }
-                MessageBox.Show("Devi specificare il Percorso libreria in Strumenti\\Opzioni");
+                else
+                    MessageBox.Show("Devi specificare il Percorso libreria in Strumenti\\Opzioni");
             }
             catch (Exception ex)
             {
@@ -82,6 +79,8 @@ namespace DO.VIVICARE.UI
         private void apriFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // APRE FILE CON EXCEL SEPARATAMENTE
+            var nome = lvReport.SelectedItems[0];
+            System.Diagnostics.Process.Start(Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(), nome.SubItems[2].Text));
         }
 
         private void caricaFileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -108,7 +107,11 @@ namespace DO.VIVICARE.UI
                         }
                         MessageBox.Show(msg, "Errore!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     }
-                    File.Copy(nomeFile, Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(), nome.SubItems[2].Text), true);
+                    else
+                    {
+                        File.Copy(nomeFile, Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(), nome.SubItems[2].Text), true);
+                        MessageBox.Show($"File {nome.SubItems[1].Text} caricato correttamente!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
                 }
             }
         }

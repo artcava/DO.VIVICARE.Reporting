@@ -43,21 +43,9 @@ namespace DO.VIVICARE.Reporter
                 {
                     foreach(var col in columns)
                     {
-                        if (rangeXls.Cells[i, col.Position] != null && rangeXls.Cells[i, col.Position].Value != null)
-                        {
-                            var t = rangeXls.Cells[i, col.Position].Value.ToString() + "\t";
-                        }
-                        else
+                        if (rangeXls.Cells[i, col.Position] == null || rangeXls.Cells[i, col.Position].Value == null)
                             list.Add(Tuple.Create($"Riga: {i}", $"Colonna: {col.Column}", $"Colonna inesistente o campo vuoto"));
                     }
-
-                    //for (int j = 1; j <= colCount; j++)
-                    //{
-                    //    if (rangeXls.Cells[i, j] != null && rangeXls.Cells[i, j].Value != null)
-                    //    {
-                    //        var t = rangeXls.Cells[i, j].Value.ToString() + "\t";
-                    //    }
-                    //}
                 }
 
                 GC.Collect();

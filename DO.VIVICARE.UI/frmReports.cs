@@ -73,7 +73,8 @@ namespace DO.VIVICARE.UI
                             "Altro3", 120, HorizontalAlignment.Left,
                             "Altro4", 120, HorizontalAlignment.Left);
                 }
-                MessageBox.Show("Devi specificare il Percorso libreria in Strumenti\\Opzioni");
+                else
+                    MessageBox.Show("Devi specificare il Percorso libreria in Strumenti\\Opzioni");
             }
             catch (Exception ex)
             {

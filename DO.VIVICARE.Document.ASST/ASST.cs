@@ -2,22 +2,22 @@
 
 namespace DO.VIVICARE.Document.ASST
 {
-    [DocumentReference(FileName = "ASST.xlsx", Name = "ASST", Description = "Elenco delle Aziende Sanitarie")]
+    [DocumentReference(FileName = "ASST.xlsx", Name = "ASST", Description = "Elenco delle Aziende Sanitarie", RowStart =2)]
     public class ASST : BaseDocument
     {
-        [DocumentMemberReference(Column = "B", Position = 1)]
+        [DocumentMemberReference(Column = "B", Position = 2)]
         public string Description { get; set; }
 
-        [DocumentMemberReference(Column = "C", Position = 2)]
+        [DocumentMemberReference(Column = "C", Position = 3)]
         public int SAPCode { get; set; }
 
-        [DocumentMemberReference(Column = "D", Position = 3)]
+        [DocumentMemberReference(Column = "D", Position = 4)]
         public int ATSCode { get; set; }
 
-        [DocumentMemberReference(Column = "E", Position = 4)]
+        [DocumentMemberReference(Column = "E", Position = 5)]
         public int ASSTCode { get; set; }
 
-        [DocumentMemberReference(Column = "F", Position = 5)]
+        [DocumentMemberReference(Column = "F", Position = 6)]
         public int IDSintesi { get; set; }
     }
 }
