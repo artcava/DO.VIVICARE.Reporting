@@ -8,6 +8,7 @@ namespace DO.VIVICARE.UI
     {
         public frmAbout()
         {
+
             InitializeComponent();
             Text = string.Format("Informazioni su {0}", AssemblyProduct);
             labelProductName.Text = AssemblyProduct;
