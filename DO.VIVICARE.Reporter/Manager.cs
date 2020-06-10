@@ -7,6 +7,7 @@ namespace DO.VIVICARE.Reporter
 {
     public static class Manager
     {
+        public static XMLSettings Settings { get { return new XMLSettings(); } }
         /// <summary>
         /// Search for every BaseDocument in the path
         /// </summary>
@@ -30,6 +31,7 @@ namespace DO.VIVICARE.Reporter
                     var ua = (DocumentReferenceAttribute)obj.GetType().GetCustomAttribute(typeof(DocumentReferenceAttribute));
                     if (ua == null) continue;
                     list.Add(new ReportingDocument { Document = obj, Attribute = ua });
+                    Settings.AddLibrary(XMLSettings.LibraryType.Document, ua.Name);
                 }
             }
             return list;

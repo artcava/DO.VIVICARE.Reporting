@@ -16,7 +16,6 @@ namespace DO.VIVICARE.UI
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            //Application.Run(new MDIParent());
             Global_formPadre = new MDIParent();
             Application.Run(Global_formPadre);
 
