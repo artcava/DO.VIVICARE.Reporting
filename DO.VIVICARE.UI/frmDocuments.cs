@@ -1,7 +1,12 @@
 ﻿using DO.VIVICARE.Reporter;
 using System;
+using System.ComponentModel;
+using System.Deployment.Application;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DO.VIVICARE.UI
@@ -83,7 +88,7 @@ namespace DO.VIVICARE.UI
             System.Diagnostics.Process.Start(Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(), nome.SubItems[2].Text));
         }
 
-        private void caricaFileToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void caricaFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // UPLOAD NUOVO FILE IN ARCHIVIO.. SOVRASCRIVENDOLO
             var nome = lvReport.SelectedItems[0];
@@ -97,11 +102,25 @@ namespace DO.VIVICARE.UI
                 if (nomeFile.Trim() != "")
                 {
                     ((BaseDocument)nome.Tag).UserPathReport = openFileDialog1.FileName;
-                    var res = ((BaseDocument)nome.Tag).CheckFields();
+                    //var res = ((BaseDocument)nome.Tag).CheckFields();
+
+                    //=================================================================
+                    label2.Text = "Attendere...";
+                    progressBar1.Value = 0;
+                    var progress = new Progress<int>(p =>
+                    {
+                        progressBar1.Value = progressBar1.Maximum / p;
+
+                    });
+                    var res = await Task.Run(() => ((BaseDocument)nome.Tag).CheckFields(progress));
+                    label2.Text = "Completato!";
+                    //=================================================================
+
+
                     if (res.Count != 0)
                     {
                         var msg = "CHECK VALUE!";
-                        foreach (var m in res)
+                        foreach (var m in res.Take(5))  //===> qua magari fagliene vedere 5 alla volta.. così non saturi tutto
                         {
                             msg += "\n" + m.ToString();
                         }
@@ -120,5 +139,6 @@ namespace DO.VIVICARE.UI
         {
             this.Close();
         }
+
     }
 }

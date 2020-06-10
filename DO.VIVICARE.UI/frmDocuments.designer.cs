@@ -41,6 +41,8 @@
             this.caricaFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.btnExit = new System.Windows.Forms.Button();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -91,6 +93,8 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.progressBar1);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.cmbChoose);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
@@ -106,7 +110,7 @@
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(693, 23);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(81, 17);
+            this.label1.Size = new System.Drawing.Size(63, 13);
             this.label1.TabIndex = 14;
             this.label1.Text = "Visualizza";
             // 
@@ -117,20 +121,20 @@
             this.apriFileToolStripMenuItem,
             this.caricaFileToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(147, 52);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(129, 48);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // apriFileToolStripMenuItem
             // 
             this.apriFileToolStripMenuItem.Name = "apriFileToolStripMenuItem";
-            this.apriFileToolStripMenuItem.Size = new System.Drawing.Size(146, 24);
+            this.apriFileToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.apriFileToolStripMenuItem.Text = "&Apri File";
             this.apriFileToolStripMenuItem.Click += new System.EventHandler(this.apriFileToolStripMenuItem_Click);
             // 
             // caricaFileToolStripMenuItem
             // 
             this.caricaFileToolStripMenuItem.Name = "caricaFileToolStripMenuItem";
-            this.caricaFileToolStripMenuItem.Size = new System.Drawing.Size(146, 24);
+            this.caricaFileToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.caricaFileToolStripMenuItem.Text = "&Carica File";
             this.caricaFileToolStripMenuItem.Click += new System.EventHandler(this.caricaFileToolStripMenuItem_Click);
             // 
@@ -149,6 +153,25 @@
             this.btnExit.TabIndex = 211;
             this.btnExit.UseVisualStyleBackColor = true;
             this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(37, 19);
+            this.progressBar1.Maximum = 1000;
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(432, 23);
+            this.progressBar1.TabIndex = 15;
+            // 
+            // label2
+            // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(475, 23);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(63, 13);
+            this.label2.TabIndex = 16;
+            this.label2.Text = "Visualizza";
             // 
             // frmDocuments
             // 
@@ -180,6 +203,8 @@
         private System.Windows.Forms.ToolStripMenuItem caricaFileToolStripMenuItem;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Button btnExit;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Label label2;
     }
 }
 

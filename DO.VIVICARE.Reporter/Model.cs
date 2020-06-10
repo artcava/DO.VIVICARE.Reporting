@@ -14,7 +14,7 @@ namespace DO.VIVICARE.Reporter
     {
         public string UserPathReport { get; set; }
 
-        public List<Tuple<string, string,string>> CheckFields()
+        public List<Tuple<string, string,string>> CheckFields(IProgress<int> progress)
         {
             var list = new List<Tuple<string, string, string>>();
             if (string.IsNullOrEmpty(UserPathReport))
@@ -46,6 +46,7 @@ namespace DO.VIVICARE.Reporter
                         if (rangeXls.Cells[i, col.Position] == null || rangeXls.Cells[i, col.Position].Value == null)
                             list.Add(Tuple.Create($"Riga: {i}", $"Colonna: {col.Column}", $"Colonna inesistente o campo vuoto"));
                     }
+                    progress.Report(rowCount / i); // PER TENER TRACCIA DELLO STATO
                 }
 
                 GC.Collect();
