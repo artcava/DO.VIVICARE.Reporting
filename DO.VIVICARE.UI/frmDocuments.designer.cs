@@ -35,14 +35,14 @@
             this.imageListGrandi = new System.Windows.Forms.ImageList(this.components);
             this.imageListPiccole = new System.Windows.Forms.ImageList(this.components);
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label1 = new System.Windows.Forms.Label();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.apriFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.caricaFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.btnExit = new System.Windows.Forms.Button();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.label2 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -54,11 +54,13 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvReport.BackColor = System.Drawing.Color.White;
             this.lvReport.HideSelection = false;
-            this.lvReport.Location = new System.Drawing.Point(12, 72);
+            this.lvReport.Location = new System.Drawing.Point(16, 89);
+            this.lvReport.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.lvReport.Name = "lvReport";
-            this.lvReport.Size = new System.Drawing.Size(1004, 448);
+            this.lvReport.Size = new System.Drawing.Size(1337, 550);
             this.lvReport.TabIndex = 14;
             this.lvReport.UseCompatibleStateImageBehavior = false;
+            this.lvReport.View = System.Windows.Forms.View.Details;
             this.lvReport.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lvReport_MouseClick);
             // 
             // cmbChoose
@@ -71,9 +73,10 @@
             "ICONE GRANDI",
             "ICONE PICCOLE",
             "DETTAGLI"});
-            this.cmbChoose.Location = new System.Drawing.Point(780, 19);
+            this.cmbChoose.Location = new System.Drawing.Point(1040, 23);
+            this.cmbChoose.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.cmbChoose.Name = "cmbChoose";
-            this.cmbChoose.Size = new System.Drawing.Size(218, 21);
+            this.cmbChoose.Size = new System.Drawing.Size(289, 24);
             this.cmbChoose.TabIndex = 13;
             this.cmbChoose.SelectionChangeCommitted += new System.EventHandler(this.cmbChoose_SelectionChangeCommitted);
             // 
@@ -97,20 +100,44 @@
             this.groupBox1.Controls.Add(this.progressBar1);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.cmbChoose);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Location = new System.Drawing.Point(16, 15);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1004, 54);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Size = new System.Drawing.Size(1339, 66);
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
+            // 
+            // label2
+            // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(633, 28);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(81, 17);
+            this.label2.TabIndex = 16;
+            this.label2.Text = "Visualizza";
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(49, 23);
+            this.progressBar1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.progressBar1.Maximum = 1000;
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(576, 28);
+            this.progressBar1.TabIndex = 15;
             // 
             // label1
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(693, 23);
+            this.label1.Location = new System.Drawing.Point(924, 28);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(63, 13);
+            this.label1.Size = new System.Drawing.Size(81, 17);
             this.label1.TabIndex = 14;
             this.label1.Text = "Visualizza";
             // 
@@ -121,20 +148,20 @@
             this.apriFileToolStripMenuItem,
             this.caricaFileToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(129, 48);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(147, 52);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // apriFileToolStripMenuItem
             // 
             this.apriFileToolStripMenuItem.Name = "apriFileToolStripMenuItem";
-            this.apriFileToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.apriFileToolStripMenuItem.Size = new System.Drawing.Size(146, 24);
             this.apriFileToolStripMenuItem.Text = "&Apri File";
             this.apriFileToolStripMenuItem.Click += new System.EventHandler(this.apriFileToolStripMenuItem_Click);
             // 
             // caricaFileToolStripMenuItem
             // 
             this.caricaFileToolStripMenuItem.Name = "caricaFileToolStripMenuItem";
-            this.caricaFileToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.caricaFileToolStripMenuItem.Size = new System.Drawing.Size(146, 24);
             this.caricaFileToolStripMenuItem.Text = "&Carica File";
             this.caricaFileToolStripMenuItem.Click += new System.EventHandler(this.caricaFileToolStripMenuItem_Click);
             // 
@@ -147,40 +174,23 @@
             this.btnExit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnExit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnExit.Image = global::DO.VIVICARE.UI.Properties.Resources.logout;
-            this.btnExit.Location = new System.Drawing.Point(946, 526);
+            this.btnExit.Location = new System.Drawing.Point(1261, 647);
+            this.btnExit.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnExit.Name = "btnExit";
-            this.btnExit.Size = new System.Drawing.Size(70, 50);
+            this.btnExit.Size = new System.Drawing.Size(93, 62);
             this.btnExit.TabIndex = 211;
             this.btnExit.UseVisualStyleBackColor = true;
             this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
             // 
-            // progressBar1
-            // 
-            this.progressBar1.Location = new System.Drawing.Point(37, 19);
-            this.progressBar1.Maximum = 1000;
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(432, 23);
-            this.progressBar1.TabIndex = 15;
-            // 
-            // label2
-            // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(475, 23);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(63, 13);
-            this.label2.TabIndex = 16;
-            this.label2.Text = "Visualizza";
-            // 
             // frmDocuments
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1028, 583);
+            this.ClientSize = new System.Drawing.Size(1371, 718);
             this.Controls.Add(this.btnExit);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.lvReport);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "frmDocuments";
             this.Text = "DOCUMENTI";
             this.Load += new System.EventHandler(this.frmDocuments_Load);

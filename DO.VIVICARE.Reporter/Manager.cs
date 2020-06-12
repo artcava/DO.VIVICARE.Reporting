@@ -7,7 +7,21 @@ namespace DO.VIVICARE.Reporter
 {
     public static class Manager
     {
-        public static XMLSettings Settings { get { return new XMLSettings(); } }
+        /// <summary>
+        /// 
+        /// </summary>
+        private static XMLSettings _settings = null;
+        /// <summary>
+        /// 
+        /// </summary>
+        public static XMLSettings Settings 
+        { 
+            get 
+            {
+                if (_settings == null) _settings = new XMLSettings();
+                return _settings;
+            } 
+        }
         /// <summary>
         /// Search for every BaseDocument in the path
         /// </summary>

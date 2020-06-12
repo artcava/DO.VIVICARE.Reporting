@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 
@@ -43,13 +44,15 @@ namespace DO.VIVICARE.Reporter
                     case LibraryType.Report:
                         node =
                             Reports.SelectSingleNode($"REPORT[@name='{name}']")
-                            ?? Documents.AppendChild(CreateElement("REPORT").Attributes.Append(CreateAttribute(name)));
+                            ?? Documents.AppendChild(CreateElement("REPORT"));
                         break;
                     default:
                         return false;
                 }
+                var nameAttr = node.Attributes.Append(CreateAttribute("name"));
+                nameAttr.Value = name;
 
-
+                //Save(_XmlFilePath);
                 return true;
             }
             catch (Exception ex)
@@ -57,11 +60,58 @@ namespace DO.VIVICARE.Reporter
                 return false;
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="extension"></param>
+        public void UpdateDocument(string name, string extension)
+        {
+            XmlNode node = Documents.SelectSingleNode($"DOCUMENT[@name='{name}']");
+            var extAttr = node.Attributes.Append(CreateAttribute("ext"));
+            extAttr.Value = extension;
+            var lastAttr = node.Attributes.Append(CreateAttribute("last"));
+            lastAttr.Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
+        }
+
+        public List<string> GetDocumentValues(LibraryType library, string name)
+        {
+            try
+            {
+                XmlNode node;
+                List<string> attributes = new List<string> { name };
+                switch (library)
+                {
+                    case LibraryType.Document:
+                        node = Documents.SelectSingleNode($"DOCUMENT[@name='{name}']");
+                        break;
+                    case LibraryType.Report:
+                        node = Reports.SelectSingleNode($"REPORT[@name='{name}']");
+                        break;
+                    default:
+                        return null;
+                }
+                if (node == null) return null;
+
+                var extAttr = node.Attributes.GetNamedItem("ext");
+                attributes.Add((extAttr != null) ? extAttr.Value : null);
+                var lastAttr = node.Attributes.GetNamedItem("last");
+                attributes.Add((lastAttr != null) ? lastAttr.Value : null);
+
+                return attributes;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
         #endregion
 
         #region Private functions
         private void LoadDocument()
         {
+            if (DocumentElement != null) return;
+
             if (!File.Exists(_XmlFilePath))
             {
                 LoadXml("<SETTINGS></SETTINGS>");

@@ -1,11 +1,9 @@
 ﻿using DO.VIVICARE.Reporter;
 using System;
 using System.ComponentModel;
-using System.Deployment.Application;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -37,36 +35,10 @@ namespace DO.VIVICARE.UI
 
         private void frmDocuments_Load(object sender, EventArgs e)
         {
-            try
-            {
-                cmbChoose.SelectedIndex = 0;
-
-                if (Properties.Settings.Default["UserPathDefault"] != null)
-                {
-                    foreach (var f in Manager.GetDocuments(Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(),
-                                                            Properties.Settings.Default["UserFolderDocuments"].ToString())))
-                    {
-                        lvReport.AddRow(0, f.Attribute.Name, f.Attribute.Description, f.Attribute.FileName);
-                        lvReport.Items[lvReport.Items.Count - 1].Tag = f.Document;
-                    }
-
-                    lvReport.SmallImageList = imageListPiccole;
-                    lvReport.LargeImageList = imageListGrandi;
-                    lvReport.MountHeaders(
-                            "Nome File", 180, HorizontalAlignment.Left,
-                            "Descrizione", 180, HorizontalAlignment.Left,
-                            "File", 180, HorizontalAlignment.Left);
-                }
-                else
-                    MessageBox.Show("Devi specificare il Percorso libreria in Strumenti\\Opzioni");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            LoadDocuments();
         }
 
-        private void contextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
         {
             if (lvReport.SelectedItems.Count == 0)
                 e.Cancel = true;
@@ -85,7 +57,10 @@ namespace DO.VIVICARE.UI
         {
             // APRE FILE CON EXCEL SEPARATAMENTE
             var nome = lvReport.SelectedItems[0];
-            System.Diagnostics.Process.Start(Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(), nome.SubItems[2].Text));
+            if (nome.SubItems[2].Text == "No file")
+                MessageBox.Show($"Non hai ancora caricato nessun file per il documento [{nome.SubItems[0].Text}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            else
+                System.Diagnostics.Process.Start(Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(), nome.SubItems[2].Text));
         }
 
         private async void caricaFileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -101,7 +76,8 @@ namespace DO.VIVICARE.UI
                 var nomeFile = openFileDialog1.FileName;
                 if (nomeFile.Trim() != "")
                 {
-                    ((BaseDocument)nome.Tag).UserPathReport = openFileDialog1.FileName;
+                    var extension = nomeFile.Substring(nomeFile.LastIndexOf('.'));
+                    ((BaseDocument)nome.Tag).UserPathReport = nomeFile;
                     //var res = ((BaseDocument)nome.Tag).CheckFields();
 
                     //=================================================================
@@ -128,8 +104,10 @@ namespace DO.VIVICARE.UI
                     }
                     else
                     {
-                        File.Copy(nomeFile, Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(), nome.SubItems[2].Text), true);
+                        File.Copy(nomeFile, Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(), nome.SubItems[0].Text + extension), true);
+                        Manager.Settings.UpdateDocument(nome.SubItems[0].Text, extension);
                         MessageBox.Show($"File {nome.SubItems[1].Text} caricato correttamente!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LoadDocuments();
                     }
                 }
             }
@@ -140,5 +118,38 @@ namespace DO.VIVICARE.UI
             this.Close();
         }
 
+        private void LoadDocuments()
+        {
+            try
+            {
+                lvReport.Clear();
+                cmbChoose.SelectedIndex = 2;
+
+                if (Properties.Settings.Default["UserPathDefault"] != null)
+                {
+                    foreach (var f in Manager.GetDocuments(Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(),
+                                                            Properties.Settings.Default["UserFolderDocuments"].ToString())))
+                    {
+                        var list = Manager.Settings.GetDocumentValues(XMLSettings.LibraryType.Document, f.Attribute.Name);
+                        lvReport.AddRow(0, f.Attribute.Name, f.Attribute.Description, list[1] == null ? "No file" : f.Attribute.Name + list[1], list[2] ?? "...");
+                        lvReport.Items[lvReport.Items.Count - 1].Tag = f.Document;
+                    }
+
+                    lvReport.SmallImageList = imageListPiccole;
+                    lvReport.LargeImageList = imageListGrandi;
+                    lvReport.MountHeaders(
+                            "Nome Documento", 180, HorizontalAlignment.Left,
+                            "Descrizione", 180, HorizontalAlignment.Left,
+                            "File", 180, HorizontalAlignment.Left,
+                            "Ultimo caricamento", 200, HorizontalAlignment.Right);
+                }
+                else
+                    MessageBox.Show("Devi specificare il Percorso libreria in Strumenti\\Opzioni");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
 }
