@@ -92,23 +92,25 @@ namespace DO.VIVICARE.UI
                     label2.Text = "Completato!";
                     //=================================================================
 
-
+                    var status = XMLSettings.DocumentStatus.FileOK;
+                    var msg = "CHECK VALUE!";
                     if (res.Count != 0)
                     {
-                        var msg = "CHECK VALUE!";
+                        status = XMLSettings.DocumentStatus.FileInError;
                         foreach (var m in res.Take(5))  //===> qua magari fagliene vedere 5 alla volta.. così non saturi tutto
                         {
                             msg += "\n" + m.ToString();
                         }
-                        MessageBox.Show(msg, "Errore!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     }
-                    else
-                    {
-                        File.Copy(nomeFile, Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(), nome.SubItems[0].Text + extension), true);
-                        Manager.Settings.UpdateDocument(nome.SubItems[0].Text, extension);
+
+                    File.Copy(nomeFile, Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(), nome.SubItems[0].Text + extension), true);
+                    var now = DateTime.Now;
+                    Manager.Settings.UpdateDocument(nome.SubItems[0].Text, extension, nomeFile, now, now, now, status);
+                    if (status == XMLSettings.DocumentStatus.FileOK)
                         MessageBox.Show($"File {nome.SubItems[1].Text} caricato correttamente!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadDocuments();
-                    }
+                    else
+                        MessageBox.Show(msg, "Errore!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    LoadDocuments();
                 }
             }
         }
@@ -138,10 +140,13 @@ namespace DO.VIVICARE.UI
                     lvReport.SmallImageList = imageListPiccole;
                     lvReport.LargeImageList = imageListGrandi;
                     lvReport.MountHeaders(
-                            "Nome Documento", 180, HorizontalAlignment.Left,
+                            "Nome Documento", 100, HorizontalAlignment.Left,
                             "Descrizione", 180, HorizontalAlignment.Left,
-                            "File", 180, HorizontalAlignment.Left,
-                            "Ultimo caricamento", 200, HorizontalAlignment.Right);
+                            "File", 120, HorizontalAlignment.Left,
+                            "File di origine", 200, HorizontalAlignment.Left,
+                            "Ultimo caricamento", 120, HorizontalAlignment.Right,
+                            "Ultima modifica", 120, HorizontalAlignment.Right,
+                            "Ultima verifica", 120, HorizontalAlignment.Right);
                 }
                 else
                     MessageBox.Show("Devi specificare il Percorso libreria in Strumenti\\Opzioni");

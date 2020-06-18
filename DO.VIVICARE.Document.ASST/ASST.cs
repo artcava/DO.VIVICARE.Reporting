@@ -17,7 +17,7 @@ namespace DO.VIVICARE.Document.ASST
         [DocumentMemberReference(Column = "E", Position = 5)]
         public int ASSTCode { get; set; }
 
-        [DocumentMemberReference(Column = "F", Position = 6)]
+        [DocumentMemberReference(Column = "H", Position = 8)]
         public int IDSintesi { get; set; }
     }
 }
