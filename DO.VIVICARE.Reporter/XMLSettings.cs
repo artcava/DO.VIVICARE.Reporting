@@ -73,22 +73,28 @@ namespace DO.VIVICARE.Reporter
         {
             XmlNode node = Documents.SelectSingleNode($"DOCUMENT[@name='{name}']");
 
-            var extAttr = node.Attributes.Append(CreateAttribute("ext"));
+            var extAttr = node.Attributes["ext"];
+            if(extAttr==null) extAttr = node.Attributes.Append(CreateAttribute("ext"));
             extAttr.Value = extension;
 
-            var origAttr = node.Attributes.Append(CreateAttribute("orig"));
+            var origAttr = node.Attributes["orig"];
+            if (origAttr == null) origAttr = node.Attributes.Append(CreateAttribute("orig"));
             origAttr.Value = origin;
 
-            var lastAttr = node.Attributes.Append(CreateAttribute("last"));
+            var lastAttr = node.Attributes["last"];
+            if (lastAttr == null) lastAttr = node.Attributes.Append(CreateAttribute("last"));
             if(upload!=null) lastAttr.Value = upload.Value.ToString("yyyy-MM-dd HH:mm");
 
-            var modAttr = node.Attributes.Append(CreateAttribute("mod"));
+            var modAttr = node.Attributes["mod"];
+            if (modAttr == null) modAttr = node.Attributes.Append(CreateAttribute("mod"));
             if (modify != null) modAttr.Value = modify.Value.ToString("yyyy-MM-dd HH:mm");
 
-            var verAttr = node.Attributes.Append(CreateAttribute("ver"));
+            var verAttr = node.Attributes["ver"];
+            if (verAttr == null) verAttr = node.Attributes.Append(CreateAttribute("ver"));
             if (verify != null) verAttr.Value = verify.Value.ToString("yyyy-MM-dd HH:mm");
 
-            var statusAttr = node.Attributes.Append(CreateAttribute("status"));
+            var statusAttr = node.Attributes["status"];
+            if (statusAttr == null) statusAttr = node.Attributes.Append(CreateAttribute("status"));
             statusAttr.Value = ((int)status).ToString();
         }
 
@@ -111,17 +117,17 @@ namespace DO.VIVICARE.Reporter
                 }
                 if (node == null) return null;
 
-                var extAttr = node.Attributes.GetNamedItem("ext");
+                var extAttr = node.Attributes["ext"];
                 attributes.Add(extAttr?.Value);
-                var origAttr = node.Attributes.GetNamedItem("orig");
+                var origAttr = node.Attributes["orig"];
                 attributes.Add(origAttr?.Value);
-                var lastAttr = node.Attributes.GetNamedItem("last");
+                var lastAttr = node.Attributes["last"];
                 attributes.Add(lastAttr?.Value);
-                var modAttr = node.Attributes.GetNamedItem("mod");
+                var modAttr = node.Attributes["mod"];
                 attributes.Add(modAttr?.Value);
-                var verAttr = node.Attributes.GetNamedItem("ver");
+                var verAttr = node.Attributes["ver"];
                 attributes.Add(verAttr?.Value);
-                var statusAttr = node.Attributes.GetNamedItem("status");
+                var statusAttr = node.Attributes["status"];
                 attributes.Add(statusAttr?.Value);
 
                 return attributes;

@@ -43,6 +43,8 @@
             this.caricaFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.btnExit = new System.Windows.Forms.Button();
+            this.apriFileDiorigineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.verificaFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -55,7 +57,7 @@
             this.lvReport.BackColor = System.Drawing.Color.White;
             this.lvReport.HideSelection = false;
             this.lvReport.Location = new System.Drawing.Point(16, 89);
-            this.lvReport.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.lvReport.Margin = new System.Windows.Forms.Padding(4);
             this.lvReport.Name = "lvReport";
             this.lvReport.Size = new System.Drawing.Size(1337, 550);
             this.lvReport.TabIndex = 14;
@@ -74,7 +76,7 @@
             "ICONE PICCOLE",
             "DETTAGLI"});
             this.cmbChoose.Location = new System.Drawing.Point(1040, 23);
-            this.cmbChoose.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cmbChoose.Margin = new System.Windows.Forms.Padding(4);
             this.cmbChoose.Name = "cmbChoose";
             this.cmbChoose.Size = new System.Drawing.Size(289, 24);
             this.cmbChoose.TabIndex = 13;
@@ -101,9 +103,9 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.cmbChoose);
             this.groupBox1.Location = new System.Drawing.Point(16, 15);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox1.Size = new System.Drawing.Size(1339, 66);
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
@@ -123,7 +125,7 @@
             // progressBar1
             // 
             this.progressBar1.Location = new System.Drawing.Point(49, 23);
-            this.progressBar1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.progressBar1.Margin = new System.Windows.Forms.Padding(4);
             this.progressBar1.Maximum = 1000;
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(576, 28);
@@ -146,22 +148,24 @@
             this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.apriFileToolStripMenuItem,
-            this.caricaFileToolStripMenuItem});
+            this.caricaFileToolStripMenuItem,
+            this.apriFileDiorigineToolStripMenuItem,
+            this.verificaFileToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(147, 52);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(211, 128);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // apriFileToolStripMenuItem
             // 
             this.apriFileToolStripMenuItem.Name = "apriFileToolStripMenuItem";
-            this.apriFileToolStripMenuItem.Size = new System.Drawing.Size(146, 24);
+            this.apriFileToolStripMenuItem.Size = new System.Drawing.Size(210, 24);
             this.apriFileToolStripMenuItem.Text = "&Apri File";
             this.apriFileToolStripMenuItem.Click += new System.EventHandler(this.apriFileToolStripMenuItem_Click);
             // 
             // caricaFileToolStripMenuItem
             // 
             this.caricaFileToolStripMenuItem.Name = "caricaFileToolStripMenuItem";
-            this.caricaFileToolStripMenuItem.Size = new System.Drawing.Size(146, 24);
+            this.caricaFileToolStripMenuItem.Size = new System.Drawing.Size(210, 24);
             this.caricaFileToolStripMenuItem.Text = "&Carica File";
             this.caricaFileToolStripMenuItem.Click += new System.EventHandler(this.caricaFileToolStripMenuItem_Click);
             // 
@@ -175,12 +179,26 @@
             this.btnExit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnExit.Image = global::DO.VIVICARE.UI.Properties.Resources.logout;
             this.btnExit.Location = new System.Drawing.Point(1261, 647);
-            this.btnExit.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnExit.Margin = new System.Windows.Forms.Padding(4);
             this.btnExit.Name = "btnExit";
             this.btnExit.Size = new System.Drawing.Size(93, 62);
             this.btnExit.TabIndex = 211;
             this.btnExit.UseVisualStyleBackColor = true;
             this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
+            // 
+            // apriFileDiorigineToolStripMenuItem
+            // 
+            this.apriFileDiorigineToolStripMenuItem.Name = "apriFileDiorigineToolStripMenuItem";
+            this.apriFileDiorigineToolStripMenuItem.Size = new System.Drawing.Size(210, 24);
+            this.apriFileDiorigineToolStripMenuItem.Text = "Apri File di &Origine";
+            this.apriFileDiorigineToolStripMenuItem.Click += new System.EventHandler(this.apriFileDiorigineToolStripMenuItem_Click);
+            // 
+            // verificaFileToolStripMenuItem
+            // 
+            this.verificaFileToolStripMenuItem.Name = "verificaFileToolStripMenuItem";
+            this.verificaFileToolStripMenuItem.Size = new System.Drawing.Size(210, 24);
+            this.verificaFileToolStripMenuItem.Text = "&Verifica File";
+            this.verificaFileToolStripMenuItem.Click += new System.EventHandler(this.verificaFileToolStripMenuItem_Click);
             // 
             // frmDocuments
             // 
@@ -190,7 +208,7 @@
             this.Controls.Add(this.btnExit);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.lvReport);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "frmDocuments";
             this.Text = "DOCUMENTI";
             this.Load += new System.EventHandler(this.frmDocuments_Load);
@@ -215,6 +233,8 @@
         private System.Windows.Forms.Button btnExit;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ToolStripMenuItem apriFileDiorigineToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem verificaFileToolStripMenuItem;
     }
 }
 

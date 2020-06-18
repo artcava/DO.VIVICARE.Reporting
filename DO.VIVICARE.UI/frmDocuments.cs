@@ -32,7 +32,6 @@ namespace DO.VIVICARE.UI
                     break;
             }
         }
-
         private void frmDocuments_Load(object sender, EventArgs e)
         {
             LoadDocuments();
@@ -53,6 +52,7 @@ namespace DO.VIVICARE.UI
             }
         }
 
+        #region ToolStripMenuItem_Click
         private void apriFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // APRE FILE CON EXCEL SEPARATAMENTE
@@ -114,6 +114,62 @@ namespace DO.VIVICARE.UI
                 }
             }
         }
+        private void apriFileDiorigineToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // APRE FILE CON EXCEL SEPARATAMENTE
+            var nome = lvReport.SelectedItems[0];
+            if (nome.SubItems[3].Text == "...")
+                MessageBox.Show($"Non hai ancora caricato nessun file per il documento [{nome.SubItems[0].Text}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            else
+                System.Diagnostics.Process.Start(nome.SubItems[3].Text);
+        }
+
+        private async void verificaFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // VERIFICA FILE IN ARCHIVIO..
+            var nome = lvReport.SelectedItems[0];
+            if (nome.SubItems[3].Text == "...")
+            {
+                MessageBox.Show($"Non hai ancora caricato nessun file per il documento [{nome.SubItems[0].Text}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var nomeFile = nome.SubItems[3].Text;
+            var extension = nomeFile.Substring(nomeFile.LastIndexOf('.'));
+            ((BaseDocument)nome.Tag).UserPathReport = nomeFile;
+
+            //=================================================================
+            label2.Text = "Attendere...";
+            progressBar1.Value = 0;
+            var progress = new Progress<int>(p =>
+            {
+                progressBar1.Value = progressBar1.Maximum / p;
+
+            });
+            var res = await Task.Run(() => ((BaseDocument)nome.Tag).CheckFields(progress));
+            label2.Text = "Completato!";
+            //=================================================================
+
+            var status = XMLSettings.DocumentStatus.FileOK;
+            var msg = "CHECK VALUE!";
+            if (res.Count != 0)
+            {
+                status = XMLSettings.DocumentStatus.FileInError;
+                foreach (var m in res.Take(5))  //===> qua magari fagliene vedere 5 alla volta.. così non saturi tutto
+                {
+                    msg += "\n" + m.ToString();
+                }
+            }
+
+            var now = DateTime.Now;
+            Manager.Settings.UpdateDocument(nome.SubItems[0].Text, extension, nomeFile, null, null, now, status);
+            if (status == XMLSettings.DocumentStatus.FileOK)
+                MessageBox.Show($"File {nome.SubItems[1].Text} vericato correttamente!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show(msg, "Errore!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            LoadDocuments();
+        }
+        #endregion
 
         private void btnExit_Click(object sender, EventArgs e)
         {
