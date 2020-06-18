@@ -133,7 +133,8 @@ namespace DO.VIVICARE.UI
                                                             Properties.Settings.Default["UserFolderDocuments"].ToString())))
                     {
                         var list = Manager.Settings.GetDocumentValues(XMLSettings.LibraryType.Document, f.Attribute.Name);
-                        lvReport.AddRow(0, f.Attribute.Name, f.Attribute.Description, list[1] == null ? "No file" : f.Attribute.Name + list[1], list[2] ?? "...");
+                        lvReport.AddRow(0, f.Attribute.Name, f.Attribute.Description, list[1] == null ? "No file" : f.Attribute.Name + list[1], list[2] ?? "...", list[3] ?? "...", list[4] ?? "...", list[5] ?? "...");
+                        //lvReport.Items[3].ImageKey = ""; (XMLSettings.DocumentStatus)((int)(list[6]??"0"))
                         lvReport.Items[lvReport.Items.Count - 1].Tag = f.Document;
                     }
 

@@ -89,7 +89,7 @@ namespace DO.VIVICARE.Reporter
             if (verify != null) verAttr.Value = verify.Value.ToString("yyyy-MM-dd HH:mm");
 
             var statusAttr = node.Attributes.Append(CreateAttribute("status"));
-            statusAttr.Value = status.ToString();
+            statusAttr.Value = ((int)status).ToString();
         }
 
         public List<string> GetDocumentValues(LibraryType library, string name)
