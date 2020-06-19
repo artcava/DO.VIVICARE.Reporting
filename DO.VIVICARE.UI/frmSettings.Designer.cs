@@ -28,33 +28,29 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle19 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgvElencoDocuments = new System.Windows.Forms.DataGridView();
             this.NomeFileDocument = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.NomeFileDocumentCompleto = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DownloadDocument = new System.Windows.Forms.DataGridViewLinkColumn();
-            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPageDocuments = new System.Windows.Forms.TabPage();
             this.tabPageReports = new System.Windows.Forms.TabPage();
             this.dgvElencoReports = new System.Windows.Forms.DataGridView();
-            this.btnChoose = new System.Windows.Forms.Button();
-            this.txtPath = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.lblResult = new System.Windows.Forms.Label();
             this.NomeFileReport = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.NomeFileReportCompleto = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DownloadReport = new System.Windows.Forms.DataGridViewLinkColumn();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.lblResult = new System.Windows.Forms.Label();
             this.btnExit = new System.Windows.Forms.Button();
             this.btnConfirm = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvElencoDocuments)).BeginInit();
@@ -62,7 +58,6 @@
             this.tabPageDocuments.SuspendLayout();
             this.tabPageReports.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvElencoReports)).BeginInit();
-            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // dgvElencoDocuments
@@ -70,46 +65,47 @@
             this.dgvElencoDocuments.AllowUserToAddRows = false;
             this.dgvElencoDocuments.AllowUserToDeleteRows = false;
             this.dgvElencoDocuments.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.LightSteelBlue;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Black;
-            this.dgvElencoDocuments.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvElencoDocuments.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle11.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.Color.LightSteelBlue;
+            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.Color.Black;
+            this.dgvElencoDocuments.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvElencoDocuments.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle12;
             this.dgvElencoDocuments.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvElencoDocuments.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.NomeFileDocument,
             this.NomeFileDocumentCompleto,
             this.DownloadDocument});
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvElencoDocuments.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle13.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle13.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle13.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle13.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle13.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvElencoDocuments.DefaultCellStyle = dataGridViewCellStyle13;
             this.dgvElencoDocuments.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvElencoDocuments.Location = new System.Drawing.Point(3, 3);
             this.dgvElencoDocuments.Name = "dgvElencoDocuments";
             this.dgvElencoDocuments.ReadOnly = true;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvElencoDocuments.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.LightSteelBlue;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.Black;
-            this.dgvElencoDocuments.RowsDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle14.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle14.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle14.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle14.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle14.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvElencoDocuments.RowHeadersDefaultCellStyle = dataGridViewCellStyle14;
+            this.dgvElencoDocuments.RowHeadersWidth = 51;
+            dataGridViewCellStyle15.SelectionBackColor = System.Drawing.Color.LightSteelBlue;
+            dataGridViewCellStyle15.SelectionForeColor = System.Drawing.Color.Black;
+            this.dgvElencoDocuments.RowsDefaultCellStyle = dataGridViewCellStyle15;
             this.dgvElencoDocuments.Size = new System.Drawing.Size(647, 248);
             this.dgvElencoDocuments.TabIndex = 6;
             this.dgvElencoDocuments.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvElencoDocuments_CellContentClick);
@@ -117,21 +113,27 @@
             // NomeFileDocument
             // 
             this.NomeFileDocument.HeaderText = "Nome file";
+            this.NomeFileDocument.MinimumWidth = 6;
             this.NomeFileDocument.Name = "NomeFileDocument";
             this.NomeFileDocument.ReadOnly = true;
+            this.NomeFileDocument.Width = 125;
             // 
             // NomeFileDocumentCompleto
             // 
             this.NomeFileDocumentCompleto.HeaderText = "Nome file completo";
+            this.NomeFileDocumentCompleto.MinimumWidth = 6;
             this.NomeFileDocumentCompleto.Name = "NomeFileDocumentCompleto";
             this.NomeFileDocumentCompleto.ReadOnly = true;
             this.NomeFileDocumentCompleto.Visible = false;
+            this.NomeFileDocumentCompleto.Width = 125;
             // 
             // DownloadDocument
             // 
             this.DownloadDocument.HeaderText = "Download";
+            this.DownloadDocument.MinimumWidth = 6;
             this.DownloadDocument.Name = "DownloadDocument";
             this.DownloadDocument.ReadOnly = true;
+            this.DownloadDocument.Width = 125;
             // 
             // tabControl
             // 
@@ -171,83 +173,78 @@
             this.dgvElencoReports.AllowUserToAddRows = false;
             this.dgvElencoReports.AllowUserToDeleteRows = false;
             this.dgvElencoReports.AllowUserToResizeRows = false;
-            dataGridViewCellStyle6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.LightSteelBlue;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.Black;
-            this.dgvElencoReports.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle6;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvElencoReports.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle16.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            dataGridViewCellStyle16.SelectionBackColor = System.Drawing.Color.LightSteelBlue;
+            dataGridViewCellStyle16.SelectionForeColor = System.Drawing.Color.Black;
+            this.dgvElencoReports.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle16;
+            dataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle17.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle17.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle17.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle17.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle17.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle17.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvElencoReports.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle17;
             this.dgvElencoReports.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvElencoReports.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.NomeFileReport,
             this.NomeFileReportCompleto,
             this.DownloadReport});
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvElencoReports.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle18.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle18.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle18.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle18.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle18.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle18.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvElencoReports.DefaultCellStyle = dataGridViewCellStyle18;
             this.dgvElencoReports.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvElencoReports.Location = new System.Drawing.Point(3, 3);
             this.dgvElencoReports.Name = "dgvElencoReports";
             this.dgvElencoReports.ReadOnly = true;
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvElencoReports.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
-            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.Color.LightSteelBlue;
-            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.Color.Black;
-            this.dgvElencoReports.RowsDefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle19.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle19.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle19.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle19.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle19.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle19.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle19.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvElencoReports.RowHeadersDefaultCellStyle = dataGridViewCellStyle19;
+            this.dgvElencoReports.RowHeadersWidth = 51;
+            dataGridViewCellStyle20.SelectionBackColor = System.Drawing.Color.LightSteelBlue;
+            dataGridViewCellStyle20.SelectionForeColor = System.Drawing.Color.Black;
+            this.dgvElencoReports.RowsDefaultCellStyle = dataGridViewCellStyle20;
             this.dgvElencoReports.Size = new System.Drawing.Size(647, 248);
             this.dgvElencoReports.TabIndex = 7;
             this.dgvElencoReports.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvElencoReports_CellContentClick);
             // 
-            // btnChoose
+            // NomeFileReport
             // 
-            this.btnChoose.Location = new System.Drawing.Point(610, 14);
-            this.btnChoose.Name = "btnChoose";
-            this.btnChoose.Size = new System.Drawing.Size(35, 23);
-            this.btnChoose.TabIndex = 215;
-            this.btnChoose.Text = "...";
-            this.btnChoose.UseVisualStyleBackColor = true;
-            this.btnChoose.Click += new System.EventHandler(this.btnChoose_Click);
+            this.NomeFileReport.HeaderText = "Nome file";
+            this.NomeFileReport.MinimumWidth = 6;
+            this.NomeFileReport.Name = "NomeFileReport";
+            this.NomeFileReport.ReadOnly = true;
+            this.NomeFileReport.Width = 125;
             // 
-            // txtPath
+            // NomeFileReportCompleto
             // 
-            this.txtPath.Location = new System.Drawing.Point(111, 15);
-            this.txtPath.Name = "txtPath";
-            this.txtPath.ReadOnly = true;
-            this.txtPath.Size = new System.Drawing.Size(493, 20);
-            this.txtPath.TabIndex = 214;
+            this.NomeFileReportCompleto.HeaderText = "Nome file completo";
+            this.NomeFileReportCompleto.MinimumWidth = 6;
+            this.NomeFileReportCompleto.Name = "NomeFileReportCompleto";
+            this.NomeFileReportCompleto.ReadOnly = true;
+            this.NomeFileReportCompleto.Visible = false;
+            this.NomeFileReportCompleto.Width = 125;
             // 
-            // label5
+            // DownloadReport
             // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(6, 19);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(99, 13);
-            this.label5.TabIndex = 213;
-            this.label5.Text = "Percorso libreria";
+            this.DownloadReport.HeaderText = "Download";
+            this.DownloadReport.MinimumWidth = 6;
+            this.DownloadReport.Name = "DownloadReport";
+            this.DownloadReport.ReadOnly = true;
+            this.DownloadReport.Width = 125;
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.label5);
-            this.groupBox3.Controls.Add(this.btnChoose);
-            this.groupBox3.Controls.Add(this.txtPath);
             this.groupBox3.Location = new System.Drawing.Point(12, 12);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(661, 44);
@@ -262,25 +259,6 @@
             this.lblResult.Size = new System.Drawing.Size(278, 18);
             this.lblResult.TabIndex = 8;
             this.lblResult.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
-            // NomeFileReport
-            // 
-            this.NomeFileReport.HeaderText = "Nome file";
-            this.NomeFileReport.Name = "NomeFileReport";
-            this.NomeFileReport.ReadOnly = true;
-            // 
-            // NomeFileReportCompleto
-            // 
-            this.NomeFileReportCompleto.HeaderText = "Nome file completo";
-            this.NomeFileReportCompleto.Name = "NomeFileReportCompleto";
-            this.NomeFileReportCompleto.ReadOnly = true;
-            this.NomeFileReportCompleto.Visible = false;
-            // 
-            // DownloadReport
-            // 
-            this.DownloadReport.HeaderText = "Download";
-            this.DownloadReport.Name = "DownloadReport";
-            this.DownloadReport.ReadOnly = true;
             // 
             // btnExit
             // 
@@ -301,7 +279,6 @@
             this.btnConfirm.Size = new System.Drawing.Size(70, 50);
             this.btnConfirm.TabIndex = 209;
             this.btnConfirm.UseVisualStyleBackColor = true;
-            this.btnConfirm.Click += new System.EventHandler(this.btnAddNew_Click);
             // 
             // frmSettings
             // 
@@ -325,8 +302,6 @@
             this.tabPageDocuments.ResumeLayout(false);
             this.tabPageReports.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvElencoReports)).EndInit();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -334,14 +309,10 @@
         #endregion
         private System.Windows.Forms.Button btnExit;
         private System.Windows.Forms.Button btnConfirm;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.DataGridView dgvElencoDocuments;
         private System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage tabPageDocuments;
         private System.Windows.Forms.TabPage tabPageReports;
-        private System.Windows.Forms.Button btnChoose;
-        private System.Windows.Forms.TextBox txtPath;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.DataGridViewTextBoxColumn NomeFileDocument;
         private System.Windows.Forms.DataGridViewTextBoxColumn NomeFileDocumentCompleto;

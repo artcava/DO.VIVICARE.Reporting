@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DO.VIVICARE.Reporter;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -32,18 +33,6 @@ namespace DO.VIVICARE.UI
             dgvElencoReports.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvElencoReports.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold);
             dgvElencoReports.Columns["NomeFileReport"].FillWeight = 150;
-        }
-
-        private void btnChoose_Click(object sender, System.EventArgs e)
-        {
-            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
-                txtPath.Text = folderBrowserDialog1.SelectedPath;
-        }
-
-        private void btnAddNew_Click(object sender, System.EventArgs e)
-        {
-            Properties.Settings.Default["UserPathDefault"] = txtPath.Text;
-            Properties.Settings.Default.Save();
         }
 
         private void GetListDocumentsUpdated()
@@ -132,11 +121,6 @@ namespace DO.VIVICARE.UI
             //});
         }
 
-        private void LoadDefault()
-        {
-            txtPath.Text = Properties.Settings.Default["UserPathDefault"].ToString();
-        }
-
         private void btnExit_Click(object sender, System.EventArgs e)
         {
             this.Close();
@@ -144,7 +128,6 @@ namespace DO.VIVICARE.UI
 
         private void frmSettings_Shown(object sender, EventArgs e)
         {
-            LoadDefault();
             GetListDocumentsUpdated();
         }
 
@@ -160,29 +143,10 @@ namespace DO.VIVICARE.UI
             }
         }
 
-        public bool CheckFolder(string folder)
-        {
-            string path = Path.Combine(
-                                    Properties.Settings.Default["UserPathDefault"].ToString(),
-                                    folder);
-            try
-            {
-                if (Directory.Exists(path)) return true;
-
-                DirectoryInfo di = Directory.CreateDirectory(path);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
-
         private void dgvElencoDocuments_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            string cartella = Properties.Settings.Default["UserFolderDocuments"].ToString();
             lblResult.Text = string.Empty;
-            if (e.ColumnIndex < 0 || string.IsNullOrEmpty(txtPath.Text) || !CheckFolder(cartella)) return;
+            if (e.ColumnIndex < 0) return;
             DataGridViewRow row = dgvElencoDocuments.Rows[dgvElencoDocuments.CurrentCell.RowIndex];
 
             switch (dgvElencoDocuments.Columns[e.ColumnIndex].Name)
@@ -193,11 +157,8 @@ namespace DO.VIVICARE.UI
                         client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
                         client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
 
-                        Uri URL = new Uri(_path + cartella + "/" + row.Cells["NomeFileDocumentCompleto"].Value.ToString());
-                        client.DownloadFileAsync(URL, Path.Combine(
-                                                            Properties.Settings.Default["UserPathDefault"].ToString(),
-                                                            cartella,
-                                                            row.Cells["NomeFileDocumentCompleto"].Value.ToString()));
+                        Uri URL = new Uri(_path + "Doc" + "/" + row.Cells["NomeFileDocumentCompleto"].Value.ToString());
+                        client.DownloadFileAsync(URL, Path.Combine(Manager.DocumentLibraries, row.Cells["NomeFileDocumentCompleto"].Value.ToString()));
                     });
                     thread.Start();
                     break;
@@ -206,9 +167,8 @@ namespace DO.VIVICARE.UI
 
         private void dgvElencoReports_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            string cartella = Properties.Settings.Default["UserFolderReports"].ToString();
             lblResult.Text = string.Empty;
-            if (e.ColumnIndex < 0 || string.IsNullOrEmpty(txtPath.Text) || !CheckFolder(cartella)) return;
+            if (e.ColumnIndex < 0) return;
             DataGridViewRow row = dgvElencoReports.Rows[dgvElencoReports.CurrentCell.RowIndex];
 
             switch (dgvElencoReports.Columns[e.ColumnIndex].Name)
@@ -220,11 +180,8 @@ namespace DO.VIVICARE.UI
                         client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
                         client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
 
-                        Uri URL = new Uri(_path + cartella + "/" + row.Cells["NomeFileReportCompleto"].Value.ToString());
-                        client.DownloadFileAsync(URL, Path.Combine(
-                                                            Properties.Settings.Default["UserPathDefault"].ToString(),
-                                                            cartella,
-                                                            row.Cells["NomeFileReportCompleto"].Value.ToString()));
+                        Uri URL = new Uri(_path + "Rep" + "/" + row.Cells["NomeFileReportCompleto"].Value.ToString());
+                        client.DownloadFileAsync(URL, Path.Combine(Manager.ReportLibraries, row.Cells["NomeFileReportCompleto"].Value.ToString()));
                     });
                     thread.Start();
                     break;

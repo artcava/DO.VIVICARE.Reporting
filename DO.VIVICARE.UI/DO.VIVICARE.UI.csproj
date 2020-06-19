@@ -198,9 +198,7 @@
     <Content Include="Resources\iconSmall.png" />
     <None Include="Resources\execute.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Libraries\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\DO.VIVICARE.Reporter\DO.VIVICARE.Reporter.csproj">
       <Project>{1eb5f145-261e-4a49-9196-8c4580b7bfb7}</Project>

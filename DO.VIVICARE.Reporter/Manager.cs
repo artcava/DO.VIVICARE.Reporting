@@ -7,6 +7,10 @@ namespace DO.VIVICARE.Reporter
 {
     public static class Manager
     {
+        public static string DocumentLibraries { get { return Path.Combine(Directory.GetCurrentDirectory(), "Repository", "DocumentLibraries"); } }
+        public static string ReportLibraries { get { return Path.Combine(Directory.GetCurrentDirectory(), "Repository", "ReportLibraries"); } }
+        public static string Documents { get { return Path.Combine(Directory.GetCurrentDirectory(), "Repository", "Documents"); } }
+        public static string Reports { get { return Path.Combine(Directory.GetCurrentDirectory(), "Repository", "Reports"); } }
         /// <summary>
         /// 
         /// </summary>
@@ -23,14 +27,13 @@ namespace DO.VIVICARE.Reporter
             } 
         }
         /// <summary>
-        /// Search for every BaseDocument in the path
+        /// 
         /// </summary>
-        /// <param name="path"></param>
         /// <returns></returns>
-        public static List<ReportingDocument> GetDocuments(string path)
+        public static List<ReportingDocument> GetDocuments()
         {
             var list = new List<ReportingDocument>();
-            foreach (var file in Directory.GetFiles(path))
+            foreach (var file in Directory.GetFiles(DocumentLibraries))
             {
                 FileInfo f = new FileInfo(file);
                 if (!f.Exists) continue;
@@ -55,10 +58,10 @@ namespace DO.VIVICARE.Reporter
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static List<ReportReferenceAttribute> GetReports(string path)
+        public static List<ReportReferenceAttribute> GetReports()
         {
             var list = new List<ReportReferenceAttribute>();
-            foreach (var file in Directory.GetFiles(path))
+            foreach (var file in Directory.GetFiles(ReportLibraries))
             {
                 FileInfo f = new FileInfo(file);
                 if (!f.Exists) continue;

@@ -57,10 +57,10 @@ namespace DO.VIVICARE.UI
         {
             // APRE FILE CON EXCEL SEPARATAMENTE
             var nome = lvReport.SelectedItems[0];
-            if (nome.SubItems[2].Text == "No file")
+            if (nome.SubItems[2].Text == "...")
                 MessageBox.Show($"Non hai ancora caricato nessun file per il documento [{nome.SubItems[0].Text}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
-                System.Diagnostics.Process.Start(Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(), nome.SubItems[2].Text));
+                System.Diagnostics.Process.Start(Path.Combine(Manager.Documents, nome.SubItems[2].Text));
         }
 
         private async void caricaFileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -78,7 +78,6 @@ namespace DO.VIVICARE.UI
                 {
                     var extension = nomeFile.Substring(nomeFile.LastIndexOf('.'));
                     ((BaseDocument)nome.Tag).UserPathReport = nomeFile;
-                    //var res = ((BaseDocument)nome.Tag).CheckFields();
 
                     //=================================================================
                     label2.Text = "Attendere...";
@@ -103,7 +102,7 @@ namespace DO.VIVICARE.UI
                         }
                     }
 
-                    File.Copy(nomeFile, Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(), nome.SubItems[0].Text + extension), true);
+                    File.Copy(nomeFile, Path.Combine(Manager.Documents, nome.SubItems[0].Text + extension), true);
                     var now = DateTime.Now;
                     Manager.Settings.UpdateDocument(nome.SubItems[0].Text, extension, nomeFile, now, now, now, status);
                     if (status == XMLSettings.DocumentStatus.FileOK)
@@ -128,13 +127,13 @@ namespace DO.VIVICARE.UI
         {
             // VERIFICA FILE IN ARCHIVIO..
             var nome = lvReport.SelectedItems[0];
-            if (nome.SubItems[3].Text == "...")
+            if (nome.SubItems[2].Text == "...")
             {
                 MessageBox.Show($"Non hai ancora caricato nessun file per il documento [{nome.SubItems[0].Text}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            var nomeFile = nome.SubItems[3].Text;
+            var nomeFile = Path.Combine(Manager.Documents, nome.SubItems[2].Text);
             var extension = nomeFile.Substring(nomeFile.LastIndexOf('.'));
             ((BaseDocument)nome.Tag).UserPathReport = nomeFile;
 
@@ -183,30 +182,24 @@ namespace DO.VIVICARE.UI
                 lvReport.Clear();
                 cmbChoose.SelectedIndex = 2;
 
-                if (Properties.Settings.Default["UserPathDefault"] != null)
+                foreach (var f in Manager.GetDocuments())
                 {
-                    foreach (var f in Manager.GetDocuments(Path.Combine(Properties.Settings.Default["UserPathDefault"].ToString(),
-                                                            Properties.Settings.Default["UserFolderDocuments"].ToString())))
-                    {
-                        var list = Manager.Settings.GetDocumentValues(XMLSettings.LibraryType.Document, f.Attribute.Name);
-                        lvReport.AddRow(0, f.Attribute.Name, f.Attribute.Description, list[1] == null ? "No file" : f.Attribute.Name + list[1], list[2] ?? "...", list[3] ?? "...", list[4] ?? "...", list[5] ?? "...");
-                        //lvReport.Items[3].ImageKey = ""; (XMLSettings.DocumentStatus)((int)(list[6]??"0"))
-                        lvReport.Items[lvReport.Items.Count - 1].Tag = f.Document;
-                    }
-
-                    lvReport.SmallImageList = imageListPiccole;
-                    lvReport.LargeImageList = imageListGrandi;
-                    lvReport.MountHeaders(
-                            "Nome Documento", 100, HorizontalAlignment.Left,
-                            "Descrizione", 180, HorizontalAlignment.Left,
-                            "File", 120, HorizontalAlignment.Left,
-                            "File di origine", 200, HorizontalAlignment.Left,
-                            "Ultimo caricamento", 120, HorizontalAlignment.Right,
-                            "Ultima modifica", 120, HorizontalAlignment.Right,
-                            "Ultima verifica", 120, HorizontalAlignment.Right);
+                    var list = Manager.Settings.GetDocumentValues(XMLSettings.LibraryType.Document, f.Attribute.Name);
+                    lvReport.AddRow(0, f.Attribute.Name, f.Attribute.Description, list[1] == null ? "..." : f.Attribute.Name + list[1], list[2] ?? "...", list[3] ?? "...", list[4] ?? "...", list[5] ?? "...");
+                    //lvReport.Items[3].ImageKey = ""; (XMLSettings.DocumentStatus)((int)(list[6]??"0"))
+                    lvReport.Items[lvReport.Items.Count - 1].Tag = f.Document;
                 }
-                else
-                    MessageBox.Show("Devi specificare il Percorso libreria in Strumenti\\Opzioni");
+
+                lvReport.SmallImageList = imageListPiccole;
+                lvReport.LargeImageList = imageListGrandi;
+                lvReport.MountHeaders(
+                        "Nome Documento", 100, HorizontalAlignment.Left,
+                        "Descrizione", 180, HorizontalAlignment.Left,
+                        "File", 120, HorizontalAlignment.Left,
+                        "File di origine", 200, HorizontalAlignment.Left,
+                        "Ultimo caricamento", 120, HorizontalAlignment.Right,
+                        "Ultima modifica", 120, HorizontalAlignment.Right,
+                        "Ultima verifica", 120, HorizontalAlignment.Right);
             }
             catch (Exception ex)
             {

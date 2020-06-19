@@ -25,18 +25,6 @@ namespace DO.VIVICARE.UI.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string UserPathDefault {
-            get {
-                return ((string)(this["UserPathDefault"]));
-            }
-            set {
-                this["UserPathDefault"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Doc")]
         public string UserFolderDocuments {
             get {

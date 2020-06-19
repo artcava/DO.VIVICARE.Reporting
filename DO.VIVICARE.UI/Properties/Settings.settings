@@ -2,9 +2,6 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DO.VIVICARE.UI.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="UserPathDefault" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="UserFolderDocuments" Type="System.String" Scope="User">
       <Value Profile="(Default)">Doc</Value>
     </Setting>
