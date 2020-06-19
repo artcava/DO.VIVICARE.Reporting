@@ -2,7 +2,7 @@
 
 namespace DO.VIVICARE.Document.ASST
 {
-    [DocumentReference(FileName = "ASST.xlsx", Name = "ASST", Description = "Elenco delle Aziende Sanitarie", RowStart =2)]
+    [DocumentReference(Name = "ASST", Description = "Elenco delle Aziende Sanitarie", RowStart =2)]
     public class ASST : BaseDocument
     {
         [DocumentMemberReference(Column = "B", Position = 2)]

@@ -12,19 +12,19 @@ namespace DO.VIVICARE.Reporter
     /// </summary>
     public class BaseDocument
     {
-        public string UserPathReport { get; set; }
+        public string SourceFilePath { get; set; }
 
         public List<Tuple<string, string,string>> CheckFields(IProgress<int> progress)
         {
             var list = new List<Tuple<string, string, string>>();
-            if (string.IsNullOrEmpty(UserPathReport))
+            if (string.IsNullOrEmpty(SourceFilePath))
             {
                 list.Add(Tuple.Create($"Riga: 0", $"Colonna: 0", $"File inesistente o campo [UserPathReport] vuoto"));
             }
             try
             {
                 Excel.Application appXls = new Excel.Application();
-                Excel.Workbook cartellaXls = appXls.Workbooks.Open(UserPathReport);
+                Excel.Workbook cartellaXls = appXls.Workbooks.Open(SourceFilePath);
                 Excel._Worksheet foglioXls = cartellaXls.Sheets[1];
                 Excel.Range rangeXls = foglioXls.UsedRange;
 
@@ -93,7 +93,6 @@ namespace DO.VIVICARE.Reporter
     public class DocumentReferenceAttribute : Attribute
     {
         public string Name { get; set; }
-        public string FileName { get; set; }
         public string Description { get; set; }
         public int RowStart { get; set; }
 

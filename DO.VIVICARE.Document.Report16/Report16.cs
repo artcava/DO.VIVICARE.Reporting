@@ -2,7 +2,7 @@
 using System;
 
 namespace DO.VIVICARE.Document.Report16
-{    [DocumentReference(FileName = "Report16.xlsx", Name = "Report16", Description = "Una descrizione del file", RowStart =3)]
+{    [DocumentReference(Name = "Report16", Description = "Lista degli articoli somministrati ai pazienti", RowStart =3)]
     public class Report16 : BaseDocument
     {
         [DocumentMemberReference(Column = "E", Position = 5)]
@@ -10,6 +10,9 @@ namespace DO.VIVICARE.Document.Report16
 
         [DocumentMemberReference(Column = "K", Position = 11)]
         public string Town { get; set; }
+
+        [DocumentMemberReference(Column = "R", Position = 18)]
+        public decimal Price { get; set; }
 
         [DocumentMemberReference(Column = "T", Position = 20)]
         public string HostType { get; set; }

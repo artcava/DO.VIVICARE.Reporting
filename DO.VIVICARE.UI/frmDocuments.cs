@@ -77,7 +77,7 @@ namespace DO.VIVICARE.UI
                 if (nomeFile.Trim() != "")
                 {
                     var extension = nomeFile.Substring(nomeFile.LastIndexOf('.'));
-                    ((BaseDocument)nome.Tag).UserPathReport = nomeFile;
+                    ((BaseDocument)nome.Tag).SourceFilePath = nomeFile;
 
                     //=================================================================
                     label2.Text = "Attendere...";
@@ -135,7 +135,7 @@ namespace DO.VIVICARE.UI
 
             var nomeFile = Path.Combine(Manager.Documents, nome.SubItems[2].Text);
             var extension = nomeFile.Substring(nomeFile.LastIndexOf('.'));
-            ((BaseDocument)nome.Tag).UserPathReport = nomeFile;
+            ((BaseDocument)nome.Tag).SourceFilePath = nomeFile;
 
             //=================================================================
             label2.Text = "Attendere...";

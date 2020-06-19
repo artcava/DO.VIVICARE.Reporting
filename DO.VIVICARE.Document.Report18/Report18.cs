@@ -2,7 +2,7 @@
 
 namespace DO.VIVICARE.Document.Report18
 {
-    [DocumentReference(FileName = "Report18.xlsx", Name = "Report18", Description = "Una descrizione del file")]
+    [DocumentReference(Name = "Report18", Description = "Una descrizione del file", RowStart =2)]
     public class Report18 : BaseDocument
     {
     }
