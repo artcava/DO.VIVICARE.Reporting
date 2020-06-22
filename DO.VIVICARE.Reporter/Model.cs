@@ -14,15 +14,17 @@ namespace DO.VIVICARE.Reporter
     {
         public string SourceFilePath { get; set; }
 
-        public List<Tuple<string, string,string>> CheckFields(IProgress<int> progress)
+        public bool CheckFields(IProgress<int> progress)
         {
+            var name = string.Empty;
             var list = new List<Tuple<string, string, string>>();
-            if (string.IsNullOrEmpty(SourceFilePath))
-            {
-                list.Add(Tuple.Create($"Riga: 0", $"Colonna: 0", $"File inesistente o campo [UserPathReport] vuoto"));
-            }
             try
             {
+                if (string.IsNullOrEmpty(SourceFilePath))
+                {
+                    list.Add(Tuple.Create($"Riga: 0", $"Colonna: 0", $"File inesistente o campo [SourceFilePath] vuoto"));
+                    return false;
+                }
                 Excel.Application appXls = new Excel.Application();
                 Excel.Workbook cartellaXls = appXls.Workbooks.Open(SourceFilePath);
                 Excel._Worksheet foglioXls = cartellaXls.Sheets[1];
@@ -35,13 +37,16 @@ namespace DO.VIVICARE.Reporter
                 int rowStart = 1;
                 var ua = (DocumentReferenceAttribute)GetType().GetCustomAttribute(typeof(DocumentReferenceAttribute));
                 if (ua != null)
+                {
                     rowStart = ua.RowStart;
+                    name = ua.Name;
+                }
 
 
                 // Excel comincia a contare da 1
                 for (int i = rowStart; i <= rowCount; i++)
                 {
-                    foreach(var col in columns)
+                    foreach (var col in columns)
                     {
                         if (rangeXls.Cells[i, col.Position] == null || rangeXls.Cells[i, col.Position].Value == null)
                             list.Add(Tuple.Create($"Riga: {i}", $"Colonna: {col.Column}", $"Colonna inesistente o campo vuoto"));
@@ -61,29 +66,49 @@ namespace DO.VIVICARE.Reporter
                 appXls.Quit();
                 Marshal.ReleaseComObject(appXls);
 
-                return list;
-
-
-                // QUESTO PEZZO GLIELO METTI AL CHIAMANTE DI QUESTA FUNZIONE
-                //=======================================================================================
-                //var res = CheckFields("pathxxxxxxxx");
-                //if (res.Count != 0)
-                //{
-                //    var msg = "CHECK VALUE!";
-                //    foreach (var m in res)
-                //    {
-                //        msg += "\n" + m;
-                //    }
-                //    MessageBox.Show("xxxxx", msg, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                //}
-                //=======================================================================================
-
+                return true;
             }
             catch (Exception ex)
             {
                 list.Add(Tuple.Create("Riga: 0", "Colonna: 0", $"Errore interno: {ex.Message}"));
-                return list;
+                return false;
             }
+            finally
+            {
+                WriteLog(list, name);
+            }
+        }
+
+        private void WriteLog(List<Tuple<string, string, string>> tuples, string fileName)
+        {
+            try
+            {
+                var path = Path.Combine(Manager.Documents, fileName + ".log");
+                var f = new FileStream(path, FileMode.Create);
+                string text = null;
+
+
+                foreach (var tuple in tuples)
+                {
+                    text += tuple.ToString() + "\r\n";
+                }
+
+                var buffer = GetBytes(text);
+
+                f.Write(buffer, 0, buffer.Length);
+                f.Close();
+            }
+            catch { }
+        }
+        /// <summary>
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        private static byte[] GetBytes(string str)
+        {
+            var bytes = new byte[str.Length * sizeof(char)];
+            Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
+            return bytes;
         }
     }
 

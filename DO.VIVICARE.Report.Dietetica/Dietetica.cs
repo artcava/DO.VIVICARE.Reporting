@@ -1,7 +1,5 @@
 ﻿using DO.VIVICARE.Reporter;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace DO.VIVICARE.Report.Dietetica
 {
@@ -16,24 +14,11 @@ namespace DO.VIVICARE.Report.Dietetica
         /// </summary>
         public Dietetica()
         {
-            string[] docs = new string[] { "Report16" };
-            FileInfo assemblyFile = new FileInfo(Assembly.GetExecutingAssembly().Location);
-            foreach (var file in Directory.GetFiles(assemblyFile.Directory.FullName))
-                //foreach (var file in Directory.GetFiles(assemblyFile.Directory.FullName + "\\Documents"))
-                {
-                    FileInfo f = new FileInfo(file);
-
-                if (f.Exists && f.Name.StartsWith("DO.VIVICARE"))
-                {
-                    var a = Assembly.LoadFile(f.FullName);
-                    foreach (var d in docs)
-                    {
-                        var obj = (from type in a.GetExportedTypes()
-                                   where type.Name.Equals(d)
-                                   select (BaseDocument)a.CreateInstance(type.FullName)).FirstOrDefault();
-                        Documents.Add(obj);
-                    }
-                }
+            string[] docs = new string[] { "ASST", "Comuni", "Report16", "Report18", "ZSDFatture" };
+            foreach (var document in Manager.GetDocuments())
+            {
+                if (!docs.Contains(document.Attribute.Name)) continue;
+                Documents.Add(document.Document);
             }
         }
         /// <summary>

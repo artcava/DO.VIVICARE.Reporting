@@ -87,25 +87,27 @@ namespace DO.VIVICARE.UI
                         progressBar1.Value = progressBar1.Maximum / p;
 
                     });
-                    var res = await Task.Run(() => ((BaseDocument)nome.Tag).CheckFields(progress));
+                    var ok = await Task.Run(() => ((BaseDocument)nome.Tag).CheckFields(progress));
                     label2.Text = "Completato!";
                     //=================================================================
 
                     var status = XMLSettings.DocumentStatus.FileOK;
                     var msg = "CHECK VALUE!";
-                    if (res.Count != 0)
+                    if (!ok)
                     {
                         status = XMLSettings.DocumentStatus.FileInError;
-                        foreach (var m in res.Take(5))  //===> qua magari fagliene vedere 5 alla volta.. così non saturi tutto
-                        {
-                            msg += "\n" + m.ToString();
-                        }
+                        //===> Caricare in qualche modo il file di log generato in Path.Combine(Manager.Documents, nome.SubItems[0].Text + ".log")
+                        msg += "Errore nel caricamento del file";
+                        //foreach (var m in ok.Take(5))  //===> qua magari fagliene vedere 5 alla volta.. così non saturi tutto
+                        //{
+                        //    msg += "\n" + m.ToString();
+                        //}
                     }
 
                     File.Copy(nomeFile, Path.Combine(Manager.Documents, nome.SubItems[0].Text + extension), true);
                     var now = DateTime.Now;
                     Manager.Settings.UpdateDocument(nome.SubItems[0].Text, extension, nomeFile, now, now, now, status);
-                    if (status == XMLSettings.DocumentStatus.FileOK)
+                    if (ok)
                         MessageBox.Show($"File {nome.SubItems[1].Text} caricato correttamente!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     else
                         MessageBox.Show(msg, "Errore!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
