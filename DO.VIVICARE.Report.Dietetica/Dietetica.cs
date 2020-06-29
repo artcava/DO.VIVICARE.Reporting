@@ -1,4 +1,6 @@
 ﻿using DO.VIVICARE.Reporter;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DO.VIVICARE.Report.Dietetica
@@ -26,7 +28,52 @@ namespace DO.VIVICARE.Report.Dietetica
         /// </summary>
         public override void Execute()
         {
-            base.Execute();
+            //base.Execute();
+
+            try
+            {
+                //Retrieve documents with Object Document and Attributes
+                var documents = Manager.GetDocuments();
+
+                var doc = documents.Find(x => x.Attribute.Name == "ZSDFatture");
+                if (doc == null)
+                {
+                    throw new Exception("ZSDFatture non trovato!");
+                }
+                var listZSDFatture = doc.Document.GetData();
+
+                doc = documents.Find(x => x.Attribute.Name == "Report16");
+                if (doc == null)
+                {
+                    throw new Exception("Report16 non trovato!");
+                }
+                var listReport16 = doc.Document.GetData();
+
+                var report = listZSDFatture.Join(
+                    listReport16, 
+                    r => new KeyValuePair<object, object>(r.GetType().GetProperty("FiscalCode"), r.GetType().GetProperty("ErogationDate")),
+                    f => new KeyValuePair<object, object>(f.GetType().GetProperty("FiscalCode"), f.GetType().GetProperty("ErogationDate")),
+                    (f,r) => new Dietetica
+                    {
+                        ATSCode = "",
+                        ASSTCode = "",
+                        FiscalCode = (string)r.GetType().GetProperty("FiscalCode").GetValue(r),
+                        Year = "",
+                        Month = ""
+                    });
+
+                foreach (var item in report)
+                {
+
+                }
+                
+
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
         }
 
         #region Members

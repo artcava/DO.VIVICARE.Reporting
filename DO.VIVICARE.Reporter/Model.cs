@@ -14,6 +14,106 @@ namespace DO.VIVICARE.Reporter
     {
         public string SourceFilePath { get; set; }
 
+        public List<Object> GetData()
+        {
+            List<Object> ret = new List<Object>();
+            var name = string.Empty;
+            var list = new List<Tuple<string, string, string>>();
+            try
+            {
+                if (string.IsNullOrEmpty(SourceFilePath))
+                {
+                    list.Add(Tuple.Create($"Riga: 0", $"Colonna: 0", $"File inesistente o campo [SourceFilePath] vuoto"));
+                    return null;
+                }
+                Excel.Application appXls = new Excel.Application();
+                Excel.Workbook cartellaXls = appXls.Workbooks.Open(SourceFilePath);
+                Excel._Worksheet foglioXls = cartellaXls.Sheets[1];
+                Excel.Range rangeXls = foglioXls.UsedRange;
+
+                int rowCount = rangeXls.Rows.Count;
+                int colCount = rangeXls.Columns.Count;
+
+                var columns = Manager.GetDocumentColumns(this);
+                int rowStart = 1;
+                var ua = (DocumentReferenceAttribute)GetType().GetCustomAttribute(typeof(DocumentReferenceAttribute));
+                if (ua != null)
+                {
+                    rowStart = ua.RowStart;
+                    name = ua.Name;
+                }
+                for (int i = rowStart; i <= rowCount; i++)
+                {
+                    var type = this.GetType();
+                    Assembly assembly = Assembly.GetAssembly(this.GetType());
+                    var o = assembly.CreateInstance(type.FullName);
+                    var element = o;
+                    var fields = element.GetType().GetProperties();
+                    var colField = 0;
+                    foreach (var col in columns)
+                    {
+                        if (rangeXls.Cells[i, col.Position] == null || rangeXls.Cells[i, col.Position].Value == null)
+                        {
+                            list.Add(Tuple.Create($"Riga: {i}", $"Colonna: {col.Column}", $"Colonna inesistente o campo vuoto"));
+
+                            var nameField = fields[colField].Name;
+                            var propField = element.GetType().GetProperty(nameField);
+                            switch (propField.PropertyType.FullName)
+                            {
+                                case "System.String":
+                                    propField.SetValue(element, "");
+                                    break;
+                                case "System.Int32":
+                                    propField.SetValue(element, 0);
+                                    break;
+                                case "System.Int64":
+                                    propField.SetValue(element, 0);
+                                    break;
+                                case "System.Double":
+                                    propField.SetValue(element, 0);
+                                    break;
+                                case "System.Boolean":
+                                    propField.SetValue(element, false);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            var nameField = fields[colField].Name;
+                            var propField = element.GetType().GetProperty(nameField);
+                            propField.SetValue(element, rangeXls.Cells[i, col.Position].Value);
+                        }
+                        colField++;
+                    }
+                    ret.Add(element);
+                }
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+
+                Marshal.ReleaseComObject(rangeXls);
+                Marshal.ReleaseComObject(foglioXls);
+
+                cartellaXls.Close();
+                Marshal.ReleaseComObject(cartellaXls);
+
+                appXls.Quit();
+                Marshal.ReleaseComObject(appXls);
+            }
+            catch (Exception ex)
+            {
+                list.Add(Tuple.Create("Riga: 0", "Colonna: 0", $"Errore interno: {ex.Message}"));
+                return null;
+            }
+            finally
+            {
+                WriteLog(list, name);
+            }
+            return ret;
+        }
+
         public bool CheckFields(IProgress<int> progress)
         {
             var name = string.Empty;
