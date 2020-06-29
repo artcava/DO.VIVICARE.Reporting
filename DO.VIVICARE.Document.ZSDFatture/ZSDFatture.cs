@@ -9,11 +9,11 @@ namespace DO.VIVICARE.Document.ZSDFatture
         [DocumentMemberReference(Column = "A", Position = 1)]
         public string Customer { get; set; }
 
-        [DocumentMemberReference(Column = "R", Position = 18)]
-        public decimal Price { get; set; }
-
         [DocumentMemberReference(Column = "AA", Position = 27)]
         public DateTime ErogationDate { get; set; }
+
+        [DocumentMemberReference(Column = "AM", Position = 39)]
+        public decimal Price { get; set; }
 
         [DocumentMemberReference(Column = "AN", Position = 40)]
         public decimal Quantity { get; set; }
