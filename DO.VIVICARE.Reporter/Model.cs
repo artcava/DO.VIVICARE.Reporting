@@ -14,9 +14,9 @@ namespace DO.VIVICARE.Reporter
     {
         public string SourceFilePath { get; set; }
 
-        public List<Object> GetData()
+        public List<BaseDocument> GetData()
         {
-            List<Object> ret = new List<Object>();
+            List<BaseDocument> ret = new List<BaseDocument>();
             var name = string.Empty;
             var list = new List<Tuple<string, string, string>>();
             try
@@ -47,7 +47,7 @@ namespace DO.VIVICARE.Reporter
                     var type = this.GetType();
                     Assembly assembly = Assembly.GetAssembly(this.GetType());
                     var o = assembly.CreateInstance(type.FullName);
-                    var element = o;
+                    var element = (BaseDocument)o;
                     var fields = element.GetType().GetProperties();
                     var colField = 0;
                     foreach (var col in columns)
@@ -67,6 +67,9 @@ namespace DO.VIVICARE.Reporter
                                     propField.SetValue(element, 0);
                                     break;
                                 case "System.Int64":
+                                    propField.SetValue(element, 0);
+                                    break;
+                                case "System.Decimal":
                                     propField.SetValue(element, 0);
                                     break;
                                 case "System.Double":

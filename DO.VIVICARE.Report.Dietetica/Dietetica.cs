@@ -11,17 +11,30 @@ namespace DO.VIVICARE.Report.Dietetica
     [ReportReference(Name = "Dietetica", Description = "Report inerente il consuntivo dietetica")]
     public class Dietetica : BaseReport
     {
+        private int _year;
+        private int _month;
+
+        public void SetYear(int year)
+        {
+            _year = year;
+        }
+
+        public void SetMonth(int month)
+        {
+            _month = month;
+        }
+
         /// <summary>
         /// 
         /// </summary>
         public Dietetica()
         {
-            string[] docs = new string[] { "ASST", "Comuni", "Report16", "Report18", "ZSDFatture" };
-            foreach (var document in Manager.GetDocuments())
-            {
-                if (!docs.Contains(document.Attribute.Name)) continue;
-                Documents.Add(document.Document);
-            }
+            //string[] docs = new string[] { "ASST", "Comuni", "Report16", "Report18", "ZSDFatture" };
+            //foreach (var document in Manager.GetDocuments())
+            //{
+            //    if (!docs.Contains(document.Attribute.Name)) continue;
+            //    Documents.Add(document.Document);
+            //}
         }
         /// <summary>
         /// 
@@ -40,28 +53,63 @@ namespace DO.VIVICARE.Report.Dietetica
                 {
                     throw new Exception("ZSDFatture non trovato!");
                 }
+                doc.Document.SourceFilePath = "C:\\DoSrlDEV\\VIVICARE.Reporting\\ZSD_FATTURE GENNAIO.XLSX";
                 var listZSDFatture = doc.Document.GetData();
-
+                if (listZSDFatture == null)
+                {
+                    throw new Exception("ZSDFatture non caricato!");
+                }
                 doc = documents.Find(x => x.Attribute.Name == "Report16");
                 if (doc == null)
                 {
                     throw new Exception("Report16 non trovato!");
                 }
+                doc.Document.SourceFilePath = "C:\\DoSrlDEV\\VIVICARE.Reporting\\Report 16 Gennaio 2020.xls";
                 var listReport16 = doc.Document.GetData();
+                if (listReport16 == null)
+                {
+                    throw new Exception("Report16 non caricato!");
+                }
 
-                var report = listZSDFatture.Join(
-                    listReport16, 
-                    r => new KeyValuePair<object, object>(r.GetType().GetProperty("FiscalCode"), r.GetType().GetProperty("ErogationDate")),
-                    f => new KeyValuePair<object, object>(f.GetType().GetProperty("FiscalCode"), f.GetType().GetProperty("ErogationDate")),
-                    (f,r) => new Dietetica
+                doc = documents.Find(x => x.Attribute.Name == "ASST");
+                if (doc == null)
+                {
+                    throw new Exception("ASST non trovato!");
+                }
+                doc.Document.SourceFilePath = "C:\\DoSrlDEV\\VIVICARE.Reporting\\ASST.xlsx";
+                var listASST = doc.Document.GetData();
+                if (listASST == null)
+                {
+                    throw new Exception("ASST non caricato!");
+                }
+
+                var report = listZSDFatture
+                    .Join(
+                        listASST, 
+                        f => f.GetType().GetProperty("Customer"),
+                        a => a.GetType().GetProperty("SAPCode"),
+                        (f, a) => new { f, a })
+                    .Select(fa => new Dietetica
                     {
-                        ATSCode = "",
-                        ASSTCode = "",
-                        FiscalCode = (string)r.GetType().GetProperty("FiscalCode").GetValue(r),
-                        Year = "",
-                        Month = ""
+                        ATSCode = Manager.Left((string)fa.a.GetType().GetProperty("ATSCode").GetValue(fa.a),3,' '),
+                        ASSTCode = Manager.Left((string)fa.a.GetType().GetProperty("ASSTCode").GetValue(fa.a), 3, ' '),
+                        Year = _year.ToString("0000"),
+                        Month = _month.ToString("00"),
+                        FiscalCode = Manager.Left((string)fa.f.GetType().GetProperty("FiscalCode").GetValue(fa.f),16,' '),
                     });
 
+                //var list = context.Packages
+                //.Join(context.Containers, p => p.ContainerID, c => c.ID, (p, c) => new { p, c })
+                //.Join(context.UserHasPackages, pc => pc.p.ID, u => u.PackageID, (pc, u) => new { pc.p, pc.c, u })
+                //.Where(pcu => pcu.u.UserID == "SomeUser")
+                //.Select(pcu => new
+                //{
+                //    pcu.p.ID,
+                //    pcu.c.Name,
+                //    pcu.p.Code,
+                //    pcu.p.Code2
+                //});
+                //Left(d.Patient.Surname,40, ' ')
                 foreach (var item in report)
                 {
 
@@ -94,6 +142,22 @@ namespace DO.VIVICARE.Report.Dietetica
 
         [ReportMemberReference(Column = "F", Position = 6, ColumnName = "Codice Fiscale", Length = 16, Required = true)]
         public string FiscalCode { get; set; }
+
+        //[ReportMemberReference(Column = "G", Position = 7, ColumnName = "Sesso", Length = 1, Required = true)]
+        //public string Sex { get; set; }
+
+        //[ReportMemberReference(Column = "H", Position = 8, ColumnName = "Data di nascita", Length = 8, Required = true)]
+        //public string DateOfBirth { get; set; }
+
+        //[ReportMemberReference(Column = "I", Position = 9, ColumnName = "Comune residenza", Length = 6, Required = true)]
+        //public string ISTATCode { get; set; }
+
+        //[ReportMemberReference(Column = "J", Position = 10, ColumnName = "Utente ospite RSA o RSD", Length = 1, Required = true)]
+        //public string UserHost { get; set; }
+
+        //[ReportMemberReference(Column = "K", Position = 11, ColumnName = "Numero Prescrizione", Length = 14)]
+        //public string PrescriptionNumber { get; set; }
+
         #endregion
     }
 }

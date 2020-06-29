@@ -200,6 +200,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\DO.VIVICARE.Report.Dietetica\DO.VIVICARE.Report.Dietetica.csproj">
+      <Project>{E37A849A-74E8-4FA3-9D80-14989EB8DDBD}</Project>
+      <Name>DO.VIVICARE.Report.Dietetica</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DO.VIVICARE.Reporter\DO.VIVICARE.Reporter.csproj">
       <Project>{1eb5f145-261e-4a49-9196-8c4580b7bfb7}</Project>
       <Name>DO.VIVICARE.Reporter</Name>

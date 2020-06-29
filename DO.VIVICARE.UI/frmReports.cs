@@ -1,4 +1,5 @@
-﻿using DO.VIVICARE.Reporter;
+﻿using DO.VIVICARE.Report.Dietetica;
+using DO.VIVICARE.Reporter;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -24,7 +25,12 @@ namespace DO.VIVICARE.UI
 
         private void btnExecute_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("SUPER PROCESS STARTS!!!");
+            //MessageBox.Show("SUPER PROCESS STARTS!!!");
+            var reportDietetica = new Dietetica();
+            reportDietetica.SetYear(DateTime.Now.Year);
+            reportDietetica.SetYear(DateTime.Now.Month);
+            
+            reportDietetica.Execute();
         }
 
         private void cmbChoose_SelectionChangeCommitted(object sender, EventArgs e)

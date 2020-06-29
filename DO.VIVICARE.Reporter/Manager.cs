@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -112,5 +113,32 @@ namespace DO.VIVICARE.Reporter
             }
             return list;
         }
+
+        public static string Left(string value, int chars, char? fill = null)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(value) && fill == null) return value;
+                if (string.IsNullOrEmpty(value) && fill != null) return new string((char)fill, chars);
+                string result = value;
+                if (result.Length >= chars) result = result.Substring(0, chars);
+                else
+                {
+                    if (fill != null) result = result.PadRight(chars, (char)fill);
+                }
+                return result;
+            }
+            catch (Exception)
+            {
+
+                return "";
+            }
+        }
+
+        public static string Space(int count)
+        {
+            return new string(' ', count);
+        }
+
     }
 }
