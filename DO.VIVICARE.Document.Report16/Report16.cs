@@ -21,7 +21,7 @@ namespace DO.VIVICARE.Document.Report16
         public DateTime ErogationDate { get; set; }
 
         [DocumentMemberReference(Column = "X", Position = 24)]
-        public DateTime ERPCode { get; set; }
+        public string ERPCode { get; set; }
 
         [DocumentMemberReference(Column = "AA", Position = 27)]
         public string ArticleCode { get; set; }

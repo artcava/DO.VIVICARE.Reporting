@@ -153,13 +153,14 @@ namespace DO.VIVICARE.UI
 
             var status = XMLSettings.DocumentStatus.FileOK;
             var msg = "CHECK VALUE!";
-            if (res.Count != 0)
+            if (!res)
             {
                 status = XMLSettings.DocumentStatus.FileInError;
-                foreach (var m in res.Take(5))  //===> qua magari fagliene vedere 5 alla volta.. così non saturi tutto
-                {
-                    msg += "\n" + m.ToString();
-                }
+                //===> qua caricare un nuovo form con la lista degli errori rilevati (da prendere nel log)
+                //foreach (var m in res.Take(5))  //===> qua magari fagliene vedere 5 alla volta.. così non saturi tutto
+                //{
+                //    msg += "\n" + m.ToString();
+                //}
             }
 
             var now = DateTime.Now;
