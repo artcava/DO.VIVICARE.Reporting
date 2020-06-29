@@ -79,6 +79,65 @@ namespace DO.VIVICARE.Reporter
             }
         }
 
+        public bool LoadRecords()
+        {
+            var name = string.Empty;
+            try
+            {
+                if (string.IsNullOrEmpty(SourceFilePath))
+                {
+                    return false;
+                }
+                Excel.Application appXls = new Excel.Application();
+                Excel.Workbook cartellaXls = appXls.Workbooks.Open(SourceFilePath);
+                Excel._Worksheet foglioXls = cartellaXls.Sheets[1];
+                Excel.Range rangeXls = foglioXls.UsedRange;
+
+                int rowCount = rangeXls.Rows.Count;
+                int colCount = rangeXls.Columns.Count;
+
+                var columns = Manager.GetDocumentColumns(this);
+                int rowStart = 1;
+                var ua = (DocumentReferenceAttribute)GetType().GetCustomAttribute(typeof(DocumentReferenceAttribute));
+                if (ua != null)
+                {
+                    rowStart = ua.RowStart;
+                    name = ua.Name;
+                }
+
+
+                // Excel comincia a contare da 1
+                for (int i = rowStart; i <= rowCount; i++)
+                {
+                    this.GetType();//Creare una nuova istanza dell'oggetto che rappresenta la classe figlia.
+                    foreach (var col in columns)
+                    {
+                        if (rangeXls.Cells[i, col.Position] == null || rangeXls.Cells[i, col.Position].Value == null)
+                            return false;
+                        // Associare il valore della colonna al membro corrispondente dell'oggetto istanziato prima
+                    }
+                }
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+
+                Marshal.ReleaseComObject(rangeXls);
+                Marshal.ReleaseComObject(foglioXls);
+
+                cartellaXls.Close();
+                Marshal.ReleaseComObject(cartellaXls);
+
+                appXls.Quit();
+                Marshal.ReleaseComObject(appXls);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
         private void WriteLog(List<Tuple<string, string, string>> tuples, string fileName)
         {
             try
