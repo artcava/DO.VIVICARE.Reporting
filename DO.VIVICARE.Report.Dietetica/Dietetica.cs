@@ -1,6 +1,7 @@
 ﻿using DO.VIVICARE.Reporter;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 
 namespace DO.VIVICARE.Report.Dietetica
@@ -30,11 +31,31 @@ namespace DO.VIVICARE.Report.Dietetica
         public Dietetica()
         {
             //string[] docs = new string[] { "ASST", "Comuni", "Report16", "Report18", "ZSDFatture" };
-            //foreach (var document in Manager.GetDocuments())
-            //{
-            //    if (!docs.Contains(document.Attribute.Name)) continue;
-            //    Documents.Add(document.Document);
-            //}
+            string[] docs = new string[] { "ASST", "ZSDFatture" };
+            foreach (var document in Manager.GetDocuments())
+            {
+                if (!docs.Contains(document.Attribute.Name)) continue;
+                //SourceFilePath recuperare da Settings
+                var list = Manager.Settings.GetDocumentValues(XMLSettings.LibraryType.Document, document.Attribute.Name);
+                document.Document.SourceFilePath = "";
+                if (list!=null)
+                {
+                    if (list[2]!=null)
+                    {
+                        document.Document.SourceFilePath = list[2];
+                    }
+                }
+                document.Document.AttributeName = document.Attribute.Name;
+                if (document.Document.LoadRecords())
+                {
+                    Documents.Add(document.Document);
+                }   
+            }
+        }
+
+        public Dietetica(bool value)
+        {
+
         }
         /// <summary>
         /// 
@@ -45,84 +66,61 @@ namespace DO.VIVICARE.Report.Dietetica
 
             try
             {
-                //Retrieve documents with Object Document and Attributes
-                var documents = Manager.GetDocuments();
+                
+                var documents = Documents;
 
-                var doc = documents.Find(x => x.Attribute.Name == "ZSDFatture");
+                var doc = documents.Find(x => x.AttributeName == "ZSDFatture");
                 if (doc == null)
                 {
                     throw new Exception("ZSDFatture non trovato!");
                 }
-                doc.Document.SourceFilePath = "C:\\DoSrlDEV\\VIVICARE.Reporting\\ZSD_FATTURE GENNAIO.XLSX";
-                var listZSDFatture = doc.Document.GetData();
+                var listZSDFatture = doc.Records;
                 if (listZSDFatture == null)
                 {
                     throw new Exception("ZSDFatture non caricato!");
                 }
-                doc = documents.Find(x => x.Attribute.Name == "Report16");
-                if (doc == null)
-                {
-                    throw new Exception("Report16 non trovato!");
-                }
-                doc.Document.SourceFilePath = "C:\\DoSrlDEV\\VIVICARE.Reporting\\Report 16 Gennaio 2020.xls";
-                var listReport16 = doc.Document.GetData();
-                if (listReport16 == null)
-                {
-                    throw new Exception("Report16 non caricato!");
-                }
-
-                doc = documents.Find(x => x.Attribute.Name == "ASST");
+                //doc = documents.Find(x => x.AttributeName == "Report16");
+                //if (doc == null)
+                //{
+                //    throw new Exception("Report16 non trovato!");
+                //}
+                //var listReport16 = doc.Records;
+                //if (listReport16 == null)
+                //{
+                //    throw new Exception("Report16 non caricato!");
+                //}
+                doc = documents.Find(x => x.AttributeName == "ASST");
                 if (doc == null)
                 {
                     throw new Exception("ASST non trovato!");
                 }
-                doc.Document.SourceFilePath = "C:\\DoSrlDEV\\VIVICARE.Reporting\\ASST.xlsx";
-                var listASST = doc.Document.GetData();
+                var listASST = doc.Records;
                 if (listASST == null)
                 {
                     throw new Exception("ASST non caricato!");
                 }
-
-                var report = listZSDFatture
-                    .Join(
-                        listASST, 
-                        f => f.GetType().GetProperty("Customer"),
-                        a => a.GetType().GetProperty("SAPCode"),
-                        (f, a) => new { f, a })
-                    .Select(fa => new Dietetica
+                
+                var report = listZSDFatture.Select((dynamic f) => new { ZSDF = f, ASST = listASST.Where((dynamic a) => a.SAPCode == f.Customer) }).
+                    Select((dynamic fa) => new Dietetica(false)
                     {
-                        ATSCode = Manager.Left((string)fa.a.GetType().GetProperty("ATSCode").GetValue(fa.a),3,' '),
-                        ASSTCode = Manager.Left((string)fa.a.GetType().GetProperty("ASSTCode").GetValue(fa.a), 3, ' '),
+                        ATSCode = ((IEnumerable<dynamic>)fa.ASST).FirstOrDefault().ATSCode.ToString(),
+                        ASSTCode = ((IEnumerable<dynamic>)fa.ASST).FirstOrDefault().ASSTCode.ToString(),
                         Year = _year.ToString("0000"),
                         Month = _month.ToString("00"),
-                        FiscalCode = Manager.Left((string)fa.f.GetType().GetProperty("FiscalCode").GetValue(fa.f),16,' '),
-                    });
+                        FiscalCode = fa.ZSDF.FiscalCode
+                    }).
+                    ToList();
 
-                //var list = context.Packages
-                //.Join(context.Containers, p => p.ContainerID, c => c.ID, (p, c) => new { p, c })
-                //.Join(context.UserHasPackages, pc => pc.p.ID, u => u.PackageID, (pc, u) => new { pc.p, pc.c, u })
-                //.Where(pcu => pcu.u.UserID == "SomeUser")
-                //.Select(pcu => new
-                //{
-                //    pcu.p.ID,
-                //    pcu.c.Name,
-                //    pcu.p.Code,
-                //    pcu.p.Code2
-                //});
-                //Left(d.Patient.Surname,40, ' ')
-                foreach (var item in report)
-                {
-
-                }
-                
-
+                ResultRecords.AddRange(report);
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
 
                 throw;
             }
         }
+
+       
 
         #region Members
         [ReportMemberReference(Column = "A", Position = 1, ColumnName = "ATS", Length = 3, Required = true)]

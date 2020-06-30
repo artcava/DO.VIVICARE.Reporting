@@ -9,7 +9,7 @@ namespace DO.VIVICARE.Document.ASST
         public string Description { get; set; }
 
         [DocumentMemberReference(Column = "C", Position = 3)]
-        public int SAPCode { get; set; }
+        public string SAPCode { get; set; }
 
         [DocumentMemberReference(Column = "D", Position = 4)]
         public int ATSCode { get; set; }

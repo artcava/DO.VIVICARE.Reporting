@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -12,7 +13,16 @@ namespace DO.VIVICARE.Reporter
     /// </summary>
     public class BaseDocument
     {
+        public BaseDocument()
+        {
+            Records = new List<BaseDocument>();
+        }
+
         public string SourceFilePath { get; set; }
+        
+        public string AttributeName { get; set; }
+
+        public List<BaseDocument> Records { get; }
 
         public List<BaseDocument> GetData()
         {
@@ -45,6 +55,7 @@ namespace DO.VIVICARE.Reporter
                 for (int i = rowStart; i <= rowCount; i++)
                 {
                     var type = this.GetType();
+                    
                     Assembly assembly = Assembly.GetAssembly(this.GetType());
                     var o = assembly.CreateInstance(type.FullName);
                     var element = (BaseDocument)o;
@@ -78,6 +89,9 @@ namespace DO.VIVICARE.Reporter
                                 case "System.Boolean":
                                     propField.SetValue(element, false);
                                     break;
+                                case "System.DateTime":
+                                    propField.SetValue(element, new DateTime(1,1,1));
+                                    break;
                                 default:
                                     break;
                             }
@@ -86,7 +100,19 @@ namespace DO.VIVICARE.Reporter
                         {
                             var nameField = fields[colField].Name;
                             var propField = element.GetType().GetProperty(nameField);
-                            propField.SetValue(element, rangeXls.Cells[i, col.Position].Value);
+                            object value = rangeXls.Cells[i, col.Position].Value;
+                            if (propField.PropertyType.FullName == "System.Decimal" && 
+                                (value.GetType().FullName == "System.Double" || 
+                                 value.GetType().FullName == "System.Int32" ||
+                                 value.GetType().FullName == "System.Int64" ||
+                                 value.GetType().FullName == "System.String"
+                                 ))
+                            {
+                                //var doubleValue = (double)value;
+                                var decimalValue = Convert.ToDecimal(value);
+                                propField.SetValue(element, decimalValue);
+                            }
+                            else propField.SetValue(element, value);
                         }
                         colField++;
                     }
@@ -104,6 +130,7 @@ namespace DO.VIVICARE.Reporter
 
                 appXls.Quit();
                 Marshal.ReleaseComObject(appXls);
+                
             }
             catch (Exception ex)
             {
@@ -117,6 +144,90 @@ namespace DO.VIVICARE.Reporter
             return ret;
         }
 
+        public bool LoadRecords()
+        {
+            Records.Clear();
+            var name = string.Empty;
+            var list = new List<Tuple<string, string, string>>();
+            try
+            {
+                if (string.IsNullOrEmpty(SourceFilePath))
+                {
+                    list.Add(Tuple.Create($"Riga: 0", $"Colonna: 0", $"File inesistente o campo [SourceFilePath] vuoto"));
+                    return false;
+                }
+                Excel.Application appXls = new Excel.Application();
+                Excel.Workbook cartellaXls = appXls.Workbooks.Open(SourceFilePath);
+                Excel._Worksheet foglioXls = cartellaXls.Sheets[1];
+                Excel.Range rangeXls = foglioXls.UsedRange;
+
+                int rowCount = rangeXls.Rows.Count;
+                int colCount = rangeXls.Columns.Count;
+
+                var columns = Manager.GetDocumentColumns(this);
+                int rowStart = 1;
+                var ua = (DocumentReferenceAttribute)GetType().GetCustomAttribute(typeof(DocumentReferenceAttribute));
+                if (ua != null)
+                {
+                    rowStart = ua.RowStart;
+                    name = ua.Name;
+                }
+                for (int i = rowStart; i <= rowCount; i++)
+                {
+                    var type = this.GetType();
+
+                    Assembly assembly = Assembly.GetAssembly(this.GetType());
+                    var o = assembly.CreateInstance(type.FullName);
+                    var element = (BaseDocument)o;
+                    var fields = element.GetType().GetProperties();
+                    var colField = 0;
+                    foreach (var col in columns)
+                    {
+                        if (rangeXls.Cells[i, col.Position] == null || rangeXls.Cells[i, col.Position].Value == null)
+                        {
+                            list.Add(Tuple.Create($"Riga: {i}", $"Colonna: {col.Column}", $"Colonna inesistente o campo vuoto"));
+
+                            var nameField = fields[colField].Name;
+                            var propField = element.GetType().GetProperty(nameField);
+                            SetDefault(element, propField);
+                        }
+                        else
+                        {
+                            var nameField = fields[colField].Name;
+                            var propField = element.GetType().GetProperty(nameField);
+                            object value = rangeXls.Cells[i, col.Position].Value;
+                            SetValue(element, propField, value); 
+                        }
+                        colField++;
+                    }
+                    Records.Add(element);
+                }
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+
+                Marshal.ReleaseComObject(rangeXls);
+                Marshal.ReleaseComObject(foglioXls);
+
+                cartellaXls.Close();
+                Marshal.ReleaseComObject(cartellaXls);
+
+                appXls.Quit();
+                Marshal.ReleaseComObject(appXls);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                list.Add(Tuple.Create("Riga: 0", "Colonna: 0", $"Errore interno: {ex.Message}"));
+                return false;
+            }
+            finally
+            {
+                WriteLog(list, name);
+            }
+        }
+        
         public bool CheckFields(IProgress<int> progress)
         {
             var name = string.Empty;
@@ -182,7 +293,7 @@ namespace DO.VIVICARE.Reporter
             }
         }
 
-        public bool LoadRecords()
+        public bool LoadRecordsOld()
         {
             var name = string.Empty;
             try
@@ -238,6 +349,91 @@ namespace DO.VIVICARE.Reporter
             catch (Exception ex)
             {
                 return false;
+            }
+        }
+
+        private void SetValue(BaseDocument el, PropertyInfo p, object value)
+        {
+            if (p.PropertyType.FullName == "System.Decimal" &&
+                                (value.GetType().FullName == "System.Double" ||
+                                 value.GetType().FullName == "System.Int32" ||
+                                 value.GetType().FullName == "System.Int64" ||
+                                 value.GetType().FullName == "System.String"
+                                 ))
+            {
+                var decimalValue = Convert.ToDecimal(value);
+                p.SetValue(el, decimalValue);
+            }
+            else if (p.PropertyType.FullName == "System.Int32" &&
+                                (value.GetType().FullName == "System.Double" ||
+                                 value.GetType().FullName == "System.Decimal" ||
+                                 value.GetType().FullName == "System.Int64" ||
+                                 value.GetType().FullName == "System.String"
+                                 ))
+            {
+                var int32Value = Convert.ToInt32(value);
+                p.SetValue(el, int32Value);
+            }
+            else if (p.PropertyType.FullName == "System.Int64" &&
+                                (value.GetType().FullName == "System.Double" ||
+                                 value.GetType().FullName == "System.Decimal" ||
+                                 value.GetType().FullName == "System.Int32" ||
+                                 value.GetType().FullName == "System.String"
+                                 ))
+            {
+                var int64Value = Convert.ToInt64(value);
+                p.SetValue(el, int64Value);
+            }
+            else if (p.PropertyType.FullName == "System.Double" &&
+                                (value.GetType().FullName == "System.Int64" ||
+                                 value.GetType().FullName == "System.Decimal" ||
+                                 value.GetType().FullName == "System.Int32" ||
+                                 value.GetType().FullName == "System.String"
+                                 ))
+            {
+                var intDoubleValue = Convert.ToDouble(value);
+                p.SetValue(el, intDoubleValue);
+            }
+            else if (p.PropertyType.FullName == "System.String" &&
+                                (value.GetType().FullName == "System.Int64" ||
+                                 value.GetType().FullName == "System.Decimal" ||
+                                 value.GetType().FullName == "System.Int32" ||
+                                 value.GetType().FullName == "System.Double"
+                                 ))
+            {
+                var stringValue = Convert.ToString(value);
+                p.SetValue(el, stringValue);
+            }
+            else p.SetValue(el, value);
+        }
+
+        private void SetDefault(BaseDocument el, PropertyInfo p)
+        {
+            switch (p.PropertyType.FullName)
+            {
+                case "System.String":
+                    p.SetValue(el, "");
+                    break;
+                case "System.Int32":
+                    p.SetValue(el, 0);
+                    break;
+                case "System.Int64":
+                    p.SetValue(el, 0);
+                    break;
+                case "System.Decimal":
+                    p.SetValue(el, 0);
+                    break;
+                case "System.Double":
+                    p.SetValue(el, 0);
+                    break;
+                case "System.Boolean":
+                    p.SetValue(el, false);
+                    break;
+                case "System.DateTime":
+                    p.SetValue(el, new DateTime(1, 1, 1));
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -318,7 +514,15 @@ namespace DO.VIVICARE.Reporter
     {
         public List<BaseDocument> Documents { get; }
 
+        public List<BaseReport> ResultRecords { get; }
+
         public virtual void Execute() { }
+
+        public BaseReport()
+        {
+            Documents = new List<BaseDocument>();
+            ResultRecords = new List<BaseReport>();
+        }
     }
     /// <summary>
     /// Attributo a livello di classe per indicare a quale file facciamo riferimento
