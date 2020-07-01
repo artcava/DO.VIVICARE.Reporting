@@ -217,8 +217,8 @@ namespace DO.VIVICARE.Reporter
                 }
                 else if (document == "Report16")
                 {
-                    decimal price = record.Price;
-                    decimal quantity = record.Quantity;
+                    decimal price = record.PREZZI.Price;
+                    decimal quantity = record.REP16.Quantity;
                     decimal amount = quantity * price;
                     var stringValue = amount.ToString("0000000000.00");
                     ret = stringValue.Substring(0, 10) + stringValue.Substring(11, 2);
