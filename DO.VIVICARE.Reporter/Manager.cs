@@ -140,5 +140,110 @@ namespace DO.VIVICARE.Reporter
             return new string(' ', count);
         }
 
+        
+        /// <summary>
+        /// Funzione che restituisce 1:Maschio o 2:Femmina a seconda del sesso recuperato dal CF
+        /// </summary>
+        /// <param name="cv"></param>
+        /// <returns></returns>
+        public static string SexCV(string cv)
+        {
+            string ret = "0";
+
+            try
+            {
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return ret;
+        }
+
+        /// <summary>
+        /// Funzione che restituisce la data di nascita in formato AAAAMMGG recuperata dal CF
+        /// </summary>
+        /// <param name="cv"></param>
+        /// <returns></returns>
+        public static string DatCV(string cv)
+        {               
+            string ret = new string(' ', 8); 
+
+            try
+            {
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return ret;
+        }
+
+        /// <summary>
+        /// Se RSA = 1, altrimenti = 2
+        /// </summary>
+        /// <param name="hostType"></param>
+        /// <returns></returns>
+        public static string ErogaRSA(string hostType)
+        {
+            return hostType.ToUpper()=="RSA"?"1":"2";
+        }
+
+        /// <summary>                                                                      
+        /// Funzione che in base documento e record in ingresso restituisce l'importo formattato NNNNNNNNNNDD
+        /// </summary>
+        /// <param name="hostType"></param>
+        /// <returns></returns>
+        public static string Amount(string document, dynamic record)
+        {
+            string ret = new string('0', 12);
+
+            try
+            {
+                if (document == "ZSDFatture")
+                {
+                    decimal netAmount = record.Price;
+                    string stringVAT = record.VAT;
+                    decimal VAT = Convert.ToDecimal(stringVAT);
+                    decimal amount = netAmount + netAmount * VAT / 100;
+                    var stringValue = amount.ToString("0000000000.00");
+                    ret = stringValue.Substring(0, 10) + stringValue.Substring(11, 2);
+                }
+                else if (document == "Report16")
+                {
+                    decimal price = record.Price;
+                    decimal quantity = record.Quantity;
+                    decimal amount = quantity * price;
+                    var stringValue = amount.ToString("0000000000.00");
+                    ret = stringValue.Substring(0, 10) + stringValue.Substring(11, 2);
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return ret;
+        }
+
+        /// <summary>
+        /// Restituisce numero progressivo (ID) con in ingresso ultimo numero progressivo e anno e mese
+        /// </summary>
+        /// <param name="lpn"></param>
+        /// <param name="y"></param>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        public static string NumProg(long lpn, int y, int m)
+        {
+            return $"VIVPEZZ{y.ToString("0000")}{m.ToString("00")}{lpn.ToString("0000000")}";
+        }
+
     }
 }

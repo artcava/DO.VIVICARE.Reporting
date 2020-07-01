@@ -11,8 +11,8 @@ namespace DO.VIVICARE.Document.Report16
         [DocumentMemberReference(Column = "K", Position = 11)]
         public string Town { get; set; }
 
-        [DocumentMemberReference(Column = "R", Position = 18)]
-        public decimal Price { get; set; }
+        //[DocumentMemberReference(Column = "R", Position = 18)]
+        //public decimal Price { get; set; }
 
         [DocumentMemberReference(Column = "T", Position = 20)]
         public string HostType { get; set; }

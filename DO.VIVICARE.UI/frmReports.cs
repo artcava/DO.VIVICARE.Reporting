@@ -26,10 +26,12 @@ namespace DO.VIVICARE.UI
         private void btnExecute_Click(object sender, EventArgs e)
         {
             //MessageBox.Show("SUPER PROCESS STARTS!!!");
+            // solo per test
             var reportDietetica = new Dietetica();
             reportDietetica.SetYear(DateTime.Now.Year);
-            reportDietetica.SetYear(DateTime.Now.Month);
-            
+            reportDietetica.SetMonth(DateTime.Now.Month);
+            reportDietetica.SetLastProgressiveNumber(100);
+
             reportDietetica.Execute();
         }
 

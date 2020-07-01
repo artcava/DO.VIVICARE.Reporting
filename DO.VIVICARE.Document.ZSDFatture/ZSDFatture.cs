@@ -3,7 +3,7 @@ using System;
 
 namespace DO.VIVICARE.Document.ZSDFatture
 {
-    [DocumentReference(Name = "ZSDFatture", Description = "Fle delle fatture", RowStart =2)]
+    [DocumentReference(Name = "ZSDFatture", Description = "File delle fatture", RowStart =2)]
     public class ZSDFatture:BaseDocument
     {
         [DocumentMemberReference(Column = "A", Position = 1)]
@@ -11,6 +11,9 @@ namespace DO.VIVICARE.Document.ZSDFatture
 
         [DocumentMemberReference(Column = "AA", Position = 27)]
         public DateTime ErogationDate { get; set; }
+
+        [DocumentMemberReference(Column = "AL", Position = 38)]
+        public string VAT { get; set; }
 
         [DocumentMemberReference(Column = "AM", Position = 39)]
         public decimal Price { get; set; }
