@@ -17,7 +17,7 @@ namespace DO.VIVICARE.Reporter
         /// </summary>
         public XMLSettings()
         {
-            _XmlFilePath = $"{Directory.GetCurrentDirectory()}\\Settings.xml";
+            _XmlFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Reporting", "Settings.xml");
             LoadDocument();
         }
 

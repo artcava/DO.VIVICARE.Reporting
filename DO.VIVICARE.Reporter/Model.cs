@@ -451,10 +451,12 @@ namespace DO.VIVICARE.Reporter
                     text += tuple.ToString() + "\r\n";
                 }
 
-                var buffer = GetBytes(text);
-
-                f.Write(buffer, 0, buffer.Length);
-                f.Close();
+                if (text != null)
+                {
+                    var buffer = GetBytes(text);
+                    f.Write(buffer, 0, buffer.Length);
+                    f.Close();
+                }
             }
             catch { }
         }

@@ -8,10 +8,11 @@ namespace DO.VIVICARE.Reporter
 {
     public static class Manager
     {
-        public static string DocumentLibraries { get { return Path.Combine(Directory.GetCurrentDirectory(), "Repository", "DocumentLibraries"); } }
-        public static string ReportLibraries { get { return Path.Combine(Directory.GetCurrentDirectory(), "Repository", "ReportLibraries"); } }
-        public static string Documents { get { return Path.Combine(Directory.GetCurrentDirectory(), "Repository", "Documents"); } }
-        public static string Reports { get { return Path.Combine(Directory.GetCurrentDirectory(), "Repository", "Reports"); } }
+        public static string ReportingRoot { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Reporting"); } }
+        public static string DocumentLibraries { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Reporting", "DocumentLibraries"); } }
+        public static string ReportLibraries { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Reporting", "ReportLibraries"); } }
+        public static string Documents { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Reporting", "Documents"); } }
+        public static string Reports { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Reporting", "Reports"); } }
         /// <summary>
         /// 
         /// </summary>

@@ -28,7 +28,7 @@ namespace DO.VIVICARE.UI
         {
             try
             {
-                var root = Path.Combine(Directory.GetCurrentDirectory(), "Repository");
+                var root = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Reporting");
                 if (!Directory.Exists(root)) Directory.CreateDirectory(root);
 
                 var docLibraries = Path.Combine(root, "DocumentLibraries");

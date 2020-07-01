@@ -101,6 +101,7 @@ namespace DO.VIVICARE.UI
                         //{
                         //    msg += "\n" + m.ToString();
                         //}
+                        var pippo = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                     }
 
                     File.Copy(nomeFile, Path.Combine(Manager.Documents, nome.SubItems[0].Text + extension), true);
