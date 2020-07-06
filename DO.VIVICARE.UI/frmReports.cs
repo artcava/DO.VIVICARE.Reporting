@@ -27,6 +27,11 @@ namespace DO.VIVICARE.UI
         {
             //MessageBox.Show("SUPER PROCESS STARTS!!!");
             // solo per test
+            //var erpCode = "0000651458";
+
+            //var sapCode = System.Convert.ToInt64(erpCode).ToString();
+
+
             var reportDietetica = new Dietetica();
             reportDietetica.SetYear(DateTime.Now.Year);
             reportDietetica.SetMonth(DateTime.Now.Month);

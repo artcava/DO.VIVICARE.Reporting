@@ -354,57 +354,65 @@ namespace DO.VIVICARE.Reporter
 
         private void SetValue(BaseDocument el, PropertyInfo p, object value)
         {
-            if (p.PropertyType.FullName == "System.Decimal" &&
+            try
+            {
+                if (p.PropertyType.FullName == "System.Decimal" &&
                                 (value.GetType().FullName == "System.Double" ||
                                  value.GetType().FullName == "System.Int32" ||
                                  value.GetType().FullName == "System.Int64" ||
                                  value.GetType().FullName == "System.String"
                                  ))
-            {
-                var decimalValue = Convert.ToDecimal(value);
-                p.SetValue(el, decimalValue);
+                {
+                    var decimalValue = Convert.ToDecimal(value);
+                    p.SetValue(el, decimalValue);
+                }
+                else if (p.PropertyType.FullName == "System.Int32" &&
+                                    (value.GetType().FullName == "System.Double" ||
+                                     value.GetType().FullName == "System.Decimal" ||
+                                     value.GetType().FullName == "System.Int64" ||
+                                     value.GetType().FullName == "System.String"
+                                     ))
+                {
+                    var int32Value = Convert.ToInt32(value);
+                    p.SetValue(el, int32Value);
+                }
+                else if (p.PropertyType.FullName == "System.Int64" &&
+                                    (value.GetType().FullName == "System.Double" ||
+                                     value.GetType().FullName == "System.Decimal" ||
+                                     value.GetType().FullName == "System.Int32" ||
+                                     value.GetType().FullName == "System.String"
+                                     ))
+                {
+                    var int64Value = Convert.ToInt64(value);
+                    p.SetValue(el, int64Value);
+                }
+                else if (p.PropertyType.FullName == "System.Double" &&
+                                    (value.GetType().FullName == "System.Int64" ||
+                                     value.GetType().FullName == "System.Decimal" ||
+                                     value.GetType().FullName == "System.Int32" ||
+                                     value.GetType().FullName == "System.String"
+                                     ))
+                {
+                    var intDoubleValue = Convert.ToDouble(value);
+                    p.SetValue(el, intDoubleValue);
+                }
+                else if (p.PropertyType.FullName == "System.String" &&
+                                    (value.GetType().FullName == "System.Int64" ||
+                                     value.GetType().FullName == "System.Decimal" ||
+                                     value.GetType().FullName == "System.Int32" ||
+                                     value.GetType().FullName == "System.Double"
+                                     ))
+                {
+                    var stringValue = Convert.ToString(value);
+                    p.SetValue(el, stringValue);
+                }
+                else p.SetValue(el, value);
             }
-            else if (p.PropertyType.FullName == "System.Int32" &&
-                                (value.GetType().FullName == "System.Double" ||
-                                 value.GetType().FullName == "System.Decimal" ||
-                                 value.GetType().FullName == "System.Int64" ||
-                                 value.GetType().FullName == "System.String"
-                                 ))
+            catch (Exception ex)
             {
-                var int32Value = Convert.ToInt32(value);
-                p.SetValue(el, int32Value);
+
+                throw;
             }
-            else if (p.PropertyType.FullName == "System.Int64" &&
-                                (value.GetType().FullName == "System.Double" ||
-                                 value.GetType().FullName == "System.Decimal" ||
-                                 value.GetType().FullName == "System.Int32" ||
-                                 value.GetType().FullName == "System.String"
-                                 ))
-            {
-                var int64Value = Convert.ToInt64(value);
-                p.SetValue(el, int64Value);
-            }
-            else if (p.PropertyType.FullName == "System.Double" &&
-                                (value.GetType().FullName == "System.Int64" ||
-                                 value.GetType().FullName == "System.Decimal" ||
-                                 value.GetType().FullName == "System.Int32" ||
-                                 value.GetType().FullName == "System.String"
-                                 ))
-            {
-                var intDoubleValue = Convert.ToDouble(value);
-                p.SetValue(el, intDoubleValue);
-            }
-            else if (p.PropertyType.FullName == "System.String" &&
-                                (value.GetType().FullName == "System.Int64" ||
-                                 value.GetType().FullName == "System.Decimal" ||
-                                 value.GetType().FullName == "System.Int32" ||
-                                 value.GetType().FullName == "System.Double"
-                                 ))
-            {
-                var stringValue = Convert.ToString(value);
-                p.SetValue(el, stringValue);
-            }
-            else p.SetValue(el, value);
         }
 
         private void SetDefault(BaseDocument el, PropertyInfo p)
@@ -412,25 +420,25 @@ namespace DO.VIVICARE.Reporter
             switch (p.PropertyType.FullName)
             {
                 case "System.String":
-                    p.SetValue(el, "");
+                    SetValue(el, p, "");
                     break;
                 case "System.Int32":
-                    p.SetValue(el, 0);
+                    SetValue(el, p, 0);
                     break;
                 case "System.Int64":
-                    p.SetValue(el, 0);
+                    SetValue(el, p, 0);
                     break;
                 case "System.Decimal":
-                    p.SetValue(el, 0);
+                    SetValue(el, p, 0);
                     break;
                 case "System.Double":
-                    p.SetValue(el, 0);
+                    SetValue(el, p, 0);
                     break;
                 case "System.Boolean":
-                    p.SetValue(el, false);
+                    SetValue(el, p, false);
                     break;
                 case "System.DateTime":
-                    p.SetValue(el, new DateTime(1, 1, 1));
+                    SetValue(el, p, new DateTime(1, 1, 1));
                     break;
                 default:
                     break;

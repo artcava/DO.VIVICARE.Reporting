@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace DO.VIVICARE.Reporter
 {
@@ -201,7 +202,7 @@ namespace DO.VIVICARE.Reporter
         /// </summary>
         /// <param name="hostType"></param>
         /// <returns></returns>
-        public static string Amount(string document, dynamic record)
+        public static string Amount(string document, dynamic record, decimal PRZPrice = 0)
         {
             string ret = new string('0', 12);
 
@@ -211,24 +212,25 @@ namespace DO.VIVICARE.Reporter
                 {
                     decimal netAmount = record.Price;
                     string stringVAT = record.VAT;
-                    decimal VAT = Convert.ToDecimal(stringVAT);
+                    decimal VAT = 0;
+                    decimal.TryParse(Regex.Match(stringVAT, @"\d+").Value, out VAT);
                     decimal amount = netAmount + netAmount * VAT / 100;
                     var stringValue = amount.ToString("0000000000.00");
                     ret = stringValue.Substring(0, 10) + stringValue.Substring(11, 2);
                 }
                 else if (document == "Report16")
                 {
-                    decimal price = record.PREZZI.Price;
-                    decimal quantity = record.REP16.Quantity;
+                    decimal price = PRZPrice;
+                    decimal quantity = record.Quantity;
                     decimal amount = quantity * price;
                     var stringValue = amount.ToString("0000000000.00");
                     ret = stringValue.Substring(0, 10) + stringValue.Substring(11, 2);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                ret = new string('0', 12);
+                //throw;
             }
 
             return ret;

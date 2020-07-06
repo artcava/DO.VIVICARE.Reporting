@@ -37,10 +37,12 @@ namespace DO.VIVICARE.Report.Dietetica
         public Dietetica()
         {
             //string[] docs = new string[] { "ASST", "Comuni", "Report16", "Report18", "ZSDFatture" };
-            string[] docs = new string[] { "ASST", "Comuni", "ZSDFatture", "Report16", "MinSan", "Prezzi" };
+            string[] docs = new string[] { "ASST", "Comuni", "ZSDFatture", "Report16", "Report18", "MinSan", "Prezzi" };
+            //string[] docs = new string[] { "ZSDFatture" };
             foreach (var document in Manager.GetDocuments())
             {
                 if (!docs.Contains(document.Attribute.Name)) continue;
+
                 //SourceFilePath recuperare da Settings
                 var list = Manager.Settings.GetDocumentValues(XMLSettings.LibraryType.Document, document.Attribute.Name);
                 document.Document.SourceFilePath = "";
@@ -95,6 +97,16 @@ namespace DO.VIVICARE.Report.Dietetica
                 {
                     throw new Exception("Report16 non caricato!");
                 }
+                doc = documents.Find(x => x.AttributeName == "Report18");
+                if (doc == null)
+                {
+                    throw new Exception("Report18 non trovato!");
+                }
+                var listReport18 = doc.Records;
+                if (listReport18 == null)
+                {
+                    throw new Exception("Report18 non caricato!");
+                }
                 doc = documents.Find(x => x.AttributeName == "ASST");
                 if (doc == null)
                 {
@@ -137,34 +149,34 @@ namespace DO.VIVICARE.Report.Dietetica
                 }
                 var reportFromReport16 = listReport16.Select((dynamic r) => new {
                     REP16 = r,
-                    ASST = listASST.Where((dynamic a) => a.SAPCode == System.Convert.ToInt64(r.ERPCode).ToString()),
-                    MINSAN = listMinSan.Where((dynamic m) => m.IDVivisol == r.ArticleCode),
-                    PREZZI = listPrezzi.Where((dynamic p) => p.IDVivisol == r.ArticleCode),
-                    COM = listComuni.Where((dynamic c) => c.Name == r.Town)
-                    }). 
+                    ASST = listASST.Where((dynamic a) => System.Convert.ToInt64(a.SAPCode) == System.Convert.ToInt64(r.ERPCode)).FirstOrDefault(),
+                    MINSAN = listMinSan.Where((dynamic m) => m.IDVivisol == r.ArticleCode).FirstOrDefault(),
+                    PRZ = listPrezzi.Where((dynamic p) => p.IDVivisol == r.ArticleCode).FirstOrDefault(),
+                    COM = listComuni.Where((dynamic c) => c.Name.ToUpper() == r.Town).FirstOrDefault()
+                }). 
                     Select((dynamic ramp) => new Dietetica(false)
                     {
-                        ATSCode = Manager.Left(((IEnumerable<dynamic>)ramp.ASST).FirstOrDefault().ATSCode.ToString(), 3 ,' '),
-                        ASSTCode = Manager.Left(((IEnumerable<dynamic>)ramp.ASST).FirstOrDefault().ASSTCode.ToString(), 6, ' '),
+                        ATSCode = ramp.ASST==null? Manager.Space(3) : Manager.Left(ramp.ASST.ATSCode.ToString(), 3 ,' '),
+                        ASSTCode = ramp.ASST == null ? Manager.Space(6) : Manager.Left(ramp.ASST.ASSTCode.ToString(), 6, ' '),
                         Year = _year.ToString("0000"),
                         Month = _month.ToString("00"),
                         FiscalCode = ramp.REP16.FiscalCode,
                         Sex = Manager.SexCV(ramp.REP16.FiscalCode),
                         DateOfBirth = Manager.DatCV(ramp.REP16.FiscalCode),
-                        ISTATCode = Manager.Left(ramp.COM.Code, 3, ' '),
+                        ISTATCode = ramp.COM==null? Manager.Space(6) : Manager.Left(ramp.COM.Code, 6, ' '),
                         UserHost = Manager.ErogaRSA(ramp.REP16.HostType),
                         PrescriptionNumber = Manager.Space(14),
                         DeliveryDate = ramp.REP16.ErogationDate.ToString("yyyyMMdd"),
                         TypeDescription = Manager.Left("ALIMENTINAD", 15, ' '),
                         Typology = "7",
-                        MinsanCode = Manager.Left(ramp.MINSAN.ArtCode, 30, ' '),
-                        MinsanDescription = Manager.Left(ramp.MINSAN.ArtDescription, 30, ' '),
-                        Manufacturer = Manager.Left(ramp.MINSAN.Producer, 30, ' '),
+                        MinsanCode = ramp.MINSAN==null? Manager.Space(30) : Manager.Left(ramp.MINSAN.ArtCode, 30, ' '),
+                        MinsanDescription = ramp.MINSAN == null ? Manager.Space(30) : Manager.Left(ramp.MINSAN.ArtDescription, 30, ' '),
+                        Manufacturer = ramp.MINSAN == null ? Manager.Space(30) : Manager.Left(ramp.MINSAN.Producer, 30, ' '),
                         PiecesPerPack = "001",
                         UnitOfMeasure = Manager.Left("PEZZO", 9, ' '),
                         Quantity = ramp.REP16.Quantity.ToString("0000"),
                         ManagementChannel = "4",
-                        PurchaseAmount = Manager.Amount("Report16", ramp),
+                        PurchaseAmount = ramp.PRZ==null? new string('0', 12):Manager.Amount("Report16", ramp.REP16, ramp.PRZ.Price),
                         ServiceChargeAmount = new string('0', 12),
                         RecordDestination = "N",
                         ID = Manager.NumProg(_lastProgressiveNumber, _year, _month),
@@ -177,17 +189,47 @@ namespace DO.VIVICARE.Report.Dietetica
 
                 ResultRecords.AddRange(reportFromReport16);
 
-                var reportFromZSDFatture = listZSDFatture.Select((dynamic f) => new { ZSDF = f, ASST = listASST.Where((dynamic a) => a.SAPCode == f.Customer) }).
+
+                var reportFromZSDFatture = listZSDFatture.Select((dynamic f) => {
+                    var istatCode = Manager.Space(6);
+                    var REP16 = listReport16.Where((dynamic r16) => r16.FiscalCode == f.FiscalCode).FirstOrDefault();
+                    if (REP16!=null)
+                    {
+                        var COM = listComuni.Where((dynamic c) => c.Name.ToUpper() == REP16.Town).FirstOrDefault();
+                        if (COM!=null)
+                        {
+                            istatCode = COM.Code;
+                        }
+                    }
+                    else
+                    {
+                        var REP18 = listReport18.Where((dynamic r18) => r18.FiscalCode == f.FiscalCode && r18.AddressType == "1").FirstOrDefault();
+                        if (REP18!=null)
+                        {
+                            var COM = listComuni.Where((dynamic c) => c.Name.ToUpper() == REP18.Town).FirstOrDefault();
+                            if (COM != null)
+                            {
+                                istatCode = COM.Code;
+                            }
+                        }
+                    }
+                    return new
+                    {
+                        ZSDF = f,
+                        ASST = listASST.Where((dynamic a) => a.SAPCode == f.Customer).FirstOrDefault(),
+                        ISTATCode = istatCode
+                    };
+                }).
                     Select((dynamic fa) => new Dietetica(false)
                     {
-                        ATSCode = Manager.Left(((IEnumerable<dynamic>)fa.ASST).FirstOrDefault().ATSCode.ToString(), 3, ' '),
-                        ASSTCode = Manager.Left(((IEnumerable<dynamic>)fa.ASST).FirstOrDefault().ASSTCode.ToString(), 6, ' '),
+                        ATSCode = fa.ASST == null ? Manager.Space(3) : Manager.Left(fa.ASST.ATSCode.ToString(), 3, ' '),
+                        ASSTCode = fa.ASST == null ? Manager.Space(6) : Manager.Left(fa.ASST.ASSTCode.ToString(), 6, ' '),
                         Year = _year.ToString("0000"),
                         Month = _month.ToString("00"),
                         FiscalCode = fa.ZSDF.FiscalCode,
                         Sex = Manager.SexCV(fa.ZSDF.FiscalCode),
                         DateOfBirth = Manager.DatCV(fa.ZSDF.FiscalCode),
-                        ISTATCode = Manager.Space(6),
+                        ISTATCode = Manager.Left(fa.ISTATCode, 6, ' '),
                         UserHost = Manager.Space(1),
                         PrescriptionNumber = Manager.Space(14),
                         DeliveryDate = fa.ZSDF.ErogationDate.ToString("yyyyMMdd"),
