@@ -1,5 +1,6 @@
 ﻿using DO.VIVICARE.Reporter;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace DO.VIVICARE.Report.Dietetica
@@ -41,11 +42,9 @@ namespace DO.VIVICARE.Report.Dietetica
                 document.Document.SourceFilePath = "";
                 if (list != null)
                 {
-                    if (list[2] != null)
-                    {
-                        document.Document.SourceFilePath = list[2];
-                    }
+                    document.Document.SourceFilePath = Path.Combine(Manager.Documents, list[0] + list[1]);
                 }
+
                 document.Document.AttributeName = document.Attribute.Name;
                 if (document.Document.LoadRecords())
                 {
