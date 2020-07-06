@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -150,19 +151,19 @@ namespace DO.VIVICARE.Reporter
         /// <returns></returns>
         public static string SexCV(string cv)
         {
-            string ret = "0";
-
             try
             {
+                if (!CheckCV(cv))
+                    return "0";
 
+                var day = int.Parse(cv.Substring(9, 2));
+                return day > 40 ? "2" : "1";
             }
             catch (Exception)
             {
 
                 throw;
             }
-
-            return ret;
         }
 
         /// <summary>
@@ -172,19 +173,106 @@ namespace DO.VIVICARE.Reporter
         /// <returns></returns>
         public static string DatCV(string cv)
         {               
-            string ret = new string(' ', 8); 
+            string Months = "ABCDEHLMPRST";
 
             try
             {
+                if (!CheckCV(cv))
+                    return null;
 
+                var year = int.Parse(cv.Substring(6, 2));
+                if (DateTime.Now.AddYears(-year).Year < 2000) year += 1900;
+                else year += 2000;
+                var month = Months.IndexOf(cv[8]) + 1;
+                var day = int.Parse(cv.Substring(9, 2));
+                if (day > 40) day -= 40;
+                return new DateTime(year, month, day).ToString("yyyyMMdd");
             }
             catch (Exception)
             {
-
                 throw;
             }
+        }
 
-            return ret;
+        public static bool CheckCV(string cv)
+        {
+            cv = cv.ToUpper();
+            if (cv.Length != 16)
+                return false; // errore
+
+            var contatore = cv.Substring(0, 15).Select((t, i) => ValoreDelCarattere(cv.Substring(0, 15).Substring(i, 1), i)).Sum();
+            contatore %= 26; // si considera il resto
+            return cv.Substring(15, 1) == Convert.ToChar(contatore + 65).ToString(CultureInfo.InvariantCulture);
+        }
+        private static int ValoreDelCarattere(string carattere, int posizione)
+        {
+            switch (carattere)
+            {
+                case "A":
+                case "0":
+                    return (posizione % 2) == 0 ? 1 : 0;
+                case "B":
+                case "1":
+                    return (posizione % 2) == 0 ? 0 : 1;
+                case "C":
+                case "2":
+                    return (posizione % 2) == 0 ? 5 : 2;
+                case "D":
+                case "3":
+                    return (posizione % 2) == 0 ? 7 : 3;
+                case "E":
+                case "4":
+                    return (posizione % 2) == 0 ? 9 : 4;
+                case "F":
+                case "5":
+                    return (posizione % 2) == 0 ? 13 : 5;
+                case "G":
+                case "6":
+                    return (posizione % 2) == 0 ? 15 : 6;
+                case "H":
+                case "7":
+                    return (posizione % 2) == 0 ? 17 : 7;
+                case "I":
+                case "8":
+                    return (posizione % 2) == 0 ? 19 : 8;
+                case "J":
+                case "9":
+                    return (posizione % 2) == 0 ? 21 : 9;
+                case "K":
+                    return (posizione % 2) == 0 ? 2 : 10;
+                case "L":
+                    return (posizione % 2) == 0 ? 4 : 11;
+                case "M":
+                    return (posizione % 2) == 0 ? 18 : 12;
+                case "N":
+                    return (posizione % 2) == 0 ? 20 : 13;
+                case "O":
+                    return (posizione % 2) == 0 ? 11 : 14;
+                case "P":
+                    return (posizione % 2) == 0 ? 3 : 15;
+                case "Q":
+                    return (posizione % 2) == 0 ? 6 : 16;
+                case "R":
+                    return (posizione % 2) == 0 ? 8 : 17;
+                case "S":
+                    return (posizione % 2) == 0 ? 12 : 18;
+                case "T":
+                    return (posizione % 2) == 0 ? 14 : 19;
+                case "U":
+                    return (posizione % 2) == 0 ? 16 : 20;
+                case "V":
+                    return (posizione % 2) == 0 ? 10 : 21;
+                case "W":
+                    return 22;
+                case "X":
+                    return (posizione % 2) == 0 ? 25 : 23;
+                case "Y":
+                    return 24;
+                case "Z":
+                    return (posizione % 2) == 0 ? 23 : 25;
+                default:
+                    return 0;
+            }
         }
 
         /// <summary>
