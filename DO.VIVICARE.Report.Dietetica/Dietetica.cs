@@ -1,7 +1,5 @@
 ﻿using DO.VIVICARE.Reporter;
 using System;
-using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 
 namespace DO.VIVICARE.Report.Dietetica
@@ -15,6 +13,7 @@ namespace DO.VIVICARE.Report.Dietetica
         private int _year;
         private int _month;
         private long _lastProgressiveNumber;
+        private string[] docs = new string[] { "ASST", "Comuni", "ZSDFatture", "Report16", "Report18", "MinSan", "Prezzi" };
 
         public void SetYear(int year)
         {
@@ -31,14 +30,8 @@ namespace DO.VIVICARE.Report.Dietetica
             _lastProgressiveNumber = lastProgressiveNumber;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public Dietetica()
+        public override void LoadDocuments()
         {
-            //string[] docs = new string[] { "ASST", "Comuni", "Report16", "Report18", "ZSDFatture" };
-            string[] docs = new string[] { "ASST", "Comuni", "ZSDFatture", "Report16", "Report18", "MinSan", "Prezzi" };
-            //string[] docs = new string[] { "ZSDFatture" };
             foreach (var document in Manager.GetDocuments())
             {
                 if (!docs.Contains(document.Attribute.Name)) continue;
@@ -46,9 +39,9 @@ namespace DO.VIVICARE.Report.Dietetica
                 //SourceFilePath recuperare da Settings
                 var list = Manager.Settings.GetDocumentValues(XMLSettings.LibraryType.Document, document.Attribute.Name);
                 document.Document.SourceFilePath = "";
-                if (list!=null)
+                if (list != null)
                 {
-                    if (list[2]!=null)
+                    if (list[2] != null)
                     {
                         document.Document.SourceFilePath = list[2];
                     }
@@ -57,14 +50,43 @@ namespace DO.VIVICARE.Report.Dietetica
                 if (document.Document.LoadRecords())
                 {
                     Documents.Add(document.Document);
-                }   
+                }
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        //public Dietetica()
+        //{
+        //    //string[] docs = new string[] { "ASST", "Comuni", "Report16", "Report18", "ZSDFatture" };
+        //    string[] docs = new string[] { "ASST", "Comuni", "ZSDFatture", "Report16", "Report18", "MinSan", "Prezzi" };
+        //    //string[] docs = new string[] { "ZSDFatture" };
+        //    foreach (var document in Manager.GetDocuments())
+        //    {
+        //        if (!docs.Contains(document.Attribute.Name)) continue;
 
-        public Dietetica(bool value)
-        {
+        //        //SourceFilePath recuperare da Settings
+        //        var list = Manager.Settings.GetDocumentValues(XMLSettings.LibraryType.Document, document.Attribute.Name);
+        //        document.Document.SourceFilePath = "";
+        //        if (list!=null)
+        //        {
+        //            if (list[2]!=null)
+        //            {
+        //                document.Document.SourceFilePath = list[2];
+        //            }
+        //        }
+        //        document.Document.AttributeName = document.Attribute.Name;
+        //        if (document.Document.LoadRecords())
+        //        {
+        //            Documents.Add(document.Document);
+        //        }   
+        //    }
+        //}
 
-        }
+        //public Dietetica(bool value)
+        //{
+
+        //}
         /// <summary>
         /// 
         /// </summary>
@@ -154,7 +176,7 @@ namespace DO.VIVICARE.Report.Dietetica
                     PRZ = listPrezzi.Where((dynamic p) => p.IDVivisol == r.ArticleCode).FirstOrDefault(),
                     COM = listComuni.Where((dynamic c) => c.Name.ToUpper() == r.Town).FirstOrDefault()
                 }). 
-                    Select((dynamic ramp) => new Dietetica(false)
+                    Select((dynamic ramp) => new Dietetica()
                     {
                         ATSCode = ramp.ASST==null? Manager.Space(3) : Manager.Left(ramp.ASST.ATSCode.ToString(), 3 ,' '),
                         ASSTCode = ramp.ASST == null ? Manager.Space(6) : Manager.Left(ramp.ASST.ASSTCode.ToString(), 6, ' '),
@@ -220,7 +242,7 @@ namespace DO.VIVICARE.Report.Dietetica
                         ISTATCode = istatCode
                     };
                 }).
-                    Select((dynamic fa) => new Dietetica(false)
+                    Select((dynamic fa) => new Dietetica()
                     {
                         ATSCode = fa.ASST == null ? Manager.Space(3) : Manager.Left(fa.ASST.ATSCode.ToString(), 3, ' '),
                         ASSTCode = fa.ASST == null ? Manager.Space(6) : Manager.Left(fa.ASST.ASSTCode.ToString(), 6, ' '),

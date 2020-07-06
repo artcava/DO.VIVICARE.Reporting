@@ -37,6 +37,8 @@ namespace DO.VIVICARE.UI
             reportDietetica.SetMonth(DateTime.Now.Month);
             reportDietetica.SetLastProgressiveNumber(100);
 
+            reportDietetica.LoadDocuments();
+
             reportDietetica.Execute();
         }
 

@@ -526,6 +526,8 @@ namespace DO.VIVICARE.Reporter
 
         public List<BaseReport> ResultRecords { get; }
 
+        public virtual void LoadDocuments() { }
+
         public virtual void Execute() { }
 
         public BaseReport()
