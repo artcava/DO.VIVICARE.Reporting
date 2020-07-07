@@ -2,6 +2,7 @@
 using DO.VIVICARE.Reporter;
 using System;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace DO.VIVICARE.UI
@@ -27,12 +28,9 @@ namespace DO.VIVICARE.UI
         {
             //MessageBox.Show("SUPER PROCESS STARTS!!!");
             // solo per test
-            //var erpCode = "0000651458";
-
-            //var sapCode = System.Convert.ToInt64(erpCode).ToString();
-
-
+           
             var reportDietetica = new Dietetica();
+            
             reportDietetica.SetYear(DateTime.Now.Year);
             reportDietetica.SetMonth(DateTime.Now.Month);
             reportDietetica.SetLastProgressiveNumber(100);
@@ -40,6 +38,43 @@ namespace DO.VIVICARE.UI
             reportDietetica.LoadDocuments();
 
             reportDietetica.Execute();
+
+            //reportDietetica.ResultRecords.Add(new Dietetica
+            //{
+            //    ATSCode = Manager.Left("222", 3, ' '),
+            //    ASSTCode = Manager.Left("4444", 6, ' '),
+            //    Year = DateTime.Now.Year.ToString("0000"),
+            //    Month = DateTime.Now.Month.ToString("00"),
+            //    FiscalCode = new string('0', 16),
+            //    Sex = Manager.SexCV(""),
+            //    DateOfBirth = Manager.DatCV(""),
+            //    ISTATCode = Manager.Left("123", 6, ' '),
+            //    UserHost = Manager.Space(1),
+            //    PrescriptionNumber = Manager.Space(14),
+            //    DeliveryDate = "19241017",
+            //    TypeDescription = Manager.Left("SERVICENAD", 15, ' '),
+            //    Typology = "5",
+            //    MinsanCode = Manager.Space(30),
+            //    MinsanDescription = Manager.Space(30),
+            //    Manufacturer = Manager.Space(30),
+            //    PiecesPerPack = "001",
+            //    UnitOfMeasure = Manager.Left("CMESE", 9, ' '),
+            //    Quantity = 2.ToString("0000"),
+            //    ManagementChannel = "4",
+            //    PurchaseAmount = new string('0', 12),
+            //    ServiceChargeAmount = new string('0', 12),
+            //    RecordDestination = "N",
+            //    ID = Manager.NumProg(100, DateTime.Now.Year, DateTime.Now.Month),
+            //    RepCode = Manager.Space(30),
+            //    CNDCode = Manager.Space(13),
+            //    FlagDM = "F",
+            //    Type = Manager.Space(1)
+            //});
+            //Manager.CreateExcelFile(reportDietetica);
+
+            MessageBox.Show("File excel Dietetica creato correttamente!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            
         }
 
         private void cmbChoose_SelectionChangeCommitted(object sender, EventArgs e)

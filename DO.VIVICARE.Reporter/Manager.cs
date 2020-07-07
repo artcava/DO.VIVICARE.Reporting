@@ -4,7 +4,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace DO.VIVICARE.Reporter
 {
@@ -115,6 +117,146 @@ namespace DO.VIVICARE.Reporter
                 list.Add(fa);
             }
             return list;
+        }
+
+        public static bool CreateExcelFile(BaseReport report)
+        {
+            var name = string.Empty;
+            var list = new List<Tuple<string, string, string>>();
+            try
+            {
+                var ua = (ReportReferenceAttribute)report.GetType().GetCustomAttribute(typeof(ReportReferenceAttribute));
+                if (ua != null)
+                {
+                    name = ua.Name;
+                }
+                Excel.Application appXls = new Excel.Application();
+                appXls.SheetsInNewWorkbook = 1; // imposta il numero di fogli per la nuova cartella Excel
+                Excel.Workbook cartellaXls = appXls.Workbooks.Add();
+                Excel._Worksheet foglioXls = cartellaXls.Sheets[1];
+
+                var columns = Manager.GetReportColumns(report);
+
+                int rowCount = report.ResultRecords.Count();
+                int colCount = columns.Count();
+                int rowStart = 2;
+
+                // header row excel sheet
+
+                foreach (var col in columns)
+                {
+                    foglioXls.Cells[1, col.Position] = col.ColumnName;
+                }
+
+                if (rowCount>0)
+                {
+                    var records = report.ResultRecords;
+
+                    var fields = records[0].GetType().GetProperties().Where(x => x.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false) != null).ToList();
+
+                    // data rows excel sheet
+                    for (int i = rowStart; i <= (rowCount+1); i++)
+                    {
+                        var element = report.ResultRecords[i - 2];
+                        foreach (var col in columns)
+                        {
+                            var field = fields.FirstOrDefault(x => ((ReportMemberReferenceAttribute)x.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false)).Position == col.Position);
+                            var nameField = field.Name;
+                            var propField = element.GetType().GetProperty(nameField);
+                            bool isDate = ((ReportMemberReferenceAttribute)field.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false)).IsDate;
+                            var decimalAttribute = ((ReportMemberReferenceAttribute)field.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false)).DecimalDigits;
+                            if (decimalAttribute!=0)
+                            {
+                                string stringValue = (string)propField.GetValue(element);
+                                if (stringValue!=new string('0',12))
+                                {
+                                    int chk = 0;
+                                }
+                                string strDec = stringValue.Substring(stringValue.Length - 2);
+                                string strInt = stringValue.Substring(0, stringValue.Length - 2);
+                                string stringNewValue = strInt + "." + strDec;
+                                decimal value = System.Convert.ToDecimal(stringNewValue);
+                                foglioXls.Cells[i, col.Position] = value;
+                            }
+                            else if (isDate)
+                            {
+                                string stringValue = (string)propField.GetValue(element);
+                                DateTime dateValue = DateTime.MinValue;
+                                if (DateTime.TryParseExact(stringValue, "yyyyMMdd",
+                                System.Globalization.CultureInfo.InvariantCulture,
+                                System.Globalization.DateTimeStyles.None, out dateValue))
+                                {
+                                    foglioXls.Cells[i, col.Position] = dateValue;
+                                }
+                                else
+                                {
+                                    foglioXls.Cells[i, col.Position] = propField.GetValue(element);
+                                }
+                            }
+                            else
+                                foglioXls.Cells[i, col.Position] = propField.GetValue(element);
+                        }
+                    }
+                }
+                var destinationFilePath = Path.Combine(Manager.Reports, $"{name}{DateTime.Now.ToString("yyyyMMddTHHmmss")}.xlsx");
+                cartellaXls.SaveAs(destinationFilePath);
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+
+                Marshal.ReleaseComObject(foglioXls);
+
+                cartellaXls.Close();
+                Marshal.ReleaseComObject(cartellaXls);
+
+                appXls.Quit();
+                Marshal.ReleaseComObject(appXls);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                list.Add(Tuple.Create("Riga: 0", "Colonna: 0", $"Errore interno: {ex.Message}"));
+                return false;
+            }
+            finally
+            {
+                WriteLog(list, name);
+            }
+        }
+
+        private static void WriteLog(List<Tuple<string, string, string>> tuples, string fileName)
+        {
+            try
+            {
+                var path = Path.Combine(Manager.Documents, fileName + ".log");
+                var f = new FileStream(path, FileMode.Create);
+                string text = null;
+
+
+                foreach (var tuple in tuples)
+                {
+                    text += tuple.ToString() + "\r\n";
+                }
+
+                if (text != null)
+                {
+                    var buffer = GetBytes(text);
+                    f.Write(buffer, 0, buffer.Length);
+                    f.Close();
+                }
+            }
+            catch { }
+        }
+        /// <summary>
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        private static byte[] GetBytes(string str)
+        {
+            var bytes = new byte[str.Length * sizeof(char)];
+            Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
+            return bytes;
         }
 
         public static string Left(string value, int chars, char? fill = null)

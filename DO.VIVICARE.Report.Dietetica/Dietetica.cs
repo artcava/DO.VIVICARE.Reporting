@@ -276,6 +276,8 @@ namespace DO.VIVICARE.Report.Dietetica
 
                 ResultRecords.AddRange(reportFromZSDFatture);
 
+                Manager.CreateExcelFile(this);
+
             }
             catch (System.Exception ex)
             {
@@ -321,7 +323,7 @@ namespace DO.VIVICARE.Report.Dietetica
 
         //F(DatCV{ ZSD[AS]})
         //F(DatCV{ R16[E]})
-        [ReportMemberReference(Column = "H", Position = 8, ColumnName = "Data di nascita", Length = 8, Required = true)]
+        [ReportMemberReference(Column = "H", Position = 8, ColumnName = "Data di nascita", Length = 8, IsDate = true, Required = true)]
         public string DateOfBirth { get; set; }
 
         //J(ZSD[?]:COM[A; B])
@@ -340,7 +342,7 @@ namespace DO.VIVICARE.Report.Dietetica
 
         //C(R16[Q])
         //C(ZSD[AA])
-        [ReportMemberReference(Column = "L", Position = 12, ColumnName = "Data erogazione", Length = 8, Required = true)]
+        [ReportMemberReference(Column = "L", Position = 12, ColumnName = "Data erogazione", Length = 8, IsDate = true, Required = true)]
         public string DeliveryDate { get; set; }
 
         //D(ALIMENTINAD)x R16
@@ -390,7 +392,7 @@ namespace DO.VIVICARE.Report.Dietetica
         //Purchase amount 12 N
         //F(Prezzo{ R16[R]})
         //F(Prezzo{ ZSD[AM]})
-        [ReportMemberReference(Column = "V", Position = 22, ColumnName = "Importo acquisto", Length = 12, Required = true)]
+        [ReportMemberReference(Column = "V", Position = 22, ColumnName = "Importo acquisto", Length = 12, DecimalDigits = 2, Required = true)]
         public string PurchaseAmount { get; set; }
 
         //Service charge amount 12 N

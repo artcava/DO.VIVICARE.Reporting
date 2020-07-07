@@ -23,127 +23,7 @@ namespace DO.VIVICARE.Reporter
         public string AttributeName { get; set; }
 
         public List<BaseDocument> Records { get; }
-
-        public List<BaseDocument> GetData()
-        {
-            List<BaseDocument> ret = new List<BaseDocument>();
-            var name = string.Empty;
-            var list = new List<Tuple<string, string, string>>();
-            try
-            {
-                if (string.IsNullOrEmpty(SourceFilePath))
-                {
-                    list.Add(Tuple.Create($"Riga: 0", $"Colonna: 0", $"File inesistente o campo [SourceFilePath] vuoto"));
-                    return null;
-                }
-                Excel.Application appXls = new Excel.Application();
-                Excel.Workbook cartellaXls = appXls.Workbooks.Open(SourceFilePath);
-                Excel._Worksheet foglioXls = cartellaXls.Sheets[1];
-                Excel.Range rangeXls = foglioXls.UsedRange;
-
-                int rowCount = rangeXls.Rows.Count;
-                int colCount = rangeXls.Columns.Count;
-
-                var columns = Manager.GetDocumentColumns(this);
-                int rowStart = 1;
-                var ua = (DocumentReferenceAttribute)GetType().GetCustomAttribute(typeof(DocumentReferenceAttribute));
-                if (ua != null)
-                {
-                    rowStart = ua.RowStart;
-                    name = ua.Name;
-                }
-                for (int i = rowStart; i <= rowCount; i++)
-                {
-                    var type = this.GetType();
-                    
-                    Assembly assembly = Assembly.GetAssembly(this.GetType());
-                    var o = assembly.CreateInstance(type.FullName);
-                    var element = (BaseDocument)o;
-                    var fields = element.GetType().GetProperties();
-                    var colField = 0;
-                    foreach (var col in columns)
-                    {
-                        if (rangeXls.Cells[i, col.Position] == null || rangeXls.Cells[i, col.Position].Value == null)
-                        {
-                            list.Add(Tuple.Create($"Riga: {i}", $"Colonna: {col.Column}", $"Colonna inesistente o campo vuoto"));
-
-                            var nameField = fields[colField].Name;
-                            var propField = element.GetType().GetProperty(nameField);
-                            switch (propField.PropertyType.FullName)
-                            {
-                                case "System.String":
-                                    propField.SetValue(element, "");
-                                    break;
-                                case "System.Int32":
-                                    propField.SetValue(element, 0);
-                                    break;
-                                case "System.Int64":
-                                    propField.SetValue(element, 0);
-                                    break;
-                                case "System.Decimal":
-                                    propField.SetValue(element, 0);
-                                    break;
-                                case "System.Double":
-                                    propField.SetValue(element, 0);
-                                    break;
-                                case "System.Boolean":
-                                    propField.SetValue(element, false);
-                                    break;
-                                case "System.DateTime":
-                                    propField.SetValue(element, new DateTime(1,1,1));
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            var nameField = fields[colField].Name;
-                            var propField = element.GetType().GetProperty(nameField);
-                            object value = rangeXls.Cells[i, col.Position].Value;
-                            if (propField.PropertyType.FullName == "System.Decimal" && 
-                                (value.GetType().FullName == "System.Double" || 
-                                 value.GetType().FullName == "System.Int32" ||
-                                 value.GetType().FullName == "System.Int64" ||
-                                 value.GetType().FullName == "System.String"
-                                 ))
-                            {
-                                //var doubleValue = (double)value;
-                                var decimalValue = Convert.ToDecimal(value);
-                                propField.SetValue(element, decimalValue);
-                            }
-                            else propField.SetValue(element, value);
-                        }
-                        colField++;
-                    }
-                    ret.Add(element);
-                }
-
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-
-                Marshal.ReleaseComObject(rangeXls);
-                Marshal.ReleaseComObject(foglioXls);
-
-                cartellaXls.Close();
-                Marshal.ReleaseComObject(cartellaXls);
-
-                appXls.Quit();
-                Marshal.ReleaseComObject(appXls);
-                
-            }
-            catch (Exception ex)
-            {
-                list.Add(Tuple.Create("Riga: 0", "Colonna: 0", $"Errore interno: {ex.Message}"));
-                return null;
-            }
-            finally
-            {
-                WriteLog(list, name);
-            }
-            return ret;
-        }
-
+        
         public bool LoadRecords()
         {
             Records.Clear();
@@ -179,26 +59,32 @@ namespace DO.VIVICARE.Reporter
                     Assembly assembly = Assembly.GetAssembly(this.GetType());
                     var o = assembly.CreateInstance(type.FullName);
                     var element = (BaseDocument)o;
-                    var fields = element.GetType().GetProperties();
-                    var colField = 0;
+                    var fields = element.GetType().GetProperties().Where(x=>x.GetCustomAttribute(typeof(DocumentMemberReferenceAttribute), false)!=null).ToList();
                     foreach (var col in columns)
                     {
                         if (rangeXls.Cells[i, col.Position] == null || rangeXls.Cells[i, col.Position].Value == null)
                         {
                             list.Add(Tuple.Create($"Riga: {i}", $"Colonna: {col.Column}", $"Colonna inesistente o campo vuoto"));
 
-                            var nameField = fields[colField].Name;
-                            var propField = element.GetType().GetProperty(nameField);
-                            SetDefault(element, propField);
+                            var field = fields.FirstOrDefault(x => ((DocumentMemberReferenceAttribute)x.GetCustomAttribute(typeof(DocumentMemberReferenceAttribute), false)).Position == col.Position);
+                            if (field!=null)
+                            {
+                                var nameField = field.Name;
+                                var propField = element.GetType().GetProperty(nameField);
+                                SetDefault(element, propField);
+                            }
                         }
                         else
                         {
-                            var nameField = fields[colField].Name;
-                            var propField = element.GetType().GetProperty(nameField);
-                            object value = rangeXls.Cells[i, col.Position].Value;
-                            SetValue(element, propField, value); 
+                            var field = fields.FirstOrDefault(x => ((DocumentMemberReferenceAttribute)x.GetCustomAttribute(typeof(DocumentMemberReferenceAttribute), false)).Position == col.Position);
+                            if (field != null)
+                            {
+                                var nameField = field.Name;
+                                var propField = element.GetType().GetProperty(nameField);
+                                object value = rangeXls.Cells[i, col.Position].Value;
+                                SetValue(element, propField, value);
+                            }
                         }
-                        colField++;
                     }
                     Records.Add(element);
                 }
@@ -292,66 +178,7 @@ namespace DO.VIVICARE.Reporter
                 WriteLog(list, name);
             }
         }
-
-        public bool LoadRecordsOld()
-        {
-            var name = string.Empty;
-            try
-            {
-                if (string.IsNullOrEmpty(SourceFilePath))
-                {
-                    return false;
-                }
-                Excel.Application appXls = new Excel.Application();
-                Excel.Workbook cartellaXls = appXls.Workbooks.Open(SourceFilePath);
-                Excel._Worksheet foglioXls = cartellaXls.Sheets[1];
-                Excel.Range rangeXls = foglioXls.UsedRange;
-
-                int rowCount = rangeXls.Rows.Count;
-                int colCount = rangeXls.Columns.Count;
-
-                var columns = Manager.GetDocumentColumns(this);
-                int rowStart = 1;
-                var ua = (DocumentReferenceAttribute)GetType().GetCustomAttribute(typeof(DocumentReferenceAttribute));
-                if (ua != null)
-                {
-                    rowStart = ua.RowStart;
-                    name = ua.Name;
-                }
-
-
-                // Excel comincia a contare da 1
-                for (int i = rowStart; i <= rowCount; i++)
-                {
-                    this.GetType();//Creare una nuova istanza dell'oggetto che rappresenta la classe figlia.
-                    foreach (var col in columns)
-                    {
-                        if (rangeXls.Cells[i, col.Position] == null || rangeXls.Cells[i, col.Position].Value == null)
-                            return false;
-                        // Associare il valore della colonna al membro corrispondente dell'oggetto istanziato prima
-                    }
-                }
-
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-
-                Marshal.ReleaseComObject(rangeXls);
-                Marshal.ReleaseComObject(foglioXls);
-
-                cartellaXls.Close();
-                Marshal.ReleaseComObject(cartellaXls);
-
-                appXls.Quit();
-                Marshal.ReleaseComObject(appXls);
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
-
+        
         private void SetValue(BaseDocument el, PropertyInfo p, object value)
         {
             try
@@ -526,6 +353,8 @@ namespace DO.VIVICARE.Reporter
 
         public List<BaseReport> ResultRecords { get; }
 
+        //public string DestinationFilePath { get; set; }
+
         public virtual void LoadDocuments() { }
 
         public virtual void Execute() { }
@@ -553,6 +382,8 @@ namespace DO.VIVICARE.Reporter
         public string Column { get; set; }
         public int Position { get; set; }
         public int Length { get; set; }
+        public int DecimalDigits { get; set; }
+        public bool IsDate { get; set; }
         public string ColumnName { get; set; }
         public bool Required { get; set; }
         public string FillValue { get; set; }
