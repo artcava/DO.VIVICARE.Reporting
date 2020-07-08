@@ -388,6 +388,10 @@ namespace DO.VIVICARE.Reporter
         public bool Required { get; set; }
         public string FillValue { get; set; }
         public Alignment FillAlignment { get; set; }
+        //08-07-2020
+        //Penso che bisognerebbe aggiungere anche FieldName per poter identificare in modo diretto
+        //il campo della classe BaseDocument
+        //public string FieldName { get; set; }
     }
     /// <summary>
     /// Direzione dell'allineamento
