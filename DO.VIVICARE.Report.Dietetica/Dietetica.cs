@@ -276,7 +276,9 @@ namespace DO.VIVICARE.Report.Dietetica
 
                 ResultRecords.AddRange(reportFromZSDFatture);
 
-                Manager.CreateExcelFile(this);
+                Manager.CreateExcelFile(this); //crea file excel xlsx
+                Manager.CreateFile(this); //crea file txt
+                Manager.CreateFile(this, true); //crea file csv
 
             }
             catch (System.Exception ex)

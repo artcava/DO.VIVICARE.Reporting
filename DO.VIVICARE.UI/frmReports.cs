@@ -71,8 +71,9 @@ namespace DO.VIVICARE.UI
             //    Type = Manager.Space(1)
             //});
             //Manager.CreateExcelFile(reportDietetica);
-
-            MessageBox.Show("File excel Dietetica creato correttamente!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //Manager.CreateFile(reportDietetica);
+            //Manager.CreateFile(reportDietetica, true);
+            MessageBox.Show("File excel e file tracciato Dietetica creato correttamente!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             
         }

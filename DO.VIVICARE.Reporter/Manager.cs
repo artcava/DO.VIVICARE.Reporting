@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -168,10 +169,10 @@ namespace DO.VIVICARE.Reporter
                             if (decimalAttribute!=0)
                             {
                                 string stringValue = (string)propField.GetValue(element);
-                                if (stringValue!=new string('0',12))
-                                {
-                                    int chk = 0;
-                                }
+                                //if (stringValue!=new string('0',12))
+                                //{
+                                //    int chk = 0;
+                                //}
                                 string strDec = stringValue.Substring(stringValue.Length - 2);
                                 string strInt = stringValue.Substring(0, stringValue.Length - 2);
                                 string stringNewValue = strInt + "." + strDec;
@@ -183,8 +184,8 @@ namespace DO.VIVICARE.Reporter
                                 string stringValue = (string)propField.GetValue(element);
                                 DateTime dateValue = DateTime.MinValue;
                                 if (DateTime.TryParseExact(stringValue, "yyyyMMdd",
-                                System.Globalization.CultureInfo.InvariantCulture,
-                                System.Globalization.DateTimeStyles.None, out dateValue))
+                                CultureInfo.InvariantCulture,
+                                DateTimeStyles.None, out dateValue))
                                 {
                                     foglioXls.Cells[i, col.Position] = dateValue;
                                 }
@@ -198,7 +199,7 @@ namespace DO.VIVICARE.Reporter
                         }
                     }
                 }
-                var destinationFilePath = Path.Combine(Manager.Reports, $"{name}{DateTime.Now.ToString("yyyyMMddTHHmmss")}.xlsx");
+                var destinationFilePath = Path.Combine(Manager.Reports, $"{name}{DateTime.Now.ToString("dd-MM-yyyy.HH.mm.ss")}.xlsx");
                 cartellaXls.SaveAs(destinationFilePath);
 
                 GC.Collect();
@@ -224,6 +225,137 @@ namespace DO.VIVICARE.Reporter
                 WriteLog(list, name);
             }
         }
+
+
+        public static bool CreateFile(BaseReport report, bool csv = false)
+        {
+            var name = string.Empty;
+            var list = new List<Tuple<string, string, string>>();
+            try
+            {
+                var ua = (ReportReferenceAttribute)report.GetType().GetCustomAttribute(typeof(ReportReferenceAttribute));
+                if (ua != null)
+                {
+                    name = ua.Name;
+                }
+               
+                int rowCount = report.ResultRecords.Count();
+                
+
+                List<string> file = new List<string>();
+                var records = report.ResultRecords;
+
+                var fields = records[0].GetType().GetProperties().Where(x => x.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false) != null).ToList();
+
+                foreach (var record in records)
+                {
+                    var line = string.Empty;
+                    foreach (var field in fields)
+                    {
+                        var nameField = field.Name;
+                        var propField = record.GetType().GetProperty(nameField);
+
+                        if (csv)
+                        {
+                            bool isDate = ((ReportMemberReferenceAttribute)field.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false)).IsDate;
+                            var decimalAttribute = ((ReportMemberReferenceAttribute)field.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false)).DecimalDigits;
+                            if (decimalAttribute != 0)
+                            {
+                                string stringValue = (string)propField.GetValue(record);
+                                //if (stringValue!=new string('0',12))
+                                //{
+                                //    int chk = 0;
+                                //}
+                                string strDec = stringValue.Substring(stringValue.Length - 2);
+                                string strInt = stringValue.Substring(0, stringValue.Length - 2);
+                                string stringNewValue = strInt + "." + strDec;
+                                decimal value = System.Convert.ToDecimal(stringNewValue);
+                                line += $"\"{value}\";";
+                            }
+                            else if (isDate)
+                            {
+                                string stringValue = (string)propField.GetValue(record);
+                                DateTime dateValue = DateTime.MinValue;
+                                if (DateTime.TryParseExact(stringValue, "yyyyMMdd",
+                                CultureInfo.InvariantCulture,
+                                DateTimeStyles.None, out dateValue))
+                                {
+                                    line += $"\"{dateValue.ToShortDateString()}\";"; 
+                                }
+                                else
+                                {
+                                    line += $"\"{ propField.GetValue(record)}\";";
+                                }
+                            }
+                            else
+                                line += $"\"{ propField.GetValue(record)}\";";
+
+                        }
+                        else
+                        {
+                            var value = propField.GetValue(record);
+                            line += $"{value}";
+                        }
+                    }
+                    line += Environment.NewLine;
+                    
+                    file.Add(line);
+                }
+
+                if (csv)
+                {
+                    var columns = Manager.GetReportColumns(report);
+                    int colCount = columns.Count();
+                    var line = string.Empty;
+                    foreach (var col in columns)
+                    {
+                        line += $"\"{col.ColumnName}\";";
+                    }
+                    line += Environment.NewLine;
+                    file.Insert(0, line);
+                }
+
+                var dataAsBytes = file
+                   .SelectMany(s => Encoding.UTF8.GetBytes(s))
+                   .ToArray();
+
+                var ext = csv ? "csv" : "txt";
+                var destinationFilePath = Path.Combine(Manager.Reports, $"{name}{DateTime.Now.ToString("dd-MM-yyyy.HH.mm.ss")}.{ext}");
+                var f = new FileStream(destinationFilePath, FileMode.Create);
+
+                f.Write(dataAsBytes, 0, dataAsBytes.Length);
+                f.Close();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                list.Add(Tuple.Create("Riga: 0", "Colonna: 0", $"Errore interno: {ex.Message}"));
+                return false;
+            }
+            finally
+            {
+                WriteLog(list, name);
+            }
+        }
+
+
+        /// <summary>
+        ///     Use this function to preformat a line with brackets for each param.
+        /// </summary>
+        /// <param name="fields"></param>
+        /// <returns></returns>
+        private static string GetPreFormattedLine(int fields)
+        {
+            var line = string.Empty;
+            for (var i = 0; i < fields; i++)
+            {
+                line += "\"{" + i + "}\"";
+            }
+            return line + Environment.NewLine;
+        }
+
+
 
         private static void WriteLog(List<Tuple<string, string, string>> tuples, string fileName)
         {
