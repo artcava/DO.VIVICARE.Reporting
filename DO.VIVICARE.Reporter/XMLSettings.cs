@@ -98,6 +98,33 @@ namespace DO.VIVICARE.Reporter
             statusAttr.Value = ((int)status).ToString();
         }
 
+       
+        public void UpdateReport(string name, string document, string extension, string destination, DateTime? create, DocumentStatus status)
+        {
+            XmlNode node = Reports.SelectSingleNode($"REPORT[@name='{name}']");
+
+            var documentAttr = node.Attributes["document"];
+            if (documentAttr == null) documentAttr = node.Attributes.Append(CreateAttribute("document"));
+            documentAttr.Value = document;
+
+            var extAttr = node.Attributes["ext"];
+            if (extAttr == null) extAttr = node.Attributes.Append(CreateAttribute("ext"));
+            extAttr.Value = extension;
+
+            var destinationAttr = node.Attributes["destination"];
+            if (destinationAttr == null) destinationAttr = node.Attributes.Append(CreateAttribute("destination"));
+            destinationAttr.Value = destination;
+
+            var createAttr = node.Attributes["create"];
+            if (createAttr == null) createAttr = node.Attributes.Append(CreateAttribute("create"));
+            if (create != null) createAttr.Value = create.Value.ToString("yyyy-MM-dd HH:mm");
+
+            var statusAttr = node.Attributes["status"];
+            if (statusAttr == null) statusAttr = node.Attributes.Append(CreateAttribute("status"));
+            statusAttr.Value = ((int)status).ToString();
+        }
+
+
         public List<string> GetDocumentValues(LibraryType library, string name)
         {
             try
@@ -178,6 +205,13 @@ namespace DO.VIVICARE.Reporter
             FileInError = 2,
             FileToVerify = 3,
             FileOK = 4
+        }
+
+        public enum ReportStatus : int
+        {
+            Undefined = 0,
+            Error = 1,
+            FileOK = 2
         }
         #endregion
     }

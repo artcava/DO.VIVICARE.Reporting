@@ -367,7 +367,29 @@ namespace DO.VIVICARE.Reporter
 
         //public string DestinationFilePath { get; set; }
 
-        public virtual void LoadDocuments(bool withRecords = false) { }
+        //public virtual void LoadDocuments(bool withRecords = false) { }
+
+        protected string[] DocumentNames { get; set; }
+
+        public virtual void LoadDocuments(bool withRecords = false)
+        {
+            foreach (var document in Manager.GetDocuments())
+            {
+                if (!DocumentNames.Contains(document.Attribute.Name)) continue;
+
+                var list = Manager.Settings.GetDocumentValues(XMLSettings.LibraryType.Document, document.Attribute.Name);
+                document.Document.SourceFilePath = "";
+                if (list != null)
+                {
+                    document.Document.SourceFilePath = Path.Combine(Manager.Documents, list[0] + list[1]);
+                }
+
+                document.Document.AttributeName = document.Attribute.Name;
+
+                if (withRecords) document.Document.LoadRecords();
+                Documents.Add(document.Document);
+            }
+        }
 
         public virtual void Execute() { }
 

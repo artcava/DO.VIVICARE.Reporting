@@ -14,7 +14,12 @@ namespace DO.VIVICARE.Report.Dietetica
         private int _year;
         private int _month;
         private long _lastProgressiveNumber;
-        private string[] docs = new string[] { "ASST", "Comuni", "ZSDFatture", "Report16", "Report18", "MinSan", "Prezzi" };
+        //private string[] docs = new string[] { "ASST", "Comuni", "ZSDFatture", "Report16", "Report18", "MinSan", "Prezzi" };
+
+        public Dietetica()
+        {
+            DocumentNames = new string[] { "ASST", "Comuni", "ZSDFatture", "Report16", "Report18", "MinSan", "Prezzi" };
+        }
 
         public void SetYear(int year)
         {
@@ -31,26 +36,7 @@ namespace DO.VIVICARE.Report.Dietetica
             _lastProgressiveNumber = lastProgressiveNumber;
         }
 
-        public override void LoadDocuments(bool withRecords = false)
-        {
-            foreach (var document in Manager.GetDocuments())
-            {
-                if (!docs.Contains(document.Attribute.Name)) continue;
-
-                //SourceFilePath recuperare da Settings
-                var list = Manager.Settings.GetDocumentValues(XMLSettings.LibraryType.Document, document.Attribute.Name);
-                document.Document.SourceFilePath = "";
-                if (list != null)
-                {
-                    document.Document.SourceFilePath = Path.Combine(Manager.Documents, list[0] + list[1]);
-                }
-
-                document.Document.AttributeName = document.Attribute.Name;
-
-                if (withRecords) document.Document.LoadRecords();
-                Documents.Add(document.Document);
-            }
-        }
+        
         /// <summary>
         /// 
         /// </summary>
