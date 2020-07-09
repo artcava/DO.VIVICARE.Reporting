@@ -31,7 +31,7 @@ namespace DO.VIVICARE.Report.Dietetica
             _lastProgressiveNumber = lastProgressiveNumber;
         }
 
-        public override void LoadDocuments()
+        public override void LoadDocuments(bool withRecords = false)
         {
             foreach (var document in Manager.GetDocuments())
             {
@@ -46,10 +46,9 @@ namespace DO.VIVICARE.Report.Dietetica
                 }
 
                 document.Document.AttributeName = document.Attribute.Name;
-                if (document.Document.LoadRecords())
-                {
-                    Documents.Add(document.Document);
-                }
+
+                if (withRecords) document.Document.LoadRecords();
+                Documents.Add(document.Document);
             }
         }
         /// <summary>

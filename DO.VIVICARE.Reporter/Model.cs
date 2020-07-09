@@ -360,13 +360,14 @@ namespace DO.VIVICARE.Reporter
     /// </summary>
     public class BaseReport
     {
+
         public List<BaseDocument> Documents { get; }
 
         public List<BaseReport> ResultRecords { get; }
 
         //public string DestinationFilePath { get; set; }
 
-        public virtual void LoadDocuments() { }
+        public virtual void LoadDocuments(bool withRecords = false) { }
 
         public virtual void Execute() { }
 
