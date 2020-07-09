@@ -5,28 +5,28 @@ namespace DO.VIVICARE.Document.Report16
 {    [DocumentReference(Name = "Report16", Description = "Lista degli articoli somministrati ai pazienti", RowStart =3)]
     public class Report16 : BaseDocument
     {
-        [DocumentMemberReference(Column = "E", Position = 5)]
+        [DocumentMemberReference(Column = "E", Position = 5, FieldName = "FiscalCode")]
         public string FiscalCode { get; set; }
 
-        [DocumentMemberReference(Column = "K", Position = 11)]
+        [DocumentMemberReference(Column = "K", Position = 11, FieldName = "Town")]
         public string Town { get; set; }
 
         //[DocumentMemberReference(Column = "R", Position = 18)]
         //public decimal Price { get; set; }
 
-        [DocumentMemberReference(Column = "T", Position = 20)]
+        [DocumentMemberReference(Column = "T", Position = 20, FieldName = "HostType")]
         public string HostType { get; set; }
 
-        [DocumentMemberReference(Column = "Q", Position = 17)]
+        [DocumentMemberReference(Column = "Q", Position = 17, FieldName = "ErogationDate")]
         public DateTime ErogationDate { get; set; }
 
-        [DocumentMemberReference(Column = "X", Position = 24)]
+        [DocumentMemberReference(Column = "X", Position = 24, FieldName = "ERPCode")]
         public string ERPCode { get; set; }
 
-        [DocumentMemberReference(Column = "AA", Position = 27)]
+        [DocumentMemberReference(Column = "AA", Position = 27, FieldName = "ArticleCode")]
         public string ArticleCode { get; set; }
 
-        [DocumentMemberReference(Column = "AD", Position = 30)]
+        [DocumentMemberReference(Column = "AD", Position = 30, FieldName = "Quantity")]
         public decimal Quantity { get; set; }
     }
 }

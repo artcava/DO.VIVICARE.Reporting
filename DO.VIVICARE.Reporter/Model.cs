@@ -59,31 +59,38 @@ namespace DO.VIVICARE.Reporter
                     Assembly assembly = Assembly.GetAssembly(this.GetType());
                     var o = assembly.CreateInstance(type.FullName);
                     var element = (BaseDocument)o;
-                    var fields = element.GetType().GetProperties().Where(x=>x.GetCustomAttribute(typeof(DocumentMemberReferenceAttribute), false)!=null).ToList();
+                    //var fields = element.GetType().GetProperties().Where(x=>x.GetCustomAttribute(typeof(DocumentMemberReferenceAttribute), false)!=null).ToList();
                     foreach (var col in columns)
                     {
+                        var nameField = col.FieldName;
+                        var propField = element.GetType().GetProperty(nameField);
                         if (rangeXls.Cells[i, col.Position] == null || rangeXls.Cells[i, col.Position].Value == null)
                         {
                             list.Add(Tuple.Create($"Riga: {i}", $"Colonna: {col.Column}", $"Colonna inesistente o campo vuoto"));
 
-                            var field = fields.FirstOrDefault(x => ((DocumentMemberReferenceAttribute)x.GetCustomAttribute(typeof(DocumentMemberReferenceAttribute), false)).Position == col.Position);
-                            if (field!=null)
-                            {
-                                var nameField = field.Name;
-                                var propField = element.GetType().GetProperty(nameField);
-                                SetDefault(element, propField);
-                            }
+                            //var field = fields.FirstOrDefault(x => ((DocumentMemberReferenceAttribute)x.GetCustomAttribute(typeof(DocumentMemberReferenceAttribute), false)).Position == col.Position);
+                            //if (field!=null)
+                            //{
+                            //    var nameField = field.Name;
+                            //    var propField = element.GetType().GetProperty(nameField);
+                            //    SetDefault(element, propField);
+                            //}
+                           
+                            SetDefault(element, propField);
                         }
                         else
                         {
-                            var field = fields.FirstOrDefault(x => ((DocumentMemberReferenceAttribute)x.GetCustomAttribute(typeof(DocumentMemberReferenceAttribute), false)).Position == col.Position);
-                            if (field != null)
-                            {
-                                var nameField = field.Name;
-                                var propField = element.GetType().GetProperty(nameField);
-                                object value = rangeXls.Cells[i, col.Position].Value;
-                                SetValue(element, propField, value);
-                            }
+                            //var field = fields.FirstOrDefault(x => ((DocumentMemberReferenceAttribute)x.GetCustomAttribute(typeof(DocumentMemberReferenceAttribute), false)).Position == col.Position);
+                            //if (field != null)
+                            //{
+                            //    var nameField = field.Name;
+                            //    var propField = element.GetType().GetProperty(nameField);
+                            //    object value = rangeXls.Cells[i, col.Position].Value;
+                            //    SetValue(element, propField, value);
+                            //}
+                           
+                            object value = rangeXls.Cells[i, col.Position].Value;
+                            SetValue(element, propField, value);
                         }
                     }
                     Records.Add(element);
@@ -329,6 +336,10 @@ namespace DO.VIVICARE.Reporter
     {
         public string Column { get; set; }
         public int Position { get; set; }
+        //08-07-2020
+        //Penso che bisognerebbe aggiungere anche FieldName per poter identificare in modo diretto
+        //il campo della classe BaseDocument
+        public string FieldName { get; set; }
     }
     /// <summary>
     /// 
@@ -391,7 +402,7 @@ namespace DO.VIVICARE.Reporter
         //08-07-2020
         //Penso che bisognerebbe aggiungere anche FieldName per poter identificare in modo diretto
         //il campo della classe BaseDocument
-        //public string FieldName { get; set; }
+        public string FieldName { get; set; }
     }
     /// <summary>
     /// Direzione dell'allineamento

@@ -189,7 +189,7 @@ namespace DO.VIVICARE.Report.Dietetica
                         PrescriptionNumber = Manager.Space(14),
                         DeliveryDate = ramp.REP16.ErogationDate.ToString("yyyyMMdd"),
                         TypeDescription = Manager.Left("ALIMENTINAD", 15, ' '),
-                        Typology = "7",
+                        Typology = "5",
                         MinsanCode = ramp.MINSAN==null? Manager.Space(30) : Manager.Left(ramp.MINSAN.ArtCode, 30, ' '),
                         MinsanDescription = ramp.MINSAN == null ? Manager.Space(30) : Manager.Left(ramp.MINSAN.ArtDescription, 30, ' '),
                         Manufacturer = ramp.MINSAN == null ? Manager.Space(30) : Manager.Left(ramp.MINSAN.Producer, 30, ' '),
@@ -255,7 +255,7 @@ namespace DO.VIVICARE.Report.Dietetica
                         PrescriptionNumber = Manager.Space(14),
                         DeliveryDate = fa.ZSDF.ErogationDate.ToString("yyyyMMdd"),
                         TypeDescription = Manager.Left("SERVICENAD", 15, ' '),
-                        Typology = "5",
+                        Typology = "7",
                         MinsanCode = Manager.Space(30),
                         MinsanDescription = Manager.Space(30),
                         Manufacturer = Manager.Space(30),
@@ -293,139 +293,139 @@ namespace DO.VIVICARE.Report.Dietetica
 
         //J(ZSD[A]:ATS[C; D])
         //J(R16[X]:ATS[C; D])
-        [ReportMemberReference(Column = "A", Position = 1, ColumnName = "ATS", Length = 3, Required = true)]
+        [ReportMemberReference(Column = "A", Position = 1, ColumnName = "ATS", Length = 3, Required = true, FieldName = "ATSCode")]
         public string ATSCode { get; set; }
 
         //J(ZSD[A]:ATS[C; E])
         //J(R16[X]:ATS[C; E])
-        [ReportMemberReference(Column = "B", Position = 2, ColumnName = "ASST", Length = 6, Required = true)]
+        [ReportMemberReference(Column = "B", Position = 2, ColumnName = "ASST", Length = 6, Required = true, FieldName = "ASSTCode")]
         public string ASSTCode { get; set; }
 
         //D(I)
-        [ReportMemberReference(Column = "C", Position = 3, ColumnName = "Tipo record", Length = 1)]
+        [ReportMemberReference(Column = "C", Position = 3, ColumnName = "Tipo record", Length = 1, FieldName = "PlanType")]
         public string PlanType { get { return "I"; } }
 
         //I(Inserisci anno)
-        [ReportMemberReference(Column = "D", Position = 4, ColumnName = "Anno", Length = 4)]
+        [ReportMemberReference(Column = "D", Position = 4, ColumnName = "Anno", Length = 4, FieldName = "Year")]
         public string Year { get; set; }
 
         //I(Inserisci mese)
-        [ReportMemberReference(Column = "E", Position = 5, ColumnName = "Mese", Length = 2)]
+        [ReportMemberReference(Column = "E", Position = 5, ColumnName = "Mese", Length = 2, FieldName = "Month")]
         public string Month { get; set; }
 
         //C(ZSD[AS])
         //C(R16[E])
-        [ReportMemberReference(Column = "F", Position = 6, ColumnName = "Codice Fiscale", Length = 16, Required = true)]
+        [ReportMemberReference(Column = "F", Position = 6, ColumnName = "Codice Fiscale", Length = 16, Required = true, FieldName = "FiscalCode")]
         public string FiscalCode { get; set; }
 
         //F(SexCV{ ZSD[AS]})
         //F(SexCV{ R16[E]})
-        [ReportMemberReference(Column = "G", Position = 7, ColumnName = "Sesso", Length = 1, Required = true)]
+        [ReportMemberReference(Column = "G", Position = 7, ColumnName = "Sesso", Length = 1, Required = true, FieldName = "Sex")]
         public string Sex { get; set; }
 
         //F(DatCV{ ZSD[AS]})
         //F(DatCV{ R16[E]})
-        [ReportMemberReference(Column = "H", Position = 8, ColumnName = "Data di nascita", Length = 8, IsDate = true, Required = true)]
+        [ReportMemberReference(Column = "H", Position = 8, ColumnName = "Data di nascita", Length = 8, IsDate = true, Required = true, FieldName = "DateOfBirth")]
         public string DateOfBirth { get; set; }
 
         //J(ZSD[?]:COM[A; B])
         //J(R16[K]:COM[A; B])
-        [ReportMemberReference(Column = "I", Position = 9, ColumnName = "Comune residenza", Length = 6, Required = true)]
+        [ReportMemberReference(Column = "I", Position = 9, ColumnName = "Comune residenza", Length = 6, Required = true, FieldName = "ISTATCode")]
         public string ISTATCode { get; set; }
 
         //F(ErogaRSA{ R16[T]})
         //F(ErogaRSA{ ZSD[?]})
-        [ReportMemberReference(Column = "J", Position = 10, ColumnName = "Utente ospite RSA o RSD", Length = 1, Required = true)]
+        [ReportMemberReference(Column = "J", Position = 10, ColumnName = "Utente ospite RSA o RSD", Length = 1, Required = true, FieldName = "UserHost")]
         public string UserHost { get; set; }
 
         //D()
-        [ReportMemberReference(Column = "K", Position = 11, ColumnName = "Numero Prescrizione", Length = 14)]
+        [ReportMemberReference(Column = "K", Position = 11, ColumnName = "Numero Prescrizione", Length = 14, FieldName = "PrescriptionNumber")]
         public string PrescriptionNumber { get; set; }
 
         //C(R16[Q])
         //C(ZSD[AA])
-        [ReportMemberReference(Column = "L", Position = 12, ColumnName = "Data erogazione", Length = 8, IsDate = true, Required = true)]
+        [ReportMemberReference(Column = "L", Position = 12, ColumnName = "Data erogazione", Length = 8, IsDate = true, Required = true, FieldName = "DeliveryDate")]
         public string DeliveryDate { get; set; }
 
         //D(ALIMENTINAD)x R16
         //D(SERVICENAD)x ZSD
-        [ReportMemberReference(Column = "M", Position = 13, ColumnName = "Descrizione tipologia", Length = 15, Required = true)]
+        [ReportMemberReference(Column = "M", Position = 13, ColumnName = "Descrizione tipologia", Length = 15, Required = true, FieldName = "TypeDescription")]
         public string TypeDescription { get; set; }
 
         //D(5)x R16
         //D(7)x ZSD
-        [ReportMemberReference(Column = "N", Position = 14, ColumnName = "Tipologia", Length = 1, Required = true)]
+        [ReportMemberReference(Column = "N", Position = 14, ColumnName = "Tipologia", Length = 1, Required = true, FieldName = "Typology")]
         public string Typology { get; set; }
 
         //J(R16[AA]:ART[G;?])
         //D()x ZSD
-        [ReportMemberReference(Column = "O", Position = 15, ColumnName = "Codice MINSAN", Length = 30, Required = true)]
+        [ReportMemberReference(Column = "O", Position = 15, ColumnName = "Codice MINSAN", Length = 30, Required = true, FieldName = "MinsanCode")]
         public string MinsanCode { get; set; }
 
         //J(R16[AA]:ART[G;?])
         //D()x ZSD
-        [ReportMemberReference(Column = "P", Position = 16, ColumnName = "Descrizione MINSAN", Length = 30, Required = true)]
+        [ReportMemberReference(Column = "P", Position = 16, ColumnName = "Descrizione MINSAN", Length = 30, Required = true, FieldName = "MinsanDescription")]
         public string MinsanDescription { get; set; }
 
         //J(R16[AA]:ART[G;?])
         //D()x ZSD
-        [ReportMemberReference(Column = "Q", Position = 17, ColumnName = "Descrizione produttore", Length = 30)]
+        [ReportMemberReference(Column = "Q", Position = 17, ColumnName = "Descrizione produttore", Length = 30, FieldName = "Manufacturer")]
         public string Manufacturer { get; set; }
 
         //D(001)
-        [ReportMemberReference(Column = "R", Position = 18, ColumnName = "Pezzi per confezione", Length = 3, Required = true)]
+        [ReportMemberReference(Column = "R", Position = 18, ColumnName = "Pezzi per confezione", Length = 3, Required = true, FieldName = "PiecesPerPack")]
         public string PiecesPerPack { get; set; }
 
         //D(PEZZO)x R16
         //D(CMESE)x ZSD
-        [ReportMemberReference(Column = "S", Position = 19, ColumnName = "Unità di misura", Length = 9, Required = true)]
+        [ReportMemberReference(Column = "S", Position = 19, ColumnName = "Unità di misura", Length = 9, Required = true, FieldName = "UnitOfMeasure")]
         public string UnitOfMeasure { get; set; }
 
         //Quantity 4 N
         //C(R16[AD])
         //C(ZSD[AN])
-        [ReportMemberReference(Column = "T", Position = 20, ColumnName = "Quantità", Length = 4, Required = true)]
+        [ReportMemberReference(Column = "T", Position = 20, ColumnName = "Quantità", Length = 4, Required = true, FieldName = "Quantity")]
         public string Quantity { get; set; }
 
         //D(4)
-        [ReportMemberReference(Column = "U", Position = 21, ColumnName = "Canale di gestione", Length = 1, Required = true)]
+        [ReportMemberReference(Column = "U", Position = 21, ColumnName = "Canale di gestione", Length = 1, Required = true, FieldName = "ManagementChannel")]
         public string ManagementChannel { get; set; }
 
         //Purchase amount 12 N
         //F(Prezzo{ R16[R]})
         //F(Prezzo{ ZSD[AM]})
-        [ReportMemberReference(Column = "V", Position = 22, ColumnName = "Importo acquisto", Length = 12, DecimalDigits = 2, Required = true)]
+        [ReportMemberReference(Column = "V", Position = 22, ColumnName = "Importo acquisto", Length = 12, DecimalDigits = 2, Required = true, FieldName = "PurchaseAmount")]
         public string PurchaseAmount { get; set; }
 
         //Service charge amount 12 N
         //D()
-        [ReportMemberReference(Column = "W", Position = 23, ColumnName = "Importo onere di servizio", Length = 12, Required = true)]
+        [ReportMemberReference(Column = "W", Position = 23, ColumnName = "Importo onere di servizio", Length = 12, Required = true, FieldName = "ServiceChargeAmount")]
         public string ServiceChargeAmount { get; set; }
 
         //Record destination
         //D(N)
-        [ReportMemberReference(Column = "X", Position = 24, ColumnName = "Destinazione del record", Length = 1, Required = true)]
+        [ReportMemberReference(Column = "X", Position = 24, ColumnName = "Destinazione del record", Length = 1, Required = true, FieldName = "RecordDestination")]
         public string RecordDestination { get; set; }
 
         //F(NumProg(I(ultimo numero progressivo)))
-        [ReportMemberReference(Column = "Y", Position = 25, ColumnName = "ID", Length = 20, Required = true)]
+        [ReportMemberReference(Column = "Y", Position = 25, ColumnName = "ID", Length = 20, Required = true, FieldName = "ID")]
         public string ID { get; set; }
 
         //D()
-        [ReportMemberReference(Column = "Z", Position = 26, ColumnName = "Codice repertorio", Length = 30)]
+        [ReportMemberReference(Column = "Z", Position = 26, ColumnName = "Codice repertorio", Length = 30, FieldName = "RepCode")]
         public string RepCode { get; set; }
 
         //D()
-        [ReportMemberReference(Column = "AA", Position = 27, ColumnName = "Codice CND", Length = 13)]
+        [ReportMemberReference(Column = "AA", Position = 27, ColumnName = "Codice CND", Length = 13, FieldName = "CNDCode")]
         public string CNDCode { get; set; }
 
         //Flag DM
         //D(F)
-        [ReportMemberReference(Column = "AB", Position = 28, ColumnName = "Flag DM", Length = 1)]
+        [ReportMemberReference(Column = "AB", Position = 28, ColumnName = "Flag DM", Length = 1, FieldName = "FlagDM")]
         public string FlagDM { get; set; }
 
         //D()
-        [ReportMemberReference(Column = "AC", Position = 29, ColumnName = "Tipo", Length = 1)]
+        [ReportMemberReference(Column = "AC", Position = 29, ColumnName = "Tipo", Length = 1, FieldName = "Type")]
         public string Type { get; set; }
 
 

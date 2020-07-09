@@ -30,7 +30,7 @@ namespace DO.VIVICARE.UI
             // solo per test
            
             var reportDietetica = new Dietetica();
-            
+            //input ASST
             reportDietetica.SetYear(DateTime.Now.Year);
             reportDietetica.SetMonth(DateTime.Now.Month);
             reportDietetica.SetLastProgressiveNumber(100);

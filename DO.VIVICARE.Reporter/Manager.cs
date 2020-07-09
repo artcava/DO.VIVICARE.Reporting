@@ -153,7 +153,7 @@ namespace DO.VIVICARE.Reporter
                 {
                     var records = report.ResultRecords;
 
-                    var fields = records[0].GetType().GetProperties().Where(x => x.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false) != null).ToList();
+                    //var fields = records[0].GetType().GetProperties().Where(x => x.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false) != null).ToList();
 
                     // data rows excel sheet
                     for (int i = rowStart; i <= (rowCount+1); i++)
@@ -161,22 +161,21 @@ namespace DO.VIVICARE.Reporter
                         var element = report.ResultRecords[i - 2];
                         foreach (var col in columns)
                         {
-                            var field = fields.FirstOrDefault(x => ((ReportMemberReferenceAttribute)x.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false)).Position == col.Position);
-                            var nameField = field.Name;
+                            //var field = fields.FirstOrDefault(x => ((ReportMemberReferenceAttribute)x.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false)).Position == col.Position);
+                            //var nameField = field.Name;
+                            var nameField = col.FieldName;
                             var propField = element.GetType().GetProperty(nameField);
-                            bool isDate = ((ReportMemberReferenceAttribute)field.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false)).IsDate;
-                            var decimalAttribute = ((ReportMemberReferenceAttribute)field.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false)).DecimalDigits;
+                            //bool isDate = ((ReportMemberReferenceAttribute)field.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false)).IsDate;
+                            //var decimalAttribute = ((ReportMemberReferenceAttribute)field.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false)).DecimalDigits;
+                            var isDate = col.IsDate;
+                            var decimalAttribute = col.DecimalDigits;
                             if (decimalAttribute!=0)
                             {
                                 string stringValue = (string)propField.GetValue(element);
-                                //if (stringValue!=new string('0',12))
-                                //{
-                                //    int chk = 0;
-                                //}
                                 string strDec = stringValue.Substring(stringValue.Length - 2);
                                 string strInt = stringValue.Substring(0, stringValue.Length - 2);
                                 string stringNewValue = strInt + "." + strDec;
-                                decimal value = System.Convert.ToDecimal(stringNewValue);
+                                decimal value = Convert.ToDecimal(stringNewValue);
                                 foglioXls.Cells[i, col.Position] = value;
                             }
                             else if (isDate)
