@@ -103,7 +103,7 @@ namespace DO.VIVICARE.Report.Dietetica
                     throw new Exception("ZSDFatture non trovato!");
                 }
                 var listZSDFatture = doc.Records;
-                if (listZSDFatture == null)
+                if (listZSDFatture.Count()==0)
                 {
                     throw new Exception("ZSDFatture non caricato!");
                 }
@@ -113,7 +113,7 @@ namespace DO.VIVICARE.Report.Dietetica
                     throw new Exception("Report16 non trovato!");
                 }
                 var listReport16 = doc.Records;
-                if (listReport16 == null)
+                if (listReport16.Count() == 0)
                 {
                     throw new Exception("Report16 non caricato!");
                 }
@@ -123,7 +123,7 @@ namespace DO.VIVICARE.Report.Dietetica
                     throw new Exception("Report18 non trovato!");
                 }
                 var listReport18 = doc.Records;
-                if (listReport18 == null)
+                if (listReport18.Count() == 0)
                 {
                     throw new Exception("Report18 non caricato!");
                 }
@@ -133,7 +133,7 @@ namespace DO.VIVICARE.Report.Dietetica
                     throw new Exception("ASST non trovato!");
                 }
                 var listASST = doc.Records;
-                if (listASST == null)
+                if (listASST.Count() == 0)
                 {
                     throw new Exception("ASST non caricato!");
                 }
@@ -143,7 +143,7 @@ namespace DO.VIVICARE.Report.Dietetica
                     throw new Exception("Comuni non trovato!");
                 }
                 var listComuni = doc.Records;
-                if (listComuni == null)
+                if (listComuni.Count() == 0)
                 {
                     throw new Exception("Comuni non caricato!");
                 }
@@ -153,7 +153,7 @@ namespace DO.VIVICARE.Report.Dietetica
                     throw new Exception("MinSan non trovato!");
                 }
                 var listMinSan = doc.Records;
-                if (listMinSan == null)
+                if (listMinSan.Count() == 0)
                 {
                     throw new Exception("MinSan non caricato!");
                 }
@@ -163,7 +163,7 @@ namespace DO.VIVICARE.Report.Dietetica
                     throw new Exception("Prezzi non trovato!");
                 }
                 var listPrezzi = doc.Records;
-                if (listPrezzi == null)
+                if (listPrezzi.Count() == 0)
                 {
                     throw new Exception("Prezzi non caricato!");
                 }
