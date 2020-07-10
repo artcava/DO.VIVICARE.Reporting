@@ -373,6 +373,7 @@ namespace DO.VIVICARE.Reporter
 
         public virtual void LoadDocuments(bool withRecords = false)
         {
+            Documents.Clear();
             foreach (var document in Manager.GetDocuments())
             {
                 if (!DocumentNames.Contains(document.Attribute.Name)) continue;
