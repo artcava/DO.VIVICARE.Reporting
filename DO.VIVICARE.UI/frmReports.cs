@@ -4,6 +4,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace DO.VIVICARE.UI
 {
@@ -28,12 +29,48 @@ namespace DO.VIVICARE.UI
         {
             //MessageBox.Show("SUPER PROCESS STARTS!!!");
             // solo per test
-           
+
+            var docASST = Manager.GetDocuments().Find(a => a.Attribute.Name == "ASST");
+            if (docASST==null)
+            {
+                MessageBox.Show("File ASST non trovato!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            var list = Manager.Settings.GetDocumentValues(XMLSettings.LibraryType.Document, docASST.Attribute.Name);
+            docASST.Document.SourceFilePath = "";
+            if (list != null)
+            {
+                docASST.Document.SourceFilePath = Path.Combine(Manager.Documents, list[0] + list[1]);
+            }
+            docASST.Document.AttributeName = docASST.Attribute.Name;
+            docASST.Document.LoadRecords();
+            
+            if (docASST.Document.Records.Count==0)
+            {
+                MessageBox.Show("ASST nessun record caricato!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            var listASST = docASST.Document.Records;
+
+            var ATSCode = 321;
+
+            BaseDocument ASST = listASST.Where((dynamic w) => w.ATSCode == ATSCode).FirstOrDefault();
+
+            if (ASST==null)
+            {
+                MessageBox.Show($"ATS {ATSCode} non trovata!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+
+
             var reportDietetica = new Dietetica();
             //input ASST
             reportDietetica.SetYear(DateTime.Now.Year);
             reportDietetica.SetMonth(DateTime.Now.Month);
-            reportDietetica.SetLastProgressiveNumber(100);
+            reportDietetica.SetASST(ASST);
+
 
             reportDietetica.LoadDocuments(true);
 

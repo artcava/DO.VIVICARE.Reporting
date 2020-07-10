@@ -279,7 +279,7 @@ namespace DO.VIVICARE.Reporter
                                 CultureInfo.InvariantCulture,
                                 DateTimeStyles.None, out dateValue))
                                 {
-                                    line += $"\"{dateValue.ToShortDateString()}\";"; 
+                                    line += $"\"{dateValue.ToString("ddMMyyyy")}\";"; 
                                 }
                                 else
                                 {
