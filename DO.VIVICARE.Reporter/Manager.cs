@@ -134,10 +134,11 @@ namespace DO.VIVICARE.Reporter
                 {
                     name = ua.Name;
                 }
-                var destinationFilePath = Path.Combine(Manager.Reports, $"{name}{DateTime.Now.ToString("dd-MM-yyyy.HH.mm.ss")}.xlsx");
+                var nameDate = $"{name}{DateTime.Now.ToString("dd-MM-yyyy.HH.mm.ss")}";
+                var destinationFilePath = Path.Combine(Manager.Reports, $"{nameDate}.xlsx");
 
                 manExcel = new ExcelManager();
-                if (!manExcel.Create(destinationFilePath, $"{name}{DateTime.Now.ToString("dd-MM-yyyy.HH.mm.ss")}")) return false;
+                if (!manExcel.Create(destinationFilePath, nameDate)) return false;
                 
 
                 var columns = Manager.GetReportColumns(report);

@@ -24,11 +24,11 @@ namespace DO.VIVICARE.Reporter
         public List<FilterDocument> Filters { get; set; }
 
         public string SourceFilePath { get; set; }
-        
+
         public string AttributeName { get; set; }
 
         public List<BaseDocument> Records { get; }
-        
+
         public bool LoadRecords()
         {
             Records.Clear();
@@ -66,7 +66,7 @@ namespace DO.VIVICARE.Reporter
 
                 if (manExcel.Extension.ToLower() == ".xlsx") manExcel.Open(false, SourceFilePath);
                 else manExcel.Open(false);
-               
+
                 var columns = Manager.GetDocumentColumns(this);
 
                 IEnumerable<Row> rows = manExcel.GetRows(this.Filters).Skip(rowStart - 1);
@@ -84,7 +84,7 @@ namespace DO.VIVICARE.Reporter
                         var nameField = col.FieldName;
                         var propField = element.GetType().GetProperty(nameField);
                         var cell = cells.FirstOrDefault(c => manExcel.GetColumnName(c.CellReference) == col.Column);
-                        if (cell==null)
+                        if (cell == null)
                         {
                             list.Add(Tuple.Create($"Riga: {row.RowIndex}", $"Colonna: {col.Column}", $"Colonna inesistente o campo vuoto"));
                             SetDefault(element, propField);
@@ -97,7 +97,7 @@ namespace DO.VIVICARE.Reporter
                     }
                     Records.Add(element);
                 }
-                
+
                 manExcel.Dispose();
 
                 return true;
@@ -275,7 +275,7 @@ namespace DO.VIVICARE.Reporter
                 WriteLog(list, name);
             }
         }
-        
+
         private void SetValue(BaseDocument el, PropertyInfo p, object value)
         {
             try
@@ -500,6 +500,10 @@ namespace DO.VIVICARE.Reporter
 
         protected string[] DocumentNames { get; set; }
 
+        public List<ReportParameter> Parameters { get; }
+
+        public virtual void CreateParameters() { }
+
         public virtual void LoadDocuments(bool withRecords = false)
         {
             Documents.Clear();
@@ -527,8 +531,23 @@ namespace DO.VIVICARE.Reporter
         {
             Documents = new List<BaseDocument>();
             ResultRecords = new List<BaseReport>();
+            Parameters = new List<ReportParameter>();
         }
     }
+
+    public class ReportParameter
+    {
+        public string Description { get; set; }
+        public string Name { get; set; }
+        /// <summary>
+        /// value parameter type Int, Long, Decimal, String, Document(BaseDocument), Bool, DateTime
+        /// </summary>
+        public string Type { get; set; }
+        public string DocumentName { get; set; }
+        public string DocumentColumnShowed { get; set; }
+        public object ReturnValue { get; set; }
+    }
+
     /// <summary>
     /// Attributo a livello di classe per indicare a quale file facciamo riferimento
     /// </summary>
@@ -557,6 +576,9 @@ namespace DO.VIVICARE.Reporter
         //il campo della classe BaseDocument
         public string FieldName { get; set; }
     }
+   
+    
+
     /// <summary>
     /// Direzione dell'allineamento
     /// </summary>

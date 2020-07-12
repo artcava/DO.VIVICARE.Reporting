@@ -12,9 +12,9 @@ namespace DO.VIVICARE.Report.Dietetica
     [ReportReference(Name = "Dietetica", Description = "Report inerente il consuntivo dietetica")]
     public class Dietetica : BaseReport
     {
-        private int _year;
-        private int _month;
-        private BaseDocument _ASST;
+        //private int _year;
+        //private int _month;
+        //private BaseDocument _ASST;
 
         //private string[] docs = new string[] { "ASST", "Comuni", "ZSDFatture", "Report16", "Report18", "MinSan", "Prezzi" };
 
@@ -24,22 +24,49 @@ namespace DO.VIVICARE.Report.Dietetica
             //DocumentNames = new string[] { "Report16" };
         }
 
-        public void SetYear(int year)
-        {
-            _year = year;
-        }
+        //public void SetYear(int year)
+        //{
+        //    _year = year;
+        //}
 
-        public void SetMonth(int month)
-        {
-            _month = month;
-        }
+        //public void SetMonth(int month)
+        //{
+        //    _month = month;
+        //}
 
-        public void SetASST(BaseDocument ASST)
-        {
-            _ASST = ASST;
-        }
+        //public void SetASST(BaseDocument ASST)
+        //{
+        //    _ASST = ASST;
+        //}
 
         public long ProgressiveNumber { get; set; }
+
+        public override void CreateParameters()
+        {
+            Parameters.Add(new ReportParameter
+            {
+                Description = "ASST",
+                Name = "ASST",
+                Type = "Document",
+                DocumentName = "ASST",
+                DocumentColumnShowed = "B",
+                ReturnValue = null
+            });
+            Parameters.Add(new ReportParameter
+            {
+                Description = "Anno",
+                Name = "Year",
+                Type = "Int",
+                ReturnValue = null
+            });
+            Parameters.Add(new ReportParameter
+            {
+                Description = "Mese",
+                Name = "Month",
+                Type = "Int",
+                ReturnValue = null
+            });
+        }
 
         public override void LoadDocuments(bool withRecords = false)
         {
@@ -60,29 +87,40 @@ namespace DO.VIVICARE.Report.Dietetica
                 {
                     if (document.Attribute.Name == "Report16")
                     {
-                        var propField = _ASST.GetType().GetProperty("IDSintesi");
-                        int idSintesi = (int)propField.GetValue(_ASST);
-                        var filters = new List<FilterDocument>();
-                        filters.Add(new FilterDocument
+                        var objASST = GetParamValue("ASST");
+                        if (objASST!=null)
                         {
-                            Column = "N",
-                            Value = idSintesi.ToString()
-                        });
-                        document.Document.Filters = filters;
-                    }
-                    else
-                    {
-                        if (document.Attribute.Name == "ZSDFatture")
-                        {                          
-                            var propField = _ASST.GetType().GetProperty("SAPCode");
-                            string SAPCode = (string)propField.GetValue(_ASST);
+                            var ASST = (BaseDocument)objASST;
+                            var propField = ASST.GetType().GetProperty("IDSintesi");
+                            int idSintesi = (int)propField.GetValue(ASST);
                             var filters = new List<FilterDocument>();
                             filters.Add(new FilterDocument
                             {
-                                Column = "A",
-                                Value = SAPCode
+                                Column = "N",
+                                Value = idSintesi.ToString()
                             });
                             document.Document.Filters = filters;
+                        }
+                    }
+                    else
+                    {
+                        
+                        if (document.Attribute.Name == "ZSDFatture")
+                        {
+                            var objASST = GetParamValue("ASST");
+                            if (objASST != null)
+                            {
+                                var ASST = (BaseDocument)objASST;
+                                var propField = ASST.GetType().GetProperty("SAPCode");
+                                string SAPCode = (string)propField.GetValue(ASST);
+                                var filters = new List<FilterDocument>();
+                                filters.Add(new FilterDocument
+                                {
+                                    Column = "A",
+                                    Value = SAPCode
+                                });
+                                document.Document.Filters = filters;
+                            }
                         }
                     }
                     document.Document.LoadRecords();
@@ -98,38 +136,7 @@ namespace DO.VIVICARE.Report.Dietetica
         //}
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        //public Dietetica()
-        //{
-        //    //string[] docs = new string[] { "ASST", "Comuni", "Report16", "Report18", "ZSDFatture" };
-        //    string[] docs = new string[] { "ASST", "Comuni", "ZSDFatture", "Report16", "Report18", "MinSan", "Prezzi" };
-        //    //string[] docs = new string[] { "ZSDFatture" };
-        //    foreach (var document in Manager.GetDocuments())
-        //    {
-        //        if (!docs.Contains(document.Attribute.Name)) continue;
-
-        //        //SourceFilePath recuperare da Settings
-        //        var list = Manager.Settings.GetDocumentValues(XMLSettings.LibraryType.Document, document.Attribute.Name);
-        //        document.Document.SourceFilePath = "";
-        //        if (list!=null)
-        //        {
-        //            if (list[2]!=null)
-        //            {
-        //                document.Document.SourceFilePath = list[2];
-        //            }
-        //        }
-        //        document.Document.AttributeName = document.Attribute.Name;
-        //        if (document.Document.LoadRecords())
-        //        {
-        //            Documents.Add(document.Document);
-        //        }   
-        //    }
-        //}
-
-        //public Dietetica(bool value)
-        //{
+        
 
         //}
         /// <summary>
@@ -150,30 +157,30 @@ namespace DO.VIVICARE.Report.Dietetica
                     throw new Exception("ZSDFatture non trovato!");
                 }
                 var listZSDFatture = doc.Records;
-                if (listZSDFatture.Count()==0)
-                {
-                    throw new Exception("ZSDFatture non caricato!");
-                }
+                //if (listZSDFatture.Count()==0)
+                //{
+                //    throw new Exception("ZSDFatture non caricato!");
+                //}
                 doc = documents.Find(x => x.AttributeName == "Report16");
                 if (doc == null)
                 {
                     throw new Exception("Report16 non trovato!");
                 }
                 var listReport16 = doc.Records;
-                if (listReport16.Count() == 0)
-                {
-                    throw new Exception("Report16 non caricato!");
-                }
+                //if (listReport16.Count() == 0)
+                //{
+                //    throw new Exception("Report16 non caricato!");
+                //}
                 doc = documents.Find(x => x.AttributeName == "Report18");
                 if (doc == null)
                 {
                     throw new Exception("Report18 non trovato!");
                 }
                 var listReport18 = doc.Records;
-                if (listReport18.Count() == 0)
-                {
-                    throw new Exception("Report18 non caricato!");
-                }
+                //if (listReport18.Count() == 0)
+                //{
+                //    throw new Exception("Report18 non caricato!");
+                //}
                 //doc = documents.Find(x => x.AttributeName == "ASST");
                 //if (doc == null)
                 //{
@@ -200,10 +207,10 @@ namespace DO.VIVICARE.Report.Dietetica
                     throw new Exception("Rendiconto non trovato!");
                 }
                 var listRendiconto = doc.Records;
-                if (listRendiconto.Count() == 0)
-                {
-                    throw new Exception("Rendiconto non caricato!");
-                }
+                //if (listRendiconto.Count() == 0)
+                //{
+                //    throw new Exception("Rendiconto non caricato!");
+                //}
                 doc = documents.Find(x => x.AttributeName == "MinSan");
                 if (doc == null)
                 {
@@ -225,18 +232,34 @@ namespace DO.VIVICARE.Report.Dietetica
                     throw new Exception("Prezzi non caricato!");
                 }
 
-                var propField = _ASST.GetType().GetProperty("IDSintesi");
-                int idSintesi = (int)propField.GetValue(_ASST);
-                propField = _ASST.GetType().GetProperty("SAPCode");
-                string SAPCode = (string)propField.GetValue(_ASST);
-                propField = _ASST.GetType().GetProperty("ATSCode");
-                int ATSCode = (int)propField.GetValue(_ASST);
-                propField = _ASST.GetType().GetProperty("ASSTCode");
-                int ASSTCode = (int)propField.GetValue(_ASST);
+                int idSintesi = 0;
+                string SAPCode = "";
+                int ATSCode = 0;
+                int ASSTCode = 0;
+                var objASST = GetParamValue("ASST");
+                if (objASST!=null)
+                {
+                    var ASST = (BaseDocument)objASST;
+                    var propField = ASST.GetType().GetProperty("IDSintesi");
+                    idSintesi = (int)propField.GetValue(ASST);
+                    propField = ASST.GetType().GetProperty("SAPCode");
+                    SAPCode = (string)propField.GetValue(ASST);
+                    propField = ASST.GetType().GetProperty("ATSCode");
+                    ATSCode = (int)propField.GetValue(ASST);
+                    propField = ASST.GetType().GetProperty("ASSTCode");
+                    ASSTCode = (int)propField.GetValue(ASST);
+                }
+                int year = 0;
+                var objYear = GetParamValue("Year");
+                if (objYear != null) year = (int)objYear;
+                int month = 0;
+                var objMonth = GetParamValue("Month");
+                if (objMonth != null) month = (int)objMonth;
+
 
                 ProgressiveNumber = 1;
 
-                var listReport16Filtered = listReport16.Where((dynamic w) => w.ContractId == idSintesi && w.ErogationDate.Year == _year && w.ErogationDate.Month == _month).ToList();
+                var listReport16Filtered = listReport16.Where((dynamic w) => w.ContractId == idSintesi && w.ErogationDate.Year == year && w.ErogationDate.Month == month).ToList();
                 List<Dietetica> reportFromReport16 = new List<Dietetica>();
                 if (listReport16Filtered.Count()!=0)
                 {
@@ -251,8 +274,8 @@ namespace DO.VIVICARE.Report.Dietetica
                     {
                         ATSCode = Manager.Left(ATSCode.ToString(), 3, ' '),
                         ASSTCode = Manager.Left(ASSTCode.ToString(), 6, ' '),
-                        Year = _year.ToString("0000"),
-                        Month = _month.ToString("00"),
+                        Year = year.ToString("0000"),
+                        Month = month.ToString("00"),
                         FiscalCode = ramp.REP16.FiscalCode,
                         Sex = Manager.SexCV(ramp.REP16.FiscalCode),
                         DateOfBirth = Manager.DatCV(ramp.REP16.FiscalCode),
@@ -272,7 +295,7 @@ namespace DO.VIVICARE.Report.Dietetica
                         PurchaseAmount = ramp.PRZ == null ? new string('0', 12) : Manager.Amount("Report16", ramp.REP16, ramp.PRZ.Price),
                         ServiceChargeAmount = new string('0', 12),
                         RecordDestination = "N",
-                        ID = Manager.NumProg(ProgressiveNumber++, _year, _month),
+                        ID = Manager.NumProg(ProgressiveNumber++, year, month),
                         RepCode = Manager.Space(30),
                         CNDCode = Manager.Space(13),
                         FlagDM = "F",
@@ -283,7 +306,7 @@ namespace DO.VIVICARE.Report.Dietetica
 
                 ResultRecords.AddRange(reportFromReport16);
 
-                var listZSDFattureFiltered = listZSDFatture.Where((dynamic w) => w.Customer == SAPCode && w.ErogationDate.Year == _year & w.ErogationDate.Month == _month);
+                var listZSDFattureFiltered = listZSDFatture.Where((dynamic w) => w.Customer == SAPCode && w.ErogationDate.Year == year & w.ErogationDate.Month == month);
                 List<Dietetica> reportFromZSDFatture = new List<Dietetica>();
                 if (listZSDFattureFiltered.Count()!=0)
                 {
@@ -320,8 +343,8 @@ namespace DO.VIVICARE.Report.Dietetica
                     {
                         ATSCode = Manager.Left(ATSCode.ToString(), 3, ' '),
                         ASSTCode = Manager.Left(ASSTCode.ToString(), 6, ' '),
-                        Year = _year.ToString("0000"),
-                        Month = _month.ToString("00"),
+                        Year = year.ToString("0000"),
+                        Month = month.ToString("00"),
                         FiscalCode = fa.ZSDF.FiscalCode,
                         Sex = Manager.SexCV(fa.ZSDF.FiscalCode),
                         DateOfBirth = Manager.DatCV(fa.ZSDF.FiscalCode),
@@ -341,7 +364,7 @@ namespace DO.VIVICARE.Report.Dietetica
                         PurchaseAmount = Manager.Amount("ZSDFatture", fa.ZSDF),
                         ServiceChargeAmount = new string('0', 12),
                         RecordDestination = "N",
-                        ID = Manager.NumProg(ProgressiveNumber++, _year, _month),
+                        ID = Manager.NumProg(ProgressiveNumber++, year, month),
                         RepCode = Manager.Space(30),
                         CNDCode = Manager.Space(13),
                         FlagDM = "F",
@@ -364,7 +387,21 @@ namespace DO.VIVICARE.Report.Dietetica
             }
         }
 
+        private object GetParamValue(string paramName)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(paramName)) return null;
+                var param = Parameters.FirstOrDefault(p=>p.Name==paramName);
+                if (param==null) return null;
+                return param.ReturnValue;
+            }
+            catch (Exception)
+            {
 
+                return null;
+            }
+        }
 
         #region Members
 

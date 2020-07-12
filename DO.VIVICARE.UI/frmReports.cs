@@ -66,10 +66,21 @@ namespace DO.VIVICARE.UI
 
 
             var reportDietetica = new Dietetica();
-            //input ASST
-            reportDietetica.SetYear(2020);
-            reportDietetica.SetMonth(5);
-            reportDietetica.SetASST(ASST);
+
+            reportDietetica.CreateParameters();
+
+            var par = reportDietetica.Parameters.FirstOrDefault(p => p.Name == "ASST");
+            if (par != null) par.ReturnValue = ASST;
+
+            par = reportDietetica.Parameters.FirstOrDefault(p => p.Name == "Year");
+            if (par != null) par.ReturnValue = 2020;
+
+            par = reportDietetica.Parameters.FirstOrDefault(p => p.Name == "Month");
+            if (par != null) par.ReturnValue = 5;
+
+            //reportDietetica.SetASST(ASST);
+            //reportDietetica.SetYear(2020);
+            //reportDietetica.SetMonth(5);
 
 
             reportDietetica.LoadDocuments(true);
