@@ -156,9 +156,9 @@ namespace DO.VIVICARE.Reporter
                         CellValue = new CellValue(col.ColumnName),
                         DataType = CellValues.String
                     };
+                    cells.Add(cell);
                 }
                 manExcel.AddRow(cells,1);
-
 
                 if (rowCount>0)
                 {
