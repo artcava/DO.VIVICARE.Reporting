@@ -1,10 +1,12 @@
-﻿using System;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
+using Tuple = System.Tuple;
 
 namespace DO.VIVICARE.Reporter
 {
@@ -16,7 +18,10 @@ namespace DO.VIVICARE.Reporter
         public BaseDocument()
         {
             Records = new List<BaseDocument>();
+            Filters = new List<FilterDocument>();
         }
+
+        public List<FilterDocument> Filters { get; set; }
 
         public string SourceFilePath { get; set; }
         
@@ -25,6 +30,91 @@ namespace DO.VIVICARE.Reporter
         public List<BaseDocument> Records { get; }
         
         public bool LoadRecords()
+        {
+            Records.Clear();
+            var name = string.Empty;
+            var list = new List<Tuple<string, string, string>>();
+            ExcelManager manExcel = null;
+            try
+            {
+                int rowStart = 1;
+                var ua = (DocumentReferenceAttribute)GetType().GetCustomAttribute(typeof(DocumentReferenceAttribute));
+                if (ua != null)
+                {
+                    rowStart = ua.RowStart;
+                    name = ua.Name;
+                }
+
+                if (string.IsNullOrEmpty(name))
+                {
+                    list.Add(Tuple.Create($"Riga: 0", $"Colonna: 0", $"NameClass vuoto"));
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(SourceFilePath))
+                {
+                    list.Add(Tuple.Create($"Riga: 0", $"Colonna: 0", $"File inesistente o campo {SourceFilePath} vuoto"));
+                    return false;
+                }
+
+                manExcel = new ExcelManager();
+                if (!manExcel.LoadFile(SourceFilePath, name))
+                {
+                    list.Add(Tuple.Create($"Riga: 0", $"Colonna: 0", $"File {SourceFilePath} non caricato!"));
+                    return false;
+                }
+
+                if (manExcel.Extension.ToLower() == ".xlsx") manExcel.Open(false, SourceFilePath);
+                else manExcel.Open(false);
+               
+                var columns = Manager.GetDocumentColumns(this);
+
+                IEnumerable<Row> rows = manExcel.GetRows(this.Filters).Skip(rowStart - 1);
+
+                var type = this.GetType();
+                Assembly assembly = Assembly.GetAssembly(this.GetType());
+
+                foreach (var row in rows)
+                {
+                    var o = assembly.CreateInstance(type.FullName);
+                    var element = (BaseDocument)o;
+                    var cells = row.Descendants<Cell>();
+                    foreach (var col in columns)
+                    {
+                        var nameField = col.FieldName;
+                        var propField = element.GetType().GetProperty(nameField);
+                        var cell = cells.FirstOrDefault(c => manExcel.GetColumnName(c.CellReference) == col.Column);
+                        if (cell==null)
+                        {
+                            list.Add(Tuple.Create($"Riga: {row.RowIndex}", $"Colonna: {col.Column}", $"Colonna inesistente o campo vuoto"));
+                            SetDefault(element, propField);
+                        }
+                        else
+                        {
+                            string value = manExcel.GetCellValue(cell);
+                            SetValue(element, propField, value);
+                        }
+                    }
+                    Records.Add(element);
+                }
+                
+                manExcel.Dispose();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                list.Add(Tuple.Create("Riga: 0", "Colonna: 0", $"Errore interno: {ex.Message}"));
+                return false;
+            }
+            finally
+            {
+                if (manExcel != null) manExcel.Dispose();
+                WriteLog(list, name);
+            }
+        }
+
+        public bool LoadRecordsOLD()
         {
             Records.Clear();
             var name = string.Empty;
@@ -75,7 +165,7 @@ namespace DO.VIVICARE.Reporter
                             //    var propField = element.GetType().GetProperty(nameField);
                             //    SetDefault(element, propField);
                             //}
-                           
+
                             SetDefault(element, propField);
                         }
                         else
@@ -88,7 +178,7 @@ namespace DO.VIVICARE.Reporter
                             //    object value = rangeXls.Cells[i, col.Position].Value;
                             //    SetValue(element, propField, value);
                             //}
-                           
+
                             object value = rangeXls.Cells[i, col.Position].Value;
                             SetValue(element, propField, value);
                         }
@@ -120,7 +210,7 @@ namespace DO.VIVICARE.Reporter
                 WriteLog(list, name);
             }
         }
-        
+
         public bool CheckFields(IProgress<int> progress)
         {
             var name = string.Empty;
@@ -240,13 +330,45 @@ namespace DO.VIVICARE.Reporter
                     var stringValue = Convert.ToString(value);
                     p.SetValue(el, stringValue);
                 }
+                else if (p.PropertyType.FullName == "System.DateTime" &&
+                                    (value.GetType().FullName == "System.String"
+                                     ))
+                {
+                    var dtmValue = ConvertDate((string)value);
+                    p.SetValue(el, dtmValue);
+                }
                 else p.SetValue(el, value);
             }
             catch (Exception ex)
             {
 
-                throw;
+                //throw;
             }
+        }
+
+        private DateTime ConvertDate(string value)
+        {
+            DateTime ret = DateTime.MinValue;
+            if (!DateTime.TryParse(value, out ret))
+            {
+                try
+                {
+                    double d = 0;
+                    try
+                    {
+                        d = double.Parse(value);
+                    }
+                    catch (Exception)
+                    {
+                    }
+                    ret = DateTime.FromOADate(d);
+                }
+                catch (Exception)
+                {
+                    throw new FormatException("Not valid format");
+                }
+            }
+            return ret;
         }
 
         private void SetDefault(BaseDocument el, PropertyInfo p)
@@ -313,6 +435,13 @@ namespace DO.VIVICARE.Reporter
             return bytes;
         }
     }
+
+    public class FilterDocument
+    {
+        public string Column { get; set; }
+        public string Value { get; set; }
+    }
+
 
     /// <summary>
     /// Attributo a livello di classe per indicare a quale file facciamo riferimento

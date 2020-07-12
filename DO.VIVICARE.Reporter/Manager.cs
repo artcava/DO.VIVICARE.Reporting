@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -8,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using Excel = Microsoft.Office.Interop.Excel;
+using Tuple = System.Tuple;
 
 namespace DO.VIVICARE.Reporter
 {
@@ -124,6 +126,119 @@ namespace DO.VIVICARE.Reporter
         {
             var name = string.Empty;
             var list = new List<Tuple<string, string, string>>();
+            ExcelManager manExcel = null;
+            try
+            {
+                var ua = (ReportReferenceAttribute)report.GetType().GetCustomAttribute(typeof(ReportReferenceAttribute));
+                if (ua != null)
+                {
+                    name = ua.Name;
+                }
+                var destinationFilePath = Path.Combine(Manager.Reports, $"{name}{DateTime.Now.ToString("dd-MM-yyyy.HH.mm.ss")}.xlsx");
+
+                manExcel = new ExcelManager();
+                if (!manExcel.Create(destinationFilePath, $"{name}{DateTime.Now.ToString("dd-MM-yyyy.HH.mm.ss")}")) return false;
+                
+
+                var columns = Manager.GetReportColumns(report);
+
+                int rowCount = report.ResultRecords.Count();
+                int colCount = columns.Count();
+                int rowStart = 2;
+
+                // header row excel sheet
+                List<Cell> cells = new List<Cell>();
+                foreach (var col in columns)
+                {
+                    var cell = new Cell
+                    {
+                        CellReference = $"{col.Column}1",
+                        CellValue = new CellValue(col.ColumnName),
+                        DataType = CellValues.String
+                    };
+                }
+                manExcel.AddRow(cells,1);
+
+
+                if (rowCount>0)
+                {
+                    var records = report.ResultRecords;
+
+                   
+                    // data rows excel sheet
+                    DocumentFormat.OpenXml.UInt32Value rowIndex = 2;
+                    for (int i = rowStart; i <= (rowCount+1); i++)
+                    {
+                        var element = report.ResultRecords[i - 2];
+                        cells = new List<Cell>();
+                        foreach (var col in columns)
+                        {
+                            var cell = new Cell
+                            {
+                                CellReference = $"{col.Column}{i.ToString()}",
+                                CellValue = new CellValue(""),
+                                DataType = CellValues.String
+                            };
+                           
+                            var nameField = col.FieldName;
+                            var propField = element.GetType().GetProperty(nameField);
+                          
+                            var isDate = col.IsDate;
+                            var decimalAttribute = col.DecimalDigits;
+                            if (decimalAttribute!=0)
+                            {
+                                string stringValue = (string)propField.GetValue(element);
+                                string strDec = stringValue.Substring(stringValue.Length - 2);
+                                string strInt = stringValue.Substring(0, stringValue.Length - 2);
+                                string stringNewValue = strInt + "." + strDec;
+                                //decimal value = Convert.ToDecimal(stringNewValue);
+                                cell.CellValue = new CellValue(stringNewValue);
+                            }
+                            else if (isDate)
+                            {
+                                string stringValue = (string)propField.GetValue(element);
+                                DateTime dateValue = DateTime.MinValue;
+                                if (DateTime.TryParseExact(stringValue, "yyyyMMdd",
+                                CultureInfo.InvariantCulture,
+                                DateTimeStyles.None, out dateValue))
+                                {
+                                    cell.CellValue = new CellValue(dateValue.ToShortDateString());
+                                }
+                                else
+                                {
+                                    cell.CellValue = new CellValue((string)propField.GetValue(element));
+                                }
+                            }
+                            else
+                                cell.CellValue = new CellValue((string)propField.GetValue(element));
+
+                            cells.Add(cell);
+                        }
+                        manExcel.AddRow(cells, rowIndex++);
+                    }
+                }
+
+                if (!manExcel.Save()) throw new Exception(string.Format("Unable to save file: {0}", destinationFilePath));
+
+                manExcel.Dispose();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                list.Add(Tuple.Create("Riga: 0", "Colonna: 0", $"Errore interno: {ex.Message}"));
+                return false;
+            }
+            finally
+            {
+                WriteLog(list, name);
+            }
+        }
+
+        public static bool CreateExcelFileOLD(BaseReport report)
+        {
+            var name = string.Empty;
+            var list = new List<Tuple<string, string, string>>();
             try
             {
                 var ua = (ReportReferenceAttribute)report.GetType().GetCustomAttribute(typeof(ReportReferenceAttribute));
@@ -149,14 +264,14 @@ namespace DO.VIVICARE.Reporter
                     foglioXls.Cells[1, col.Position] = col.ColumnName;
                 }
 
-                if (rowCount>0)
+                if (rowCount > 0)
                 {
                     var records = report.ResultRecords;
 
                     //var fields = records[0].GetType().GetProperties().Where(x => x.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false) != null).ToList();
 
                     // data rows excel sheet
-                    for (int i = rowStart; i <= (rowCount+1); i++)
+                    for (int i = rowStart; i <= (rowCount + 1); i++)
                     {
                         var element = report.ResultRecords[i - 2];
                         foreach (var col in columns)
@@ -169,7 +284,7 @@ namespace DO.VIVICARE.Reporter
                             //var decimalAttribute = ((ReportMemberReferenceAttribute)field.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false)).DecimalDigits;
                             var isDate = col.IsDate;
                             var decimalAttribute = col.DecimalDigits;
-                            if (decimalAttribute!=0)
+                            if (decimalAttribute != 0)
                             {
                                 string stringValue = (string)propField.GetValue(element);
                                 string strDec = stringValue.Substring(stringValue.Length - 2);

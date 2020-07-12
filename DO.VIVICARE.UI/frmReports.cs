@@ -53,13 +53,13 @@ namespace DO.VIVICARE.UI
             }
             var listASST = docASST.Document.Records;
 
-            var ATSCode = 321;
+            var ASSTCode = 30705;
 
-            BaseDocument ASST = listASST.Where((dynamic w) => w.ATSCode == ATSCode).FirstOrDefault();
+            BaseDocument ASST = listASST.Where((dynamic w) => w.ASSTCode == ASSTCode).FirstOrDefault();
 
             if (ASST==null)
             {
-                MessageBox.Show($"ATS {ATSCode} non trovata!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"ASST {ASSTCode} non trovata!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -67,14 +67,25 @@ namespace DO.VIVICARE.UI
 
             var reportDietetica = new Dietetica();
             //input ASST
-            reportDietetica.SetYear(DateTime.Now.Year);
-            reportDietetica.SetMonth(DateTime.Now.Month);
+            reportDietetica.SetYear(2020);
+            reportDietetica.SetMonth(5);
             reportDietetica.SetASST(ASST);
 
 
             reportDietetica.LoadDocuments(true);
 
             reportDietetica.Execute();
+
+
+            if (reportDietetica.ResultRecords.Count()==0)
+            {
+                MessageBox.Show("Nessun dato da elaborare per Dietetica!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            else
+            {
+                MessageBox.Show("File excel e file tracciato Dietetica creato correttamente!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
 
             //reportDietetica.ResultRecords.Add(new Dietetica
             //{
@@ -110,9 +121,8 @@ namespace DO.VIVICARE.UI
             //Manager.CreateExcelFile(reportDietetica);
             //Manager.CreateFile(reportDietetica);
             //Manager.CreateFile(reportDietetica, true);
-            MessageBox.Show("File excel e file tracciato Dietetica creato correttamente!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-            
+
         }
 
         private void cmbChoose_SelectionChangeCommitted(object sender, EventArgs e)
