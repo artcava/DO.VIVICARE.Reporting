@@ -49,8 +49,14 @@
             this.Altro1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Altro2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Altro3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.executeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openFileExcelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.downloadFileCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.downloadFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvElenco)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -223,6 +229,42 @@
             this.Altro3.Name = "Altro3";
             this.Altro3.ReadOnly = true;
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.executeToolStripMenuItem,
+            this.openFileExcelToolStripMenuItem,
+            this.downloadFileCSVToolStripMenuItem,
+            this.downloadFileToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 114);
+            // 
+            // executeToolStripMenuItem
+            // 
+            this.executeToolStripMenuItem.Name = "executeToolStripMenuItem";
+            this.executeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.executeToolStripMenuItem.Text = "&Esegui";
+            this.executeToolStripMenuItem.Click += new System.EventHandler(this.executeToolStripMenuItem_Click);
+            // 
+            // openFileExcelToolStripMenuItem
+            // 
+            this.openFileExcelToolStripMenuItem.Name = "openFileExcelToolStripMenuItem";
+            this.openFileExcelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openFileExcelToolStripMenuItem.Text = "&Apri File Excel";
+            // 
+            // downloadFileCSVToolStripMenuItem
+            // 
+            this.downloadFileCSVToolStripMenuItem.Name = "downloadFileCSVToolStripMenuItem";
+            this.downloadFileCSVToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.downloadFileCSVToolStripMenuItem.Text = "&Download CSV";
+            // 
+            // downloadFileToolStripMenuItem
+            // 
+            this.downloadFileToolStripMenuItem.Name = "downloadFileToolStripMenuItem";
+            this.downloadFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.downloadFileToolStripMenuItem.Text = "Download &File";
+            // 
             // frmReports
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -239,6 +281,7 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvElenco)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -259,5 +302,10 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Altro1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Altro2;
         private System.Windows.Forms.DataGridViewTextBoxColumn Altro3;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem executeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openFileExcelToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem downloadFileCSVToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem downloadFileToolStripMenuItem;
     }
 }

@@ -53,7 +53,8 @@ namespace DO.VIVICARE.UI
             }
             var listASST = docASST.Document.Records;
 
-            var ASSTCode = 30705;
+            //var ASSTCode = 30705;
+            var ASSTCode = 30707;
 
             BaseDocument ASST = listASST.Where((dynamic w) => w.ASSTCode == ASSTCode).FirstOrDefault();
 
@@ -154,28 +155,16 @@ namespace DO.VIVICARE.UI
 
         private void frmReports_Load(object sender, EventArgs e)
         {
-            try
-            {
-                cmbChoose.SelectedIndex = 0;
+            LoadReports();
+        }
 
-                foreach (var f in Manager.GetReports())
-                {
-                    lvReport.AddRow(0, f.Name, "param1", "param2", "param3", "param4");
-                }
-
-                lvReport.SmallImageList = imageListPiccole;
-                lvReport.LargeImageList = imageListGrandi;
-                lvReport.MountHeaders(
-                        "File", 180, HorizontalAlignment.Left,
-                        "Altro1", 120, HorizontalAlignment.Left,
-                        "Altro2", 120, HorizontalAlignment.Left,
-                        "Altro3", 120, HorizontalAlignment.Left,
-                        "Altro4", 120, HorizontalAlignment.Left);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+        private void lvReport_MouseClick(object sender, MouseEventArgs e)
+        {
+            //if (e.Button == MouseButtons.Right)
+            //{
+            //    Point pt = lvReport.PointToScreen(e.Location);
+            //    contextMenuStrip1.Show(pt);
+            //}
         }
 
         private void btnExit_Click(object sender, EventArgs e)
@@ -204,5 +193,55 @@ namespace DO.VIVICARE.UI
                 dgvElenco.Rows[i].Cells["Altro3"].Value = "ALTRO 3";
             }
         }
+
+        private void LoadReports()
+        {
+            try
+            {
+                lvReport.Clear();
+                cmbChoose.SelectedIndex = 2;
+
+                foreach (var f in Manager.GetReports())
+                {
+                    var name = "";
+                    // looking for last report created
+                    var lastReportValues = Manager.Settings.GetLastReportValues(f.Name);
+                    if (lastReportValues != null)
+                    {
+                        if (lastReportValues.Count != 0) name = lastReportValues[0];
+                    }
+                    var list = Manager.Settings.GetDocumentValues(XMLSettings.LibraryType.Report, name);
+                    if (list==null)
+                    {
+                        lvReport.AddRow(0, f.Name, f.Description, "..." , "...", "...");
+                    }
+                    else
+                    {
+                        lvReport.AddRow(0, f.Name, f.Description, list[0] == null ? "..." : name + list[2], list[3] ?? "...", list[4] ?? "...");
+                    }
+                }
+                lvReport.SmallImageList = imageListPiccole;
+                lvReport.LargeImageList = imageListGrandi;
+                lvReport.MountHeaders(
+                       "Nome Report", 100, HorizontalAlignment.Left,
+                       "Descrizione", 180, HorizontalAlignment.Left,
+                       "File", 120, HorizontalAlignment.Left,
+                       "Destinazione File", 200, HorizontalAlignment.Left,
+                       "Ultimo creato", 120, HorizontalAlignment.Right
+                       );
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        #region ToolStripMenuItem_Click
+        private void executeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var report = lvReport.SelectedItems[0];
+        }
+        #endregion
+
     }
 }

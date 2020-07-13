@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace DO.VIVICARE.Report.Dietetica
 {
@@ -376,10 +377,24 @@ namespace DO.VIVICARE.Report.Dietetica
 
                 ResultRecords.AddRange(reportFromZSDFatture);
 
-                Manager.CreateExcelFile(this); //crea file excel xlsx
-                Manager.CreateFile(this); //crea file txt
-                Manager.CreateFile(this, true); //crea file csv
+                var nameReport = "unkown";
+                var ua = (ReportReferenceAttribute)this.GetType().GetCustomAttribute(typeof(ReportReferenceAttribute));
+                if (ua != null)
+                {
+                    nameReport = ua.Name;
+                }
 
+                var now = DateTime.Now;
+
+                var nameFileWithoutExt = $"{nameReport}{ASSTCode.ToString()}.{now.ToString("dd-MM-yyyy.HH.mm.ss")}";
+
+                Manager.CreateExcelFile(this, nameFileWithoutExt); //crea file excel xlsx
+                Manager.CreateFile(this, nameFileWithoutExt); //crea file txt
+                Manager.CreateFile(this, nameFileWithoutExt, true); //crea file csv
+                
+                var destinationFilePath = Path.Combine(Manager.Reports, $"{nameFileWithoutExt}.xlsx");
+                Manager.Settings.UpdateReport(nameFileWithoutExt, nameReport, "xlsx", destinationFilePath, now, XMLSettings.ReportStatus.FileOK);
+                Manager.Settings.Save();
             }
             catch (System.Exception ex)
             {
