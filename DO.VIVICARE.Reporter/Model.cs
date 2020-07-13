@@ -535,6 +535,8 @@ namespace DO.VIVICARE.Reporter
         }
     }
 
+    
+
     public class ReportParameter
     {
         public string Description { get; set; }

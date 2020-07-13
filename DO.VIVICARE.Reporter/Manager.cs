@@ -122,7 +122,7 @@ namespace DO.VIVICARE.Reporter
             return list;
         }
 
-        public static bool CreateExcelFile(BaseReport report)
+        public static bool CreateExcelFile(BaseReport report, string fileWithoutExt)
         {
             var name = string.Empty;
             var list = new List<Tuple<string, string, string>>();
@@ -134,11 +134,11 @@ namespace DO.VIVICARE.Reporter
                 {
                     name = ua.Name;
                 }
-                var nameDate = $"{name}{DateTime.Now.ToString("dd-MM-yyyy.HH.mm.ss")}";
-                var destinationFilePath = Path.Combine(Manager.Reports, $"{nameDate}.xlsx");
+                
+                var destinationFilePath = Path.Combine(Manager.Reports, $"{fileWithoutExt}.xlsx");
 
                 manExcel = new ExcelManager();
-                if (!manExcel.Create(destinationFilePath, nameDate)) return false;
+                if (!manExcel.Create(destinationFilePath, fileWithoutExt)) return false;
                 
 
                 var columns = Manager.GetReportColumns(report);
@@ -342,7 +342,7 @@ namespace DO.VIVICARE.Reporter
         }
 
 
-        public static bool CreateFile(BaseReport report, bool csv = false)
+        public static bool CreateFile(BaseReport report, string fileWithoutExt, bool csv = false)
         {
             var name = string.Empty;
             var list = new List<Tuple<string, string, string>>();
@@ -435,7 +435,7 @@ namespace DO.VIVICARE.Reporter
                    .ToArray();
 
                 var ext = csv ? "csv" : "txt";
-                var destinationFilePath = Path.Combine(Manager.Reports, $"{name}{DateTime.Now.ToString("dd-MM-yyyy.HH.mm.ss")}.{ext}");
+                var destinationFilePath = Path.Combine(Manager.Reports, $"{fileWithoutExt}.{ext}");
                 var f = new FileStream(destinationFilePath, FileMode.Create);
 
                 f.Write(dataAsBytes, 0, dataAsBytes.Length);
