@@ -23,5 +23,11 @@ namespace DO.VIVICARE.Document.ZSDFatture
 
         [DocumentMemberReference(Column = "AS", Position = 45, FieldName = "FiscalCode")]
         public string FiscalCode { get; set; }
+
+        //colonna G Gerarchia prodotto fitrare solo ANEN
+        //ProductHierarchy
+        [DocumentMemberReference(Column = "G", Position = 7, FieldName = "ProductHierarchy")]
+        public string ProductHierarchy { get; set; }
+
     }
 }

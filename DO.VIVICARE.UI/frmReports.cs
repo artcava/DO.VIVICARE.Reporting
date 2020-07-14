@@ -22,13 +22,21 @@ namespace DO.VIVICARE.UI
             dgvElenco.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvElenco.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold);
 
-            dgvElenco.Columns["NomeFileDocument"].FillWeight = 300;
+            dgvElenco.Columns["Origin"].FillWeight = 200;
         }
 
         private void btnExecute_Click(object sender, EventArgs e)
         {
             //MessageBox.Show("SUPER PROCESS STARTS!!!");
             // solo per test
+
+            if (lvReport.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Nessun report selezionato!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            var report = lvReport.SelectedItems[0];
 
             var docASST = Manager.GetDocuments().Find(a => a.Attribute.Name == "ASST");
             if (docASST==null)
@@ -98,6 +106,7 @@ namespace DO.VIVICARE.UI
                 MessageBox.Show("File excel e file tracciato Dietetica creato correttamente!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
+            LoadReports();
 
             //reportDietetica.ResultRecords.Add(new Dietetica
             //{
@@ -160,11 +169,11 @@ namespace DO.VIVICARE.UI
 
         private void lvReport_MouseClick(object sender, MouseEventArgs e)
         {
-            //if (e.Button == MouseButtons.Right)
-            //{
-            //    Point pt = lvReport.PointToScreen(e.Location);
-            //    contextMenuStrip1.Show(pt);
-            //}
+            if (e.Button == MouseButtons.Right)
+            {
+                Point pt = lvReport.PointToScreen(e.Location);
+                contextMenuStrip1.Show(pt);
+            }
         }
 
         private void btnExit_Click(object sender, EventArgs e)
@@ -174,24 +183,52 @@ namespace DO.VIVICARE.UI
 
         private void lvReport_Click(object sender, EventArgs e)
         {
-            FillGrid(lvReport.SelectedItems[0].ToString());
+            FillGrid(lvReport.SelectedItems[0]);
         }
 
-        private void FillGrid(string nomeReport)
+        private void FillGrid(ListViewItem selectedReport)
         {
+
+            var report = (BaseReport)selectedReport.Tag;
+
+            report.LoadDocuments();
+            
             dgvElenco.Rows.Clear();
 
-            // DA SOSTITUIRE CON LA LISTA DEGLI OGGETTI DOCUMENT
-            for (int it = 0; it < 3; it++)
+            var documents = report.Documents;
+
+            foreach (var document in documents)
             {
                 var row = new DataGridViewRow();
                 var i = dgvElenco.Rows.Add(row);
-                dgvElenco.Rows[i].Cells["NomeFileDocument"].Value = nomeReport;
-                dgvElenco.Rows[i].Cells["NomeFileDocumentCompleto"].Value = nomeReport.ToUpper();
-                dgvElenco.Rows[i].Cells["Altro1"].Value = "ALTRO 1";
-                dgvElenco.Rows[i].Cells["Altro2"].Value = "ALRO 2";
-                dgvElenco.Rows[i].Cells["Altro3"].Value = "ALTRO 3";
+                var list = Manager.Settings.GetDocumentValues(XMLSettings.LibraryType.Document, document.AttributeName);
+                if (list!=null)
+                {
+                    dgvElenco.Rows[i].Cells["Document"].Value = document.AttributeName;
+                    dgvElenco.Rows[i].Cells["FileName"].Value = list.Count == 0 ? "..." : list[1] == null ? "..." : document.AttributeName + list[1];
+                    dgvElenco.Rows[i].Cells["Origin"].Value = list.Count == 1 ? "..." : list[2] ?? "...";
+                    dgvElenco.Rows[i].Cells["LastModify"].Value = list.Count == 3 ? "..." : list[4] ?? "...";
+                }
+                else
+                {
+                    dgvElenco.Rows[i].Cells["Document"].Value = document.AttributeName;
+                    dgvElenco.Rows[i].Cells["FileName"].Value = "...";
+                    dgvElenco.Rows[i].Cells["Origin"].Value = "...";
+                    dgvElenco.Rows[i].Cells["LastModify"].Value = "...";
+                }
             }
+
+            // DA SOSTITUIRE CON LA LISTA DEGLI OGGETTI DOCUMENT
+            //for (int it = 0; it < 3; it++)
+            //{
+            //    var row = new DataGridViewRow();
+            //    var i = dgvElenco.Rows.Add(row);
+            //    dgvElenco.Rows[i].Cells["NomeFileDocument"].Value = nomeReport;
+            //    dgvElenco.Rows[i].Cells["NomeFileDocumentCompleto"].Value = nomeReport.ToUpper();
+            //    dgvElenco.Rows[i].Cells["Altro1"].Value = "ALTRO 1";
+            //    dgvElenco.Rows[i].Cells["Altro2"].Value = "ALRO 2";
+            //    dgvElenco.Rows[i].Cells["Altro3"].Value = "ALTRO 3";
+            //}
         }
 
         private void LoadReports()
@@ -199,13 +236,14 @@ namespace DO.VIVICARE.UI
             try
             {
                 lvReport.Clear();
+                lvReport.View = View.Details;
                 cmbChoose.SelectedIndex = 2;
 
                 foreach (var f in Manager.GetReports())
                 {
                     var name = "";
                     // looking for last report created
-                    var lastReportValues = Manager.Settings.GetLastReportValues(f.Name);
+                    var lastReportValues = Manager.Settings.GetLastReportValues(f.Attribute.Name);
                     if (lastReportValues != null)
                     {
                         if (lastReportValues.Count != 0) name = lastReportValues[0];
@@ -213,12 +251,13 @@ namespace DO.VIVICARE.UI
                     var list = Manager.Settings.GetDocumentValues(XMLSettings.LibraryType.Report, name);
                     if (list==null)
                     {
-                        lvReport.AddRow(0, f.Name, f.Description, "..." , "...", "...");
+                        lvReport.AddRow(0, f.Attribute.Name, f.Attribute.Description, "..." , "...", "...");
                     }
                     else
                     {
-                        lvReport.AddRow(0, f.Name, f.Description, list[0] == null ? "..." : name + list[2], list[3] ?? "...", list[4] ?? "...");
+                        lvReport.AddRow(0, f.Attribute.Name, f.Attribute.Description, list[0] == null ? "..." : name + list[2], list[3] ?? "...", list[4] ?? "...");
                     }
+                    lvReport.Items[lvReport.Items.Count - 1].Tag = f.Report;
                 }
                 lvReport.SmallImageList = imageListPiccole;
                 lvReport.LargeImageList = imageListGrandi;

@@ -44,11 +44,10 @@
             this.imageListGrandi = new System.Windows.Forms.ImageList(this.components);
             this.imageListPiccole = new System.Windows.Forms.ImageList(this.components);
             this.dgvElenco = new System.Windows.Forms.DataGridView();
-            this.NomeFileDocument = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.NomeFileDocumentCompleto = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Altro1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Altro2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Altro3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Document = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.FileName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Origin = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.LastModify = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.executeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileExcelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -106,17 +105,19 @@
             this.lvReport.HideSelection = false;
             this.lvReport.Location = new System.Drawing.Point(12, 72);
             this.lvReport.Name = "lvReport";
-            this.lvReport.Size = new System.Drawing.Size(1272, 447);
+            this.lvReport.Size = new System.Drawing.Size(1272, 357);
             this.lvReport.TabIndex = 16;
             this.lvReport.UseCompatibleStateImageBehavior = false;
+            this.lvReport.View = System.Windows.Forms.View.Details;
             this.lvReport.Click += new System.EventHandler(this.lvReport_Click);
+            this.lvReport.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lvReport_MouseClick);
             // 
             // btnExit
             // 
             this.btnExit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnExit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnExit.Image = global::DO.VIVICARE.UI.Properties.Resources.logout;
-            this.btnExit.Location = new System.Drawing.Point(1214, 681);
+            this.btnExit.Location = new System.Drawing.Point(1214, 579);
             this.btnExit.Name = "btnExit";
             this.btnExit.Size = new System.Drawing.Size(70, 50);
             this.btnExit.TabIndex = 212;
@@ -127,7 +128,7 @@
             // 
             this.btnExecute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnExecute.Image = global::DO.VIVICARE.UI.Properties.Resources.execute;
-            this.btnExecute.Location = new System.Drawing.Point(1138, 681);
+            this.btnExecute.Location = new System.Drawing.Point(1138, 579);
             this.btnExecute.Name = "btnExecute";
             this.btnExecute.Size = new System.Drawing.Size(70, 50);
             this.btnExecute.TabIndex = 211;
@@ -168,11 +169,10 @@
             this.dgvElenco.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.dgvElenco.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvElenco.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.NomeFileDocument,
-            this.NomeFileDocumentCompleto,
-            this.Altro1,
-            this.Altro2,
-            this.Altro3});
+            this.Document,
+            this.FileName,
+            this.Origin,
+            this.LastModify});
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
             dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -181,7 +181,8 @@
             dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvElenco.DefaultCellStyle = dataGridViewCellStyle3;
-            this.dgvElenco.Location = new System.Drawing.Point(12, 525);
+            this.dgvElenco.Location = new System.Drawing.Point(12, 435);
+            this.dgvElenco.MinimumSize = new System.Drawing.Size(0, 123);
             this.dgvElenco.Name = "dgvElenco";
             this.dgvElenco.ReadOnly = true;
             dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -195,39 +196,34 @@
             dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.LightSteelBlue;
             dataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.Black;
             this.dgvElenco.RowsDefaultCellStyle = dataGridViewCellStyle5;
-            this.dgvElenco.Size = new System.Drawing.Size(1272, 150);
+            this.dgvElenco.Size = new System.Drawing.Size(1272, 123);
             this.dgvElenco.TabIndex = 214;
             // 
-            // NomeFileDocument
+            // Document
             // 
-            this.NomeFileDocument.HeaderText = "Nome file";
-            this.NomeFileDocument.Name = "NomeFileDocument";
-            this.NomeFileDocument.ReadOnly = true;
+            this.Document.HeaderText = "Documento";
+            this.Document.Name = "Document";
+            this.Document.ReadOnly = true;
             // 
-            // NomeFileDocumentCompleto
+            // FileName
             // 
-            this.NomeFileDocumentCompleto.HeaderText = "Nome file completo";
-            this.NomeFileDocumentCompleto.Name = "NomeFileDocumentCompleto";
-            this.NomeFileDocumentCompleto.ReadOnly = true;
-            this.NomeFileDocumentCompleto.Visible = false;
+            this.FileName.HeaderText = "Nome File";
+            this.FileName.Name = "FileName";
+            this.FileName.ReadOnly = true;
             // 
-            // Altro1
+            // Origin
             // 
-            this.Altro1.HeaderText = "Altro1";
-            this.Altro1.Name = "Altro1";
-            this.Altro1.ReadOnly = true;
+            this.Origin.HeaderText = "Origine File";
+            this.Origin.Name = "Origin";
+            this.Origin.ReadOnly = true;
+            this.Origin.Width = 400;
             // 
-            // Altro2
+            // LastModify
             // 
-            this.Altro2.HeaderText = "Altro2";
-            this.Altro2.Name = "Altro2";
-            this.Altro2.ReadOnly = true;
-            // 
-            // Altro3
-            // 
-            this.Altro3.HeaderText = "Altro3";
-            this.Altro3.Name = "Altro3";
-            this.Altro3.ReadOnly = true;
+            this.LastModify.HeaderText = "Ultima modifica";
+            this.LastModify.Name = "LastModify";
+            this.LastModify.ReadOnly = true;
+            this.LastModify.Width = 120;
             // 
             // contextMenuStrip1
             // 
@@ -238,38 +234,38 @@
             this.downloadFileCSVToolStripMenuItem,
             this.downloadFileToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 114);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 92);
             // 
             // executeToolStripMenuItem
             // 
             this.executeToolStripMenuItem.Name = "executeToolStripMenuItem";
-            this.executeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.executeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.executeToolStripMenuItem.Text = "&Esegui";
             this.executeToolStripMenuItem.Click += new System.EventHandler(this.executeToolStripMenuItem_Click);
             // 
             // openFileExcelToolStripMenuItem
             // 
             this.openFileExcelToolStripMenuItem.Name = "openFileExcelToolStripMenuItem";
-            this.openFileExcelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openFileExcelToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.openFileExcelToolStripMenuItem.Text = "&Apri File Excel";
             // 
             // downloadFileCSVToolStripMenuItem
             // 
             this.downloadFileCSVToolStripMenuItem.Name = "downloadFileCSVToolStripMenuItem";
-            this.downloadFileCSVToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.downloadFileCSVToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.downloadFileCSVToolStripMenuItem.Text = "&Download CSV";
             // 
             // downloadFileToolStripMenuItem
             // 
             this.downloadFileToolStripMenuItem.Name = "downloadFileToolStripMenuItem";
-            this.downloadFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.downloadFileToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.downloadFileToolStripMenuItem.Text = "Download &File";
             // 
             // frmReports
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1293, 739);
+            this.ClientSize = new System.Drawing.Size(1293, 641);
             this.Controls.Add(this.dgvElenco);
             this.Controls.Add(this.btnExit);
             this.Controls.Add(this.btnExecute);
@@ -297,15 +293,14 @@
         private System.Windows.Forms.ImageList imageListGrandi;
         private System.Windows.Forms.ImageList imageListPiccole;
         private System.Windows.Forms.DataGridView dgvElenco;
-        private System.Windows.Forms.DataGridViewTextBoxColumn NomeFileDocument;
-        private System.Windows.Forms.DataGridViewTextBoxColumn NomeFileDocumentCompleto;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Altro1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Altro2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Altro3;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem executeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openFileExcelToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem downloadFileCSVToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem downloadFileToolStripMenuItem;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Document;
+        private System.Windows.Forms.DataGridViewTextBoxColumn FileName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Origin;
+        private System.Windows.Forms.DataGridViewTextBoxColumn LastModify;
     }
 }

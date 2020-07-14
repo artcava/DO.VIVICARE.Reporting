@@ -11,6 +11,7 @@ namespace DO.VIVICARE.Document.Prezzi
         public string SAPCode { get; set; }
         [DocumentMemberReference(Column = "C", Position = 3, FieldName = "ATSCode")]
         public string ATSCode { get; set; }
+        //ASSTCode filtrare per ASST
         [DocumentMemberReference(Column = "D", Position = 4, FieldName = "ASSTCode")]
         public string ASSTCode { get; set; }
         [DocumentMemberReference(Column = "E", Position = 5, FieldName = "IDSintesi")]

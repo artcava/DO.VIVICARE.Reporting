@@ -67,9 +67,9 @@ namespace DO.VIVICARE.Reporter
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static List<ReportReferenceAttribute> GetReports()
+        public static List<ReportingReport> GetReports()
         {
-            var list = new List<ReportReferenceAttribute>();
+            var list = new List<ReportingReport>();
             foreach (var file in Directory.GetFiles(ReportLibraries))
             {
                 FileInfo f = new FileInfo(file);
@@ -84,7 +84,7 @@ namespace DO.VIVICARE.Reporter
                 {
                     var ua = (ReportReferenceAttribute)obj.GetType().GetCustomAttribute(typeof(ReportReferenceAttribute));
                     if (ua == null) continue;
-                    list.Add(ua);
+                    list.Add(new ReportingReport { Report = obj, Attribute = ua });
                 }
             }
             return list;
@@ -450,7 +450,7 @@ namespace DO.VIVICARE.Reporter
             }
             finally
             {
-                WriteLog(list, name);
+                WriteLog(list, fileWithoutExt);
             }
         }
 
@@ -471,12 +471,12 @@ namespace DO.VIVICARE.Reporter
         }
 
 
-
+        //verific
         private static void WriteLog(List<Tuple<string, string, string>> tuples, string fileName)
         {
             try
             {
-                var path = Path.Combine(Manager.Documents, fileName + ".log");
+                var path = Path.Combine(Manager.Reports, fileName + ".log");
                 var f = new FileStream(path, FileMode.Create);
                 string text = null;
 

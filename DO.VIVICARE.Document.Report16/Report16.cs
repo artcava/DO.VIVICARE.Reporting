@@ -26,7 +26,16 @@ namespace DO.VIVICARE.Document.Report16
         [DocumentMemberReference(Column = "AA", Position = 27, FieldName = "ArticleCode")]
         public string ArticleCode { get; set; }
 
+        [DocumentMemberReference(Column = "AB", Position = 28, FieldName = "ArticleDescription")]
+        public string ArticleDescription { get; set; }
+
         [DocumentMemberReference(Column = "AD", Position = 30, FieldName = "Quantity")]
         public decimal Quantity { get; set; }
+
+        //colonna AM position 39 Famiglia fitrare FamilyCode per F0103, F0157, F0158, F0159
+        //FamilyCode
+        [DocumentMemberReference(Column = "AM", Position = 39, FieldName = "FamilyCode")]
+        public string FamilyCode { get; set; }
+
     }
 }

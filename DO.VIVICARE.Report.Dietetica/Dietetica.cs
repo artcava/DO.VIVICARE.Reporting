@@ -21,7 +21,7 @@ namespace DO.VIVICARE.Report.Dietetica
 
         public Dietetica()
         {
-            DocumentNames = new string[] { "Comuni", "ZSDFatture", "Report16", "Report18", "Rendiconto", "MinSan", "Prezzi" };
+            DocumentNames = new string[] { "ASST", "Comuni", "ZSDFatture", "Report16", "Report18", "Rendiconto", "MinSan", "Prezzi" };
             //DocumentNames = new string[] { "Report16" };
         }
 
@@ -86,7 +86,7 @@ namespace DO.VIVICARE.Report.Dietetica
                 document.Document.AttributeName = document.Attribute.Name;
                 if (withRecords)
                 {
-                    if (document.Attribute.Name == "Report16")
+                    if (document.Attribute.Name == "Report16" || document.Attribute.Name == "Prezzi")
                     {
                         var objASST = GetParamValue("ASST");
                         if (objASST!=null)
@@ -97,37 +97,38 @@ namespace DO.VIVICARE.Report.Dietetica
                             var filters = new List<FilterDocument>();
                             filters.Add(new FilterDocument
                             {
-                                Column = "N",
+                                Column = document.Attribute.Name == "Report16"?"N":"E",
                                 Value = idSintesi.ToString()
                             });
                             document.Document.Filters = filters;
                         }
                     }
-                    else
+                    else if (document.Attribute.Name == "ZSDFatture")
                     {
-                        
-                        if (document.Attribute.Name == "ZSDFatture")
+                        var filters = new List<FilterDocument>();
+                        var objASST = GetParamValue("ASST");
+                        if (objASST != null)
                         {
-                            var objASST = GetParamValue("ASST");
-                            if (objASST != null)
+                            var ASST = (BaseDocument)objASST;
+                            var propField = ASST.GetType().GetProperty("SAPCode");
+                            string SAPCode = (string)propField.GetValue(ASST);
+
+                            filters.Add(new FilterDocument
                             {
-                                var ASST = (BaseDocument)objASST;
-                                var propField = ASST.GetType().GetProperty("SAPCode");
-                                string SAPCode = (string)propField.GetValue(ASST);
-                                var filters = new List<FilterDocument>();
-                                filters.Add(new FilterDocument
-                                {
-                                    Column = "A",
-                                    Value = SAPCode
-                                });
-                                document.Document.Filters = filters;
-                            }
+                                Column = "A",
+                                Value = SAPCode
+                            });
                         }
+                        filters.Add(new FilterDocument
+                        {
+                            Column = "G",
+                            Value = "ANEN"
+                        });
+                        document.Document.Filters = filters;
                     }
                     document.Document.LoadRecords();
                 }
                 Documents.Add(document.Document);
-                
             }
         }
 
@@ -135,8 +136,6 @@ namespace DO.VIVICARE.Report.Dietetica
         //{
         //    _lastProgressiveNumber = lastProgressiveNumber;
         //}
-
-
         
 
         //}
@@ -149,7 +148,7 @@ namespace DO.VIVICARE.Report.Dietetica
 
             try
             {
-                
+
                 var documents = Documents;
 
                 var doc = documents.Find(x => x.AttributeName == "ZSDFatture");
@@ -238,7 +237,7 @@ namespace DO.VIVICARE.Report.Dietetica
                 int ATSCode = 0;
                 int ASSTCode = 0;
                 var objASST = GetParamValue("ASST");
-                if (objASST!=null)
+                if (objASST != null)
                 {
                     var ASST = (BaseDocument)objASST;
                     var propField = ASST.GetType().GetProperty("IDSintesi");
@@ -260,7 +259,14 @@ namespace DO.VIVICARE.Report.Dietetica
 
                 ProgressiveNumber = 1;
 
-                var listReport16Filtered = listReport16.Where((dynamic w) => w.ContractId == idSintesi && w.ErogationDate.Year == year && w.ErogationDate.Month == month).ToList();
+                //fitrare FamilyCode per F0103, F0157, F0158, F0159
+
+                var listReport16Filtered = listReport16.
+                    Where((dynamic w) =>
+                    w.ContractId == idSintesi &&
+                    w.ErogationDate.Year == year &&
+                    w.ErogationDate.Month == month &&
+                    (w.FamilyCode == "F0103" || w.FamilyCode == "F0157" || w.FamilyCode == "F0158" || w.FamilyCode == "F0159")).ToList();
                 List<Dietetica> reportFromReport16 = new List<Dietetica>();
                 if (listReport16Filtered.Count()!=0)
                 {
@@ -274,7 +280,7 @@ namespace DO.VIVICARE.Report.Dietetica
                     Select((dynamic ramp) => new Dietetica()
                     {
                         ATSCode = Manager.Left(ATSCode.ToString(), 3, ' '),
-                        ASSTCode = Manager.Left(ASSTCode.ToString(), 6, ' '),
+                        ASSTCode = ASSTCode.ToString("000000"),
                         Year = year.ToString("0000"),
                         Month = month.ToString("00"),
                         FiscalCode = ramp.REP16.FiscalCode,
@@ -287,7 +293,7 @@ namespace DO.VIVICARE.Report.Dietetica
                         TypeDescription = Manager.Left("ALIMENTINAD", 15, ' '),
                         Typology = "5",
                         MinsanCode = ramp.MINSAN == null ? Manager.Left(new string('9', 9), 30, ' ') : Manager.Left(ramp.MINSAN.ArtCode, 30, ' '),
-                        MinsanDescription = ramp.MINSAN == null ? Manager.Space(30) : Manager.Left(ramp.MINSAN.ArtDescription, 30, ' '),
+                        MinsanDescription = Manager.Left(ramp.REP16.ArticleDescription, 30, ' '),
                         Manufacturer = ramp.REN == null ? Manager.Space(30) : Manager.Left(ramp.REN.CompanyName, 30, ' '),
                         PiecesPerPack = "001",
                         UnitOfMeasure = Manager.Left("PEZZO", 9, ' '),
@@ -313,9 +319,11 @@ namespace DO.VIVICARE.Report.Dietetica
                 {
                     reportFromZSDFatture = listZSDFattureFiltered.Select((dynamic f) => {
                         var istatCode = Manager.Space(6);
+                        var userHost = Manager.Space(1);
                         var REP16 = listReport16.Where((dynamic r16) => r16.FiscalCode == f.FiscalCode).FirstOrDefault();
                         if (REP16 != null)
                         {
+                            userHost = REP16.HostType;
                             var COM = listComuni.Where((dynamic c) => c.Name.ToUpper() == REP16.Town).FirstOrDefault();
                             if (COM != null)
                             {
@@ -337,20 +345,21 @@ namespace DO.VIVICARE.Report.Dietetica
                         return new
                         {
                             ZSDF = f,
-                            ISTATCode = istatCode
+                            ISTATCode = istatCode,
+                            UserHost = userHost
                         };
                     }).
                     Select((dynamic fa) => new Dietetica()
                     {
                         ATSCode = Manager.Left(ATSCode.ToString(), 3, ' '),
-                        ASSTCode = Manager.Left(ASSTCode.ToString(), 6, ' '),
+                        ASSTCode =ASSTCode.ToString("000000"),
                         Year = year.ToString("0000"),
                         Month = month.ToString("00"),
                         FiscalCode = fa.ZSDF.FiscalCode,
                         Sex = Manager.SexCV(fa.ZSDF.FiscalCode),
                         DateOfBirth = Manager.DatCV(fa.ZSDF.FiscalCode),
                         ISTATCode = Manager.Left(fa.ISTATCode, 6, ' '),
-                        UserHost = Manager.Space(1),
+                        UserHost = Manager.ErogaRSA(fa.UserHost),
                         PrescriptionNumber = Manager.Space(14),
                         DeliveryDate = fa.ZSDF.ErogationDate.ToString("yyyyMMdd"),
                         TypeDescription = Manager.Left("SERVICENAD", 15, ' '),
@@ -464,6 +473,8 @@ namespace DO.VIVICARE.Report.Dietetica
 
         //F(ErogaRSA{ R16[T]})
         //F(ErogaRSA{ ZSD[?]})
+        //ZSD FiscalCode in Report16 prelavare colonna T
+        // vuoto altrimenti (ma segnalare errore)
         [ReportMemberReference(Column = "J", Position = 10, ColumnName = "Utente ospite RSA o RSD", Length = 1, Required = true, FieldName = "UserHost")]
         public string UserHost { get; set; }
 

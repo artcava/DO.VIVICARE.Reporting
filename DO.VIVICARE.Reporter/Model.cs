@@ -535,7 +535,20 @@ namespace DO.VIVICARE.Reporter
         }
     }
 
-    
+    /// <summary>
+    /// 
+    /// </summary>
+    public class ReportingReport
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public BaseReport Report { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public ReportReferenceAttribute Attribute { get; set; }
+    }
 
     public class ReportParameter
     {
