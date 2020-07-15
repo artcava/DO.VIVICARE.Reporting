@@ -232,7 +232,7 @@ namespace DO.VIVICARE.Reporter
             }
             finally
             {
-                WriteLog(list, name);
+                WriteLog(list, fileWithoutExt);
             }
         }
 

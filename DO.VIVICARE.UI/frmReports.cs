@@ -5,6 +5,8 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Linq;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace DO.VIVICARE.UI
 {
@@ -36,7 +38,14 @@ namespace DO.VIVICARE.UI
                 return;
             }
 
-            var report = lvReport.SelectedItems[0];
+            var listViewItemReport = lvReport.SelectedItems[0];
+
+            var returnMessage = string.Empty;
+            if (Execute(listViewItemReport, out returnMessage)) MessageBox.Show(returnMessage, "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else MessageBox.Show(returnMessage, "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            LoadReports();
+            return;
 
             var docASST = Manager.GetDocuments().Find(a => a.Attribute.Name == "ASST");
             if (docASST==null)
@@ -107,43 +116,7 @@ namespace DO.VIVICARE.UI
             }
 
             LoadReports();
-
-            //reportDietetica.ResultRecords.Add(new Dietetica
-            //{
-            //    ATSCode = Manager.Left("222", 3, ' '),
-            //    ASSTCode = Manager.Left("4444", 6, ' '),
-            //    Year = DateTime.Now.Year.ToString("0000"),
-            //    Month = DateTime.Now.Month.ToString("00"),
-            //    FiscalCode = new string('0', 16),
-            //    Sex = Manager.SexCV(""),
-            //    DateOfBirth = Manager.DatCV(""),
-            //    ISTATCode = Manager.Left("123", 6, ' '),
-            //    UserHost = Manager.Space(1),
-            //    PrescriptionNumber = Manager.Space(14),
-            //    DeliveryDate = "19241017",
-            //    TypeDescription = Manager.Left("SERVICENAD", 15, ' '),
-            //    Typology = "5",
-            //    MinsanCode = Manager.Space(30),
-            //    MinsanDescription = Manager.Space(30),
-            //    Manufacturer = Manager.Space(30),
-            //    PiecesPerPack = "001",
-            //    UnitOfMeasure = Manager.Left("CMESE", 9, ' '),
-            //    Quantity = 2.ToString("0000"),
-            //    ManagementChannel = "4",
-            //    PurchaseAmount = new string('0', 12),
-            //    ServiceChargeAmount = new string('0', 12),
-            //    RecordDestination = "N",
-            //    ID = Manager.NumProg(100, DateTime.Now.Year, DateTime.Now.Month),
-            //    RepCode = Manager.Space(30),
-            //    CNDCode = Manager.Space(13),
-            //    FlagDM = "F",
-            //    Type = Manager.Space(1)
-            //});
-            //Manager.CreateExcelFile(reportDietetica);
-            //Manager.CreateFile(reportDietetica);
-            //Manager.CreateFile(reportDietetica, true);
-
-
+            
         }
 
         private void cmbChoose_SelectionChangeCommitted(object sender, EventArgs e)
@@ -275,10 +248,68 @@ namespace DO.VIVICARE.UI
             }
         }
 
+        private bool Execute(ListViewItem selectedReport, out string message)
+        {
+            message = string.Empty;
+            try
+            {
+                BaseReport report = (BaseReport)selectedReport.Tag;
+
+                var nameReport = "unkown";
+                var ua = (ReportReferenceAttribute)report.GetType().GetCustomAttribute(typeof(ReportReferenceAttribute));
+                if (ua != null)
+                {
+                    nameReport = ua.Name;
+                }
+
+                report.CreateParameters();
+                if (report.Parameters.Count>0)
+                {
+                    //open window input parameters and fill all ReturnValue parameters
+
+                    frmInputReportParameter f = new frmInputReportParameter($"Parametri report {nameReport}", report.Parameters);
+                    DialogResult result = f.ShowDialog();
+                    if (result != DialogResult.OK)
+                    {
+                        message = "Operazione annullata dall'utente!";
+                        return false;
+                    }
+                    //check return values
+                    var invalidValues = report.Parameters.Exists(p => p.ReturnValue == null);
+                    if (invalidValues)
+                    {
+                        message = "Indicare tutti i valori per i parametri richiesti!";
+                        return false;
+                    }
+                }
+                report.LoadDocuments(true);
+
+                report.Execute();
+
+                if (report.ResultRecords.Count() == 0)
+                {
+                    message = "Nessun dato da elaborare per Dietetica!";
+                    return false;
+                }
+                
+                message = "File excel e file tracciato Dietetica creato correttamente!";
+                return true;
+            }
+            catch (Exception ex)
+            {
+                message = $"Internal error:{ex.Message}";
+                return false;
+            }
+        }
+
         #region ToolStripMenuItem_Click
         private void executeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var report = lvReport.SelectedItems[0];
+            var listViewItemReport = lvReport.SelectedItems[0];
+            var returnMessage = string.Empty;
+            if (Execute(listViewItemReport, out returnMessage)) MessageBox.Show(returnMessage , "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else MessageBox.Show(returnMessage, "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            LoadReports();
         }
         #endregion
 

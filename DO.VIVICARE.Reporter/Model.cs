@@ -442,6 +442,12 @@ namespace DO.VIVICARE.Reporter
         public string Value { get; set; }
     }
 
+    public class DataCombo
+    {
+        public string Text { get; set; }
+        public string Value { get; set; }
+        public BaseDocument Data { get; set; }
+    }
 
     /// <summary>
     /// Attributo a livello di classe per indicare a quale file facciamo riferimento
@@ -559,7 +565,10 @@ namespace DO.VIVICARE.Reporter
         /// </summary>
         public string Type { get; set; }
         public string DocumentName { get; set; }
-        public string DocumentColumnShowed { get; set; }
+        public string DocumentFieldText { get; set; }
+        public string DocumentFieldId { get; set; }
+        //public string DocumentValueText { get; set; }
+        public string DocumentValueId { get; set; }
         public object ReturnValue { get; set; }
     }
 
