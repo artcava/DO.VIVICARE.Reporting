@@ -38,7 +38,7 @@ namespace DO.VIVICARE.Document.Report16
         public string FamilyCode { get; set; }
 
         [DocumentMemberReference(Column = "H", Position = 8, FieldName = "DateOfBirth")]
-        public string DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
 
     }
 }
