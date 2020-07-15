@@ -44,13 +44,17 @@ namespace DO.VIVICARE.Report.Dietetica
 
         public override void CreateParameters()
         {
+            Parameters.Clear();
             Parameters.Add(new ReportParameter
             {
                 Description = "ASST",
                 Name = "ASST",
                 Type = "Document",
                 DocumentName = "ASST",
-                DocumentColumnShowed = "B",
+                DocumentFieldText = "Description",
+                DocumentFieldId = "IDSintesi",
+                //DocumentValueText = string.Empty,
+                DocumentValueId = string.Empty,
                 ReturnValue = null
             });
             Parameters.Add(new ReportParameter
