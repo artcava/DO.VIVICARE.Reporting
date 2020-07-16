@@ -235,10 +235,10 @@ namespace DO.VIVICARE.UI
                 lvReport.SmallImageList = imageListPiccole;
                 lvReport.LargeImageList = imageListGrandi;
                 lvReport.MountHeaders(
-                       "Nome Report", 100, HorizontalAlignment.Left,
-                       "Descrizione", 180, HorizontalAlignment.Left,
-                       "File", 120, HorizontalAlignment.Left,
-                       "Destinazione File", 200, HorizontalAlignment.Left,
+                       "Nome Report", 150, HorizontalAlignment.Left,
+                       "Descrizione", 250, HorizontalAlignment.Left,
+                       "File", 150, HorizontalAlignment.Left,
+                       "Destinazione File", 300, HorizontalAlignment.Left,
                        "Ultimo creato", 120, HorizontalAlignment.Right
                        );
             }
@@ -282,9 +282,14 @@ namespace DO.VIVICARE.UI
                         return false;
                     }
                 }
+
+                Cursor.Current = Cursors.WaitCursor;
+
                 report.LoadDocuments(true);
 
                 report.Execute();
+
+                Cursor.Current = Cursors.Default;
 
                 if (report.ResultRecords.Count() == 0)
                 {

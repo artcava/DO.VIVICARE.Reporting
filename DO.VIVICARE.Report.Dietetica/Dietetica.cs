@@ -161,6 +161,11 @@ namespace DO.VIVICARE.Report.Dietetica
                     throw new Exception("ZSDFatture non trovato!");
                 }
                 var listZSDFatture = doc.Records;
+
+                //RNDGNN34M14G273B
+
+                //var zsdf = listZSDFatture.FirstOrDefault((dynamic f) => f.FiscalCode == "RNDGNN34M14G273B");
+
                 //if (listZSDFatture.Count()==0)
                 //{
                 //    throw new Exception("ZSDFatture non caricato!");
@@ -289,7 +294,7 @@ namespace DO.VIVICARE.Report.Dietetica
                         Month = month.ToString("00"),
                         FiscalCode = ramp.REP16.FiscalCode,
                         Sex = Manager.SexCV(ramp.REP16.FiscalCode),
-                        DateOfBirth = Manager.DatCV(ramp.REP16.FiscalCode),
+                        DateOfBirth = ramp.REP16.DateOfBirth.ToString("yyyyMMdd") /*Manager.DatCV(ramp.REP16.FiscalCode)*/,
                         ISTATCode = ramp.COM == null ? Manager.Space(6) : Manager.Left(ramp.COM.Code, 6, ' '),
                         UserHost = Manager.ErogaRSA(ramp.REP16.HostType),
                         PrescriptionNumber = Manager.Space(14),
@@ -324,9 +329,11 @@ namespace DO.VIVICARE.Report.Dietetica
                     reportFromZSDFatture = listZSDFattureFiltered.Select((dynamic f) => {
                         var istatCode = Manager.Space(6);
                         var userHost = Manager.Space(1);
+                        DateTime dtmDateOfBirth = DateTime.MinValue;
                         var REP16 = listReport16.Where((dynamic r16) => r16.FiscalCode == f.FiscalCode).FirstOrDefault();
                         if (REP16 != null)
                         {
+                            dtmDateOfBirth = REP16.DateOfBirth;
                             userHost = REP16.HostType;
                             var COM = listComuni.Where((dynamic c) => c.Name.ToUpper() == REP16.Town).FirstOrDefault();
                             if (COM != null)
@@ -350,7 +357,8 @@ namespace DO.VIVICARE.Report.Dietetica
                         {
                             ZSDF = f,
                             ISTATCode = istatCode,
-                            UserHost = userHost
+                            UserHost = userHost,
+                            DateOfBirth = dtmDateOfBirth
                         };
                     }).
                     Select((dynamic fa) => new Dietetica()
@@ -361,7 +369,7 @@ namespace DO.VIVICARE.Report.Dietetica
                         Month = month.ToString("00"),
                         FiscalCode = fa.ZSDF.FiscalCode,
                         Sex = Manager.SexCV(fa.ZSDF.FiscalCode),
-                        DateOfBirth = Manager.DatCV(fa.ZSDF.FiscalCode),
+                        DateOfBirth = fa.DateOfBirth == DateTime.MinValue ? Manager.DatCV(fa.ZSDF.FiscalCode) : fa.DateOfBirth.ToString("yyyyMMdd"),
                         ISTATCode = Manager.Left(fa.ISTATCode, 6, ' '),
                         UserHost = Manager.ErogaRSA(fa.UserHost),
                         PrescriptionNumber = Manager.Space(14),

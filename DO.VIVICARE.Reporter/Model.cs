@@ -53,7 +53,7 @@ namespace DO.VIVICARE.Reporter
 
                 if (string.IsNullOrEmpty(SourceFilePath))
                 {
-                    list.Add(Tuple.Create($"Riga: 0", $"Colonna: 0", $"File inesistente o campo {SourceFilePath} vuoto"));
+                    list.Add(Tuple.Create($"Riga: 0", $"Colonna: 0", $"File inesistente o campo [SourceFilePath] vuoto"));
                     return false;
                 }
 
@@ -69,7 +69,25 @@ namespace DO.VIVICARE.Reporter
 
                 var columns = Manager.GetDocumentColumns(this);
 
-                IEnumerable<Row> rows = manExcel.GetRows(this.Filters).Skip(rowStart - 1);
+                IEnumerable<Row> rows = null;
+
+                // IEnumerable<Row> rows = manExcel.GetRows(this.Filters).Skip(rowStart - 1);
+                if (this.Filters != null)
+                {
+                    if (this.Filters.Count()>0)
+                    {
+                        rows = manExcel.GetRows(this.Filters);
+                    }
+                    else
+                    {
+                        rows = manExcel.GetRows(null).Skip(rowStart - 1);
+                    }                   
+                }
+                else
+                {
+                    rows = manExcel.GetRows(null).Skip(rowStart - 1);
+                }
+                
 
                 var type = this.GetType();
                 Assembly assembly = Assembly.GetAssembly(this.GetType());
@@ -212,6 +230,78 @@ namespace DO.VIVICARE.Reporter
         }
 
         public bool CheckFields(IProgress<int> progress)
+        {
+            var name = string.Empty;
+            var list = new List<Tuple<string, string, string>>();
+            ExcelManager manExcel = null;
+            try
+            {
+                int rowStart = 1;
+                var ua = (DocumentReferenceAttribute)GetType().GetCustomAttribute(typeof(DocumentReferenceAttribute));
+                if (ua != null)
+                {
+                    rowStart = ua.RowStart;
+                    name = ua.Name;
+                }
+                if (string.IsNullOrEmpty(name))
+                {
+                    list.Add(Tuple.Create($"Riga: 0", $"Colonna: 0", $"NameClass vuoto"));
+                    return false;
+                }
+                if (string.IsNullOrEmpty(SourceFilePath))
+                {
+                    list.Add(Tuple.Create($"Riga: 0", $"Colonna: 0", $"File inesistente o campo [SourceFilePath] vuoto"));
+                    return false;
+                }
+
+                manExcel = new ExcelManager();
+                if (!manExcel.LoadFile(SourceFilePath, name))
+                {
+                    list.Add(Tuple.Create($"Riga: 0", $"Colonna: 0", $"File {SourceFilePath} non caricato!"));
+                    return false;
+                }
+
+                if (manExcel.Extension.ToLower() == ".xlsx") manExcel.Open(false, SourceFilePath);
+                else manExcel.Open(false);
+                
+                var columns = Manager.GetDocumentColumns(this);
+
+                IEnumerable<Row> rows = manExcel.GetRows(null).Skip(rowStart - 1);
+                int rowCount = rows.Count();
+                int i = rowStart;
+                foreach (var row in rows)
+                {
+                    var cells = row.Descendants<Cell>();
+                    if (cells!=null)
+                    {
+                        foreach (var col in columns)
+                        {
+                            var cell = cells.FirstOrDefault(c => manExcel.GetColumnName(c.CellReference) == col.Column);
+                            if (cell == null)
+                                list.Add(Tuple.Create($"Riga: {row.RowIndex}", $"Colonna: {col.Column}", $"Colonna inesistente o campo vuoto"));
+                        }
+                    }
+                    //progress.Report(rowCount / i++); // PER TENER TRACCIA DELLO STATO
+                }
+
+              
+                manExcel.Dispose();
+                
+                return true;
+            }
+            catch (Exception ex)
+            {
+                list.Add(Tuple.Create("Riga: 0", "Colonna: 0", $"Errore interno: {ex.Message}"));
+                return false;
+            }
+            finally
+            {
+                if (manExcel != null) manExcel.Dispose();
+                WriteLog(list, name);
+            }
+        }
+
+        public bool CheckFieldsOLD(IProgress<int> progress)
         {
             var name = string.Empty;
             var list = new List<Tuple<string, string, string>>();

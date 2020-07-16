@@ -283,12 +283,11 @@ namespace DO.VIVICARE.Reporter
             IEnumerable<Row> rows = sheetData.Descendants<Row>();
             if (filters==null) return rows;
             if (filters.Count()==0) return rows;
-            
             var filteredRows = rows.Where(row =>
             {
+                var cells = row.Descendants<Cell>();               
                 foreach (var f in filters)
                 {
-                    var cells = row.Descendants<Cell>();
                     var cell = cells.FirstOrDefault(c => GetColumnName(c.CellReference) == f.Column);
                     if (cell!=null)
                     {
@@ -299,7 +298,6 @@ namespace DO.VIVICARE.Reporter
                 }
                 return true;
             });
-            var list = filteredRows.ToList();
             return filteredRows;
         }
 

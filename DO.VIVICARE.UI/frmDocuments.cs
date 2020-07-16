@@ -62,7 +62,7 @@ namespace DO.VIVICARE.UI
                 System.Diagnostics.Process.Start(Path.Combine(Manager.Documents, nome.SubItems[2].Text));
         }
 
-        private async void caricaFileToolStripMenuItem_Click(object sender, EventArgs e)
+        private void caricaFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // UPLOAD NUOVO FILE IN ARCHIVIO.. SOVRASCRIVENDOLO
             var nome = lvReport.SelectedItems[0];
@@ -86,7 +86,10 @@ namespace DO.VIVICARE.UI
                         progressBar1.Value = progressBar1.Maximum / p;
 
                     });
-                    var ok = await Task.Run(() => ((BaseDocument)nome.Tag).CheckFields(progress));
+                    Cursor.Current = Cursors.WaitCursor;
+                    //var ok = await Task.Run(() => ((BaseDocument)nome.Tag).CheckFields(progress));
+                    var ok = ((BaseDocument)nome.Tag).CheckFields(progress);
+                    Cursor.Current = Cursors.Default;
                     label2.Text = "Completato!";
                     //=================================================================
 
