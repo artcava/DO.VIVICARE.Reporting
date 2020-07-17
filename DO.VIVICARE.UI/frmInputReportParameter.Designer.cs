@@ -76,12 +76,14 @@
             // 
             this.ParameterName.HeaderText = "Nome Parametro";
             this.ParameterName.Name = "ParameterName";
+            this.ParameterName.ReadOnly = true;
             this.ParameterName.Visible = false;
             // 
             // ParameterDescription
             // 
             this.ParameterDescription.HeaderText = "Descrizione Parametro";
             this.ParameterDescription.Name = "ParameterDescription";
+            this.ParameterDescription.ReadOnly = true;
             this.ParameterDescription.Width = 300;
             // 
             // ParameterValue

@@ -407,7 +407,7 @@ namespace DO.VIVICARE.Report.Dietetica
 
                 var now = DateTime.Now;
 
-                var nameFileWithoutExt = $"{nameReport}{ASSTCode.ToString()}.{now.ToString("dd-MM-yyyy.HH.mm.ss")}";
+                var nameFileWithoutExt = $"{nameReport}{ASSTCode.ToString()}-{year.ToString("0000")}{month.ToString("00")}.{now.ToString("dd-MM-yyyy.HH.mm.ss")}";
 
                 Manager.CreateExcelFile(this, nameFileWithoutExt); //crea file excel xlsx
                 Manager.CreateFile(this, nameFileWithoutExt); //crea file txt
