@@ -406,7 +406,8 @@ namespace DO.VIVICARE.Reporter
                             // the table.
                             if (stringTable != null)
                             {
-                                value = stringTable.SharedStringTable.ElementAt(int.Parse(value)).InnerText;
+                                var index = int.Parse(value);
+                                value = stringTable.SharedStringTable.ElementAt(index).InnerText;
                             }
                             break;
 

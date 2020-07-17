@@ -369,7 +369,7 @@ namespace DO.VIVICARE.Report.Dietetica
                         Month = month.ToString("00"),
                         FiscalCode = fa.ZSDF.FiscalCode,
                         Sex = Manager.SexCV(fa.ZSDF.FiscalCode),
-                        DateOfBirth = fa.DateOfBirth == DateTime.MinValue ? Manager.DatCV(fa.ZSDF.FiscalCode) : fa.DateOfBirth.ToString("yyyyMMdd"),
+                        DateOfBirth = Manager.DatCV(fa.ZSDF.FiscalCode),
                         ISTATCode = Manager.Left(fa.ISTATCode, 6, ' '),
                         UserHost = Manager.ErogaRSA(fa.UserHost),
                         PrescriptionNumber = Manager.Space(14),
