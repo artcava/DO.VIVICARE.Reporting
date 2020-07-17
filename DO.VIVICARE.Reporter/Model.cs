@@ -1,6 +1,7 @@
 ﻿using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -109,7 +110,7 @@ namespace DO.VIVICARE.Reporter
                         }
                         else
                         {
-                            string value = manExcel.GetCellValue(cell);
+                            string value = manExcel.GetCellValue(cell);   
                             SetValue(element, propField, value);
                         }
                     }
@@ -446,14 +447,15 @@ namespace DO.VIVICARE.Reporter
                     double d = 0;
                     try
                     {
-                        d = double.Parse(value);
+                        d = double.Parse(value, CultureInfo.InvariantCulture);
                     }
-                    catch (Exception)
+                    catch (Exception exDouble)
                     {
+                        var err = exDouble;
                     }
                     ret = DateTime.FromOADate(d);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     throw new FormatException("Not valid format");
                 }

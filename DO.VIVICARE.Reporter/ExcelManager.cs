@@ -387,7 +387,6 @@ namespace DO.VIVICARE.Reporter
             if (theCell != null)
             {
                 value = theCell.InnerText;
-
                 if (theCell.DataType != null)
                 {
                     switch (theCell.DataType.Value)
