@@ -457,7 +457,8 @@ namespace DO.VIVICARE.Reporter
                 }
                 catch (Exception ex)
                 {
-                    throw new FormatException("Not valid format");
+
+                    throw new FormatException("Not valid format", ex);
                 }
             }
             return ret;
