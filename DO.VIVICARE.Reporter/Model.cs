@@ -1,6 +1,7 @@
 ﻿using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -446,16 +447,17 @@ namespace DO.VIVICARE.Reporter
                     double d = 0;
                     try
                     {
-                        d = double.Parse(value);
+                        d = double.Parse(value, CultureInfo.InvariantCulture);
                     }
                     catch (Exception)
                     {
                     }
                     ret = DateTime.FromOADate(d);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    throw new FormatException("Not valid format");
+
+                    throw new FormatException("Not valid format", ex);
                 }
             }
             return ret;
