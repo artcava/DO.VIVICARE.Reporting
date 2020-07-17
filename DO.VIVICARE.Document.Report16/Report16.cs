@@ -8,6 +8,9 @@ namespace DO.VIVICARE.Document.Report16
         [DocumentMemberReference(Column = "E", Position = 5, FieldName = "FiscalCode")]
         public string FiscalCode { get; set; }
 
+        [DocumentMemberReference(Column = "H", Position = 8, FieldName = "DateOfBirth")]
+        public DateTime DateOfBirth { get; set; }
+
         [DocumentMemberReference(Column = "K", Position = 11, FieldName = "Town")]
         public string Town { get; set; }
 
@@ -36,9 +39,5 @@ namespace DO.VIVICARE.Document.Report16
         //FamilyCode
         [DocumentMemberReference(Column = "AM", Position = 39, FieldName = "FamilyCode")]
         public string FamilyCode { get; set; }
-
-        [DocumentMemberReference(Column = "H", Position = 8, FieldName = "DateOfBirth")]
-        public DateTime DateOfBirth { get; set; }
-
     }
 }
