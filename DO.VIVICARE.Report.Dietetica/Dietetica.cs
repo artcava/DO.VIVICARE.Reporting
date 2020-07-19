@@ -150,6 +150,16 @@ namespace DO.VIVICARE.Report.Dietetica
         {
             //base.Execute();
 
+            var list = new List<Tuple<string, string, string>>();
+            var nameReport = "unkown";
+            var ua = (ReportReferenceAttribute)this.GetType().GetCustomAttribute(typeof(ReportReferenceAttribute));
+            if (ua != null)
+            {
+                nameReport = ua.Name;
+            }
+            var now = DateTime.Now;
+            var nameFileWithoutExt = "Dietetica";
+         
             try
             {
 
@@ -265,6 +275,7 @@ namespace DO.VIVICARE.Report.Dietetica
                 var objMonth = GetParamValue("Month");
                 if (objMonth != null) month = (int)objMonth;
 
+                nameFileWithoutExt = $"{nameReport}{ASSTCode.ToString()}-{year.ToString("0000")}{month.ToString("00")}.{now.ToString("dd-MM-yyyy.HH.mm.ss")}";
 
                 ProgressiveNumber = 1;
 
@@ -318,6 +329,15 @@ namespace DO.VIVICARE.Report.Dietetica
                         Type = Manager.Space(1)
                     }).
                     ToList();
+                }
+
+                var errorUserHostReport16 = reportFromReport16.Where(r => r.UserHost == null);
+                if (errorUserHostReport16 != null)
+                {
+                    foreach (var item in errorUserHostReport16)
+                    {
+                        list.Add(Tuple.Create("Report", "Elaborazione report dietetica", $"Errore Report16 ID {item.ID} : UserHost mancante"));
+                    }
                 }
 
                 ResultRecords.AddRange(reportFromReport16);
@@ -394,21 +414,26 @@ namespace DO.VIVICARE.Report.Dietetica
                     }).
                     ToList();
                 }
-                
-
-                ResultRecords.AddRange(reportFromZSDFatture);
-
-                var nameReport = "unkown";
-                var ua = (ReportReferenceAttribute)this.GetType().GetCustomAttribute(typeof(ReportReferenceAttribute));
-                if (ua != null)
+                var errorUserHostZSDFatture = reportFromZSDFatture.Where(r => r.UserHost == null);
+                if (errorUserHostZSDFatture != null)
                 {
-                    nameReport = ua.Name;
+                    foreach (var item in errorUserHostZSDFatture)
+                    {
+                        list.Add(Tuple.Create("Report", "Elaborazione report dietetica", $"Errore ZSDFatture ID {item.ID} : UserHost mancante"));
+                    }
+                }
+                var errorDateOfBirthZSDFatture = reportFromZSDFatture.Where(r => r.DateOfBirth == null ? true : (int.Parse(r.DateOfBirth.Substring(0, 4)) - now.Year)>100);
+                if (errorDateOfBirthZSDFatture != null)
+                {
+                    foreach (var item in errorDateOfBirthZSDFatture)
+                    {
+                        list.Add(Tuple.Create("Report", "Elaborazione report dietetica", $"Errore ZSDFatture ID {item.ID} : Data di nascita nulla o maggiore di 100"));
+                    }
                 }
 
-                var now = DateTime.Now;
 
-                var nameFileWithoutExt = $"{nameReport}{ASSTCode.ToString()}-{year.ToString("0000")}{month.ToString("00")}.{now.ToString("dd-MM-yyyy.HH.mm.ss")}";
-
+                ResultRecords.AddRange(reportFromZSDFatture);
+                
                 Manager.CreateExcelFile(this, nameFileWithoutExt); //crea file excel xlsx
                 Manager.CreateFile(this, nameFileWithoutExt); //crea file txt
                 Manager.CreateFile(this, nameFileWithoutExt, true); //crea file csv
@@ -419,8 +444,47 @@ namespace DO.VIVICARE.Report.Dietetica
             }
             catch (System.Exception ex)
             {
-                throw;
+                list.Add(Tuple.Create("Report", "Elaborazione report dietetica", $"Errore interno : {ex.Message}"));
             }
+            finally
+            {
+                WriteLog(list, nameFileWithoutExt);
+            }
+        }
+
+        //verific
+        private static void WriteLog(List<Tuple<string, string, string>> tuples, string fileName)
+        {
+            try
+            {
+                var path = Path.Combine(Manager.Reports, fileName + ".log");
+                var f = new FileStream(path, FileMode.Create);
+                string text = null;
+
+
+                foreach (var tuple in tuples)
+                {
+                    text += tuple.ToString() + "\r\n";
+                }
+
+                if (text != null)
+                {
+                    var buffer = GetBytes(text);
+                    f.Write(buffer, 0, buffer.Length);
+                    f.Close();
+                }
+            }
+            catch { }
+        }
+        /// <summary>
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        private static byte[] GetBytes(string str)
+        {
+            var bytes = new byte[str.Length * sizeof(char)];
+            Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
+            return bytes;
         }
 
         private object GetParamValue(string paramName)

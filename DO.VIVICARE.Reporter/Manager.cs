@@ -227,7 +227,7 @@ namespace DO.VIVICARE.Reporter
             }
             catch (Exception ex)
             {
-                list.Add(Tuple.Create("Riga: 0", "Colonna: 0", $"Errore interno: {ex.Message}"));
+                list.Add(Tuple.Create("Report", "Creazione file excel", $"Errore interno : {ex.Message}"));
                 return false;
             }
             finally
@@ -445,7 +445,7 @@ namespace DO.VIVICARE.Reporter
             }
             catch (Exception ex)
             {
-                list.Add(Tuple.Create("Riga: 0", "Colonna: 0", $"Errore interno: {ex.Message}"));
+                list.Add(Tuple.Create("Report", csv ? "Creazione file csv" : "Creazione file txt", $"Errore interno: {ex.Message}"));
                 return false;
             }
             finally
@@ -579,7 +579,7 @@ namespace DO.VIVICARE.Reporter
             }
             catch (Exception)
             {
-                throw;
+                return null;
             }
         }
 
@@ -671,6 +671,7 @@ namespace DO.VIVICARE.Reporter
         /// <returns></returns>
         public static string ErogaRSA(string hostType)
         {
+            if (string.IsNullOrEmpty(hostType)) return null;
             return hostType.ToUpper()=="RSA"?"1":"2";
         }
 
