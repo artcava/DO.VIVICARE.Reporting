@@ -230,6 +230,31 @@ namespace DO.VIVICARE.Reporter
 
         }
 
+        public List<string> GetReports(string report)
+        {
+            try
+            {
+                List<string> reports = new List<string>();
+                IEnumerable<XmlNode> nodes = Reports.SelectNodes($"REPORT[@report='{report}']").Cast<XmlNode>().OrderByDescending(r => Convert.ToDateTime(r.Attributes["create"].Value));
+
+                if (nodes == null) return null;
+                if (nodes.Count() == 0) return null;
+
+                foreach (var node in nodes)
+                {
+                    var nameAttr = node.Attributes["name"];
+                    reports.Add(nameAttr?.Value);
+                }
+
+                return reports;
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
+        }
+
         #endregion
 
         #region Private functions

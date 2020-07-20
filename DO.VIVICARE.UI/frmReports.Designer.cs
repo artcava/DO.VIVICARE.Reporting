@@ -39,8 +39,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.cmbChoose = new System.Windows.Forms.ComboBox();
             this.lvReport = new System.Windows.Forms.ListView();
-            this.btnExit = new System.Windows.Forms.Button();
-            this.btnExecute = new System.Windows.Forms.Button();
             this.imageListGrandi = new System.Windows.Forms.ImageList(this.components);
             this.imageListPiccole = new System.Windows.Forms.ImageList(this.components);
             this.dgvElenco = new System.Windows.Forms.DataGridView();
@@ -51,8 +49,11 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.executeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileExcelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.downloadFileCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.downloadFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openFileCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openFileTxtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnExit = new System.Windows.Forms.Button();
+            this.btnExecute = new System.Windows.Forms.Button();
+            this.storicoReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvElenco)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
@@ -111,29 +112,6 @@
             this.lvReport.View = System.Windows.Forms.View.Details;
             this.lvReport.Click += new System.EventHandler(this.lvReport_Click);
             this.lvReport.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lvReport_MouseClick);
-            // 
-            // btnExit
-            // 
-            this.btnExit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnExit.Image = global::DO.VIVICARE.UI.Properties.Resources.logout;
-            this.btnExit.Location = new System.Drawing.Point(1214, 579);
-            this.btnExit.Name = "btnExit";
-            this.btnExit.Size = new System.Drawing.Size(70, 50);
-            this.btnExit.TabIndex = 212;
-            this.btnExit.UseVisualStyleBackColor = true;
-            this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
-            // 
-            // btnExecute
-            // 
-            this.btnExecute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExecute.Image = global::DO.VIVICARE.UI.Properties.Resources.execute;
-            this.btnExecute.Location = new System.Drawing.Point(1138, 579);
-            this.btnExecute.Name = "btnExecute";
-            this.btnExecute.Size = new System.Drawing.Size(70, 50);
-            this.btnExecute.TabIndex = 211;
-            this.btnExecute.UseVisualStyleBackColor = true;
-            this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
             // 
             // imageListGrandi
             // 
@@ -231,35 +209,69 @@
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.executeToolStripMenuItem,
             this.openFileExcelToolStripMenuItem,
-            this.downloadFileCSVToolStripMenuItem,
-            this.downloadFileToolStripMenuItem});
+            this.openFileCSVToolStripMenuItem,
+            this.openFileTxtToolStripMenuItem,
+            this.storicoReportToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 92);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 136);
             // 
             // executeToolStripMenuItem
             // 
             this.executeToolStripMenuItem.Name = "executeToolStripMenuItem";
-            this.executeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.executeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.executeToolStripMenuItem.Text = "&Esegui";
             this.executeToolStripMenuItem.Click += new System.EventHandler(this.executeToolStripMenuItem_Click);
             // 
             // openFileExcelToolStripMenuItem
             // 
             this.openFileExcelToolStripMenuItem.Name = "openFileExcelToolStripMenuItem";
-            this.openFileExcelToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openFileExcelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openFileExcelToolStripMenuItem.Text = "&Apri File Excel";
+            this.openFileExcelToolStripMenuItem.Click += new System.EventHandler(this.openFileExcelToolStripMenuItem_Click);
             // 
-            // downloadFileCSVToolStripMenuItem
+            // openFileCSVToolStripMenuItem
             // 
-            this.downloadFileCSVToolStripMenuItem.Name = "downloadFileCSVToolStripMenuItem";
-            this.downloadFileCSVToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.downloadFileCSVToolStripMenuItem.Text = "&Download CSV";
+            this.openFileCSVToolStripMenuItem.Name = "openFileCSVToolStripMenuItem";
+            this.openFileCSVToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openFileCSVToolStripMenuItem.Text = "Apri File &CSV";
+            this.openFileCSVToolStripMenuItem.Click += new System.EventHandler(this.openFileCSVToolStripMenuItem_Click);
             // 
-            // downloadFileToolStripMenuItem
+            // openFileTxtToolStripMenuItem
             // 
-            this.downloadFileToolStripMenuItem.Name = "downloadFileToolStripMenuItem";
-            this.downloadFileToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.downloadFileToolStripMenuItem.Text = "Download &File";
+            this.openFileTxtToolStripMenuItem.Name = "openFileTxtToolStripMenuItem";
+            this.openFileTxtToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openFileTxtToolStripMenuItem.Text = "Apri File &Testo";
+            this.openFileTxtToolStripMenuItem.Click += new System.EventHandler(this.openFileTxtToolStripMenuItem_Click);
+            // 
+            // btnExit
+            // 
+            this.btnExit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnExit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnExit.Image = global::DO.VIVICARE.UI.Properties.Resources.logout;
+            this.btnExit.Location = new System.Drawing.Point(1214, 579);
+            this.btnExit.Name = "btnExit";
+            this.btnExit.Size = new System.Drawing.Size(70, 50);
+            this.btnExit.TabIndex = 212;
+            this.btnExit.UseVisualStyleBackColor = true;
+            this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
+            // 
+            // btnExecute
+            // 
+            this.btnExecute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnExecute.Image = global::DO.VIVICARE.UI.Properties.Resources.execute;
+            this.btnExecute.Location = new System.Drawing.Point(1138, 579);
+            this.btnExecute.Name = "btnExecute";
+            this.btnExecute.Size = new System.Drawing.Size(70, 50);
+            this.btnExecute.TabIndex = 211;
+            this.btnExecute.UseVisualStyleBackColor = true;
+            this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
+            // 
+            // storicoReportToolStripMenuItem
+            // 
+            this.storicoReportToolStripMenuItem.Name = "storicoReportToolStripMenuItem";
+            this.storicoReportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.storicoReportToolStripMenuItem.Text = "&Storico Report";
+            this.storicoReportToolStripMenuItem.Click += new System.EventHandler(this.storicoReportToolStripMenuItem_Click);
             // 
             // frmReports
             // 
@@ -296,11 +308,12 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem executeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openFileExcelToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem downloadFileCSVToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem downloadFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openFileCSVToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openFileTxtToolStripMenuItem;
         private System.Windows.Forms.DataGridViewTextBoxColumn Document;
         private System.Windows.Forms.DataGridViewTextBoxColumn FileName;
         private System.Windows.Forms.DataGridViewTextBoxColumn Origin;
         private System.Windows.Forms.DataGridViewTextBoxColumn LastModify;
+        private System.Windows.Forms.ToolStripMenuItem storicoReportToolStripMenuItem;
     }
 }

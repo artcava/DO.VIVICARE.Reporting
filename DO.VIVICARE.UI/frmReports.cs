@@ -316,7 +316,57 @@ namespace DO.VIVICARE.UI
             else MessageBox.Show(returnMessage, "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
             LoadReports();
         }
+        private void openFileExcelToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // APRE FILE xlsx CON EXCEL SEPARATAMENTE o il programma impostato per i file xlsx
+            var listViewItemReport = lvReport.SelectedItems[0];
+            if (listViewItemReport.SubItems[2].Text == "...")
+                MessageBox.Show($"Non hai ancora eseguito nessun report [{listViewItemReport.SubItems[1].Text}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            else
+                System.Diagnostics.Process.Start(listViewItemReport.SubItems[3].Text);
+        }
+        private void openFileCSVToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // APRE FILE csv CON EXCEL SEPARATAMENTE o il programma impostato per i file csv
+            var listViewItemReport = lvReport.SelectedItems[0];
+            if (listViewItemReport.SubItems[2].Text == "...")
+                MessageBox.Show($"Non hai ancora eseguito nessun report [{listViewItemReport.SubItems[1].Text}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            else
+            {
+                var destination = listViewItemReport.SubItems[3].Text;
+                destination = destination.Substring(0, destination.Length - 4)+"csv";
+                System.Diagnostics.Process.Start(destination);
+            }
+                
+        }
+        private void openFileTxtToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // APRE FILE txt CON EXCEL SEPARATAMENTE o il programma impostato per i file txt
+            var listViewItemReport = lvReport.SelectedItems[0];
+            if (listViewItemReport.SubItems[2].Text == "...")
+                MessageBox.Show($"Non hai ancora eseguito nessun report [{listViewItemReport.SubItems[1].Text}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            else
+            {
+                var destination = listViewItemReport.SubItems[3].Text;
+                destination = destination.Substring(0, destination.Length - 4) + "txt";
+                System.Diagnostics.Process.Start(destination);
+            }
+        }
+
         #endregion
 
+        private void storicoReportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var listViewItemReport = lvReport.SelectedItems[0];
+            if (listViewItemReport.SubItems[2].Text == "...")
+                MessageBox.Show($"Non hai ancora eseguito nessun report [{listViewItemReport.SubItems[1].Text}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            else
+            {
+                var report = listViewItemReport.SubItems[0].Text;
+                frmReportHistory f = new frmReportHistory($"Report Storico {report}", report);
+                DialogResult result = f.ShowDialog();
+            }
+                
+        }
     }
 }

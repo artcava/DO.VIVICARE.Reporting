@@ -26,7 +26,7 @@ namespace DO.VIVICARE.UI
             InitializeComponent();
 
             Parameters = parameters;
-
+            this.Text = title;
             LoadParameters();
         }
 

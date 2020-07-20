@@ -109,6 +109,12 @@
     <Compile Include="frmInputReportParameter.Designer.cs">
       <DependentUpon>frmInputReportParameter.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmReportHistory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmReportHistory.Designer.cs">
+      <DependentUpon>frmReportHistory.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmReports.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -143,6 +149,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmInputReportParameter.resx">
       <DependentUpon>frmInputReportParameter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmReportHistory.resx">
+      <DependentUpon>frmReportHistory.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmReports.resx">
       <DependentUpon>frmReports.cs</DependentUpon>
