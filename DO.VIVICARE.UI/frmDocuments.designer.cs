@@ -41,10 +41,11 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.apriFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.caricaFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.btnExit = new System.Windows.Forms.Button();
             this.apriFileDiorigineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.verificaFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.btnExit = new System.Windows.Forms.Button();
+            this.legendaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -150,9 +151,10 @@
             this.apriFileToolStripMenuItem,
             this.caricaFileToolStripMenuItem,
             this.apriFileDiorigineToolStripMenuItem,
-            this.verificaFileToolStripMenuItem});
+            this.verificaFileToolStripMenuItem,
+            this.legendaToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(211, 128);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(211, 152);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // apriFileToolStripMenuItem
@@ -168,6 +170,20 @@
             this.caricaFileToolStripMenuItem.Size = new System.Drawing.Size(210, 24);
             this.caricaFileToolStripMenuItem.Text = "&Carica File";
             this.caricaFileToolStripMenuItem.Click += new System.EventHandler(this.caricaFileToolStripMenuItem_Click);
+            // 
+            // apriFileDiorigineToolStripMenuItem
+            // 
+            this.apriFileDiorigineToolStripMenuItem.Name = "apriFileDiorigineToolStripMenuItem";
+            this.apriFileDiorigineToolStripMenuItem.Size = new System.Drawing.Size(210, 24);
+            this.apriFileDiorigineToolStripMenuItem.Text = "Apri File di &Origine";
+            this.apriFileDiorigineToolStripMenuItem.Click += new System.EventHandler(this.apriFileDiorigineToolStripMenuItem_Click);
+            // 
+            // verificaFileToolStripMenuItem
+            // 
+            this.verificaFileToolStripMenuItem.Name = "verificaFileToolStripMenuItem";
+            this.verificaFileToolStripMenuItem.Size = new System.Drawing.Size(210, 24);
+            this.verificaFileToolStripMenuItem.Text = "&Verifica File";
+            this.verificaFileToolStripMenuItem.Click += new System.EventHandler(this.verificaFileToolStripMenuItem_Click);
             // 
             // openFileDialog1
             // 
@@ -186,19 +202,12 @@
             this.btnExit.UseVisualStyleBackColor = true;
             this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
             // 
-            // apriFileDiorigineToolStripMenuItem
+            // legendaToolStripMenuItem
             // 
-            this.apriFileDiorigineToolStripMenuItem.Name = "apriFileDiorigineToolStripMenuItem";
-            this.apriFileDiorigineToolStripMenuItem.Size = new System.Drawing.Size(210, 24);
-            this.apriFileDiorigineToolStripMenuItem.Text = "Apri File di &Origine";
-            this.apriFileDiorigineToolStripMenuItem.Click += new System.EventHandler(this.apriFileDiorigineToolStripMenuItem_Click);
-            // 
-            // verificaFileToolStripMenuItem
-            // 
-            this.verificaFileToolStripMenuItem.Name = "verificaFileToolStripMenuItem";
-            this.verificaFileToolStripMenuItem.Size = new System.Drawing.Size(210, 24);
-            this.verificaFileToolStripMenuItem.Text = "&Verifica File";
-            this.verificaFileToolStripMenuItem.Click += new System.EventHandler(this.verificaFileToolStripMenuItem_Click);
+            this.legendaToolStripMenuItem.Name = "legendaToolStripMenuItem";
+            this.legendaToolStripMenuItem.Size = new System.Drawing.Size(210, 24);
+            this.legendaToolStripMenuItem.Text = "Legenda";
+            this.legendaToolStripMenuItem.Click += new System.EventHandler(this.legendaToolStripMenuItem_Click);
             // 
             // frmDocuments
             // 
@@ -235,6 +244,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ToolStripMenuItem apriFileDiorigineToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem verificaFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem legendaToolStripMenuItem;
     }
 }
 
