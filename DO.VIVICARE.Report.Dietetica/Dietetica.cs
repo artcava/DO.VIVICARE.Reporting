@@ -452,6 +452,53 @@ namespace DO.VIVICARE.Report.Dietetica
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public override void Regenerate(string nameFileWithoutExt)
+        {
+            ResultRecords.Clear();
+            var records = GetRecordsFromExcelFile(nameFileWithoutExt);
+
+            var formattedRecords = records.Select((dynamic r) => new Dietetica()
+            {
+                ATSCode = Manager.Left(int.Parse(r.ATSCode).ToString(), 3, ' '),
+                ASSTCode = int.Parse(r.ASSTCode).ToString("000000"),
+                Year = int.Parse(r.Year).ToString("0000"),
+                Month = int.Parse(r.Month).ToString("00"),
+                FiscalCode = Manager.Left(r.FiscalCode, 16),
+                Sex = r.Sex,
+                DateOfBirth = Manager.ConvertDate(r.DateOfBirth).ToString("yyyyMMdd"),
+                ISTATCode = Manager.Left(r.ISTATCode, 6, ' '),
+                UserHost = r.UserHost,
+                PrescriptionNumber = Manager.Space(14),
+                DeliveryDate = Manager.ConvertDate(r.DeliveryDate).ToString("yyyyMMdd"),
+                TypeDescription = Manager.Left(r.TypeDescription, 15, ' '),
+                Typology = Manager.Left(r.Typology, 1, ' '),
+                MinsanCode = Manager.Left(r.MinsanCode, 30, ' '),
+                MinsanDescription = Manager.Left(r.MinsanDescription, 30, ' '),
+                Manufacturer = Manager.Left(r.Manufacturer, 30, ' '),
+                PiecesPerPack = int.Parse(r.PiecesPerPack).ToString("000"),
+                UnitOfMeasure = Manager.Left(r.UnitOfMeasure, 9, ' '),
+                Quantity = int.Parse(r.Quantity).ToString("0000"),
+                ManagementChannel = ManagementChannel,
+                PurchaseAmount = decimal.Parse(r.PurchaseAmount).ToString("0000000000.00").Substring(0, 10)+
+                                 decimal.Parse(r.PurchaseAmount).ToString("0000000000.00").Substring(11, 2),
+                ServiceChargeAmount = decimal.Parse(r.ServiceChargeAmount).ToString("0000000000.00").Substring(0, 10) +
+                                 decimal.Parse(r.ServiceChargeAmount).ToString("0000000000.00").Substring(11, 2),
+                RecordDestination = r.RecordDestination,
+                ID = r.ID,
+                RepCode = Manager.Left(r.RepCode, 30, ' '),
+                CNDCode = Manager.Left(r.CNDCode, 13, ' '),
+                FlagDM = r.FlagDM,
+                Type = Manager.Left(r.Type, 1, ' ')
+            }).ToList();
+
+            ResultRecords.AddRange(formattedRecords);
+            Manager.CreateFile(this, nameFileWithoutExt); //crea file txt
+            Manager.CreateFile(this, nameFileWithoutExt, true); //crea file csv
+        }
+
         //verific
         private static void WriteLog(List<Tuple<string, string, string>> tuples, string fileName)
         {

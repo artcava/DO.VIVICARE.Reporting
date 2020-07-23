@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Globalization;
 
 namespace DO.VIVICARE.UI
 {
@@ -228,7 +229,7 @@ namespace DO.VIVICARE.UI
                     }
                     else
                     {
-                        lvReport.AddRow(0, f.Attribute.Name, f.Attribute.Description, list[0] == null ? "..." : name + list[2], list[3] ?? "...", list[4] ?? "...");
+                        lvReport.AddRow(0, f.Attribute.Name, f.Attribute.Description, list[0] == null ? "..." : name +"."+ list[2], list[3] ?? "...", list[4] ?? "...");
                     }
                     lvReport.Items[lvReport.Items.Count - 1].Tag = f.Report;
                 }
@@ -323,7 +324,18 @@ namespace DO.VIVICARE.UI
             if (listViewItemReport.SubItems[2].Text == "...")
                 MessageBox.Show($"Non hai ancora eseguito nessun report [{listViewItemReport.SubItems[1].Text}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
-                System.Diagnostics.Process.Start(listViewItemReport.SubItems[3].Text);
+            {
+                var destination = listViewItemReport.SubItems[3].Text;
+                try
+                {
+                    System.Diagnostics.Process.Start(destination);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"file [{destination}] errore [{ex.Message}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+                
         }
         private void openFileCSVToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -335,7 +347,14 @@ namespace DO.VIVICARE.UI
             {
                 var destination = listViewItemReport.SubItems[3].Text;
                 destination = destination.Substring(0, destination.Length - 4)+"csv";
-                System.Diagnostics.Process.Start(destination);
+                try
+                {
+                    System.Diagnostics.Process.Start(destination);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"file [{destination}] errore [{ex.Message}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
                 
         }
@@ -349,12 +368,36 @@ namespace DO.VIVICARE.UI
             {
                 var destination = listViewItemReport.SubItems[3].Text;
                 destination = destination.Substring(0, destination.Length - 4) + "txt";
-                System.Diagnostics.Process.Start(destination);
+                try
+                {
+                    System.Diagnostics.Process.Start(destination);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"file [{destination}] errore [{ex.Message}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
         }
-
-        #endregion
-
+        private void openFileErrorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // APRE FILE log CON EXCEL SEPARATAMENTE o il programma impostato per i file log
+            var listViewItemReport = lvReport.SelectedItems[0];
+            if (listViewItemReport.SubItems[2].Text == "...")
+                MessageBox.Show($"Non hai ancora eseguito nessun report [{listViewItemReport.SubItems[1].Text}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            else
+            {
+                var destination = listViewItemReport.SubItems[3].Text;
+                destination = destination.Substring(0, destination.Length - 4) + "log";
+                try
+                {
+                    System.Diagnostics.Process.Start(destination);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"file [{destination}] errore [{ex.Message}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+        }
         private void storicoReportToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var listViewItemReport = lvReport.SelectedItems[0];
@@ -366,7 +409,53 @@ namespace DO.VIVICARE.UI
                 frmReportHistory f = new frmReportHistory($"Report Storico {report}", report);
                 DialogResult result = f.ShowDialog();
             }
+
+        }
+        private void regenerateCSVTxtFromFileExcelToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var listViewItemReport = lvReport.SelectedItems[0];
+            if (listViewItemReport.SubItems[2].Text == "...")
+            {
+                MessageBox.Show($"Non hai ancora eseguito nessun report [{listViewItemReport.SubItems[1].Text}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }          
+            var returnMessage = string.Empty;
+            if (Regenerate(listViewItemReport, out returnMessage)) MessageBox.Show(returnMessage, "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else MessageBox.Show(returnMessage, "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+        #endregion
+
+        private bool Regenerate(ListViewItem selectedReport, out string message)
+        {
+            message = string.Empty;
+            try
+            {
                 
+                var fileNoExt = selectedReport.SubItems[2].Text;
+                fileNoExt = fileNoExt.Substring(0,fileNoExt.Length-5);
+                
+                BaseReport report = (BaseReport)selectedReport.Tag;
+
+                Cursor.Current = Cursors.WaitCursor;
+                
+                report.Regenerate(fileNoExt);
+
+                Cursor.Current = Cursors.Default;
+
+                if (report.ResultRecords.Count() == 0)
+                {
+                    message = "Nessun dato da rigenerare per Dietetica!";
+                    return false;
+                }
+
+                message = "File file CSV/Testo Dietetica rigenerati correttamente!";
+                return true;
+            }
+            catch (Exception ex)
+            {
+                message = $"Internal error:{ex.Message}";
+                return false;
+            }
         }
     }
 }

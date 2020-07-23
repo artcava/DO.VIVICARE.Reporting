@@ -51,9 +51,11 @@
             this.openFileExcelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileTxtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openFileErrorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.storicoReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnExit = new System.Windows.Forms.Button();
             this.btnExecute = new System.Windows.Forms.Button();
-            this.storicoReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.regenerateCSVTxtFromFileExcelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvElenco)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
@@ -211,37 +213,53 @@
             this.openFileExcelToolStripMenuItem,
             this.openFileCSVToolStripMenuItem,
             this.openFileTxtToolStripMenuItem,
-            this.storicoReportToolStripMenuItem});
+            this.openFileErrorToolStripMenuItem,
+            this.storicoReportToolStripMenuItem,
+            this.regenerateCSVTxtFromFileExcelToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 136);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(244, 180);
             // 
             // executeToolStripMenuItem
             // 
             this.executeToolStripMenuItem.Name = "executeToolStripMenuItem";
-            this.executeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.executeToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
             this.executeToolStripMenuItem.Text = "&Esegui";
             this.executeToolStripMenuItem.Click += new System.EventHandler(this.executeToolStripMenuItem_Click);
             // 
             // openFileExcelToolStripMenuItem
             // 
             this.openFileExcelToolStripMenuItem.Name = "openFileExcelToolStripMenuItem";
-            this.openFileExcelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openFileExcelToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
             this.openFileExcelToolStripMenuItem.Text = "&Apri File Excel";
             this.openFileExcelToolStripMenuItem.Click += new System.EventHandler(this.openFileExcelToolStripMenuItem_Click);
             // 
             // openFileCSVToolStripMenuItem
             // 
             this.openFileCSVToolStripMenuItem.Name = "openFileCSVToolStripMenuItem";
-            this.openFileCSVToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openFileCSVToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
             this.openFileCSVToolStripMenuItem.Text = "Apri File &CSV";
             this.openFileCSVToolStripMenuItem.Click += new System.EventHandler(this.openFileCSVToolStripMenuItem_Click);
             // 
             // openFileTxtToolStripMenuItem
             // 
             this.openFileTxtToolStripMenuItem.Name = "openFileTxtToolStripMenuItem";
-            this.openFileTxtToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openFileTxtToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
             this.openFileTxtToolStripMenuItem.Text = "Apri File &Testo";
             this.openFileTxtToolStripMenuItem.Click += new System.EventHandler(this.openFileTxtToolStripMenuItem_Click);
+            // 
+            // openFileErrorToolStripMenuItem
+            // 
+            this.openFileErrorToolStripMenuItem.Name = "openFileErrorToolStripMenuItem";
+            this.openFileErrorToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.openFileErrorToolStripMenuItem.Text = "Apri File &Errori";
+            this.openFileErrorToolStripMenuItem.Click += new System.EventHandler(this.openFileErrorToolStripMenuItem_Click);
+            // 
+            // storicoReportToolStripMenuItem
+            // 
+            this.storicoReportToolStripMenuItem.Name = "storicoReportToolStripMenuItem";
+            this.storicoReportToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.storicoReportToolStripMenuItem.Text = "&Storico Report";
+            this.storicoReportToolStripMenuItem.Click += new System.EventHandler(this.storicoReportToolStripMenuItem_Click);
             // 
             // btnExit
             // 
@@ -266,12 +284,12 @@
             this.btnExecute.UseVisualStyleBackColor = true;
             this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
             // 
-            // storicoReportToolStripMenuItem
+            // regenerateCSVTxtFromFileExcelToolStripMenuItem
             // 
-            this.storicoReportToolStripMenuItem.Name = "storicoReportToolStripMenuItem";
-            this.storicoReportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.storicoReportToolStripMenuItem.Text = "&Storico Report";
-            this.storicoReportToolStripMenuItem.Click += new System.EventHandler(this.storicoReportToolStripMenuItem_Click);
+            this.regenerateCSVTxtFromFileExcelToolStripMenuItem.Name = "regenerateCSVTxtFromFileExcelToolStripMenuItem";
+            this.regenerateCSVTxtFromFileExcelToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.regenerateCSVTxtFromFileExcelToolStripMenuItem.Text = "&Rigenera CSV/Testo da File Excel";
+            this.regenerateCSVTxtFromFileExcelToolStripMenuItem.Click += new System.EventHandler(this.regenerateCSVTxtFromFileExcelToolStripMenuItem_Click);
             // 
             // frmReports
             // 
@@ -315,5 +333,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Origin;
         private System.Windows.Forms.DataGridViewTextBoxColumn LastModify;
         private System.Windows.Forms.ToolStripMenuItem storicoReportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openFileErrorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem regenerateCSVTxtFromFileExcelToolStripMenuItem;
     }
 }

@@ -36,10 +36,12 @@
             this.openFileExcelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileTxtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openFileErrorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.cmbChoose = new System.Windows.Forms.ComboBox();
             this.imageListGrandi = new System.Windows.Forms.ImageList(this.components);
             this.imageListPiccole = new System.Windows.Forms.ImageList(this.components);
+            this.regenerateCSVTxtFromFileExcelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -75,30 +77,39 @@
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openFileExcelToolStripMenuItem,
             this.openFileCSVToolStripMenuItem,
-            this.openFileTxtToolStripMenuItem});
+            this.openFileTxtToolStripMenuItem,
+            this.openFileErrorToolStripMenuItem,
+            this.regenerateCSVTxtFromFileExcelToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(148, 70);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(244, 114);
             // 
             // openFileExcelToolStripMenuItem
             // 
             this.openFileExcelToolStripMenuItem.Name = "openFileExcelToolStripMenuItem";
-            this.openFileExcelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openFileExcelToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
             this.openFileExcelToolStripMenuItem.Text = "&Apri File Excel";
             this.openFileExcelToolStripMenuItem.Click += new System.EventHandler(this.openFileExcelToolStripMenuItem_Click);
             // 
             // openFileCSVToolStripMenuItem
             // 
             this.openFileCSVToolStripMenuItem.Name = "openFileCSVToolStripMenuItem";
-            this.openFileCSVToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openFileCSVToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
             this.openFileCSVToolStripMenuItem.Text = "Apri File &CSV";
             this.openFileCSVToolStripMenuItem.Click += new System.EventHandler(this.openFileCSVToolStripMenuItem_Click);
             // 
             // openFileTxtToolStripMenuItem
             // 
             this.openFileTxtToolStripMenuItem.Name = "openFileTxtToolStripMenuItem";
-            this.openFileTxtToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openFileTxtToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
             this.openFileTxtToolStripMenuItem.Text = "Apri File &Testo";
             this.openFileTxtToolStripMenuItem.Click += new System.EventHandler(this.openFileTxtToolStripMenuItem_Click);
+            // 
+            // openFileErrorToolStripMenuItem
+            // 
+            this.openFileErrorToolStripMenuItem.Name = "openFileErrorToolStripMenuItem";
+            this.openFileErrorToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.openFileErrorToolStripMenuItem.Text = "Apri File Errori";
+            this.openFileErrorToolStripMenuItem.Click += new System.EventHandler(this.openFileErrorToolStripMenuItem_Click);
             // 
             // label1
             // 
@@ -125,6 +136,7 @@
             this.cmbChoose.Name = "cmbChoose";
             this.cmbChoose.Size = new System.Drawing.Size(218, 21);
             this.cmbChoose.TabIndex = 215;
+            this.cmbChoose.SelectionChangeCommitted += new System.EventHandler(this.cmbChoose_SelectionChangeCommitted);
             // 
             // imageListGrandi
             // 
@@ -137,6 +149,13 @@
             this.imageListPiccole.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListPiccole.ImageStream")));
             this.imageListPiccole.TransparentColor = System.Drawing.Color.Transparent;
             this.imageListPiccole.Images.SetKeyName(0, "iconReportSmall.png");
+            // 
+            // regenerateCSVTxtFromFileExcelToolStripMenuItem
+            // 
+            this.regenerateCSVTxtFromFileExcelToolStripMenuItem.Name = "regenerateCSVTxtFromFileExcelToolStripMenuItem";
+            this.regenerateCSVTxtFromFileExcelToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.regenerateCSVTxtFromFileExcelToolStripMenuItem.Text = "&Rigenera CSV/Testo da File Excel";
+            this.regenerateCSVTxtFromFileExcelToolStripMenuItem.Click += new System.EventHandler(this.regenerateCSVTxtFromFileExcelToolStripMenuItem_Click);
             // 
             // frmReportHistory
             // 
@@ -169,5 +188,7 @@
         private System.Windows.Forms.ComboBox cmbChoose;
         private System.Windows.Forms.ImageList imageListGrandi;
         private System.Windows.Forms.ImageList imageListPiccole;
+        private System.Windows.Forms.ToolStripMenuItem openFileErrorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem regenerateCSVTxtFromFileExcelToolStripMenuItem;
     }
 }

@@ -89,6 +89,7 @@ namespace DO.VIVICARE.Reporter
             }
             return list;
         }
+        
         /// <summary>
         /// 
         /// </summary>
@@ -436,6 +437,9 @@ namespace DO.VIVICARE.Reporter
 
                 var ext = csv ? "csv" : "txt";
                 var destinationFilePath = Path.Combine(Manager.Reports, $"{fileWithoutExt}.{ext}");
+
+                if (File.Exists(destinationFilePath)) File.Delete(destinationFilePath);
+
                 var f = new FileStream(destinationFilePath, FileMode.Create);
 
                 f.Write(dataAsBytes, 0, dataAsBytes.Length);
@@ -724,6 +728,43 @@ namespace DO.VIVICARE.Reporter
         public static string NumProg(long lpn, int y, int m)
         {
             return $"VIVPEZZ{y.ToString("0000")}{m.ToString("00")}{lpn.ToString("0000000")}";
+        }
+
+        public static DateTime ConvertDate(string value)
+        {
+            DateTime ret = DateTime.MinValue;
+           
+            if (!DateTime.TryParse(value, CultureInfo.InvariantCulture,
+                                DateTimeStyles.None, out ret))
+            {
+                if (!DateTime.TryParse(value, new CultureInfo("it-IT"),
+                                DateTimeStyles.None, out ret))
+                {
+                    if (!DateTime.TryParseExact(value, "yyyyMMdd", CultureInfo.InvariantCulture,
+                               DateTimeStyles.None, out ret))
+                    {
+                        try
+                        {
+                            double d = 0;
+                            try
+                            {
+                                d = double.Parse(value, CultureInfo.InvariantCulture);
+                            }
+                            catch (Exception exDouble)
+                            {
+                                var err = exDouble;
+                            }
+                            ret = DateTime.FromOADate(d);
+                        }
+                        catch (Exception ex)
+                        {
+
+                            throw new FormatException("Not valid format", ex);
+                        }
+                    }
+                }                  
+            }
+            return ret;
         }
 
     }
