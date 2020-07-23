@@ -174,6 +174,14 @@ namespace DO.VIVICARE.UI
                 MessageBox.Show(msg, "Errore!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             LoadDocuments();
         }
+
+        private void legendaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form childForm = new frmDocumentLegend($"Legenda {lvReport.SelectedItems[0].Text}", (BaseDocument)lvReport.SelectedItems[0].Tag);
+            childForm.MdiParent = this.MdiParent;
+            childForm.Text = $"Legenda {lvReport.SelectedItems[0].Text}";
+            childForm.Show();
+        }
         #endregion
 
         private void btnExit_Click(object sender, EventArgs e)
