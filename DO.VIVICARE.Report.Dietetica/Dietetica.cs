@@ -275,7 +275,7 @@ namespace DO.VIVICARE.Report.Dietetica
                 var objMonth = GetParamValue("Month");
                 if (objMonth != null) month = (int)objMonth;
 
-                nameFileWithoutExt = $"{nameReport}{ASSTCode.ToString()}-{year.ToString("0000")}{month.ToString("00")}.{now.ToString("dd-MM-yyyy.HH.mm.ss")}";
+                nameFileWithoutExt = $"{nameReport}{ASSTCode}-{year:0000}{month:00}.{now:dd-MM-yyyy.HH.mm.ss}";
 
                 ProgressiveNumber = 1;
 
