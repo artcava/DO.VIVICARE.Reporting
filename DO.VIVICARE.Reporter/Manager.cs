@@ -89,7 +89,7 @@ namespace DO.VIVICARE.Reporter
             }
             return list;
         }
-        
+
         /// <summary>
         /// 
         /// </summary>

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -42,7 +43,12 @@ namespace DO.VIVICARE.UI
             try
             {
                 lvReport.Clear();
+                lblHeader.Text = string.Empty;
                 lvReport.View = View.Details;
+
+                var ua = (DocumentReferenceAttribute)Document.GetType().GetCustomAttribute(typeof(DocumentReferenceAttribute));
+                if (ua != null)
+                    lblHeader.Text = $"Documento: {ua.Name}; Descrizione: {ua.Description}; Riga iniziale: {ua.RowStart}";
 
                 var list = Manager.GetDocumentColumns(Document);
                 if (list == null)

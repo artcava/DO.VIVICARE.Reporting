@@ -30,6 +30,7 @@
         {
             this.lvReport = new System.Windows.Forms.ListView();
             this.btnExit = new System.Windows.Forms.Button();
+            this.lblHeader = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lvReport
@@ -38,10 +39,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvReport.BackColor = System.Drawing.Color.White;
             this.lvReport.HideSelection = false;
-            this.lvReport.Location = new System.Drawing.Point(12, 13);
-            this.lvReport.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.lvReport.Location = new System.Drawing.Point(9, 39);
             this.lvReport.Name = "lvReport";
-            this.lvReport.Size = new System.Drawing.Size(1132, 484);
+            this.lvReport.Size = new System.Drawing.Size(850, 366);
             this.lvReport.TabIndex = 17;
             this.lvReport.UseCompatibleStateImageBehavior = false;
             this.lvReport.View = System.Windows.Forms.View.Details;
@@ -51,27 +51,36 @@
             this.btnExit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnExit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnExit.Image = global::DO.VIVICARE.UI.Properties.Resources.logout;
-            this.btnExit.Location = new System.Drawing.Point(1052, 505);
-            this.btnExit.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnExit.Location = new System.Drawing.Point(789, 410);
             this.btnExit.Name = "btnExit";
-            this.btnExit.Size = new System.Drawing.Size(93, 62);
+            this.btnExit.Size = new System.Drawing.Size(70, 50);
             this.btnExit.TabIndex = 213;
             this.btnExit.UseVisualStyleBackColor = true;
             this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
             // 
+            // lblHeader
+            // 
+            this.lblHeader.AutoSize = true;
+            this.lblHeader.Location = new System.Drawing.Point(12, 9);
+            this.lblHeader.Name = "lblHeader";
+            this.lblHeader.Size = new System.Drawing.Size(115, 13);
+            this.lblHeader.TabIndex = 214;
+            this.lblHeader.Text = "Header del documento";
+            // 
             // frmDocumentLegend
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1161, 576);
+            this.ClientSize = new System.Drawing.Size(871, 468);
+            this.Controls.Add(this.lblHeader);
             this.Controls.Add(this.btnExit);
             this.Controls.Add(this.lvReport);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "frmDocumentLegend";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Storico report";
+            this.Text = "Legenda";
             this.Load += new System.EventHandler(this.frmReportHistory_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -79,5 +88,6 @@
 
         private System.Windows.Forms.ListView lvReport;
         private System.Windows.Forms.Button btnExit;
+        private System.Windows.Forms.Label lblHeader;
     }
 }
