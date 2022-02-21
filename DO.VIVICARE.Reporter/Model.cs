@@ -1,12 +1,9 @@
 ﻿using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using Excel = Microsoft.Office.Interop.Excel;
 using Tuple = System.Tuple;
 
 namespace DO.VIVICARE.Reporter
