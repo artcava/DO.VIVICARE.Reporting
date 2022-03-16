@@ -26,5 +26,7 @@ namespace DO.VIVICARE.Document.ADIAltaIntensita
 
         [DocumentMemberReference(Column = "L", Position = 12, FieldName = "Activity")]
         public string Activity { get; set; }
+
+        public string NameKey { get { return HealthWorker.Replace(" ", string.Empty); } }
     }
 }

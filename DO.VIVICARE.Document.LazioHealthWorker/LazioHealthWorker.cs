@@ -10,5 +10,7 @@ namespace DO.VIVICARE.Document.LazioHealthWorker
 
         [DocumentMemberReference(Column = "B", Position = 2, FieldName = "WorkType")]
         public string WorkType { get; set; }
+
+        public string NameKey { get { return HealthWorker.Replace(" ", string.Empty); } }
     }
 }

@@ -272,33 +272,6 @@ namespace DO.VIVICARE.Reporter
             }
         }
 
-        //private DateTime ConvertDate(string value)
-        //{
-        //    DateTime ret = DateTime.MinValue;
-        //    if (!DateTime.TryParse(value, out ret))
-        //    {
-        //        try
-        //        {
-        //            double d = 0;
-        //            try
-        //            {
-        //                d = double.Parse(value, CultureInfo.InvariantCulture);
-        //            }
-        //            catch (Exception exDouble)
-        //            {
-        //                var err = exDouble;
-        //            }
-        //            ret = DateTime.FromOADate(d);
-        //        }
-        //        catch (Exception ex)
-        //        {
-
-        //            throw new FormatException("Not valid format", ex);
-        //        }
-        //    }
-        //    return ret;
-        //}
-
         private void SetDefault(BaseDocument el, PropertyInfo p)
         {
             switch (p.PropertyType.FullName)
@@ -437,6 +410,21 @@ namespace DO.VIVICARE.Reporter
         public List<ReportParameter> Parameters { get; }
 
         public virtual void CreateParameters() { }
+
+        protected object GetParamValue(string paramName)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(paramName)) return null;
+                var param = Parameters.FirstOrDefault(p => p.Name == paramName);
+                if (param == null) return null;
+                return param.ReturnValue;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
 
         public virtual void LoadDocuments(bool withRecords = false)
         {
@@ -655,11 +643,11 @@ namespace DO.VIVICARE.Reporter
             }
         }
 
-        private void WriteLog(List<Tuple<string, string, string>> tuples, string fileName)
+        protected void WriteLog(List<Tuple<string, string, string>> tuples, string fileName)
         {
             try
             {
-                var path = Path.Combine(Manager.Documents, fileName + ".log");
+                var path = Path.Combine(Manager.Reports, fileName + ".log");
                 var f = new FileStream(path, FileMode.Create);
                 string text = null;
 

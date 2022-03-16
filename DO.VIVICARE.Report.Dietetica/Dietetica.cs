@@ -13,32 +13,10 @@ namespace DO.VIVICARE.Report.Dietetica
     [ReportReference(Name = "Dietetica", Description = "Report inerente il consuntivo dietetica")]
     public class Dietetica : BaseReport
     {
-        //private int _year;
-        //private int _month;
-        //private BaseDocument _ASST;
-
-        //private string[] docs = new string[] { "ASST", "Comuni", "ZSDFatture", "Report16", "Report18", "MinSan", "Prezzi" };
-
         public Dietetica()
         {
             DocumentNames = new string[] { "ASST", "Comuni", "ZSDFatture", "Report16", "Report18", "Rendiconto", "MinSan", "Prezzi" };
-            //DocumentNames = new string[] { "Report16" };
         }
-
-        //public void SetYear(int year)
-        //{
-        //    _year = year;
-        //}
-
-        //public void SetMonth(int month)
-        //{
-        //    _month = month;
-        //}
-
-        //public void SetASST(BaseDocument ASST)
-        //{
-        //    _ASST = ASST;
-        //}
 
         public long ProgressiveNumber { get; set; }
 
@@ -98,12 +76,14 @@ namespace DO.VIVICARE.Report.Dietetica
                             var ASST = (BaseDocument)objASST;
                             var propField = ASST.GetType().GetProperty("IDSintesi");
                             int idSintesi = (int)propField.GetValue(ASST);
-                            var filters = new List<FilterDocument>();
-                            filters.Add(new FilterDocument
+                            var filters = new List<FilterDocument>
                             {
-                                Column = document.Attribute.Name == "Report16"?"N":"E",
-                                Value = idSintesi.ToString()
-                            });
+                                new FilterDocument
+                                {
+                                    Column = document.Attribute.Name == "Report16" ? "N" : "E",
+                                    Value = idSintesi.ToString()
+                                }
+                            };
                             document.Document.Filters = filters;
                         }
                     }
@@ -136,20 +116,12 @@ namespace DO.VIVICARE.Report.Dietetica
             }
         }
 
-        //public void SetLastProgressiveNumber(long lastProgressiveNumber)
-        //{
-        //    _lastProgressiveNumber = lastProgressiveNumber;
-        //}
-        
-
         //}
         /// <summary>
         /// 
         /// </summary>
         public override void Execute()
         {
-            //base.Execute();
-
             var list = new List<Tuple<string, string, string>>();
             var nameReport = "unkown";
             var ua = (ReportReferenceAttribute)this.GetType().GetCustomAttribute(typeof(ReportReferenceAttribute));
@@ -162,7 +134,7 @@ namespace DO.VIVICARE.Report.Dietetica
          
             try
             {
-
+                #region Caricamento Documenti
                 var documents = Documents;
 
                 var doc = documents.Find(x => x.AttributeName == "ZSDFatture");
@@ -172,44 +144,20 @@ namespace DO.VIVICARE.Report.Dietetica
                 }
                 var listZSDFatture = doc.Records;
 
-                //RNDGNN34M14G273B
-
-                //var zsdf = listZSDFatture.FirstOrDefault((dynamic f) => f.FiscalCode == "RNDGNN34M14G273B");
-
-                //if (listZSDFatture.Count()==0)
-                //{
-                //    throw new Exception("ZSDFatture non caricato!");
-                //}
                 doc = documents.Find(x => x.AttributeName == "Report16");
                 if (doc == null)
                 {
                     throw new Exception("Report16 non trovato!");
                 }
                 var listReport16 = doc.Records;
-                //if (listReport16.Count() == 0)
-                //{
-                //    throw new Exception("Report16 non caricato!");
-                //}
+
                 doc = documents.Find(x => x.AttributeName == "Report18");
                 if (doc == null)
                 {
                     throw new Exception("Report18 non trovato!");
                 }
                 var listReport18 = doc.Records;
-                //if (listReport18.Count() == 0)
-                //{
-                //    throw new Exception("Report18 non caricato!");
-                //}
-                //doc = documents.Find(x => x.AttributeName == "ASST");
-                //if (doc == null)
-                //{
-                //    throw new Exception("ASST non trovato!");
-                //}
-                //var listASST = doc.Records;
-                //if (listASST.Count() == 0)
-                //{
-                //    throw new Exception("ASST non caricato!");
-                //}
+
                 doc = documents.Find(x => x.AttributeName == "Comuni");
                 if (doc == null)
                 {
@@ -220,16 +168,14 @@ namespace DO.VIVICARE.Report.Dietetica
                 {
                     throw new Exception("Comuni non caricato!");
                 }
+
                 doc = documents.Find(x => x.AttributeName == "Rendiconto");
                 if (doc == null)
                 {
                     throw new Exception("Rendiconto non trovato!");
                 }
                 var listRendiconto = doc.Records;
-                //if (listRendiconto.Count() == 0)
-                //{
-                //    throw new Exception("Rendiconto non caricato!");
-                //}
+
                 doc = documents.Find(x => x.AttributeName == "MinSan");
                 if (doc == null)
                 {
@@ -240,6 +186,7 @@ namespace DO.VIVICARE.Report.Dietetica
                 {
                     throw new Exception("MinSan non caricato!");
                 }
+
                 doc = documents.Find(x => x.AttributeName == "Prezzi");
                 if (doc == null)
                 {
@@ -250,7 +197,9 @@ namespace DO.VIVICARE.Report.Dietetica
                 {
                     throw new Exception("Prezzi non caricato!");
                 }
+                #endregion
 
+                #region Caricamento Parametri
                 int idSintesi = 0;
                 string SAPCode = "";
                 int ATSCode = 0;
@@ -278,6 +227,7 @@ namespace DO.VIVICARE.Report.Dietetica
                 nameFileWithoutExt = $"{nameReport}{ASSTCode}-{year:0000}{month:00}.{now:dd-MM-yyyy.HH.mm.ss}";
 
                 ProgressiveNumber = 1;
+                #endregion
 
                 //fitrare FamilyCode per F0103, F0157, F0158, F0159
 
@@ -497,57 +447,6 @@ namespace DO.VIVICARE.Report.Dietetica
             ResultRecords.AddRange(formattedRecords);
             Manager.CreateFile(this, nameFileWithoutExt); //crea file txt
             Manager.CreateFile(this, nameFileWithoutExt, true); //crea file csv
-        }
-
-        //verific
-        private static void WriteLog(List<Tuple<string, string, string>> tuples, string fileName)
-        {
-            try
-            {
-                var path = Path.Combine(Manager.Reports, fileName + ".log");
-                var f = new FileStream(path, FileMode.Create);
-                string text = null;
-
-
-                foreach (var tuple in tuples)
-                {
-                    text += tuple.ToString() + "\r\n";
-                }
-
-                if (text != null)
-                {
-                    var buffer = GetBytes(text);
-                    f.Write(buffer, 0, buffer.Length);
-                    f.Close();
-                }
-            }
-            catch { }
-        }
-        /// <summary>
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        private static byte[] GetBytes(string str)
-        {
-            var bytes = new byte[str.Length * sizeof(char)];
-            Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
-            return bytes;
-        }
-
-        private object GetParamValue(string paramName)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(paramName)) return null;
-                var param = Parameters.FirstOrDefault(p=>p.Name==paramName);
-                if (param==null) return null;
-                return param.ReturnValue;
-            }
-            catch (Exception)
-            {
-
-                return null;
-            }
         }
 
         #region Members
