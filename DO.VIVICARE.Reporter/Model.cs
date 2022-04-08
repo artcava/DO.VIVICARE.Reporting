@@ -204,6 +204,8 @@ namespace DO.VIVICARE.Reporter
         
         private void SetValue(BaseDocument el, PropertyInfo p, object value)
         {
+            var ax = (DocumentMemberReferenceAttribute[])p.GetCustomAttributes(typeof(DocumentMemberReferenceAttribute), false);
+
             try
             {
                 if (p.PropertyType.FullName == "System.Decimal" &&
@@ -260,7 +262,10 @@ namespace DO.VIVICARE.Reporter
                                     (value.GetType().FullName == "System.String"
                                      ))
                 {
-                    var dtmValue = Manager.ConvertDate((string)value);
+                    string format=null;
+                    if (ax != null && ax[0] != null && !string.IsNullOrEmpty(ax[0].Format))
+                        format = ax[0].Format;
+                    var dtmValue = Manager.ConvertDate((string)value, format);
                     p.SetValue(el, dtmValue);
                 }
                 else p.SetValue(el, value);
@@ -376,6 +381,8 @@ namespace DO.VIVICARE.Reporter
         //Penso che bisognerebbe aggiungere anche FieldName per poter identificare in modo diretto
         //il campo della classe BaseDocument
         public string FieldName { get; set; }
+
+        public string Format { get; set; }
     }
     /// <summary>
     /// 
@@ -728,6 +735,8 @@ namespace DO.VIVICARE.Reporter
         public int Length { get; set; }
         public int DecimalDigits { get; set; }
         public bool IsDate { get; set; }
+        public bool IsDouble { get; set; }
+        public bool IsDecimal { get; set; }
         public string ColumnName { get; set; }
         public bool Required { get; set; }
         public string FillValue { get; set; }
@@ -736,6 +745,7 @@ namespace DO.VIVICARE.Reporter
         //Penso che bisognerebbe aggiungere anche FieldName per poter identificare in modo diretto
         //il campo della classe BaseDocument
         public string FieldName { get; set; }
+        public string Format { get; set; }
     }
    
     

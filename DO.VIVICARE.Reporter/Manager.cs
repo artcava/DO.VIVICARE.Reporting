@@ -186,8 +186,9 @@ namespace DO.VIVICARE.Reporter
                             var propField = element.GetType().GetProperty(nameField);
                           
                             var isDate = col.IsDate;
+                            var isDouble = col.IsDouble;
                             var decimalAttribute = col.DecimalDigits;
-                            if (decimalAttribute!=0)
+                            if (decimalAttribute != 0)
                             {
                                 string stringValue = (string)propField.GetValue(element);
                                 string strDec = stringValue.Substring(stringValue.Length - 2);
@@ -198,18 +199,22 @@ namespace DO.VIVICARE.Reporter
                             }
                             else if (isDate)
                             {
-                                string stringValue = (string)propField.GetValue(element);
-                                DateTime dateValue = DateTime.MinValue;
-                                if (DateTime.TryParseExact(stringValue, "yyyyMMdd",
-                                CultureInfo.InvariantCulture,
-                                DateTimeStyles.None, out dateValue))
-                                {
-                                    cell.CellValue = new CellValue(dateValue.ToShortDateString());
-                                }
-                                else
-                                {
-                                    cell.CellValue = new CellValue((string)propField.GetValue(element));
-                                }
+                                DateTime dateValue = (DateTime)propField.GetValue(element);
+                                var format = col.Format ?? "yyyyMMdd";
+                                cell.CellValue = new CellValue(dateValue.ToString(format));
+                                //if (DateTime.TryParseExact(stringValue, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateValue))
+                                //{
+                                //    cell.CellValue = new CellValue(dateValue.ToShortDateString());
+                                //}
+                                //else
+                                //{
+                                //    cell.CellValue = new CellValue((string)propField.GetValue(element));
+                                //}
+                            }
+                            else if (isDouble)
+                            {
+                                double val = (double)propField.GetValue(element);
+                                cell.CellValue = new CellValue(val.ToString());
                             }
                             else
                                 cell.CellValue = new CellValue((string)propField.GetValue(element));
@@ -392,9 +397,7 @@ namespace DO.VIVICARE.Reporter
                             {
                                 string stringValue = (string)propField.GetValue(record);
                                 DateTime dateValue = DateTime.MinValue;
-                                if (DateTime.TryParseExact(stringValue, "yyyyMMdd",
-                                CultureInfo.InvariantCulture,
-                                DateTimeStyles.None, out dateValue))
+                                if (DateTime.TryParseExact(stringValue, "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dateValue))
                                 {
                                     line += $"\"{dateValue.ToString("ddMMyyyy")}\";"; 
                                 }
@@ -730,18 +733,18 @@ namespace DO.VIVICARE.Reporter
             return $"VIVPEZZ{y.ToString("0000")}{m.ToString("00")}{lpn.ToString("0000000")}";
         }
 
-        public static DateTime ConvertDate(string value)
+        public static DateTime ConvertDate(string value, string format=null)
         {
-            DateTime ret = DateTime.MinValue;
-           
-            if (!DateTime.TryParse(value, CultureInfo.InvariantCulture,
-                                DateTimeStyles.None, out ret))
+            DateTime ret;
+            if (format != null)
             {
-                if (!DateTime.TryParse(value, new CultureInfo("it-IT"),
-                                DateTimeStyles.None, out ret))
+                DateTime.TryParseExact(value, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out ret);
+            }
+            else if (!DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.None, out ret))
+            {
+                if (!DateTime.TryParse(value, new CultureInfo("it-IT"), DateTimeStyles.None, out ret))
                 {
-                    if (!DateTime.TryParseExact(value, "yyyyMMdd", CultureInfo.InvariantCulture,
-                               DateTimeStyles.None, out ret))
+                    if (!DateTime.TryParseExact(value, "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out ret))
                     {
                         try
                         {
@@ -758,7 +761,6 @@ namespace DO.VIVICARE.Reporter
                         }
                         catch (Exception ex)
                         {
-
                             throw new FormatException("Not valid format", ex);
                         }
                     }

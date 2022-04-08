@@ -294,11 +294,11 @@ namespace DO.VIVICARE.UI
 
                 if (report.ResultRecords.Count() == 0)
                 {
-                    message = "Nessun dato da elaborare per Dietetica!";
+                    message = $"Nessun dato da elaborare per {nameReport}!";
                     return false;
                 }
                 
-                message = "File excel e file tracciato Dietetica creato correttamente!";
+                message = $"File excel e file tracciato {nameReport} creato correttamente!";
                 return true;
             }
             catch (Exception ex)
