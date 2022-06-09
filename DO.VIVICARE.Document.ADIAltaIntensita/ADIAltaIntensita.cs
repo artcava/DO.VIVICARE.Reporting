@@ -15,16 +15,16 @@ namespace DO.VIVICARE.Document.ADIAltaIntensita
         [DocumentMemberReference(Column = "E", Position = 5, FieldName = "District")]
         public string District { get; set; }
 
-        [DocumentMemberReference(Column = "F", Position = 6, FieldName = "Date", Format ="dd/MM/yyyy")]
+        [DocumentMemberReference(Column = "G", Position = 7, FieldName = "Date", Format ="dd/MM/yyyy")]
         public DateTime Date { get; set; }
 
-        [DocumentMemberReference(Column = "J", Position = 10, FieldName = "HealthWorker")]
+        [DocumentMemberReference(Column = "K", Position = 11, FieldName = "HealthWorker")]
         public string HealthWorker { get; set; }
 
-        [DocumentMemberReference(Column = "K", Position = 11, FieldName = "Duration")]
+        [DocumentMemberReference(Column = "M", Position = 13, FieldName = "Duration")]
         public double Duration { get; set; }
 
-        [DocumentMemberReference(Column = "L", Position = 12, FieldName = "Activity")]
+        [DocumentMemberReference(Column = "O", Position = 15, FieldName = "Activity")]
         public string Activity { get; set; }
 
         public string NameKey { get { return HealthWorker.Replace(" ", string.Empty); } }

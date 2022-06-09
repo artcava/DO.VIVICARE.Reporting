@@ -125,20 +125,18 @@ namespace DO.VIVICARE.Reporter
 
         public static bool CreateExcelFile(BaseReport report, string fileWithoutExt)
         {
-            var name = string.Empty;
             var list = new List<Tuple<string, string, string>>();
-            ExcelManager manExcel = null;
             try
             {
                 var ua = (ReportReferenceAttribute)report.GetType().GetCustomAttribute(typeof(ReportReferenceAttribute));
                 if (ua != null)
                 {
-                    name = ua.Name;
+                    string name = ua.Name;
                 }
                 
                 var destinationFilePath = Path.Combine(Manager.Reports, $"{fileWithoutExt}.xlsx");
 
-                manExcel = new ExcelManager();
+                ExcelManager manExcel = new ExcelManager();
                 if (!manExcel.Create(destinationFilePath, fileWithoutExt)) return false;
                 
 
@@ -177,13 +175,15 @@ namespace DO.VIVICARE.Reporter
                         {
                             var cell = new Cell
                             {
-                                CellReference = $"{col.Column}{i.ToString()}",
+                                CellReference = $"{col.Column}{i}",
                                 CellValue = new CellValue(""),
                                 DataType = CellValues.String
                             };
                            
                             var nameField = col.FieldName;
                             var propField = element.GetType().GetProperty(nameField);
+
+                            ///TODO: Rivedere le assegnazioni utilizzando il Type della Property anziché gli attributi isDate e isDouble
                           
                             var isDate = col.IsDate;
                             var isDouble = col.IsDouble;

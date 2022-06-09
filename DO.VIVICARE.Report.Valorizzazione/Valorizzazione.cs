@@ -41,6 +41,258 @@ namespace DO.VIVICARE.Report.Valorizzazione
                 ReturnValue = null
             });
         }
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        //public override void Execute()
+        //{
+        //    var list = new List<Tuple<string, string, string>>();
+        //    var nameReport = "unkown";
+        //    var ua = (ReportReferenceAttribute)this.GetType().GetCustomAttribute(typeof(ReportReferenceAttribute));
+        //    if (ua != null)
+        //    {
+        //        nameReport = ua.Name;
+        //    }
+        //    var now = DateTime.Now;
+        //    var nameFileWithoutExt = "Valorizzazione";
+
+        //    try
+        //    {
+        //        var documents = Documents;
+
+        //        var doc = documents.Find(x => x.AttributeName == "ADIAltaIntensita");
+        //        if (doc == null)
+        //        {
+        //            throw new Exception("ADIAltaIntensita non trovato!");
+        //        }
+        //        var listADIAltaIntensita = doc.Records;
+
+        //        doc = documents.Find(x => x.AttributeName == "LazioHealthWorker");
+        //        if (doc == null)
+        //        {
+        //            throw new Exception("LazioHealthWorker non trovato!");
+        //        }
+        //        var listLazioHealthWorker = doc.Records;
+
+        //        int year = 0;
+        //        var objYear = GetParamValue("Year");
+        //        if (objYear != null) year = (int)objYear;
+        //        int month = 0;
+        //        var objMonth = GetParamValue("Month");
+        //        if (objMonth != null) month = (int)objMonth;
+
+        //        nameFileWithoutExt = $"{nameReport}-{year:0000}{month:00}.{now:dd-MM-yyyy.HH.mm.ss}";
+
+        //        List<Valorizzazione> reportValorizzazione = new List<Valorizzazione>();
+
+        //        foreach(dynamic adi in listADIAltaIntensita)
+        //        {
+        //            // Creo o utilizzo una riga esistente di valorizzazione
+        //            var val = reportValorizzazione.Where(r => r.PatientName == adi.Patient && r.ASL == adi.ASL && r.District == adi.District && r.ActivityDate == adi.Date).FirstOrDefault();
+        //            if (val == null)
+        //            {
+        //                val = new Valorizzazione { PatientName = adi.Patient, ASL = adi.ASL, District = adi.District, ActivityDate = adi.Date };
+        //                reportValorizzazione.Add(val);
+        //            }
+
+        //            // Operatore Sanitario, per individuare il WorkType
+        //            dynamic oss = listLazioHealthWorker.Where((dynamic os) => os.NameKey == adi.NameKey).FirstOrDefault();
+        //            if (oss == null) continue;
+
+        //            // Prelievi e Trasporti sono identificati con un WorkType specifico
+        //            switch (((string)adi.Activity).ToUpper())
+        //            {
+        //                case "PRELIEVO EMATICO (ADI ALTA INTENSITA’)":
+        //                case "PRELIEVO EMATICO (ADI ALTA INTENSITA' - Frosinone)":
+        //                case "PRELIEVO VENOSO (SIAT ASL FROSINONE)":
+        //                    oss.WorkType = "PRELIEVO";
+        //                    break;
+        //                case "SERVIZIO TRASPORTO SANITARIO (ADI ALTA INTENSITA’)":
+        //                    switch (((string)oss.WorkType).ToUpper())
+        //                    {
+        //                        case "ANESTESISTA":
+        //                        case "MEDICO CHIRURGO":
+        //                            oss.WorkType = "TRASPORTO CON MEDICO";
+        //                            break;
+        //                        default:
+        //                            oss.WorkType = "TRASPORTO CON INFERMIERE";
+        //                            break;
+        //                    }
+        //                    break;
+        //            }
+
+        //            var duration = ((adi.Duration >= 1) ? adi.Duration : 1);
+
+        //            // In base alla durata e al WorkType definisco i pacchetti
+        //            switch (((string)oss.WorkType).ToUpper())
+        //            {
+        //                case "ANESTESISTA":
+        //                    val.AccessAneNumber += 1;
+        //                    break;
+        //                case "FISIOTERAPISTA":
+        //                    val.HourFktNumberTotal += duration / 4;
+        //                    break;
+        //                case "INFERMIERE":
+        //                    switch (adi.Activity)
+        //                    {
+        //                        case "ACCESSO OSS (ADI ALTA INTENSITA' - FROSINONE)":
+        //                        case "ACCESSO OSS (ADI ALTA INTENSITA’)":
+        //                        case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (ADI ALTA INTENSITA’)":
+        //                        case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (SIAT ASL FROSINONE)":
+        //                        case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (SIAT ASL ROMA 6)":
+        //                        case "ASSIST. (OSS) PAZIENTE ALTA COMPLES-H (SIAT ASL ROMA 2)":
+        //                            val.HourOssNumber+= duration / 5;
+        //                            break;
+        //                        default:
+        //                            val.HourInfNumber += duration / 4;
+        //                            break;
+        //                    }
+        //                    break;
+        //                case "INFERMIERE PEDIATRICO":
+        //                    val.HourInfNumber += duration / 4;
+        //                    break;
+        //                case "LOGOPEDISTA":
+        //                    val.HourLogNumberTotal += duration / 4;
+        //                    break;
+        //                case "MEDICO CHIRURGO":
+        //                    val.AccessChiNumber += duration / 4;
+        //                    break;
+        //                case "OPERATORE SOCIO-SANITARIO":
+        //                    val.HourOssNumber += duration / 5;
+        //                    break;
+        //                case "PSICOLOGO":
+        //                    val.HourPsiNumberTotal += duration;
+        //                    break;
+        //                case "TERAPISTA DELLA NEURO E PSICOMOTRICITA' DELL'ETA' EVOLUTIVA":
+        //                    val.HourTpnNumberTotal += duration/4;
+        //                    break;
+        //                case "TERAPISTA OCCUPAZIONALE":
+        //                    val.HourTerNumberTotal += duration / 4;
+        //                    break;
+        //                case "PRELIEVO":
+        //                    val.SampleNumber += 1;
+        //                    break;
+        //                case "TRASPORTO CON INFERMIERE":
+        //                    val.TransportNurseNumber += 1;
+        //                    break;
+        //                case "TRASPORTO CON MEDICO":
+        //                    val.TransportDoctorNumber += 1;
+        //                    break;
+        //            }
+        //        }
+
+        //        foreach(var val in reportValorizzazione)
+        //        {
+        //            double _pacchettiInfermieristici = val.HourInfNumber;
+        //            double _pacchettiRiabilitativi = val.HourFktNumberTotal + val.HourLogNumberTotal + val.HourTpnNumberTotal + val.HourTerNumberTotal;
+        //            double _pacchettiOSS = val.HourOssNumber;
+
+        //            val.BasePacketValue = 120;
+        //            val.ReliefPacketValue = 108;
+        //            val.SpecialistAccessNumber = val.AccessAneNumber + val.AccessChiNumber;
+        //            val.SpecialistAccessValue = (val.SpecialistAccessNumber > 2) ? 120 : 0;
+
+        //            if (_pacchettiRiabilitativi < 1)
+        //            {
+        //                if ((_pacchettiRiabilitativi + _pacchettiInfermieristici) < 1)
+        //                {
+        //                    val.HourInfValue = 30;
+        //                    val.HourRehabValue = 30;
+        //                    val.TotalValue += (30 * (_pacchettiRiabilitativi + _pacchettiInfermieristici) * 4);
+        //                    val.HourInfNumber += _pacchettiInfermieristici * 4;
+        //                    val.HourRehabNumber += _pacchettiRiabilitativi * 4;
+        //                }
+        //                else
+        //                {
+        //                    val.HourInfValue = 27;
+        //                    val.HourRehabValue = 27;
+        //                    val.BasePacketNumber++;
+        //                    val.ReliefPacketNumber += (int)Math.Truncate(_pacchettiInfermieristici + _pacchettiRiabilitativi - 1);
+        //                    val.TotalValue += 120 + val.ReliefPacketNumber * 108 + (((_pacchettiInfermieristici + _pacchettiRiabilitativi) - (int)Math.Truncate(_pacchettiInfermieristici + _pacchettiRiabilitativi)) * 27 * 4);
+        //                    val.HourInfNumber = ((_pacchettiInfermieristici + _pacchettiRiabilitativi) - (int)Math.Truncate(_pacchettiInfermieristici + _pacchettiRiabilitativi)) * 4;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                val.HourInfValue = 27;
+        //                val.HourRehabValue = 27;
+        //                val.TotalValue += 120 + ((_pacchettiRiabilitativi - 1) * 27 * 4) + ((int)Math.Truncate(_pacchettiInfermieristici) * 108) + ((_pacchettiInfermieristici - (int)Math.Truncate(_pacchettiInfermieristici)) * 27 * 4);
+        //                val.ReliefPacketNumber += (int)Math.Truncate(_pacchettiInfermieristici);
+        //                val.BasePacketNumber++;
+        //                val.HourRehabNumber += ((_pacchettiRiabilitativi - (int)Math.Truncate(_pacchettiRiabilitativi)) * 4);
+        //                val.HourInfNumber += ((_pacchettiInfermieristici - (int)Math.Truncate(_pacchettiInfermieristici)) * 4);
+        //            }
+
+        //            //Valorizzazione pacchetto di ore OSS + PSICOLOGO + PRELIEVI
+        //            val.TotalValue += (_pacchettiOSS * 21.6 * 5) + val.SampleNumber * 14;
+        //            val.HourOssValue = 21.6;
+        //            val.SampleValue = 14;
+        //            val.ReliefPacketNumber += (int)Math.Truncate(_pacchettiOSS);
+        //            val.HourOssNumber = (_pacchettiOSS - (int)Math.Truncate(_pacchettiOSS)) * 5;
+
+        //            //Valorizzazione attività Psicologo
+        //            val.TotalValue += Math.Round(val.HourPsiNumberTotal) * 60;
+        //            val.HourPsiNumberTotal = Math.Round(val.HourPsiNumberTotal);
+        //            val.HourPsyValue = 60;
+
+        //            //Valorizzazione trasporti in ambulanza assistiti
+        //            val.TotalValue += (val.TransInfNumber * 62) + (val.TransDocNumber * 104);
+        //            val.TransInfNumber = 62;
+        //            val.TransDocNumber = 104;
+        //        }
+
+        //        foreach(var val in reportValorizzazione)
+        //        {
+        //            double _valoreBaseDaScontare = (val.BasePacketNumber * val.BasePacketValue) +
+        //                (val.ReliefPacketNumber * val.ReliefPacketValue) +
+        //                (val.HourInfNumber * val.HourInfValue) +
+        //                (val.HourRehabNumber * val.HourRehabValue) +
+        //                (val.HourOssNumber * val.HourOssValue);
+                    
+        //            double _valoreAddizionaleExtra = (val.HourPsiNumberTotal * val.HourPsyValue) +
+        //                (val.SampleNumber * val.SampleValue) +
+        //                (val.TransInfNumber * val.TransportNurseValue) +
+        //                (val.TransDocNumber * val.TransportDoctorValue) +
+        //                (val.SpecialistAccessNumber * val.SpecialistAccessValue);
+
+        //            if (_valoreBaseDaScontare > 300)
+        //            {
+        //                val.Discount = (_valoreBaseDaScontare - 300) * 0.1;
+        //                val.NoDiscountValue = _valoreBaseDaScontare + _valoreAddizionaleExtra;
+        //                val.TotalValue = (_valoreBaseDaScontare + _valoreAddizionaleExtra) - val.Discount;
+        //            }
+
+        //            val.BasePacketTotal = val.BasePacketNumber * val.BasePacketValue;
+        //            val.ReliefPacketTotal = val.ReliefPacketNumber * val.ReliefPacketValue;
+
+        //            val.HourInfNumberTotal *= 4;
+        //            val.HourFktNumberTotal *= 4;
+        //            val.HourLogNumberTotal *= 4;
+        //            val.HourTpnNumberTotal *= 4;
+        //            val.HourTerNumberTotal *= 4;
+        //            val.HourOssNumbertotal *= 5;
+        //        }
+
+
+        //        ResultRecords.AddRange(reportValorizzazione);
+
+        //        Manager.CreateExcelFile(this, nameFileWithoutExt); //crea file excel xlsx
+        //        Manager.CreateFile(this, nameFileWithoutExt); //crea file txt
+        //        Manager.CreateFile(this, nameFileWithoutExt, true); //crea file csv
+
+        //        var destinationFilePath = Path.Combine(Manager.Reports, $"{nameFileWithoutExt}.xlsx");
+        //        Manager.Settings.UpdateReport(nameFileWithoutExt, nameReport, "xlsx", destinationFilePath, now, XMLSettings.ReportStatus.FileOK);
+        //        Manager.Settings.Save();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        list.Add(Tuple.Create("Report", "Elaborazione report Valorizzazione", $"Errore interno : {ex.Message}"));
+        //    }
+        //    finally
+        //    {
+        //        WriteLog(list, nameFileWithoutExt);
+        //    }
+        //}
         /// <summary>
         /// 
         /// </summary>
@@ -85,8 +337,9 @@ namespace DO.VIVICARE.Report.Valorizzazione
 
                 List<Valorizzazione> reportValorizzazione = new List<Valorizzazione>();
 
-                foreach(dynamic adi in listADIAltaIntensita)
+                foreach (dynamic adi in listADIAltaIntensita)
                 {
+                    // Creo o utilizzo una riga esistente di valorizzazione
                     var val = reportValorizzazione.Where(r => r.PatientName == adi.Patient && r.ASL == adi.ASL && r.District == adi.District && r.ActivityDate == adi.Date).FirstOrDefault();
                     if (val == null)
                     {
@@ -94,10 +347,11 @@ namespace DO.VIVICARE.Report.Valorizzazione
                         reportValorizzazione.Add(val);
                     }
 
-                    // Operatore Sanitario
+                    // Operatore Sanitario, per individuare il WorkType
                     dynamic oss = listLazioHealthWorker.Where((dynamic os) => os.NameKey == adi.NameKey).FirstOrDefault();
                     if (oss == null) continue;
 
+                    // Prelievi e Trasporti sono identificati con un WorkType specifico
                     switch (((string)adi.Activity).ToUpper())
                     {
                         case "PRELIEVO EMATICO (ADI ALTA INTENSITA’)":
@@ -121,13 +375,14 @@ namespace DO.VIVICARE.Report.Valorizzazione
 
                     var duration = ((adi.Duration >= 1) ? adi.Duration : 1);
 
+                    // In base alla durata e al WorkType definisco i pacchetti
                     switch (((string)oss.WorkType).ToUpper())
                     {
                         case "ANESTESISTA":
                             val.AccessAneNumber += 1;
                             break;
                         case "FISIOTERAPISTA":
-                            val.HourFktNumber += duration / 4;
+                            val.HourFktNumberTotal += duration;
                             break;
                         case "INFERMIERE":
                             switch (adi.Activity)
@@ -138,133 +393,152 @@ namespace DO.VIVICARE.Report.Valorizzazione
                                 case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (SIAT ASL FROSINONE)":
                                 case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (SIAT ASL ROMA 6)":
                                 case "ASSIST. (OSS) PAZIENTE ALTA COMPLES-H (SIAT ASL ROMA 2)":
-                                    val.HourOssNumber+= duration / 5;
+                                    val.HourOssNumber += duration;
                                     break;
                                 default:
-                                    val.HourInfNumber += duration / 4;
+                                    val.HourInfNumber += duration;
                                     break;
                             }
                             break;
                         case "INFERMIERE PEDIATRICO":
-                            val.HourInfNumber += duration / 4;
+                            val.HourInfNumber += duration;
                             break;
                         case "LOGOPEDISTA":
-                            val.HourLogNumber += duration / 4;
+                            val.HourLogNumberTotal += duration;
                             break;
                         case "MEDICO CHIRURGO":
-                            val.AccessChiNumber += duration / 4;
+                            val.AccessChiNumber += duration;
                             break;
                         case "OPERATORE SOCIO-SANITARIO":
-                            val.HourOssNumber += duration / 5;
+                            val.HourOssNumber += duration;
                             break;
                         case "PSICOLOGO":
-                            val.HourPsiNumber += duration;
+                            val.HourPsiNumberTotal += duration;
                             break;
                         case "TERAPISTA DELLA NEURO E PSICOMOTRICITA' DELL'ETA' EVOLUTIVA":
-                            val.HourTpnNumber += duration/4;
+                            val.HourTpnNumberTotal += duration;
                             break;
                         case "TERAPISTA OCCUPAZIONALE":
-                            val.HourTerNumber += duration / 4;
+                            val.HourTerNumberTotal += duration;
                             break;
                         case "PRELIEVO":
                             val.SampleNumber += 1;
                             break;
                         case "TRASPORTO CON INFERMIERE":
-                            val.TransportNurseNumber += 1;
+                            val.TransInfNumber += 1;
                             break;
                         case "TRASPORTO CON MEDICO":
-                            val.TransportDoctorNumber += 1;
+                            val.TransDocNumber += 1;
                             break;
                     }
                 }
 
-                foreach(var val in reportValorizzazione)
+                // Gestione pacchetti
+                foreach (var val in reportValorizzazione)
                 {
-                    double _pacchettiInfermieristici = val.HourInfNumber;
-                    double _pacchettiRiabilitativi = val.HourFktNumber + val.HourLogNumber + val.HourTpnNumber + val.HourTerNumber;
-                    double _pacchettiOSS = val.HourOssNumber;
+                    val.HourInfNumberTotal = val.HourInfNumber;
+                    val.HourOssNumbertotal = val.HourOssNumber;
+                    double _pacchettiRiabilitativi = val.HourFktNumberTotal + val.HourLogNumberTotal + val.HourTpnNumberTotal + val.HourTerNumberTotal;
 
                     val.BasePacketValue = 120;
                     val.ReliefPacketValue = 108;
                     val.SpecialistAccessNumber = val.AccessAneNumber + val.AccessChiNumber;
                     val.SpecialistAccessValue = (val.SpecialistAccessNumber > 2) ? 120 : 0;
 
-                    if (_pacchettiRiabilitativi < 1)
+                    val.HourInfValue = 27;
+                    val.HourRehabValue = 27;
+
+
+                    if((_pacchettiRiabilitativi + val.HourInfNumberTotal) < 4) // non ci sono pacchetti
                     {
-                        if ((_pacchettiRiabilitativi + _pacchettiInfermieristici) < 1)
-                        {
-                            val.FractHourInfValue = 30;
-                            val.FractHourRehabValue = 30;
-                            val.TotalValue += (30 * (_pacchettiRiabilitativi + _pacchettiInfermieristici) * 4);
-                            val.FractHourInf += _pacchettiInfermieristici * 4;
-                            val.FractHourRehab += _pacchettiRiabilitativi * 4;
-                        }
-                        else
-                        {
-                            val.FractHourInfValue = 27;
-                            val.FractHourRehabValue = 27;
-                            val.BasePacketNumber++;
-                            val.ReliefPacketNumber += (int)Math.Truncate(_pacchettiInfermieristici + _pacchettiRiabilitativi - 1);
-                            val.TotalValue += 120 + val.ReliefPacketNumber * 108 + (((_pacchettiInfermieristici + _pacchettiRiabilitativi) - (int)Math.Truncate(_pacchettiInfermieristici + _pacchettiRiabilitativi)) * 27 * 4);
-                            val.FractHourInf = ((_pacchettiInfermieristici + _pacchettiRiabilitativi) - (int)Math.Truncate(_pacchettiInfermieristici + _pacchettiRiabilitativi)) * 4;
-                        }
+                        val.HourInfValue = 30;
+                        val.HourRehabValue = 30;
+                        val.HourInfNumber = val.HourInfNumberTotal;
+                        val.HourRehabNumber = _pacchettiRiabilitativi;
                     }
                     else
                     {
-                        val.FractHourInfValue = 27;
-                        val.FractHourRehabValue = 27;
-                        val.TotalValue += 120 + ((_pacchettiRiabilitativi - 1) * 27 * 4) + ((int)Math.Truncate(_pacchettiInfermieristici) * 108) + ((_pacchettiInfermieristici - (int)Math.Truncate(_pacchettiInfermieristici)) * 27 * 4);
-                        val.ReliefPacketNumber += (int)Math.Truncate(_pacchettiInfermieristici);
-                        val.BasePacketNumber++;
-                        val.FractHourRehab += ((_pacchettiRiabilitativi - (int)Math.Truncate(_pacchettiRiabilitativi)) * 4);
-                        val.FractHourInf += ((_pacchettiInfermieristici - (int)Math.Truncate(_pacchettiInfermieristici)) * 4);
+                        val.BasePacketNumber = 1;
+
+                        switch (val.ASL)
+                        {
+                            case "ASL ROMA 5":
+                            case "ASL ROMA 6":
+                            case "ASL FROSINONE":
+                                val.HourInfValue = 30;
+                                val.HourRehabValue = 30;
+                                break;
+                        }
+
+                        var rest = (_pacchettiRiabilitativi + val.HourInfNumberTotal - 4);
+                        while (rest >= 4)
+                        {
+                            val.ReliefPacketNumber += 1;
+                            rest -= 4;
+                        }
+
+                        var infrest = val.HourInfNumberTotal % 4;
+                        var rehabrest = _pacchettiRiabilitativi % 4;
+                        if (rest >= infrest)
+                        {
+                            val.HourInfNumber = infrest;
+                            val.HourRehabNumber = rest - infrest;
+                        }
+                        else
+                        {
+                            val.HourInfNumber = rest;
+                            val.HourRehabNumber = 0;
+                        }
                     }
 
-                    //Valorizzazione pacchetto di ore OSS + PSICOLOGO + PRELIEVI
-                    val.TotalValue += (_pacchettiOSS * 21.6 * 5) + val.SampleNumber * 14;
-                    val.FractHourOssValue = 21.6;
+                    val.TotalValue += (val.BasePacketNumber * 120) + (val.ReliefPacketNumber * 108) + (val.HourInfNumber * val.HourInfValue) + (val.HourRehabNumber * val.HourRehabValue);
+
+                    //Valorizzazione pacchetto di ore OSS + PRELIEVI
+                    val.TotalValue += (val.HourOssNumbertotal * 21.6) + val.SampleNumber * 14;
+                    val.HourOssValue = 21.6;
                     val.SampleValue = 14;
-                    val.ReliefPacketNumber += (int)Math.Truncate(_pacchettiOSS);
-                    val.FractHourOss = (_pacchettiOSS - (int)Math.Truncate(_pacchettiOSS)) * 5;
+                    val.ReliefPacketNumber += (int)Math.Truncate(val.HourOssNumbertotal / 5);
+                    val.HourOssNumber = val.HourOssNumbertotal - ((int)Math.Truncate(val.HourOssNumbertotal / 5) * 5);
 
                     //Valorizzazione attività Psicologo
-                    val.TotalValue += Math.Round(val.HourPsiNumber) * 60;
-                    val.HourPsiNumber = Math.Round(val.HourPsiNumber);
-                    val.FractHourPsyValue = 60;
+                    val.HourPsyValue = 60;
+                    val.HourPsyNumber = val.HourPsiNumberTotal = Math.Round(val.HourPsiNumberTotal);
+                    val.TotalValue += val.HourPsiNumberTotal * val.HourPsyValue;
 
                     //Valorizzazione trasporti in ambulanza assistiti
-                    val.TotalValue += (val.TransInfNumber * 62) + (val.TransDocNumber * 104);
-                    val.TransInfNumber = 62;
-                    val.TransDocNumber = 104;
+                    val.TransInfValue = 62;
+                    val.TransDocValue = 104;
+                    //val.TransInfTotal = val.TransInfNumber * val.TransInfValue;
+                    val.TransDocTotal = val.TransDocNumber * val.TransDocValue;
+                    //val.TotalValue += val.TransInfTotal + val.TransDocTotal;
+                    val.TotalValue += val.TransDocTotal;
                 }
 
-                foreach(var val in reportValorizzazione)
+                foreach (var val in reportValorizzazione)
                 {
                     double _valoreBaseDaScontare = (val.BasePacketNumber * val.BasePacketValue) +
                         (val.ReliefPacketNumber * val.ReliefPacketValue) +
-                        (val.FractHourInf * val.FractHourInfValue) +
-                        (val.FractHourRehab * val.FractHourRehabValue) +
-                        (val.FractHourOss * val.FractHourOssValue);
-                    
-                    double _valoreAddizionaleExtra = (val.HourPsiNumber * val.FractHourPsyValue) +
+                        (val.HourInfNumber * val.HourInfValue) +
+                        (val.HourRehabNumber * val.HourRehabValue) +
+                        (val.HourOssNumber * val.HourOssValue);
+
+                    double _valoreAddizionaleExtra = (val.HourPsiNumberTotal * val.HourPsyValue) +
                         (val.SampleNumber * val.SampleValue) +
-                        (val.TransInfNumber * val.TransportNurseValue) +
-                        (val.TransDocNumber * val.TransportDoctorValue) +
+                        (val.TransDocNumber * val.TransDocValue) +
                         (val.SpecialistAccessNumber * val.SpecialistAccessValue);
 
-                    if (_valoreBaseDaScontare > 300)
-                    {
-                        val.Discount = (_valoreBaseDaScontare - 300) * 0.1;
-                        val.NoDiscountValue = _valoreBaseDaScontare + _valoreAddizionaleExtra;
-                        val.TotalValue = (_valoreBaseDaScontare + _valoreAddizionaleExtra) - val.Discount;
-                    }
+                    val.Discount = (_valoreBaseDaScontare > 300) ? (_valoreBaseDaScontare - 300) * 0.1 : 0;
+                    val.NoDiscountValue = _valoreBaseDaScontare + _valoreAddizionaleExtra;
+                    val.TotalValue = val.NoDiscountValue - val.Discount;
 
-                    val.HourInfNumber *= 4;
-                    val.HourFktNumber *= 4;
-                    val.HourLogNumber *= 4;
-                    val.HourTpnNumber *= 4;
-                    val.HourTerNumber *= 4;
-                    val.HourOssNumber *= 5;
+                    val.BasePacketTotal = val.BasePacketNumber * val.BasePacketValue;
+                    val.ReliefPacketTotal = val.ReliefPacketNumber * val.ReliefPacketValue;
+
+                    val.HourInfTotal = val.HourInfNumber * val.HourInfValue;
+                    val.HourRehabTotal = val.HourRehabNumber * val.HourRehabValue;
+                    val.HourOssTotal = val.HourOssNumber * val.HourOssValue;
+                    val.HourPsyTotal = val.HourPsyNumber * val.HourPsyValue;
+                    val.SampleTotal = val.SampleNumber * val.SampleValue;
                 }
 
 
@@ -291,82 +565,175 @@ namespace DO.VIVICARE.Report.Valorizzazione
         #region Member
         [ReportMemberReference(Column = "A", Position = 1, ColumnName = "NOME PAZIENTE", Length = 50, Required = true, FieldName = "PatientName")]
         public string PatientName { get; set; }
+
         [ReportMemberReference(Column = "B", Position = 2, ColumnName = "AZIENDA SANITARIA", Length = 50, Required = true, FieldName = "ASL")]
         public string ASL { get; set; }
+
         [ReportMemberReference(Column = "C", Position = 3, ColumnName = "DISTRETTO", Length = 50, FieldName = "District")]
         public string District { get; set; }
+
         [ReportMemberReference(Column = "D", Position = 4, ColumnName = "DATA ATTIVITA'", FieldName = "ActivityDate", IsDate =true, Format ="dd/MM/yyyy")]
         public DateTime ActivityDate { get; set; }
+
         [ReportMemberReference(Column = "E", Position = 5, ColumnName = "VALORE TOTALE CALCOLATO", FieldName = "TotalValue", IsDouble = true)]
         public double TotalValue { get; set; }
+
         [ReportMemberReference(Column = "F", Position = 6, ColumnName = "VALORE NON SCONTATO", FieldName = "NoDiscountValue", IsDouble = true)]
         public double NoDiscountValue { get; set; }
+
         [ReportMemberReference(Column = "G", Position = 7, ColumnName = "SCONTO", FieldName = "Discount", IsDouble = true)]
         public double Discount { get; set; }
-        [ReportMemberReference(Column = "H", Position = 8, ColumnName = "Nr PACCHETTI BASE", FieldName = "BasePacketNumber", IsDouble = true)]
+
+        #region PACCHETTI BASE
+        [ReportMemberReference(Column = "H", Position = 8, ColumnName = "NUMERO PACCHETTI BASE", FieldName = "BasePacketNumber", IsDouble = true)]
         public double BasePacketNumber { get; set; }
+
         [ReportMemberReference(Column = "I", Position = 9, ColumnName = "VALORE PACCHETTO BASE", FieldName = "BasePacketValue", IsDouble = true)]
         public double BasePacketValue { get; set; }
-        [ReportMemberReference(Column = "J", Position = 10, ColumnName = "Nr PACCHETTI SOLLIEVO", FieldName = "ReliefPacketNumber", IsDouble = true)]
+
+        [ReportMemberReference(Column = "J", Position = 10, ColumnName = "TOTALE PACCHETTO BASE", FieldName = "BasePacketTotal", IsDouble = true)]
+        public double BasePacketTotal { get; set; }
+        #endregion
+
+        #region PACCHETTI SOLLIEVO
+        [ReportMemberReference(Column = "K", Position = 11, ColumnName = "NUMERO PACCHETTI SOLLIEVO", FieldName = "ReliefPacketNumber", IsDouble = true)]
         public double ReliefPacketNumber { get; set; }
-        [ReportMemberReference(Column = "K", Position = 11, ColumnName = "VALORE PACCHETTO SOLLIEVO", FieldName = "ReliefPacketValue", IsDouble = true)]
+
+        [ReportMemberReference(Column = "L", Position = 12, ColumnName = "VALORE PACCHETTO SOLLIEVO", FieldName = "ReliefPacketValue", IsDouble = true)]
         public double ReliefPacketValue { get; set; }
-        [ReportMemberReference(Column = "L", Position = 12, ColumnName = "ORE FRAZIONARIE INF.", FieldName = "FractHourInf", IsDouble = true)]
-        public double FractHourInf { get; set; }
-        [ReportMemberReference(Column = "M", Position = 13, ColumnName = "VALORE ORE FRAZIONARIE INF.", FieldName = "FractHourInfValue", IsDouble = true)]
-        public double FractHourInfValue { get; set; }
-        [ReportMemberReference(Column = "N", Position = 14, ColumnName = "ORE FRAZIONARIE RIAB. (FKT/LOGO/TPNEE/TO)", FieldName = "FractHourRehab", IsDouble = true)]
-        public double FractHourRehab { get; set; }
-        [ReportMemberReference(Column = "O", Position = 15, ColumnName = "VALORE ORE FRAZIONARIE RIAB.", FieldName = "FractHourRehabValue", IsDouble = true)]
-        public double FractHourRehabValue { get; set; }
-        [ReportMemberReference(Column = "P", Position = 16, ColumnName = "ORE FRAZIONARIE OSS", FieldName = "FractHourOss", IsDouble = true)]
-        public double FractHourOss { get; set; }
-        [ReportMemberReference(Column = "Q", Position = 17, ColumnName = "VALORE ORE FRAZIONARIE OSS", FieldName = "FractHourOssValue", IsDouble = true)]
-        public double FractHourOssValue { get; set; }
-        [ReportMemberReference(Column = "R", Position = 18, ColumnName = "ORE PSICOLOGO", FieldName = "FractHourPsy", IsDouble = true)]
-        public double FractHourPsy { get; set; }
-        [ReportMemberReference(Column = "S", Position = 19, ColumnName = "VALORE ORE FRAZIONARIE PSICOLOGO", FieldName = "FractHourPsyValue", IsDouble = true)]
-        public double FractHourPsyValue { get; set; }
-        [ReportMemberReference(Column = "T", Position = 20, ColumnName = "NR PRELIEVI", FieldName = "SampleNumber", IsDouble = true)]
-        public double SampleNumber { get; set; }
-        [ReportMemberReference(Column = "U", Position = 21, ColumnName = "VALORE PRELIEVO", FieldName = "SampleValue", IsDouble = true)]
-        public double SampleValue { get; set; }
-        [ReportMemberReference(Column = "V", Position = 22, ColumnName = "NR TRASPORTI CON INF.", FieldName = "TransportNurseNumber", IsDouble = true)]
-        public double TransportNurseNumber { get; set; }
-        [ReportMemberReference(Column = "W", Position = 23, ColumnName = "VALORE TRASPORTO CON INF.", FieldName = "TransportNurseValue", IsDouble = true)]
-        public double TransportNurseValue { get; set; }
-        [ReportMemberReference(Column = "X", Position = 24, ColumnName = "NR TRASPORTI CON MED.", FieldName = "TransportDoctorNumber", IsDouble = true)]
-        public double TransportDoctorNumber { get; set; }
-        [ReportMemberReference(Column = "Y", Position = 25, ColumnName = "VALORE TRASPORTO CON MED.", FieldName = "TransportDoctorValue", IsDouble = true)]
-        public double TransportDoctorValue { get; set; }
-        [ReportMemberReference(Column = "Z", Position = 26, ColumnName = "NR ACCESSI SPECIALISTICI", FieldName = "SpecialistAccessNumber", IsDouble = true)]
-        public double SpecialistAccessNumber { get; set; }
-        [ReportMemberReference(Column = "AA", Position = 27, ColumnName = "VALORE ACCESSI SPECIALISTICI", FieldName = "SpecialistAccessValue", IsDouble = true)]
-        public double SpecialistAccessValue { get; set; }
-        [ReportMemberReference(Column = "AB", Position = 28, ColumnName = "NR ORE INF TOTALI", FieldName = "HourInfNumber", IsDouble = true)]
+
+        [ReportMemberReference(Column = "M", Position = 13, ColumnName = "TOTALE PACCHETTO SOLLIEVO", FieldName = "ReliefPacketTotal", IsDouble = true)]
+        public double ReliefPacketTotal { get; set; }
+        #endregion
+
+        #region ORE INFERMIERISTICHE
+        [ReportMemberReference(Column = "N", Position = 14, ColumnName = "NUMERO ORE INF.", FieldName = "HourInfNumber", IsDouble = true)]
         public double HourInfNumber { get; set; }
-        [ReportMemberReference(Column = "AC", Position = 29, ColumnName = "Nr ORE FKT TOTALI", FieldName = "HourFktNumber", IsDouble = true)]
-        public double HourFktNumber { get; set; }
-        [ReportMemberReference(Column = "AD", Position = 30, ColumnName = "NR ORE LOGOPEDISTA TOTALI", FieldName = "HourLogNumber", IsDouble = true)]
-        public double HourLogNumber { get; set; }
-        [ReportMemberReference(Column = "AE", Position = 31, ColumnName = "Nr ORE TPNEE TOTALI", FieldName = "HourTpnNumber", IsDouble = true)]
-        public double HourTpnNumber { get; set; }
-        [ReportMemberReference(Column = "AF", Position = 32, ColumnName = "NR ORE TERAPISTA OCCUPAZIONALE TOTALI", FieldName = "HourTerNumber", IsDouble = true)]
-        public double HourTerNumber { get; set; }
-        [ReportMemberReference(Column = "AG", Position = 33, ColumnName = "Nr Accessi ANESTESISTA TOTALI", FieldName = "AccessAneNumber", IsDouble = true)]
-        public double AccessAneNumber { get; set; }
-        [ReportMemberReference(Column = "AH", Position = 34, ColumnName = "NR Accessi MEDICO CHIRURGO TOTALI", FieldName = "AccessChiNumber", IsDouble = true)]
-        public double AccessChiNumber { get; set; }
-        [ReportMemberReference(Column = "AI", Position = 35, ColumnName = "Nr Ore PSICOLOGO TOTALI", FieldName = "HourPsiNumber", IsDouble = true)]
-        public double HourPsiNumber { get; set; }
-        [ReportMemberReference(Column = "AJ", Position = 36, ColumnName = "NR ORE OSS TOTALI", FieldName = "HourOssNumber", IsDouble = true)]
+
+        [ReportMemberReference(Column = "O", Position = 15, ColumnName = "VALORE ORE INF.", FieldName = "HourInfValue", IsDouble = true)]
+        public double HourInfValue { get; set; }
+
+        [ReportMemberReference(Column = "P", Position = 16, ColumnName = "TOTALE ORE INF.", FieldName = "HourInfTotal", IsDouble = true)]
+        public double HourInfTotal { get; set; }
+        #endregion
+
+        #region ORE RIABILITAZIONE
+        [ReportMemberReference(Column = "Q", Position = 17, ColumnName = "NUMERO ORE RIAB. (FKT/LOGO/TPNEE/TO)", FieldName = "HourRehabNumber", IsDouble = true)]
+        public double HourRehabNumber { get; set; }
+        
+        [ReportMemberReference(Column = "R", Position = 18, ColumnName = "VALORE ORE RIAB.", FieldName = "HourRehabValue", IsDouble = true)]
+        public double HourRehabValue { get; set; }
+
+        [ReportMemberReference(Column = "S", Position = 19, ColumnName = "TOTALE ORE RIAB.", FieldName = "HourRehabTotal", IsDouble = true)]
+        public double HourRehabTotal { get; set; }
+        #endregion
+
+        #region ORE OSS
+        [ReportMemberReference(Column = "T", Position = 20, ColumnName = "NUMERO ORE OSS", FieldName = "HourOssNumber", IsDouble = true)]
         public double HourOssNumber { get; set; }
-        [ReportMemberReference(Column = "AK", Position = 37, ColumnName = "Nr Prelievi", FieldName = "SampleNumber2", IsDouble = true)]
-        public double SampleNumber2 { get; set; }
-        [ReportMemberReference(Column = "AL", Position = 38, ColumnName = "NR TRASPORTI INF.", FieldName = "TransInfNumber", IsDouble = true)]
+        
+        [ReportMemberReference(Column = "U", Position = 21, ColumnName = "VALORE ORE OSS", FieldName = "HourOssValue", IsDouble = true)]
+        public double HourOssValue { get; set; }
+
+        [ReportMemberReference(Column = "V", Position = 22, ColumnName = "TOTALE VALORE ORE OSS", FieldName = "HourOssTotal", IsDouble = true)]
+        public double HourOssTotal { get; set; }
+        #endregion
+
+        #region ORE PSICOLOGO
+        [ReportMemberReference(Column = "W", Position = 23, ColumnName = "NUMERO ORE PSICOLOGO", FieldName = "HourPsyNumber", IsDouble = true)]
+        public double HourPsyNumber { get; set; }
+        
+        [ReportMemberReference(Column = "X", Position = 24, ColumnName = "VALORE ORE PSICOLOGO", FieldName = "HourPsyValue", IsDouble = true)]
+        public double HourPsyValue { get; set; }
+
+        [ReportMemberReference(Column = "Y", Position = 25, ColumnName = "TOTALE ORE PSICOLOGO", FieldName = "HourPsyTotal", IsDouble = true)]
+        public double HourPsyTotal { get; set; }
+        #endregion
+
+        #region PRELIEVI
+        [ReportMemberReference(Column = "Z", Position = 26, ColumnName = "NUMERO PRELIEVI", FieldName = "SampleNumber", IsDouble = true)]
+        public double SampleNumber { get; set; }
+        
+        [ReportMemberReference(Column = "AA", Position = 27, ColumnName = "VALORE PRELIEVO", FieldName = "SampleValue", IsDouble = true)]
+        public double SampleValue { get; set; }
+
+        [ReportMemberReference(Column = "AB", Position = 28, ColumnName = "TOTALE PRELIEVI", FieldName = "SampleTotal", IsDouble = true)]
+        public double SampleTotal { get; set; }
+        #endregion
+
+        #region TRASPORTI CON INF
+        [ReportMemberReference(Column = "AC", Position = 29, ColumnName = "NUMERO TRASPORTI CON INF", FieldName = "TransInfNumber", IsDouble = true)]
         public double TransInfNumber { get; set; }
-        [ReportMemberReference(Column = "AM", Position = 39, ColumnName = "NR TRASPORTI MED.", FieldName = "TransDocNumber", IsDouble = true)]
+        
+        [ReportMemberReference(Column = "AD", Position = 30, ColumnName = "VALORE TRASPORTO CON INF", FieldName = "TransInfValue", IsDouble = true)]
+        public double TransInfValue { get; set; }
+
+        [ReportMemberReference(Column = "AE", Position = 31, ColumnName = "TOTALE TRASPORTO CON INF", FieldName = "TransInfTotal", IsDouble = true)]
+        public double TransInfTotal { get; set; }
+        #endregion
+
+        #region TRASPORTI CON MED
+        [ReportMemberReference(Column = "AF", Position = 32, ColumnName = "NUMERO TRASPORTI CON MED", FieldName = "TransDocNumber", IsDouble = true)]
         public double TransDocNumber { get; set; }
+        
+        [ReportMemberReference(Column = "AG", Position = 33, ColumnName = "VALORE TRASPORTO CON MED", FieldName = "TransDocValue", IsDouble = true)]
+        public double TransDocValue { get; set; }
+
+        [ReportMemberReference(Column = "AH", Position = 34, ColumnName = "TOTALE TRASPORTO CON MED", FieldName = "TransDocTotal", IsDouble = true)]
+        public double TransDocTotal { get; set; }
+        #endregion
+
+        #region ACCESSI SPECIALISTICI
+        [ReportMemberReference(Column = "AI", Position = 35, ColumnName = "NUMERO ACCESSI SPECIALISTICI", FieldName = "SpecialistAccessNumber", IsDouble = true)]
+        public double SpecialistAccessNumber { get; set; }
+        
+        [ReportMemberReference(Column = "AJ", Position = 36, ColumnName = "VALORE ACCESSI SPECIALISTICI", FieldName = "SpecialistAccessValue", IsDouble = true)]
+        public double SpecialistAccessValue { get; set; }
+
+        [ReportMemberReference(Column = "AK", Position = 37, ColumnName = "TOTALE ACCESSI SPECIALISTICI", FieldName = "SpecialistAccessTotal", IsDouble = true)]
+        public double SpecialistAccessTotal { get; set; }
+        #endregion
+
+        #region ORE TOTALI
+        [ReportMemberReference(Column = "AL", Position = 38, ColumnName = "NR ORE INF TOTALI", FieldName = "HourInfNumberTotal", IsDouble = true)]
+        public double HourInfNumberTotal { get; set; }
+        
+        [ReportMemberReference(Column = "AM", Position = 39, ColumnName = "Nr ORE FKT TOTALI", FieldName = "HourFktNumberTotal", IsDouble = true)]
+        public double HourFktNumberTotal { get; set; }
+        
+        [ReportMemberReference(Column = "AN", Position = 40, ColumnName = "NR ORE LOGOPEDISTA TOTALI", FieldName = "HourLogNumberTotal", IsDouble = true)]
+        public double HourLogNumberTotal { get; set; }
+        
+        [ReportMemberReference(Column = "AO", Position = 41, ColumnName = "Nr ORE TPNEE TOTALI", FieldName = "HourTpnNumberTotal", IsDouble = true)]
+        public double HourTpnNumberTotal { get; set; }
+        
+        [ReportMemberReference(Column = "AP", Position = 42, ColumnName = "NR ORE TO TOTALI", FieldName = "HourTerNumberTotal", IsDouble = true)]
+        public double HourTerNumberTotal { get; set; }
+        
+        [ReportMemberReference(Column = "AQ", Position = 43, ColumnName = "Nr ORE PSICOLOGO TOTALI", FieldName = "HourPsiNumberTotal", IsDouble = true)]
+        public double HourPsiNumberTotal { get; set; }
+        
+        [ReportMemberReference(Column = "AR", Position = 44, ColumnName = "NR ORE OSS TOTALI", FieldName = "HourOssNumbertotal", IsDouble = true)]
+        public double HourOssNumbertotal { get; set; }
+        #endregion
+
+        #region NUMERO ACCESSI, PRELIEVI, TRASPORTI
+        [ReportMemberReference(Column = "AS", Position = 45, ColumnName = "NR ACCESSI ANESTESISTA TOTALI", FieldName = "AccessAneNumber", IsDouble = true)]
+        public double AccessAneNumber { get; set; }
+        
+        [ReportMemberReference(Column = "AT", Position = 46, ColumnName = "NR ACCESSI MEDICO CHIRURGO TOTALI", FieldName = "AccessChiNumber", IsDouble = true)]
+        public double AccessChiNumber { get; set; }
+        
+        [ReportMemberReference(Column = "AU", Position = 47, ColumnName = "NR PRELIEVI", FieldName = "SampleNumber2", IsDouble = true)]
+        public double SampleNumber2 { get; set; }
+        
+        //[ReportMemberReference(Column = "AV", Position = 48, ColumnName = "NR TRASPORTI INF.", FieldName = "TransInfNumber", IsDouble = true)]
+        //public double TransInfNumber { get; set; }
+        
+        //[ReportMemberReference(Column = "AW", Position = 49, ColumnName = "NR TRASPORTI MED.", FieldName = "TransDocNumber", IsDouble = true)]
+        //public double TransDocNumber { get; set; }
+        #endregion
+
         #endregion
     }
 }
