@@ -373,7 +373,8 @@ namespace DO.VIVICARE.Report.Valorizzazione
                             break;
                     }
 
-                    var duration = ((adi.Duration >= 1) ? adi.Duration : 1);
+                    decimal duration = ((adi.Duration >= 1) ? adi.Duration : 1);
+                    duration = NumerizeDuration(duration);
 
                     // In base alla durata e al WorkType definisco i pacchetti
                     switch (((string)oss.WorkType).ToUpper())
@@ -560,6 +561,30 @@ namespace DO.VIVICARE.Report.Valorizzazione
             {
                 WriteLog(list, nameFileWithoutExt);
             }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="duration"></param>
+        /// <returns></returns>
+        private decimal NumerizeDuration(decimal duration)
+        {
+            var intpart = (int)Math.Truncate(duration);
+            var decimalpart = duration - intpart;
+            if (decimalpart == 0) return duration;
+            return intpart + (decimalpart / 6 * 10);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="duration"></param>
+        /// <returns></returns>
+        private decimal HourizeDuration(decimal duration)
+        {
+            var intpart = (int)Math.Truncate(duration);
+            var decimalpart = duration - intpart;
+            if (decimalpart == 0) return duration;
+            return intpart + (decimalpart * 6 / 10);
         }
 
         #region Member
