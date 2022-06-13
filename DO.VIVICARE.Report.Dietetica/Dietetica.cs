@@ -485,7 +485,7 @@ namespace DO.VIVICARE.Report.Dietetica
 
         //F(DatCV{ ZSD[AS]})
         //F(DatCV{ R16[E]})
-        [ReportMemberReference(Column = "H", Position = 8, ColumnName = "Data di nascita", Length = 8, IsDate = true, Required = true, FieldName = "DateOfBirth")]
+        [ReportMemberReference(Column = "H", Position = 8, ColumnName = "Data di nascita", Length = 8, Required = true, FieldName = "DateOfBirth")]
         public string DateOfBirth { get; set; }
 
         //J(ZSD[?]:COM[A; B])
@@ -506,7 +506,7 @@ namespace DO.VIVICARE.Report.Dietetica
 
         //C(R16[Q])
         //C(ZSD[AA])
-        [ReportMemberReference(Column = "L", Position = 12, ColumnName = "Data erogazione", Length = 8, IsDate = true, Required = true, FieldName = "DeliveryDate")]
+        [ReportMemberReference(Column = "L", Position = 12, ColumnName = "Data erogazione", Length = 8, Required = true, FieldName = "DeliveryDate")]
         public string DeliveryDate { get; set; }
 
         //D(ALIMENTINAD)x R16
@@ -556,7 +556,7 @@ namespace DO.VIVICARE.Report.Dietetica
         //Purchase amount 12 N
         //F(Prezzo{ R16[R]})
         //F(Prezzo{ ZSD[AM]})
-        [ReportMemberReference(Column = "V", Position = 22, ColumnName = "Importo acquisto", Length = 12, DecimalDigits = 2, Required = true, FieldName = "PurchaseAmount")]
+        [ReportMemberReference(Column = "V", Position = 22, ColumnName = "Importo acquisto", Length = 12, Required = true, FieldName = "PurchaseAmount")]
         public string PurchaseAmount { get; set; }
 
         //Service charge amount 12 N

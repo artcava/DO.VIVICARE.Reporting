@@ -373,8 +373,10 @@ namespace DO.VIVICARE.Report.Valorizzazione
                             break;
                     }
 
-                    decimal duration = ((adi.Duration >= 1) ? adi.Duration : 1);
-                    duration = NumerizeDuration(duration);
+                    decimal duration = NumerizeDuration(adi.Duration);
+
+                    duration = ((duration >= 1) ? duration : 1);
+                    //duration = NumerizeDuration(duration);
 
                     // In base alla durata e al WorkType definisco i pacchetti
                     switch (((string)oss.WorkType).ToUpper())
@@ -439,7 +441,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
                 {
                     val.HourInfNumberTotal = val.HourInfNumber;
                     val.HourOssNumbertotal = val.HourOssNumber;
-                    double _pacchettiRiabilitativi = val.HourFktNumberTotal + val.HourLogNumberTotal + val.HourTpnNumberTotal + val.HourTerNumberTotal;
+                    decimal _pacchettiRiabilitativi = val.HourFktNumberTotal + val.HourLogNumberTotal + val.HourTpnNumberTotal + val.HourTerNumberTotal;
 
                     val.BasePacketValue = 120;
                     val.ReliefPacketValue = 108;
@@ -495,8 +497,8 @@ namespace DO.VIVICARE.Report.Valorizzazione
                     val.TotalValue += (val.BasePacketNumber * 120) + (val.ReliefPacketNumber * 108) + (val.HourInfNumber * val.HourInfValue) + (val.HourRehabNumber * val.HourRehabValue);
 
                     //Valorizzazione pacchetto di ore OSS + PRELIEVI
-                    val.TotalValue += (val.HourOssNumbertotal * 21.6) + val.SampleNumber * 14;
-                    val.HourOssValue = 21.6;
+                    val.TotalValue += (val.HourOssNumbertotal * 21.6M) + val.SampleNumber * 14;
+                    val.HourOssValue = 21.6M;
                     val.SampleValue = 14;
                     val.ReliefPacketNumber += (int)Math.Truncate(val.HourOssNumbertotal / 5);
                     val.HourOssNumber = val.HourOssNumbertotal - ((int)Math.Truncate(val.HourOssNumbertotal / 5) * 5);
@@ -517,18 +519,18 @@ namespace DO.VIVICARE.Report.Valorizzazione
 
                 foreach (var val in reportValorizzazione)
                 {
-                    double _valoreBaseDaScontare = (val.BasePacketNumber * val.BasePacketValue) +
+                    decimal _valoreBaseDaScontare = (val.BasePacketNumber * val.BasePacketValue) +
                         (val.ReliefPacketNumber * val.ReliefPacketValue) +
                         (val.HourInfNumber * val.HourInfValue) +
                         (val.HourRehabNumber * val.HourRehabValue) +
                         (val.HourOssNumber * val.HourOssValue);
 
-                    double _valoreAddizionaleExtra = (val.HourPsiNumberTotal * val.HourPsyValue) +
+                    decimal _valoreAddizionaleExtra = (val.HourPsiNumberTotal * val.HourPsyValue) +
                         (val.SampleNumber * val.SampleValue) +
                         (val.TransDocNumber * val.TransDocValue) +
                         (val.SpecialistAccessNumber * val.SpecialistAccessValue);
 
-                    val.Discount = (_valoreBaseDaScontare > 300) ? (_valoreBaseDaScontare - 300) * 0.1 : 0;
+                    val.Discount = (_valoreBaseDaScontare > 300) ? (_valoreBaseDaScontare - 300) * 0.1M : 0;
                     val.NoDiscountValue = _valoreBaseDaScontare + _valoreAddizionaleExtra;
                     val.TotalValue = val.NoDiscountValue - val.Discount;
 
@@ -567,24 +569,24 @@ namespace DO.VIVICARE.Report.Valorizzazione
         /// </summary>
         /// <param name="duration"></param>
         /// <returns></returns>
-        private decimal NumerizeDuration(decimal duration)
+        private decimal NumerizeDuration(TimeSpan duration)
         {
-            var intpart = (int)Math.Truncate(duration);
-            var decimalpart = duration - intpart;
-            if (decimalpart == 0) return duration;
-            return intpart + (decimalpart / 6 * 10);
+            var intpart = duration.Hours;
+            var decimalpart = duration.Minutes;
+            if (decimalpart == 0) return intpart;
+            return intpart + (decimal)(decimalpart / 6 * 10) / 100;
         }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="duration"></param>
         /// <returns></returns>
-        private decimal HourizeDuration(decimal duration)
+        private TimeSpan HourizeDuration(decimal duration)
         {
             var intpart = (int)Math.Truncate(duration);
-            var decimalpart = duration - intpart;
-            if (decimalpart == 0) return duration;
-            return intpart + (decimalpart * 6 / 10);
+            var decimalpart = (duration - intpart) * 100;
+            if (decimalpart == 0) return new TimeSpan(intpart, 0, 0);
+            return new TimeSpan(intpart, (int)decimalpart * 6 / 10, 0);
         }
 
         #region Member
@@ -597,160 +599,160 @@ namespace DO.VIVICARE.Report.Valorizzazione
         [ReportMemberReference(Column = "C", Position = 3, ColumnName = "DISTRETTO", Length = 50, FieldName = "District")]
         public string District { get; set; }
 
-        [ReportMemberReference(Column = "D", Position = 4, ColumnName = "DATA ATTIVITA'", FieldName = "ActivityDate", IsDate =true, Format ="dd/MM/yyyy")]
+        [ReportMemberReference(Column = "D", Position = 4, ColumnName = "DATA ATTIVITA'", FieldName = "ActivityDate", Format ="dd/MM/yyyy")]
         public DateTime ActivityDate { get; set; }
 
-        [ReportMemberReference(Column = "E", Position = 5, ColumnName = "VALORE TOTALE CALCOLATO", FieldName = "TotalValue", IsDouble = true)]
-        public double TotalValue { get; set; }
+        [ReportMemberReference(Column = "E", Position = 5, ColumnName = "VALORE TOTALE CALCOLATO", FieldName = "TotalValue")]
+        public decimal TotalValue { get; set; }
 
-        [ReportMemberReference(Column = "F", Position = 6, ColumnName = "VALORE NON SCONTATO", FieldName = "NoDiscountValue", IsDouble = true)]
-        public double NoDiscountValue { get; set; }
+        [ReportMemberReference(Column = "F", Position = 6, ColumnName = "VALORE NON SCONTATO", FieldName = "NoDiscountValue")]
+        public decimal NoDiscountValue { get; set; }
 
-        [ReportMemberReference(Column = "G", Position = 7, ColumnName = "SCONTO", FieldName = "Discount", IsDouble = true)]
-        public double Discount { get; set; }
+        [ReportMemberReference(Column = "G", Position = 7, ColumnName = "SCONTO", FieldName = "Discount")]
+        public decimal Discount { get; set; }
 
         #region PACCHETTI BASE
-        [ReportMemberReference(Column = "H", Position = 8, ColumnName = "NUMERO PACCHETTI BASE", FieldName = "BasePacketNumber", IsDouble = true)]
-        public double BasePacketNumber { get; set; }
+        [ReportMemberReference(Column = "H", Position = 8, ColumnName = "NUMERO PACCHETTI BASE", FieldName = "BasePacketNumber")]
+        public decimal BasePacketNumber { get; set; }
 
-        [ReportMemberReference(Column = "I", Position = 9, ColumnName = "VALORE PACCHETTO BASE", FieldName = "BasePacketValue", IsDouble = true)]
-        public double BasePacketValue { get; set; }
+        [ReportMemberReference(Column = "I", Position = 9, ColumnName = "VALORE PACCHETTO BASE", FieldName = "BasePacketValue")]
+        public decimal BasePacketValue { get; set; }
 
-        [ReportMemberReference(Column = "J", Position = 10, ColumnName = "TOTALE PACCHETTO BASE", FieldName = "BasePacketTotal", IsDouble = true)]
-        public double BasePacketTotal { get; set; }
+        [ReportMemberReference(Column = "J", Position = 10, ColumnName = "TOTALE PACCHETTO BASE", FieldName = "BasePacketTotal")]
+        public decimal BasePacketTotal { get; set; }
         #endregion
 
         #region PACCHETTI SOLLIEVO
-        [ReportMemberReference(Column = "K", Position = 11, ColumnName = "NUMERO PACCHETTI SOLLIEVO", FieldName = "ReliefPacketNumber", IsDouble = true)]
-        public double ReliefPacketNumber { get; set; }
+        [ReportMemberReference(Column = "K", Position = 11, ColumnName = "NUMERO PACCHETTI SOLLIEVO", FieldName = "ReliefPacketNumber")]
+        public decimal ReliefPacketNumber { get; set; }
 
-        [ReportMemberReference(Column = "L", Position = 12, ColumnName = "VALORE PACCHETTO SOLLIEVO", FieldName = "ReliefPacketValue", IsDouble = true)]
-        public double ReliefPacketValue { get; set; }
+        [ReportMemberReference(Column = "L", Position = 12, ColumnName = "VALORE PACCHETTO SOLLIEVO", FieldName = "ReliefPacketValue")]
+        public decimal ReliefPacketValue { get; set; }
 
-        [ReportMemberReference(Column = "M", Position = 13, ColumnName = "TOTALE PACCHETTO SOLLIEVO", FieldName = "ReliefPacketTotal", IsDouble = true)]
-        public double ReliefPacketTotal { get; set; }
+        [ReportMemberReference(Column = "M", Position = 13, ColumnName = "TOTALE PACCHETTO SOLLIEVO", FieldName = "ReliefPacketTotal")]
+        public decimal ReliefPacketTotal { get; set; }
         #endregion
 
         #region ORE INFERMIERISTICHE
-        [ReportMemberReference(Column = "N", Position = 14, ColumnName = "NUMERO ORE INF.", FieldName = "HourInfNumber", IsDouble = true)]
-        public double HourInfNumber { get; set; }
+        [ReportMemberReference(Column = "N", Position = 14, ColumnName = "NUMERO ORE INF.", FieldName = "HourInfNumber")]
+        public decimal HourInfNumber { get; set; }
 
-        [ReportMemberReference(Column = "O", Position = 15, ColumnName = "VALORE ORE INF.", FieldName = "HourInfValue", IsDouble = true)]
-        public double HourInfValue { get; set; }
+        [ReportMemberReference(Column = "O", Position = 15, ColumnName = "VALORE ORE INF.", FieldName = "HourInfValue")]
+        public decimal HourInfValue { get; set; }
 
-        [ReportMemberReference(Column = "P", Position = 16, ColumnName = "TOTALE ORE INF.", FieldName = "HourInfTotal", IsDouble = true)]
-        public double HourInfTotal { get; set; }
+        [ReportMemberReference(Column = "P", Position = 16, ColumnName = "TOTALE ORE INF.", FieldName = "HourInfTotal")]
+        public decimal HourInfTotal { get; set; }
         #endregion
 
         #region ORE RIABILITAZIONE
-        [ReportMemberReference(Column = "Q", Position = 17, ColumnName = "NUMERO ORE RIAB. (FKT/LOGO/TPNEE/TO)", FieldName = "HourRehabNumber", IsDouble = true)]
-        public double HourRehabNumber { get; set; }
+        [ReportMemberReference(Column = "Q", Position = 17, ColumnName = "NUMERO ORE RIAB. (FKT/LOGO/TPNEE/TO)", FieldName = "HourRehabNumber")]
+        public decimal HourRehabNumber { get; set; }
         
-        [ReportMemberReference(Column = "R", Position = 18, ColumnName = "VALORE ORE RIAB.", FieldName = "HourRehabValue", IsDouble = true)]
-        public double HourRehabValue { get; set; }
+        [ReportMemberReference(Column = "R", Position = 18, ColumnName = "VALORE ORE RIAB.", FieldName = "HourRehabValue")]
+        public decimal HourRehabValue { get; set; }
 
-        [ReportMemberReference(Column = "S", Position = 19, ColumnName = "TOTALE ORE RIAB.", FieldName = "HourRehabTotal", IsDouble = true)]
-        public double HourRehabTotal { get; set; }
+        [ReportMemberReference(Column = "S", Position = 19, ColumnName = "TOTALE ORE RIAB.", FieldName = "HourRehabTotal")]
+        public decimal HourRehabTotal { get; set; }
         #endregion
 
         #region ORE OSS
-        [ReportMemberReference(Column = "T", Position = 20, ColumnName = "NUMERO ORE OSS", FieldName = "HourOssNumber", IsDouble = true)]
-        public double HourOssNumber { get; set; }
+        [ReportMemberReference(Column = "T", Position = 20, ColumnName = "NUMERO ORE OSS", FieldName = "HourOssNumber")]
+        public decimal HourOssNumber { get; set; }
         
-        [ReportMemberReference(Column = "U", Position = 21, ColumnName = "VALORE ORE OSS", FieldName = "HourOssValue", IsDouble = true)]
-        public double HourOssValue { get; set; }
+        [ReportMemberReference(Column = "U", Position = 21, ColumnName = "VALORE ORE OSS", FieldName = "HourOssValue")]
+        public decimal HourOssValue { get; set; }
 
-        [ReportMemberReference(Column = "V", Position = 22, ColumnName = "TOTALE VALORE ORE OSS", FieldName = "HourOssTotal", IsDouble = true)]
-        public double HourOssTotal { get; set; }
+        [ReportMemberReference(Column = "V", Position = 22, ColumnName = "TOTALE VALORE ORE OSS", FieldName = "HourOssTotal")]
+        public decimal HourOssTotal { get; set; }
         #endregion
 
         #region ORE PSICOLOGO
-        [ReportMemberReference(Column = "W", Position = 23, ColumnName = "NUMERO ORE PSICOLOGO", FieldName = "HourPsyNumber", IsDouble = true)]
-        public double HourPsyNumber { get; set; }
+        [ReportMemberReference(Column = "W", Position = 23, ColumnName = "NUMERO ORE PSICOLOGO", FieldName = "HourPsyNumber")]
+        public decimal HourPsyNumber { get; set; }
         
-        [ReportMemberReference(Column = "X", Position = 24, ColumnName = "VALORE ORE PSICOLOGO", FieldName = "HourPsyValue", IsDouble = true)]
-        public double HourPsyValue { get; set; }
+        [ReportMemberReference(Column = "X", Position = 24, ColumnName = "VALORE ORE PSICOLOGO", FieldName = "HourPsyValue")]
+        public decimal HourPsyValue { get; set; }
 
-        [ReportMemberReference(Column = "Y", Position = 25, ColumnName = "TOTALE ORE PSICOLOGO", FieldName = "HourPsyTotal", IsDouble = true)]
-        public double HourPsyTotal { get; set; }
+        [ReportMemberReference(Column = "Y", Position = 25, ColumnName = "TOTALE ORE PSICOLOGO", FieldName = "HourPsyTotal")]
+        public decimal HourPsyTotal { get; set; }
         #endregion
 
         #region PRELIEVI
-        [ReportMemberReference(Column = "Z", Position = 26, ColumnName = "NUMERO PRELIEVI", FieldName = "SampleNumber", IsDouble = true)]
-        public double SampleNumber { get; set; }
+        [ReportMemberReference(Column = "Z", Position = 26, ColumnName = "NUMERO PRELIEVI", FieldName = "SampleNumber")]
+        public decimal SampleNumber { get; set; }
         
-        [ReportMemberReference(Column = "AA", Position = 27, ColumnName = "VALORE PRELIEVO", FieldName = "SampleValue", IsDouble = true)]
-        public double SampleValue { get; set; }
+        [ReportMemberReference(Column = "AA", Position = 27, ColumnName = "VALORE PRELIEVO", FieldName = "SampleValue")]
+        public decimal SampleValue { get; set; }
 
-        [ReportMemberReference(Column = "AB", Position = 28, ColumnName = "TOTALE PRELIEVI", FieldName = "SampleTotal", IsDouble = true)]
-        public double SampleTotal { get; set; }
+        [ReportMemberReference(Column = "AB", Position = 28, ColumnName = "TOTALE PRELIEVI", FieldName = "SampleTotal")]
+        public decimal SampleTotal { get; set; }
         #endregion
 
         #region TRASPORTI CON INF
-        [ReportMemberReference(Column = "AC", Position = 29, ColumnName = "NUMERO TRASPORTI CON INF", FieldName = "TransInfNumber", IsDouble = true)]
-        public double TransInfNumber { get; set; }
+        [ReportMemberReference(Column = "AC", Position = 29, ColumnName = "NUMERO TRASPORTI CON INF", FieldName = "TransInfNumber")]
+        public decimal TransInfNumber { get; set; }
         
-        [ReportMemberReference(Column = "AD", Position = 30, ColumnName = "VALORE TRASPORTO CON INF", FieldName = "TransInfValue", IsDouble = true)]
-        public double TransInfValue { get; set; }
+        [ReportMemberReference(Column = "AD", Position = 30, ColumnName = "VALORE TRASPORTO CON INF", FieldName = "TransInfValue")]
+        public decimal TransInfValue { get; set; }
 
-        [ReportMemberReference(Column = "AE", Position = 31, ColumnName = "TOTALE TRASPORTO CON INF", FieldName = "TransInfTotal", IsDouble = true)]
-        public double TransInfTotal { get; set; }
+        [ReportMemberReference(Column = "AE", Position = 31, ColumnName = "TOTALE TRASPORTO CON INF", FieldName = "TransInfTotal")]
+        public decimal TransInfTotal { get; set; }
         #endregion
 
         #region TRASPORTI CON MED
-        [ReportMemberReference(Column = "AF", Position = 32, ColumnName = "NUMERO TRASPORTI CON MED", FieldName = "TransDocNumber", IsDouble = true)]
-        public double TransDocNumber { get; set; }
+        [ReportMemberReference(Column = "AF", Position = 32, ColumnName = "NUMERO TRASPORTI CON MED", FieldName = "TransDocNumber")]
+        public decimal TransDocNumber { get; set; }
         
-        [ReportMemberReference(Column = "AG", Position = 33, ColumnName = "VALORE TRASPORTO CON MED", FieldName = "TransDocValue", IsDouble = true)]
-        public double TransDocValue { get; set; }
+        [ReportMemberReference(Column = "AG", Position = 33, ColumnName = "VALORE TRASPORTO CON MED", FieldName = "TransDocValue")]
+        public decimal TransDocValue { get; set; }
 
-        [ReportMemberReference(Column = "AH", Position = 34, ColumnName = "TOTALE TRASPORTO CON MED", FieldName = "TransDocTotal", IsDouble = true)]
-        public double TransDocTotal { get; set; }
+        [ReportMemberReference(Column = "AH", Position = 34, ColumnName = "TOTALE TRASPORTO CON MED", FieldName = "TransDocTotal")]
+        public decimal TransDocTotal { get; set; }
         #endregion
 
         #region ACCESSI SPECIALISTICI
-        [ReportMemberReference(Column = "AI", Position = 35, ColumnName = "NUMERO ACCESSI SPECIALISTICI", FieldName = "SpecialistAccessNumber", IsDouble = true)]
-        public double SpecialistAccessNumber { get; set; }
+        [ReportMemberReference(Column = "AI", Position = 35, ColumnName = "NUMERO ACCESSI SPECIALISTICI", FieldName = "SpecialistAccessNumber")]
+        public decimal SpecialistAccessNumber { get; set; }
         
-        [ReportMemberReference(Column = "AJ", Position = 36, ColumnName = "VALORE ACCESSI SPECIALISTICI", FieldName = "SpecialistAccessValue", IsDouble = true)]
-        public double SpecialistAccessValue { get; set; }
+        [ReportMemberReference(Column = "AJ", Position = 36, ColumnName = "VALORE ACCESSI SPECIALISTICI", FieldName = "SpecialistAccessValue")]
+        public decimal SpecialistAccessValue { get; set; }
 
-        [ReportMemberReference(Column = "AK", Position = 37, ColumnName = "TOTALE ACCESSI SPECIALISTICI", FieldName = "SpecialistAccessTotal", IsDouble = true)]
-        public double SpecialistAccessTotal { get; set; }
+        [ReportMemberReference(Column = "AK", Position = 37, ColumnName = "TOTALE ACCESSI SPECIALISTICI", FieldName = "SpecialistAccessTotal")]
+        public decimal SpecialistAccessTotal { get; set; }
         #endregion
 
         #region ORE TOTALI
-        [ReportMemberReference(Column = "AL", Position = 38, ColumnName = "NR ORE INF TOTALI", FieldName = "HourInfNumberTotal", IsDouble = true)]
-        public double HourInfNumberTotal { get; set; }
+        [ReportMemberReference(Column = "AL", Position = 38, ColumnName = "NR ORE INF TOTALI", FieldName = "HourInfNumberTotal")]
+        public decimal HourInfNumberTotal { get; set; }
         
-        [ReportMemberReference(Column = "AM", Position = 39, ColumnName = "Nr ORE FKT TOTALI", FieldName = "HourFktNumberTotal", IsDouble = true)]
-        public double HourFktNumberTotal { get; set; }
+        [ReportMemberReference(Column = "AM", Position = 39, ColumnName = "Nr ORE FKT TOTALI", FieldName = "HourFktNumberTotal")]
+        public decimal HourFktNumberTotal { get; set; }
         
-        [ReportMemberReference(Column = "AN", Position = 40, ColumnName = "NR ORE LOGOPEDISTA TOTALI", FieldName = "HourLogNumberTotal", IsDouble = true)]
-        public double HourLogNumberTotal { get; set; }
+        [ReportMemberReference(Column = "AN", Position = 40, ColumnName = "NR ORE LOGOPEDISTA TOTALI", FieldName = "HourLogNumberTotal")]
+        public decimal HourLogNumberTotal { get; set; }
         
-        [ReportMemberReference(Column = "AO", Position = 41, ColumnName = "Nr ORE TPNEE TOTALI", FieldName = "HourTpnNumberTotal", IsDouble = true)]
-        public double HourTpnNumberTotal { get; set; }
+        [ReportMemberReference(Column = "AO", Position = 41, ColumnName = "Nr ORE TPNEE TOTALI", FieldName = "HourTpnNumberTotal")]
+        public decimal HourTpnNumberTotal { get; set; }
         
-        [ReportMemberReference(Column = "AP", Position = 42, ColumnName = "NR ORE TO TOTALI", FieldName = "HourTerNumberTotal", IsDouble = true)]
-        public double HourTerNumberTotal { get; set; }
+        [ReportMemberReference(Column = "AP", Position = 42, ColumnName = "NR ORE TO TOTALI", FieldName = "HourTerNumberTotal")]
+        public decimal HourTerNumberTotal { get; set; }
         
-        [ReportMemberReference(Column = "AQ", Position = 43, ColumnName = "Nr ORE PSICOLOGO TOTALI", FieldName = "HourPsiNumberTotal", IsDouble = true)]
-        public double HourPsiNumberTotal { get; set; }
+        [ReportMemberReference(Column = "AQ", Position = 43, ColumnName = "Nr ORE PSICOLOGO TOTALI", FieldName = "HourPsiNumberTotal")]
+        public decimal HourPsiNumberTotal { get; set; }
         
-        [ReportMemberReference(Column = "AR", Position = 44, ColumnName = "NR ORE OSS TOTALI", FieldName = "HourOssNumbertotal", IsDouble = true)]
-        public double HourOssNumbertotal { get; set; }
+        [ReportMemberReference(Column = "AR", Position = 44, ColumnName = "NR ORE OSS TOTALI", FieldName = "HourOssNumbertotal")]
+        public decimal HourOssNumbertotal { get; set; }
         #endregion
 
         #region NUMERO ACCESSI, PRELIEVI, TRASPORTI
-        [ReportMemberReference(Column = "AS", Position = 45, ColumnName = "NR ACCESSI ANESTESISTA TOTALI", FieldName = "AccessAneNumber", IsDouble = true)]
-        public double AccessAneNumber { get; set; }
+        [ReportMemberReference(Column = "AS", Position = 45, ColumnName = "NR ACCESSI ANESTESISTA TOTALI", FieldName = "AccessAneNumber")]
+        public decimal AccessAneNumber { get; set; }
         
-        [ReportMemberReference(Column = "AT", Position = 46, ColumnName = "NR ACCESSI MEDICO CHIRURGO TOTALI", FieldName = "AccessChiNumber", IsDouble = true)]
-        public double AccessChiNumber { get; set; }
+        [ReportMemberReference(Column = "AT", Position = 46, ColumnName = "NR ACCESSI MEDICO CHIRURGO TOTALI", FieldName = "AccessChiNumber")]
+        public decimal AccessChiNumber { get; set; }
         
-        [ReportMemberReference(Column = "AU", Position = 47, ColumnName = "NR PRELIEVI", FieldName = "SampleNumber2", IsDouble = true)]
-        public double SampleNumber2 { get; set; }
+        [ReportMemberReference(Column = "AU", Position = 47, ColumnName = "NR PRELIEVI", FieldName = "SampleNumber2")]
+        public decimal SampleNumber2 { get; set; }
         
         //[ReportMemberReference(Column = "AV", Position = 48, ColumnName = "NR TRASPORTI INF.", FieldName = "TransInfNumber", IsDouble = true)]
         //public double TransInfNumber { get; set; }

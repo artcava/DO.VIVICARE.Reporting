@@ -208,6 +208,51 @@ namespace DO.VIVICARE.Reporter
 
             try
             {
+                switch (p.PropertyType.Name)
+                {
+                    case "Decimal":
+                        var decimalValue = Convert.ToDecimal(value);
+                        p.SetValue(el, decimalValue);
+                        break;
+                    case "Int32":
+                        var int32Value = Convert.ToInt32(value);
+                        p.SetValue(el, int32Value);
+                        break;
+                    case "Int64":
+                        var int64Value = Convert.ToInt64(value);
+                        p.SetValue(el, int64Value);
+                        break;
+                    case "Double":
+                        var intDoubleValue = Convert.ToDouble(value);
+                        p.SetValue(el, intDoubleValue);
+                        break;
+                    case "String":
+                        var stringValue = Convert.ToString(value);
+                        p.SetValue(el, stringValue);
+                        break;
+                    case "DateTime":
+                        string dtFormat = null;
+                        if (ax != null && ax[0] != null && !string.IsNullOrEmpty(ax[0].Format))
+                            dtFormat = ax[0].Format;
+                        var dtmValue = Manager.ConvertDate((string)value, dtFormat);
+                        p.SetValue(el, dtmValue);
+                        break;
+                    case "TimeSpan":
+                        string tsFormat = null;
+                        if (ax != null && ax[0] != null && !string.IsNullOrEmpty(ax[0].Format))
+                            tsFormat = ax[0].Format;
+                        var tsValue = Manager.ConvertToTimeSpan((string)value, tsFormat);
+                        p.SetValue(el, tsValue);
+                        break;
+                    default:
+                        p.SetValue(el, value);
+                        break;
+                }
+
+
+
+
+
                 if (p.PropertyType.FullName == "System.Decimal" &&
                                 (value.GetType().FullName == "System.Double" ||
                                  value.GetType().FullName == "System.Int32" ||
@@ -733,10 +778,6 @@ namespace DO.VIVICARE.Reporter
         public string Column { get; set; }
         public int Position { get; set; }
         public int Length { get; set; }
-        public int DecimalDigits { get; set; }
-        public bool IsDate { get; set; }
-        public bool IsDouble { get; set; }
-        public bool IsDecimal { get; set; }
         public string ColumnName { get; set; }
         public bool Required { get; set; }
         public string FillValue { get; set; }

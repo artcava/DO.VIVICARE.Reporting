@@ -126,6 +126,7 @@ namespace DO.VIVICARE.Reporter
         public static bool CreateExcelFile(BaseReport report, string fileWithoutExt)
         {
             var list = new List<Tuple<string, string, string>>();
+            ExcelManager manExcel = new ExcelManager();
             try
             {
                 var ua = (ReportReferenceAttribute)report.GetType().GetCustomAttribute(typeof(ReportReferenceAttribute));
@@ -136,7 +137,6 @@ namespace DO.VIVICARE.Reporter
                 
                 var destinationFilePath = Path.Combine(Manager.Reports, $"{fileWithoutExt}.xlsx");
 
-                ExcelManager manExcel = new ExcelManager();
                 if (!manExcel.Create(destinationFilePath, fileWithoutExt)) return false;
                 
 
@@ -183,41 +183,25 @@ namespace DO.VIVICARE.Reporter
                             var nameField = col.FieldName;
                             var propField = element.GetType().GetProperty(nameField);
 
-                            ///TODO: Rivedere le assegnazioni utilizzando il Type della Property anziché gli attributi isDate e isDouble
-                          
-                            var isDate = col.IsDate;
-                            var isDouble = col.IsDouble;
-                            var decimalAttribute = col.DecimalDigits;
-                            if (decimalAttribute != 0)
+                            switch (propField.PropertyType.Name)
                             {
-                                string stringValue = (string)propField.GetValue(element);
-                                string strDec = stringValue.Substring(stringValue.Length - 2);
-                                string strInt = stringValue.Substring(0, stringValue.Length - 2);
-                                string stringNewValue = strInt + "." + strDec;
-                                //decimal value = Convert.ToDecimal(stringNewValue);
-                                cell.CellValue = new CellValue(stringNewValue);
+                                case "DateTime":
+                                    DateTime dateValue = (DateTime)propField.GetValue(element);
+                                    var format = col.Format ?? "yyyyMMdd";
+                                    cell.CellValue = new CellValue(dateValue.ToString(format));
+                                    break;
+                                case "Double":
+                                    double doubleValue = (double)propField.GetValue(element);
+                                    cell.CellValue = new CellValue(doubleValue.ToString());
+                                    break;
+                                case "Decimal":
+                                    decimal decimalValue = (decimal)propField.GetValue(element);
+                                    cell.CellValue = new CellValue(decimalValue.ToString());
+                                    break;
+                                default:
+                                    cell.CellValue = new CellValue((string)propField.GetValue(element));
+                                    break;
                             }
-                            else if (isDate)
-                            {
-                                DateTime dateValue = (DateTime)propField.GetValue(element);
-                                var format = col.Format ?? "yyyyMMdd";
-                                cell.CellValue = new CellValue(dateValue.ToString(format));
-                                //if (DateTime.TryParseExact(stringValue, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateValue))
-                                //{
-                                //    cell.CellValue = new CellValue(dateValue.ToShortDateString());
-                                //}
-                                //else
-                                //{
-                                //    cell.CellValue = new CellValue((string)propField.GetValue(element));
-                                //}
-                            }
-                            else if (isDouble)
-                            {
-                                double val = (double)propField.GetValue(element);
-                                cell.CellValue = new CellValue(val.ToString());
-                            }
-                            else
-                                cell.CellValue = new CellValue((string)propField.GetValue(element));
 
                             cells.Add(cell);
                         }
@@ -226,8 +210,6 @@ namespace DO.VIVICARE.Reporter
                 }
 
                 if (!manExcel.Save()) throw new Exception(string.Format("Unable to save file: {0}", destinationFilePath));
-
-                manExcel.Dispose();
 
                 return true;
             }
@@ -239,113 +221,109 @@ namespace DO.VIVICARE.Reporter
             finally
             {
                 WriteLog(list, fileWithoutExt);
+                if(manExcel!=null) manExcel.Dispose();
             }
         }
 
-        public static bool CreateExcelFileOLD(BaseReport report)
-        {
-            var name = string.Empty;
-            var list = new List<Tuple<string, string, string>>();
-            try
-            {
-                var ua = (ReportReferenceAttribute)report.GetType().GetCustomAttribute(typeof(ReportReferenceAttribute));
-                if (ua != null)
-                {
-                    name = ua.Name;
-                }
-                Excel.Application appXls = new Excel.Application();
-                appXls.SheetsInNewWorkbook = 1; // imposta il numero di fogli per la nuova cartella Excel
-                Excel.Workbook cartellaXls = appXls.Workbooks.Add();
-                Excel._Worksheet foglioXls = cartellaXls.Sheets[1];
+        //public static bool CreateExcelFileOLD(BaseReport report)
+        //{
+        //    var name = string.Empty;
+        //    var list = new List<Tuple<string, string, string>>();
+        //    try
+        //    {
+        //        var ua = (ReportReferenceAttribute)report.GetType().GetCustomAttribute(typeof(ReportReferenceAttribute));
+        //        if (ua != null)
+        //        {
+        //            name = ua.Name;
+        //        }
+        //        Excel.Application appXls = new Excel.Application();
+        //        appXls.SheetsInNewWorkbook = 1; // imposta il numero di fogli per la nuova cartella Excel
+        //        Excel.Workbook cartellaXls = appXls.Workbooks.Add();
+        //        Excel._Worksheet foglioXls = cartellaXls.Sheets[1];
 
-                var columns = Manager.GetReportColumns(report);
+        //        var columns = Manager.GetReportColumns(report);
 
-                int rowCount = report.ResultRecords.Count();
-                int colCount = columns.Count();
-                int rowStart = 2;
+        //        int rowCount = report.ResultRecords.Count();
+        //        int colCount = columns.Count();
+        //        int rowStart = 2;
 
-                // header row excel sheet
+        //        // header row excel sheet
 
-                foreach (var col in columns)
-                {
-                    foglioXls.Cells[1, col.Position] = col.ColumnName;
-                }
+        //        foreach (var col in columns)
+        //        {
+        //            foglioXls.Cells[1, col.Position] = col.ColumnName;
+        //        }
 
-                if (rowCount > 0)
-                {
-                    var records = report.ResultRecords;
+        //        if (rowCount > 0)
+        //        {
+        //            var records = report.ResultRecords;
 
-                    //var fields = records[0].GetType().GetProperties().Where(x => x.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false) != null).ToList();
+        //            //var fields = records[0].GetType().GetProperties().Where(x => x.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false) != null).ToList();
 
-                    // data rows excel sheet
-                    for (int i = rowStart; i <= (rowCount + 1); i++)
-                    {
-                        var element = report.ResultRecords[i - 2];
-                        foreach (var col in columns)
-                        {
-                            //var field = fields.FirstOrDefault(x => ((ReportMemberReferenceAttribute)x.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false)).Position == col.Position);
-                            //var nameField = field.Name;
-                            var nameField = col.FieldName;
-                            var propField = element.GetType().GetProperty(nameField);
-                            //bool isDate = ((ReportMemberReferenceAttribute)field.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false)).IsDate;
-                            //var decimalAttribute = ((ReportMemberReferenceAttribute)field.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false)).DecimalDigits;
-                            var isDate = col.IsDate;
-                            var decimalAttribute = col.DecimalDigits;
-                            if (decimalAttribute != 0)
-                            {
-                                string stringValue = (string)propField.GetValue(element);
-                                string strDec = stringValue.Substring(stringValue.Length - 2);
-                                string strInt = stringValue.Substring(0, stringValue.Length - 2);
-                                string stringNewValue = strInt + "." + strDec;
-                                decimal value = Convert.ToDecimal(stringNewValue);
-                                foglioXls.Cells[i, col.Position] = value;
-                            }
-                            else if (isDate)
-                            {
-                                string stringValue = (string)propField.GetValue(element);
-                                DateTime dateValue = DateTime.MinValue;
-                                if (DateTime.TryParseExact(stringValue, "yyyyMMdd",
-                                CultureInfo.InvariantCulture,
-                                DateTimeStyles.None, out dateValue))
-                                {
-                                    foglioXls.Cells[i, col.Position] = dateValue;
-                                }
-                                else
-                                {
-                                    foglioXls.Cells[i, col.Position] = propField.GetValue(element);
-                                }
-                            }
-                            else
-                                foglioXls.Cells[i, col.Position] = propField.GetValue(element);
-                        }
-                    }
-                }
-                var destinationFilePath = Path.Combine(Manager.Reports, $"{name}{DateTime.Now.ToString("dd-MM-yyyy.HH.mm.ss")}.xlsx");
-                cartellaXls.SaveAs(destinationFilePath);
+        //            // data rows excel sheet
+        //            for (int i = rowStart; i <= (rowCount + 1); i++)
+        //            {
+        //                var element = report.ResultRecords[i - 2];
+        //                foreach (var col in columns)
+        //                {
+        //                    var nameField = col.FieldName;
+        //                    var propField = element.GetType().GetProperty(nameField);
+        //                    var decimalAttribute = col.DecimalDigits;
+        //                    if (decimalAttribute != 0)
+        //                    {
+        //                        string stringValue = (string)propField.GetValue(element);
+        //                        string strDec = stringValue.Substring(stringValue.Length - 2);
+        //                        string strInt = stringValue.Substring(0, stringValue.Length - 2);
+        //                        string stringNewValue = strInt + "." + strDec;
+        //                        decimal value = Convert.ToDecimal(stringNewValue);
+        //                        foglioXls.Cells[i, col.Position] = value;
+        //                    }
+        //                    else if (isDate)
+        //                    {
+        //                        string stringValue = (string)propField.GetValue(element);
+        //                        DateTime dateValue = DateTime.MinValue;
+        //                        if (DateTime.TryParseExact(stringValue, "yyyyMMdd",
+        //                        CultureInfo.InvariantCulture,
+        //                        DateTimeStyles.None, out dateValue))
+        //                        {
+        //                            foglioXls.Cells[i, col.Position] = dateValue;
+        //                        }
+        //                        else
+        //                        {
+        //                            foglioXls.Cells[i, col.Position] = propField.GetValue(element);
+        //                        }
+        //                    }
+        //                    else
+        //                        foglioXls.Cells[i, col.Position] = propField.GetValue(element);
+        //                }
+        //            }
+        //        }
+        //        var destinationFilePath = Path.Combine(Manager.Reports, $"{name}{DateTime.Now.ToString("dd-MM-yyyy.HH.mm.ss")}.xlsx");
+        //        cartellaXls.SaveAs(destinationFilePath);
 
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
+        //        GC.Collect();
+        //        GC.WaitForPendingFinalizers();
 
-                Marshal.ReleaseComObject(foglioXls);
+        //        Marshal.ReleaseComObject(foglioXls);
 
-                cartellaXls.Close();
-                Marshal.ReleaseComObject(cartellaXls);
+        //        cartellaXls.Close();
+        //        Marshal.ReleaseComObject(cartellaXls);
 
-                appXls.Quit();
-                Marshal.ReleaseComObject(appXls);
+        //        appXls.Quit();
+        //        Marshal.ReleaseComObject(appXls);
 
-                return true;
-            }
-            catch (Exception ex)
-            {
-                list.Add(Tuple.Create("Riga: 0", "Colonna: 0", $"Errore interno: {ex.Message}"));
-                return false;
-            }
-            finally
-            {
-                WriteLog(list, name);
-            }
-        }
+        //        return true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        list.Add(Tuple.Create("Riga: 0", "Colonna: 0", $"Errore interno: {ex.Message}"));
+        //        return false;
+        //    }
+        //    finally
+        //    {
+        //        WriteLog(list, name);
+        //    }
+        //}
 
 
         public static bool CreateFile(BaseReport report, string fileWithoutExt, bool csv = false)
@@ -378,37 +356,24 @@ namespace DO.VIVICARE.Reporter
 
                         if (csv)
                         {
-                            bool isDate = ((ReportMemberReferenceAttribute)field.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false)).IsDate;
-                            var decimalAttribute = ((ReportMemberReferenceAttribute)field.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false)).DecimalDigits;
-                            if (decimalAttribute != 0)
+                            switch (propField.PropertyType.Name)
                             {
-                                string stringValue = (string)propField.GetValue(record);
-                                //if (stringValue!=new string('0',12))
-                                //{
-                                //    int chk = 0;
-                                //}
-                                string strDec = stringValue.Substring(stringValue.Length - 2);
-                                string strInt = stringValue.Substring(0, stringValue.Length - 2);
-                                string stringNewValue = strInt + "." + strDec;
-                                decimal value = System.Convert.ToDecimal(stringNewValue);
-                                line += $"\"{value}\";";
-                            }
-                            else if (isDate)
-                            {
-                                string stringValue = (string)propField.GetValue(record);
-                                DateTime dateValue = DateTime.MinValue;
-                                if (DateTime.TryParseExact(stringValue, "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dateValue))
-                                {
-                                    line += $"\"{dateValue.ToString("ddMMyyyy")}\";"; 
-                                }
-                                else
-                                {
+                                case "DateTime":
+                                    string stringValue = (string)propField.GetValue(record);
+                                    DateTime dateValue = DateTime.MinValue;
+                                    if (DateTime.TryParseExact(stringValue, "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dateValue))
+                                    {
+                                        line += $"\"{dateValue.ToString("ddMMyyyy")}\";";
+                                    }
+                                    else
+                                    {
+                                        line += $"\"{ propField.GetValue(record)}\";";
+                                    }
+                                    break;
+                                default:
                                     line += $"\"{ propField.GetValue(record)}\";";
-                                }
+                                    break;
                             }
-                            else
-                                line += $"\"{ propField.GetValue(record)}\";";
-
                         }
                         else
                         {
@@ -417,7 +382,7 @@ namespace DO.VIVICARE.Reporter
                         }
                     }
                     line += Environment.NewLine;
-                    
+
                     file.Add(line);
                 }
 
@@ -733,6 +698,25 @@ namespace DO.VIVICARE.Reporter
             return $"VIVPEZZ{y.ToString("0000")}{m.ToString("00")}{lpn.ToString("0000000")}";
         }
 
+        public static TimeSpan ConvertToTimeSpan(string value, string format = null)
+        {
+            TimeSpan ret;
+            if (format != null)
+            {
+                TimeSpan.TryParseExact(value, format, CultureInfo.InvariantCulture, TimeSpanStyles.None, out ret);
+            }
+            else if (!TimeSpan.TryParse(value, CultureInfo.InvariantCulture, out ret))
+            {
+                if (!TimeSpan.TryParse(value, new CultureInfo("it-IT"), out ret))
+                {
+                    if (!TimeSpan.TryParseExact(value, "hh:mm", CultureInfo.InvariantCulture, out ret))
+                    {
+                        ret = new TimeSpan(0, 0, 0);
+                    }
+                }
+            }
+            return ret;
+        }
         public static DateTime ConvertDate(string value, string format=null)
         {
             DateTime ret;
