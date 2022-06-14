@@ -371,6 +371,13 @@ namespace DO.VIVICARE.Report.Valorizzazione
                                     break;
                             }
                             break;
+                            // Aggiunte il 14/06/2022 per difformità con l'originale
+                        case "SERVIZIO TRASPORTO AMBULANZE INFERM. (ADI ALTA INTENSITA’)":
+                            oss.WorkType = "TRASPORTO CON INFERMIERE";
+                            break;
+                        case "SERVIZIO TRASPORTO AMBULANZE MEDICO (ADI ALTA INTENSITA’)":
+                            oss.WorkType = "TRASPORTO CON MEDICO";
+                            break;
                     }
 
                     decimal duration = NumerizeDuration(adi.Duration);
@@ -410,7 +417,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
                             val.HourLogNumberTotal += duration;
                             break;
                         case "MEDICO CHIRURGO":
-                            val.AccessChiNumber += duration;
+                            val.AccessChiNumber += 1;
                             break;
                         case "OPERATORE SOCIO-SANITARIO":
                             val.HourOssNumber += duration;
@@ -463,15 +470,15 @@ namespace DO.VIVICARE.Report.Valorizzazione
                     {
                         val.BasePacketNumber = 1;
 
-                        switch (val.ASL)
-                        {
-                            case "ASL ROMA 5":
-                            case "ASL ROMA 6":
-                            case "ASL FROSINONE":
-                                val.HourInfValue = 30;
-                                val.HourRehabValue = 30;
-                                break;
-                        }
+                        //switch (val.ASL)
+                        //{
+                        //    case "ASL ROMA 5":
+                        //    case "ASL ROMA 6":
+                        //    case "ASL FROSINONE":
+                        //        val.HourInfValue = 30;
+                        //        val.HourRehabValue = 30;
+                        //        break;
+                        //}
 
                         var rest = (_pacchettiRiabilitativi + val.HourInfNumberTotal - 4);
                         while (rest >= 4)
@@ -527,6 +534,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
 
                     decimal _valoreAddizionaleExtra = (val.HourPsiNumberTotal * val.HourPsyValue) +
                         (val.SampleNumber * val.SampleValue) +
+                        (val.TransInfNumber * val.TransInfValue) +
                         (val.TransDocNumber * val.TransDocValue) +
                         (val.SpecialistAccessNumber * val.SpecialistAccessValue);
 
