@@ -539,8 +539,10 @@ namespace DO.VIVICARE.Report.Valorizzazione
                         (val.SpecialistAccessNumber * val.SpecialistAccessValue);
 
                     val.Discount = (_valoreBaseDaScontare > 300) ? (_valoreBaseDaScontare - 300) * 0.1M : 0;
-                    val.NoDiscountValue = _valoreBaseDaScontare + _valoreAddizionaleExtra;
-                    val.TotalValue = val.NoDiscountValue - val.Discount;
+                    val.NoDiscountValue = _valoreBaseDaScontare;
+                    // Modificato perché il valore non scontato deve essere calcolato senza i costi extra
+                    var grosstotal = _valoreBaseDaScontare + _valoreAddizionaleExtra;
+                    val.TotalValue = grosstotal - val.Discount;
 
                     val.BasePacketTotal = val.BasePacketNumber * val.BasePacketValue;
                     val.ReliefPacketTotal = val.ReliefPacketNumber * val.ReliefPacketValue;
