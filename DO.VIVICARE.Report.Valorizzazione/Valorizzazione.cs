@@ -470,25 +470,47 @@ namespace DO.VIVICARE.Report.Valorizzazione
                     {
                         val.BasePacketNumber = 1;
 
-                        //switch (val.ASL)
-                        //{
-                        //    case "ASL ROMA 5":
-                        //    case "ASL ROMA 6":
-                        //    case "ASL FROSINONE":
-                        //        val.HourInfValue = 30;
-                        //        val.HourRehabValue = 30;
-                        //        break;
-                        //}
+                        val.HourInfNumber = val.HourInfNumberTotal;
+                        switch (val.ASL)
+                        {
+                            case "ASL ROMA 2":
+                            case "ASL ROMA 3":
+                            case "ASL LATINA":
+                                // rehab priority
+                                for (int i = 1; i <= 4; i++)
+                                {
+                                    if (_pacchettiRiabilitativi == 0)
+                                        val.HourInfNumber--;
+                                    else
+                                        _pacchettiRiabilitativi--;
+                                }
+                                break;
+                            case "ASL ROMA 5":
+                            case "ASL ROMA 6":
+                            case "ASL FROSINONE":
+                                // inf priority
+                                val.HourRehabValue = 30; // Unica condizione particolare
+                                for (int i = 1; i <= 4; i++)
+                                {
+                                    if (val.HourInfNumber == 0)
+                                        _pacchettiRiabilitativi--;
+                                    else
+                                        val.HourInfNumber--;
+                                }
+                                break;
+                        }
 
-                        var rest = (_pacchettiRiabilitativi + val.HourInfNumberTotal - 4);
+                        var rest = (_pacchettiRiabilitativi + val.HourInfNumber);
                         while (rest >= 4)
                         {
                             val.ReliefPacketNumber += 1;
                             rest -= 4;
                         }
 
-                        var infrest = val.HourInfNumberTotal % 4;
+                        var infrest = val.HourInfNumber % 4;
                         var rehabrest = _pacchettiRiabilitativi % 4;
+                        
+                        // Probabilmente qui c'è ancora qualche incongruenza...
                         if (rest >= infrest)
                         {
                             val.HourInfNumber = infrest;
