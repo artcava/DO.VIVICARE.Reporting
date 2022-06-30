@@ -336,6 +336,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
                 nameFileWithoutExt = $"{nameReport}-{year:0000}{month:00}.{now:dd-MM-yyyy.HH.mm.ss}";
 
                 List<Valorizzazione> reportValorizzazione = new List<Valorizzazione>();
+                List<string> patients = new List<string>();
 
                 foreach (dynamic adi in listADIAltaIntensita)
                 {
@@ -345,6 +346,8 @@ namespace DO.VIVICARE.Report.Valorizzazione
                     {
                         val = new Valorizzazione { PatientName = adi.Patient, ASL = adi.ASL, District = adi.District, ActivityDate = adi.Date };
                         reportValorizzazione.Add(val);
+                        if (!patients.Contains(val.PatientName))
+                            patients.Add(val.PatientName);
                     }
 
                     // Operatore Sanitario, per individuare il WorkType
@@ -452,8 +455,8 @@ namespace DO.VIVICARE.Report.Valorizzazione
 
                     val.BasePacketValue = 120;
                     val.ReliefPacketValue = 108;
-                    val.SpecialistAccessNumber = val.AccessAneNumber + val.AccessChiNumber;
-                    val.SpecialistAccessValue = (val.SpecialistAccessNumber > 2) ? 120 : 0;
+                    //val.SpecialistAccessNumber = val.AccessAneNumber + val.AccessChiNumber;
+                    //val.SpecialistAccessValue = (val.SpecialistAccessNumber > 2) ? 120 : 0;
 
                     val.HourInfValue = 27;
                     val.HourRehabValue = 27;
@@ -539,11 +542,33 @@ namespace DO.VIVICARE.Report.Valorizzazione
 
                     //Valorizzazione trasporti in ambulanza assistiti
                     val.TransInfValue = 62;
-                    val.TransDocValue = 104;
+                    val.TransDocValue = 106;
                     //val.TransInfTotal = val.TransInfNumber * val.TransInfValue;
                     val.TransDocTotal = val.TransDocNumber * val.TransDocValue;
                     //val.TotalValue += val.TransInfTotal + val.TransDocTotal;
                     val.TotalValue += val.TransDocTotal;
+                }
+
+                //Valorizzazione della quota accesso medici
+                foreach (var patient in patients)
+                {
+                    int counter = 0;
+                    var items = (from r in reportValorizzazione where r.PatientName == patient && r.AccessAneNumber+r.AccessChiNumber > 0 select r).ToList();
+                    bool havepack = items.Any(r => r.BasePacketNumber > 0);
+                    foreach(var item in items)
+                    {
+                        var specnumber = item.AccessAneNumber + item.AccessChiNumber;
+                        for (int i = 1; i <= specnumber; i++)
+                        {
+                            item.SpecialistAccessNumber += (counter < 2 && havepack) ? 0 : 1;
+                            counter++;
+                        }
+                        if (item.SpecialistAccessNumber > 0)
+                        {
+                            item.SpecialistAccessValue = 120;
+                            item.SpecialistAccessTotal = item.SpecialistAccessNumber * item.SpecialistAccessValue;
+                        }
+                    }
                 }
 
                 foreach (var val in reportValorizzazione)
@@ -567,15 +592,21 @@ namespace DO.VIVICARE.Report.Valorizzazione
                     val.TotalValue = grosstotal - val.Discount;
 
                     val.BasePacketTotal = val.BasePacketNumber * val.BasePacketValue;
+                    if (val.BasePacketTotal == 0) val.BasePacketValue = 0;
                     val.ReliefPacketTotal = val.ReliefPacketNumber * val.ReliefPacketValue;
+                    if (val.ReliefPacketTotal == 0) val.ReliefPacketValue = 0;
 
                     val.HourInfTotal = val.HourInfNumber * val.HourInfValue;
+                    if (val.HourInfTotal == 0) val.HourInfValue = 0;
                     val.HourRehabTotal = val.HourRehabNumber * val.HourRehabValue;
+                    if (val.HourRehabTotal == 0) val.HourRehabValue = 0;
                     val.HourOssTotal = val.HourOssNumber * val.HourOssValue;
+                    if (val.HourOssTotal == 0) val.HourOssValue = 0;
                     val.HourPsyTotal = val.HourPsyNumber * val.HourPsyValue;
+                    if (val.HourPsyTotal == 0) val.HourPsyValue = 0;
                     val.SampleTotal = val.SampleNumber * val.SampleValue;
+                    if (val.SampleTotal == 0) val.SampleValue = 0;
                 }
-
 
                 ResultRecords.AddRange(reportValorizzazione);
 
@@ -785,12 +816,12 @@ namespace DO.VIVICARE.Report.Valorizzazione
         
         [ReportMemberReference(Column = "AU", Position = 47, ColumnName = "NR PRELIEVI", FieldName = "SampleNumber2")]
         public decimal SampleNumber2 { get; set; }
-        
-        //[ReportMemberReference(Column = "AV", Position = 48, ColumnName = "NR TRASPORTI INF.", FieldName = "TransInfNumber", IsDouble = true)]
-        //public double TransInfNumber { get; set; }
-        
-        //[ReportMemberReference(Column = "AW", Position = 49, ColumnName = "NR TRASPORTI MED.", FieldName = "TransDocNumber", IsDouble = true)]
-        //public double TransDocNumber { get; set; }
+
+        [ReportMemberReference(Column = "AV", Position = 48, ColumnName = "NR TRASPORTI INF.", FieldName = "TransInfNumber")]
+        public decimal TransInfNumberTotal { get { return TransInfNumber; } }
+
+        [ReportMemberReference(Column = "AW", Position = 49, ColumnName = "NR TRASPORTI MED.", FieldName = "TransDocNumber")]
+        public decimal TransDocNumberTotal { get { return TransDocNumber; } }
         #endregion
 
         #endregion
