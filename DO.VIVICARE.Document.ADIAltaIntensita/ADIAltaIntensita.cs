@@ -24,7 +24,7 @@ namespace DO.VIVICARE.Document.ADIAltaIntensita
         [DocumentMemberReference(Column = "L", Position = 12, FieldName = "HealthWorker")]
         public string HealthWorker { get; set; }
 
-        [DocumentMemberReference(Column = "N", Position = 14, FieldName = "Duration", Format = "hh\\:mm")]
+        [DocumentMemberReference(Column = "O", Position = 15, FieldName = "Duration", Format = "hh\\:mm")]
         public TimeSpan Duration { get; set; }
 
         [DocumentMemberReference(Column = "S", Position = 19, FieldName = "Activity")]

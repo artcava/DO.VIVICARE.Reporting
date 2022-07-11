@@ -426,12 +426,13 @@ namespace DO.VIVICARE.Report.Valorizzazione
                             val.AccessChiNumber += 1;
                             break;
                         case "OPERATORE SOCIO-SANITARIO":
+                        case "ASSISTENTE SANITARIO":
                             val.HourOssNumber += duration;
                             break;
                         case "PSICOLOGO":
                             val.HourPsiNumberTotal += duration;
                             break;
-                        case "TERAPISTA DELLA NEURO E PSICOMOTRICITA' DELL'ETA' EVOLUTIVA":
+                        case "TERAPISTA DELLA NEURO E PSICOMOTRICITÀ DELL'ETÀ EVOLUTIVA":
                             val.HourTpnNumberTotal += duration;
                             break;
                         case "TERAPISTA OCCUPAZIONALE":
