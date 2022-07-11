@@ -358,8 +358,11 @@ namespace DO.VIVICARE.Report.Valorizzazione
                     switch (((string)adi.Activity).ToUpper())
                     {
                         case "PRELIEVO EMATICO (ADI ALTA INTENSITA’)":
-                        case "PRELIEVO EMATICO (ADI ALTA INTENSITA' - Frosinone)":
+                        case "PRELIEVO VENOSO (ADI ALTA INTENSITA')":
+                        case "PRELIEVO ALTRO MATERIALE BIOLOGICO (ADI ALTA INTENSITA')":
+                        case "PRELIEVO EMATICO (ADI ALTA INTENSITA' - FROSINONE)":
                         case "PRELIEVO VENOSO (SIAT ASL FROSINONE)":
+                        case "PRELIEVO EMATICO (ADI PRESTAZIONALE)":
                             oss.WorkType = "PRELIEVO";
                             break;
                         case "SERVIZIO TRASPORTO SANITARIO (ADI ALTA INTENSITA’)":
