@@ -357,6 +357,10 @@ namespace DO.VIVICARE.Report.Valorizzazione
                     // Prelievi e Trasporti sono identificati con un WorkType specifico
                     switch (((string)adi.Activity).ToUpper())
                     {
+                        case "PRELIEVO PER EMOTRASFUSIONI (ADI ALTA INTENSITA')":
+                        case "TELEMONITORAGGIO/TELEVISITA/TELECONSULTO (SIAT ASL FROSINONE)":
+                            continue; // 2022/07/14 - Per queste attività non si conteggia nulla 
+                        case "PRELIEVO EMATICO (ADI ALTA INTENSITA')":
                         case "PRELIEVO EMATICO (ADI ALTA INTENSITA’)":
                         case "PRELIEVO VENOSO (ADI ALTA INTENSITA')":
                         case "PRELIEVO ALTRO MATERIALE BIOLOGICO (ADI ALTA INTENSITA')":
@@ -365,7 +369,10 @@ namespace DO.VIVICARE.Report.Valorizzazione
                         case "PRELIEVO EMATICO (ADI PRESTAZIONALE)":
                             oss.WorkType = "PRELIEVO";
                             break;
+                        case "SERVIZIO TRASPORTO SANITARIO (ADI ALTA INTENSITA')":
                         case "SERVIZIO TRASPORTO SANITARIO (ADI ALTA INTENSITA’)":
+                        case "SERVIZIO TRASPORTO (ADI ALTA INTENSITA')":
+                        case "SERVIZIO TRASPORTO (ADI ALTA INTENSITA’)":
                             switch (((string)oss.WorkType).ToUpper())
                             {
                                 case "ANESTESISTA":
@@ -383,6 +390,59 @@ namespace DO.VIVICARE.Report.Valorizzazione
                             break;
                         case "SERVIZIO TRASPORTO AMBULANZE MEDICO (ADI ALTA INTENSITA’)":
                             oss.WorkType = "TRASPORTO CON MEDICO";
+                            break;
+                            // Tutte aggiunte il 14/07/2022 per uniformità alle ASL
+                        case "RADIOGRAFIA DOMICILIARE CON REFERTAZIONE (ADI ALTA INTENSITA’)":
+                        case "RADIOGRAFIA DOMICILIARE CON REFERTAZIONE (ADI ALTA INTENSITA')":
+                        case "ESAMI DIAGNOSTICI RX (ADI ALTA INTENSITA’)":
+                        case "ESAMI DIAGNOSTICI RX (ADI ALTA INTENSITA')":
+                            oss.WorkType = "RX DOMICILIARE";
+                            break;
+                        case "ECOGRAFIA DOMICILIARE (ADI ALTA INTENSITA’)":
+                        case "ECOGRAFIA DOMICILIARE (ADI ALTA INTENSITA')":
+                            oss.WorkType = "ECOGRAFIA DOMICILIARE";
+                            break;
+                        case "EMOGASANALISI-PRELIEVO.ANALISI.REFERTO (ADI ALTA INTENSITA’)":
+                        case "EMOGASANALISI-PRELIEVO.ANALISI.REFERTO (ADI ALTA INTENSITA')":
+                        case "EMOGASANALISI-PRELIEVO.ANALISI.REFERTO (SIAT ASL FROSINONE)":
+                            oss.WorkType = "EMOGAS DOMICILIARE";
+                            break;
+                        case "EMOGASANALISI-PRELIEVO.TRASPORTO.LAB":
+                            oss.WorkType = "EMOGAS DOMICILIARE SOLO PRELIEVO E TRASP";
+                            break;
+                        case "EMOTRASFUSIONE (SEMP.) (ADI ALTA INTENSITA’)":
+                        case "EMOTRASFUSIONE (SEMP.) (ADI ALTA INTENSITA')":
+                        case "EMOTRASFUSIONE (SEMP.) (ADI PRESTAZIONALE)":
+                        case "EMOTRASFUSIONE (SEMP.) (SIAT ASL FROSINONE)":
+                        case "EMOTRASFUSIONE DOMICILIARE (ADI ALTA INTENSITA’)":
+                        case "EMOTRASFUSIONE DOMICILIARE (ADI ALTA INTENSITA')":
+                        case "EMOTRASFUSIONE DOMICILIARE (ADI PRESTAZIONALE)":
+                        case "EMOTRASFUSIONE-PREL.PROVE.RITIRO.SACCA (SIAT ASL ROMA 2)":
+                            oss.WorkType = "EMOTRASFUSIONE DOMICILIARE";
+                            break;
+                        case "SOSTITUZIONE DEL CATETERE VESCICALE (ADI ALTA INTENSITA’)":
+                        case "SOSTITUZIONE DEL CATETERE VESCICALE (ADI ALTA INTENSITA')":
+                            oss.WorkType = "CAMBIO CATETERE";
+                            break;
+                        case "TAMPONE RAPIDO (ADI ALTA INTENSITA’)":
+                        case "TAMPONE RAPIDO (ADI ALTA INTENSITA')":
+                        case "TEST ANTIGIENICO A DOMICILIO (SIAT ASL FROSINONE)":
+                        case "TEST ANTIGIENICO A DOMICILIO (SIAT ASL ROMA 2)":
+                        case "TAMPONE RAPIDO A DOMICILIO - SINGOLO (ADI ALTA INTENSITA’)":
+                        case "TAMPONE RAPIDO A DOMICILIO - SINGOLO (ADI ALTA INTENSITA')":
+                            oss.WorkType = "TAMPONI ANTIGENICI (COVID)";
+                            break;
+                        case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (SIAT ASL FROSINONE)":
+                        case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (SIAT ASL ROMA 2)":
+                        case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (ADI ALTA INTENSITA’)":
+                        case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (ADI ALTA INTENSITA')":
+                            oss.WorkType = "PRESTAZIONI VACCINI (COVID)";
+                            break;
+                        case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (ADI ALTA INTENSITA’)":
+                        case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (ADI ALTA INTENSITA')":
+                        case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (SIAT ASL FROSINONE)":
+                        case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (SIAT ASL ROMA 2)":
+                            oss.WorkType = "GESTIONE KIT PER TELEMONITORAGGIO PAZ. COVID";
                             break;
                     }
 
@@ -450,6 +510,34 @@ namespace DO.VIVICARE.Report.Valorizzazione
                         case "TRASPORTO CON MEDICO":
                             val.TransDocNumber += 1;
                             break;
+                        // Tutte aggiunte il 14/07/2022 per uniformità alle ASL
+                        case "RX DOMICILIARE":
+                            val.RXDomNumber += 1;
+                            break;
+                        case "ECOGRAFIA DOMICILIARE":
+                            val.EcoDomNumber += 1;
+                            break;
+                        case "EMOGAS DOMICILIARE":
+                            val.EmoGasDomNumber += 1;
+                            break;
+                        case "EMOGAS DOMICILIARE SOLO PRELIEVO E TRASP":
+                            val.EmoGasLabDomNumber += 1;
+                            break;
+                        case "EMOTRASFUSIONE DOMICILIARE":
+                            val.EmoTrasfDomNumber += 1;
+                            break;
+                        case "CAMBIO CATETERE":
+                            val.CatheterChangeNumber += 1;
+                            break;
+                        case "TAMPONI ANTIGENICI (COVID)":
+                            val.SwabNumber += 1;
+                            break;
+                        case "PRESTAZIONI VACCINI (COVID)":
+                            val.VaxNumber += 1;
+                            break;
+                        case "GESTIONE KIT PER TELEMONITORAGGIO PAZ. COVID":
+                            val.MonitoringKitNumber += 1;
+                            break;
                     }
                 }
 
@@ -462,8 +550,6 @@ namespace DO.VIVICARE.Report.Valorizzazione
 
                     val.BasePacketValue = 120;
                     val.ReliefPacketValue = 108;
-                    //val.SpecialistAccessNumber = val.AccessAneNumber + val.AccessChiNumber;
-                    //val.SpecialistAccessValue = (val.SpecialistAccessNumber > 2) ? 120 : 0;
 
                     val.HourInfValue = 27;
                     val.HourRehabValue = 27;
@@ -549,11 +635,58 @@ namespace DO.VIVICARE.Report.Valorizzazione
 
                     //Valorizzazione trasporti in ambulanza assistiti
                     val.TransInfValue = 62;
+                    val.TransInfTotal = val.TransInfNumber * val.TransInfValue;
+                    val.TotalValue += val.TransInfTotal;
                     val.TransDocValue = 106;
-                    //val.TransInfTotal = val.TransInfNumber * val.TransInfValue;
                     val.TransDocTotal = val.TransDocNumber * val.TransDocValue;
-                    //val.TotalValue += val.TransInfTotal + val.TransDocTotal;
                     val.TotalValue += val.TransDocTotal;
+
+                    // Tutte aggiunte il 14/07/2022 per uniformità alle ASL
+
+                    //Valorizzazione RX DOMICILIARE
+                    val.RXDomValue = 120;
+                    val.RXDomTotal = val.RXDomNumber * val.RXDomValue;
+                    val.TotalValue += val.RXDomTotal;
+
+                    //Valorizzazione ECOGRAFIA DOMICILIARE
+                    val.EcoDomValue = 140;
+                    val.EcoDomTotal = val.EcoDomNumber * val.EcoDomValue;
+                    val.TotalValue += val.EcoDomTotal;
+
+                    //Valorizzazione EMOGAS DOMICILIARE
+                    val.EmoGasDomValue = 90;
+                    val.EmoGasDomTotal = val.EmoGasDomNumber * val.EmoGasDomValue;
+                    val.TotalValue += val.EmoGasDomTotal;
+
+                    //Valorizzazione EMOGAS DOMICILIARE SOLO PRELIEVO E TRASP
+                    val.EmoGasLabDomValue = 30;
+                    val.EmoGasLabDomTotal = val.EmoGasLabDomNumber * val.EmoGasLabDomValue;
+                    val.TotalValue += val.EmoGasLabDomTotal;
+
+                    //Valorizzazione EMOSTRASFUSIONE DOMICILIARE
+                    val.EmoTrasfDomValue = (val.ASL == "ASL FROSINONE") ? 200 : 250;
+                    val.EmoTrasfDomTotal = val.EmoTrasfDomNumber * val.EmoTrasfDomValue;
+                    val.TotalValue += val.EmoTrasfDomTotal;
+
+                    //Valorizzazione CAMBIO CATETERE
+                    val.CatheterChangeValue = 22;
+                    val.CatheterChangeTotal = val.CatheterChangeNumber * val.CatheterChangeValue;
+                    val.TotalValue += val.CatheterChangeTotal;
+
+                    //Valorizzazione TAMPONI ANTIGENICI (COVID)
+                    val.SwabValue = 33;
+                    val.SwabTotal = val.SwabNumber * val.SwabValue;
+                    val.TotalValue += val.SwabTotal;
+
+                    //Valorizzazione PRESTAZIONI VACCINI (COVID)
+                    val.VaxValue = 44;
+                    val.VaxTotal = val.VaxNumber * val.VaxValue;
+                    val.TotalValue += val.VaxTotal;
+
+                    //Valorizzazione GESTIONE KIT PER TELEMONITORAGGIO PAZ. COVID
+                    val.MonitoringKitValue = 40;
+                    val.MonitoringKitTotal = val.MonitoringKitNumber * val.MonitoringKitValue;
+                    val.TotalValue += val.MonitoringKitTotal;
                 }
 
                 //Valorizzazione della quota accesso medici
@@ -587,11 +720,11 @@ namespace DO.VIVICARE.Report.Valorizzazione
                         (val.HourRehabNumber * val.HourRehabValue) +
                         (val.HourOssNumber * val.HourOssValue);
 
-                    decimal _valoreAddizionaleExtra = (val.HourPsiNumberTotal * val.HourPsyValue) +
-                        (val.SampleNumber * val.SampleValue) +
-                        (val.TransInfNumber * val.TransInfValue) +
-                        (val.TransDocNumber * val.TransDocValue) +
-                        (val.SpecialistAccessNumber * val.SpecialistAccessValue);
+                    decimal _valoreAddizionaleExtra = (val.HourPsiNumberTotal * val.HourPsyValue) + (val.SampleNumber * val.SampleValue) +
+                        val.TransInfTotal + val.TransDocTotal + val.SpecialistAccessTotal +
+                        val.RXDomTotal + val.EcoDomTotal + val.EmoGasDomTotal +
+                        val.EmoGasLabDomTotal + val.EmoTrasfDomTotal + val.CatheterChangeTotal +
+                        val.SwabTotal + val.VaxTotal + val.MonitoringKitTotal;
 
                     val.Discount = (_valoreBaseDaScontare > 300) ? (_valoreBaseDaScontare - 300) * 0.1M : 0;
                     val.NoDiscountValue = _valoreBaseDaScontare;
@@ -661,6 +794,8 @@ namespace DO.VIVICARE.Report.Valorizzazione
         }
 
         #region Member
+
+        #region ANAG
         [ReportMemberReference(Column = "A", Position = 1, ColumnName = "NOME PAZIENTE", Length = 50, Required = true, FieldName = "PatientName")]
         public string PatientName { get; set; }
 
@@ -684,6 +819,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
 
         [ReportMemberReference(Column = "H", Position = 8, ColumnName = "SCONTO", FieldName = "Discount")]
         public decimal Discount { get; set; }
+        #endregion
 
         #region PACCHETTI BASE
         [ReportMemberReference(Column = "I", Position = 9, ColumnName = "NUMERO PACCHETTI BASE", FieldName = "BasePacketNumber")]
@@ -795,43 +931,142 @@ namespace DO.VIVICARE.Report.Valorizzazione
         public decimal SpecialistAccessTotal { get; set; }
         #endregion
 
+        #region RX DOMICILIARE
+        [ReportMemberReference(Column = "AM", Position = 39, ColumnName = "NUMERO RX DOMICILIARE", FieldName = "RXDomNumber")]
+        public decimal RXDomNumber { get; set; }
+
+        [ReportMemberReference(Column = "AN", Position = 40, ColumnName = "VALORE RX DOMICILIARE", FieldName = "RXDomValue")]
+        public decimal RXDomValue { get; set; }
+
+        [ReportMemberReference(Column = "AO", Position = 41, ColumnName = "TOTALE RX DOMICILIARE", FieldName = "RXDomTotal")]
+        public decimal RXDomTotal { get; set; }
+        #endregion
+
+        #region ECOGRAFIA DOMICILIARE
+        [ReportMemberReference(Column = "AP", Position = 42, ColumnName = "NUMERO ECOGRAFIA DOMICILIARE", FieldName = "EcoDomNumber")]
+        public decimal EcoDomNumber { get; set; }
+
+        [ReportMemberReference(Column = "AQ", Position = 43, ColumnName = "VALORE ECOGRAFIA DOMICILIARE", FieldName = "EcoDomValue")]
+        public decimal EcoDomValue { get; set; }
+
+        [ReportMemberReference(Column = "AR", Position = 44, ColumnName = "TOTALE ECOGRAFIA DOMICILIARE", FieldName = "EcoDomTotal")]
+        public decimal EcoDomTotal { get; set; }
+        #endregion
+
+        #region EMOGAS DOMICILIARE
+        [ReportMemberReference(Column = "AS", Position = 45, ColumnName = "NUMERO EMOGAS DOMICILIARE", FieldName = "EmoGasDomNumber")]
+        public decimal EmoGasDomNumber { get; set; }
+
+        [ReportMemberReference(Column = "AT", Position = 46, ColumnName = "VALORE EMOGAS DOMICILIARE", FieldName = "EmoGasDomValue")]
+        public decimal EmoGasDomValue { get; set; }
+
+        [ReportMemberReference(Column = "AU", Position = 47, ColumnName = "TOTALE EMOGAS DOMICILIARE", FieldName = "EmoGasDomTotal")]
+        public decimal EmoGasDomTotal { get; set; }
+        #endregion
+
+        #region EMOGAS DOMICILIARE SOLO PRELIEVO E TRASP.
+        [ReportMemberReference(Column = "AV", Position = 48, ColumnName = "NUMERO EMOGAS DOMICILIARE SOLO PRELIEVO E TRASP.", FieldName = "EmoGasLabDomNumber")]
+        public decimal EmoGasLabDomNumber { get; set; }
+
+        [ReportMemberReference(Column = "AW", Position = 49, ColumnName = "VALORE EMOGAS DOMICILIARE SOLO PRELIEVO E TRASP.", FieldName = "EmoGasLabDomValue")]
+        public decimal EmoGasLabDomValue { get; set; }
+
+        [ReportMemberReference(Column = "AX", Position = 50, ColumnName = "TOTALE EMOGAS DOMICILIARE SOLO PRELIEVO E TRASP.", FieldName = "EmoGasLabDomTotal")]
+        public decimal EmoGasLabDomTotal { get; set; }
+        #endregion
+
+        #region EMOTRASFUSIONE DOMICILIARE
+        [ReportMemberReference(Column = "AY", Position = 51, ColumnName = "NUMERO EMOTRASFUSIONE DOMICILIARE", FieldName = "EmoTrasfDomNumber")]
+        public decimal EmoTrasfDomNumber { get; set; }
+
+        [ReportMemberReference(Column = "AZ", Position = 52, ColumnName = "VALORE EMOTRASFUSIONE DOMICILIARE", FieldName = "EmoTrasfDomValue")]
+        public decimal EmoTrasfDomValue { get; set; }
+
+        [ReportMemberReference(Column = "BA", Position = 53, ColumnName = "TOTALE EMOTRASFUSIONE DOMICILIARE", FieldName = "EmoTrasfDomTotal")]
+        public decimal EmoTrasfDomTotal { get; set; }
+        #endregion
+
+        #region CAMBIO CATETERE
+        [ReportMemberReference(Column = "BB", Position = 54, ColumnName = "NUMERO CAMBIO CATETERE", FieldName = "CatheterChangeNumber")]
+        public decimal CatheterChangeNumber { get; set; }
+
+        [ReportMemberReference(Column = "BC", Position = 55, ColumnName = "VALORE CAMBIO CATETERE", FieldName = "CatheterChangeValue")]
+        public decimal CatheterChangeValue { get; set; }
+
+        [ReportMemberReference(Column = "BD", Position = 56, ColumnName = "TOTALE CAMBIO CATETERE", FieldName = "CatheterChangeTotal")]
+        public decimal CatheterChangeTotal { get; set; }
+        #endregion
+
+        #region TAMPONI ANTIGENICI (COVID)
+        [ReportMemberReference(Column = "BE", Position = 57, ColumnName = "NUMERO TAMPONI ANTIGENICI (COVID)", FieldName = "SwabNumber")]
+        public decimal SwabNumber { get; set; }
+
+        [ReportMemberReference(Column = "BF", Position = 58, ColumnName = "VALORE TAMPONI ANTIGENICI (COVID)", FieldName = "SwabValue")]
+        public decimal SwabValue { get; set; }
+
+        [ReportMemberReference(Column = "BG", Position = 59, ColumnName = "TOTALE TAMPONI ANTIGENICI (COVID)", FieldName = "SwabTotal")]
+        public decimal SwabTotal { get; set; }
+        #endregion
+
+        #region PRESTAZIONI VACCINI (COVID)
+        [ReportMemberReference(Column = "BH", Position = 60, ColumnName = "NUMERO PRESTAZIONI VACCINI (COVID)", FieldName = "VaxNumber")]
+        public decimal VaxNumber { get; set; }
+
+        [ReportMemberReference(Column = "BI", Position = 61, ColumnName = "VALORE PRESTAZIONI VACCINI (COVID)", FieldName = "VaxValue")]
+        public decimal VaxValue { get; set; }
+
+        [ReportMemberReference(Column = "BJ", Position = 62, ColumnName = "TOTALE PRESTAZIONI VACCINI (COVID)", FieldName = "VaxTotal")]
+        public decimal VaxTotal { get; set; }
+        #endregion
+
+        #region GESTIONE KIT PER TELEMONITORAGGIO PAZ. COVID
+        [ReportMemberReference(Column = "BK", Position = 63, ColumnName = "NUMERO GESTIONE KIT PER TELEMONITORAGGIO PAZ. COVID", FieldName = "MonitoringKitNumber")]
+        public decimal MonitoringKitNumber { get; set; }
+
+        [ReportMemberReference(Column = "BL", Position = 64, ColumnName = "VALORE GESTIONE KIT PER TELEMONITORAGGIO PAZ. COVID", FieldName = "MonitoringKitValue")]
+        public decimal MonitoringKitValue { get; set; }
+
+        [ReportMemberReference(Column = "BM", Position = 65, ColumnName = "TOTALE GESTIONE KIT PER TELEMONITORAGGIO PAZ. COVID", FieldName = "MonitoringKitTotal")]
+        public decimal MonitoringKitTotal { get; set; }
+        #endregion
+
         #region ORE TOTALI
-        [ReportMemberReference(Column = "AM", Position = 39, ColumnName = "NR ORE INF TOTALI", FieldName = "HourInfNumberTotal")]
+        [ReportMemberReference(Column = "BN", Position = 66, ColumnName = "NR ORE INF TOTALI", FieldName = "HourInfNumberTotal")]
         public decimal HourInfNumberTotal { get; set; }
         
-        [ReportMemberReference(Column = "AN", Position = 40, ColumnName = "Nr ORE FKT TOTALI", FieldName = "HourFktNumberTotal")]
+        [ReportMemberReference(Column = "BO", Position = 67, ColumnName = "Nr ORE FKT TOTALI", FieldName = "HourFktNumberTotal")]
         public decimal HourFktNumberTotal { get; set; }
         
-        [ReportMemberReference(Column = "AO", Position = 41, ColumnName = "NR ORE LOGOPEDISTA TOTALI", FieldName = "HourLogNumberTotal")]
+        [ReportMemberReference(Column = "BP", Position = 68, ColumnName = "NR ORE LOGOPEDISTA TOTALI", FieldName = "HourLogNumberTotal")]
         public decimal HourLogNumberTotal { get; set; }
         
-        [ReportMemberReference(Column = "AP", Position = 42, ColumnName = "Nr ORE TPNEE TOTALI", FieldName = "HourTpnNumberTotal")]
+        [ReportMemberReference(Column = "BQ", Position = 69, ColumnName = "Nr ORE TPNEE TOTALI", FieldName = "HourTpnNumberTotal")]
         public decimal HourTpnNumberTotal { get; set; }
         
-        [ReportMemberReference(Column = "AQ", Position = 43, ColumnName = "NR ORE TO TOTALI", FieldName = "HourTerNumberTotal")]
+        [ReportMemberReference(Column = "BR", Position = 70, ColumnName = "NR ORE TO TOTALI", FieldName = "HourTerNumberTotal")]
         public decimal HourTerNumberTotal { get; set; }
         
-        [ReportMemberReference(Column = "AR", Position = 44, ColumnName = "Nr ORE PSICOLOGO TOTALI", FieldName = "HourPsiNumberTotal")]
+        [ReportMemberReference(Column = "BS", Position = 71, ColumnName = "Nr ORE PSICOLOGO TOTALI", FieldName = "HourPsiNumberTotal")]
         public decimal HourPsiNumberTotal { get; set; }
         
-        [ReportMemberReference(Column = "AS", Position = 45, ColumnName = "NR ORE OSS TOTALI", FieldName = "HourOssNumbertotal")]
+        [ReportMemberReference(Column = "BT", Position = 72, ColumnName = "NR ORE OSS TOTALI", FieldName = "HourOssNumbertotal")]
         public decimal HourOssNumbertotal { get; set; }
         #endregion
 
         #region NUMERO ACCESSI, PRELIEVI, TRASPORTI
-        [ReportMemberReference(Column = "AT", Position = 46, ColumnName = "NR ACCESSI ANESTESISTA TOTALI", FieldName = "AccessAneNumber")]
+        [ReportMemberReference(Column = "BU", Position = 73, ColumnName = "NR ACCESSI ANESTESISTA TOTALI", FieldName = "AccessAneNumber")]
         public decimal AccessAneNumber { get; set; }
         
-        [ReportMemberReference(Column = "AU", Position = 47, ColumnName = "NR ACCESSI MEDICO CHIRURGO TOTALI", FieldName = "AccessChiNumber")]
+        [ReportMemberReference(Column = "BV", Position = 74, ColumnName = "NR ACCESSI MEDICO CHIRURGO TOTALI", FieldName = "AccessChiNumber")]
         public decimal AccessChiNumber { get; set; }
         
-        [ReportMemberReference(Column = "AV", Position = 48, ColumnName = "NR PRELIEVI", FieldName = "SampleNumber2")]
+        [ReportMemberReference(Column = "BW", Position = 75, ColumnName = "NR PRELIEVI", FieldName = "SampleNumber2")]
         public decimal SampleNumber2 { get; set; }
 
-        [ReportMemberReference(Column = "AW", Position = 49, ColumnName = "NR TRASPORTI INF.", FieldName = "TransInfNumber")]
+        [ReportMemberReference(Column = "BX", Position = 76, ColumnName = "NR TRASPORTI INF.", FieldName = "TransInfNumber")]
         public decimal TransInfNumberTotal { get { return TransInfNumber; } }
 
-        [ReportMemberReference(Column = "AX", Position = 50, ColumnName = "NR TRASPORTI MED.", FieldName = "TransDocNumber")]
+        [ReportMemberReference(Column = "BY", Position = 77, ColumnName = "NR TRASPORTI MED.", FieldName = "TransDocNumber")]
         public decimal TransDocNumberTotal { get { return TransDocNumber; } }
         #endregion
 
