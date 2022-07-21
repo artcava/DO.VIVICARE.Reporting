@@ -354,6 +354,8 @@ namespace DO.VIVICARE.Report.Valorizzazione
                     dynamic oss = listLazioHealthWorker.Where((dynamic os) => os.NameKey == adi.NameKey).FirstOrDefault();
                     if (oss == null) continue;
 
+                    var worktype = oss.WorkType;
+
                     // Prelievi e Trasporti sono identificati con un WorkType specifico
                     switch (((string)adi.Activity).ToUpper())
                     {
@@ -367,7 +369,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
                         case "PRELIEVO EMATICO (ADI ALTA INTENSITA' - FROSINONE)":
                         case "PRELIEVO VENOSO (SIAT ASL FROSINONE)":
                         case "PRELIEVO EMATICO (ADI PRESTAZIONALE)":
-                            oss.WorkType = "PRELIEVO";
+                            worktype = "PRELIEVO";
                             break;
                         case "SERVIZIO TRASPORTO SANITARIO (ADI ALTA INTENSITA')":
                         case "SERVIZIO TRASPORTO SANITARIO (ADI ALTA INTENSITA’)":
@@ -377,38 +379,38 @@ namespace DO.VIVICARE.Report.Valorizzazione
                             {
                                 case "ANESTESISTA":
                                 case "MEDICO CHIRURGO":
-                                    oss.WorkType = "TRASPORTO CON MEDICO";
+                                    worktype = "TRASPORTO CON MEDICO";
                                     break;
                                 default:
-                                    oss.WorkType = "TRASPORTO CON INFERMIERE";
+                                    worktype = "TRASPORTO CON INFERMIERE";
                                     break;
                             }
                             break;
                             // Aggiunte il 14/06/2022 per difformità con l'originale
                         case "SERVIZIO TRASPORTO AMBULANZE INFERM. (ADI ALTA INTENSITA’)":
-                            oss.WorkType = "TRASPORTO CON INFERMIERE";
+                            worktype = "TRASPORTO CON INFERMIERE";
                             break;
                         case "SERVIZIO TRASPORTO AMBULANZE MEDICO (ADI ALTA INTENSITA’)":
-                            oss.WorkType = "TRASPORTO CON MEDICO";
+                            worktype = "TRASPORTO CON MEDICO";
                             break;
                             // Tutte aggiunte il 14/07/2022 per uniformità alle ASL
                         case "RADIOGRAFIA DOMICILIARE CON REFERTAZIONE (ADI ALTA INTENSITA’)":
                         case "RADIOGRAFIA DOMICILIARE CON REFERTAZIONE (ADI ALTA INTENSITA')":
                         case "ESAMI DIAGNOSTICI RX (ADI ALTA INTENSITA’)":
                         case "ESAMI DIAGNOSTICI RX (ADI ALTA INTENSITA')":
-                            oss.WorkType = "RX DOMICILIARE";
+                            worktype = "RX DOMICILIARE";
                             break;
                         case "ECOGRAFIA DOMICILIARE (ADI ALTA INTENSITA’)":
                         case "ECOGRAFIA DOMICILIARE (ADI ALTA INTENSITA')":
-                            oss.WorkType = "ECOGRAFIA DOMICILIARE";
+                            worktype = "ECOGRAFIA DOMICILIARE";
                             break;
                         case "EMOGASANALISI-PRELIEVO.ANALISI.REFERTO (ADI ALTA INTENSITA’)":
                         case "EMOGASANALISI-PRELIEVO.ANALISI.REFERTO (ADI ALTA INTENSITA')":
                         case "EMOGASANALISI-PRELIEVO.ANALISI.REFERTO (SIAT ASL FROSINONE)":
-                            oss.WorkType = "EMOGAS DOMICILIARE";
+                            worktype = "EMOGAS DOMICILIARE";
                             break;
                         case "EMOGASANALISI-PRELIEVO.TRASPORTO.LAB":
-                            oss.WorkType = "EMOGAS DOMICILIARE SOLO PRELIEVO E TRASP";
+                            worktype = "EMOGAS DOMICILIARE SOLO PRELIEVO E TRASP";
                             break;
                         case "EMOTRASFUSIONE (SEMP.) (ADI ALTA INTENSITA’)":
                         case "EMOTRASFUSIONE (SEMP.) (ADI ALTA INTENSITA')":
@@ -418,11 +420,11 @@ namespace DO.VIVICARE.Report.Valorizzazione
                         case "EMOTRASFUSIONE DOMICILIARE (ADI ALTA INTENSITA')":
                         case "EMOTRASFUSIONE DOMICILIARE (ADI PRESTAZIONALE)":
                         case "EMOTRASFUSIONE-PREL.PROVE.RITIRO.SACCA (SIAT ASL ROMA 2)":
-                            oss.WorkType = "EMOTRASFUSIONE DOMICILIARE";
+                            worktype = "EMOTRASFUSIONE DOMICILIARE";
                             break;
                         case "SOSTITUZIONE DEL CATETERE VESCICALE (ADI ALTA INTENSITA’)":
                         case "SOSTITUZIONE DEL CATETERE VESCICALE (ADI ALTA INTENSITA')":
-                            oss.WorkType = "CAMBIO CATETERE";
+                            worktype = "CAMBIO CATETERE";
                             break;
                         case "TAMPONE RAPIDO (ADI ALTA INTENSITA’)":
                         case "TAMPONE RAPIDO (ADI ALTA INTENSITA')":
@@ -430,19 +432,19 @@ namespace DO.VIVICARE.Report.Valorizzazione
                         case "TEST ANTIGIENICO A DOMICILIO (SIAT ASL ROMA 2)":
                         case "TAMPONE RAPIDO A DOMICILIO - SINGOLO (ADI ALTA INTENSITA’)":
                         case "TAMPONE RAPIDO A DOMICILIO - SINGOLO (ADI ALTA INTENSITA')":
-                            oss.WorkType = "TAMPONI ANTIGENICI (COVID)";
+                            worktype = "TAMPONI ANTIGENICI (COVID)";
                             break;
                         case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (SIAT ASL FROSINONE)":
                         case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (SIAT ASL ROMA 2)":
                         case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (ADI ALTA INTENSITA’)":
                         case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (ADI ALTA INTENSITA')":
-                            oss.WorkType = "PRESTAZIONI VACCINI (COVID)";
+                            worktype = "PRESTAZIONI VACCINI (COVID)";
                             break;
                         case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (ADI ALTA INTENSITA’)":
                         case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (ADI ALTA INTENSITA')":
                         case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (SIAT ASL FROSINONE)":
                         case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (SIAT ASL ROMA 2)":
-                            oss.WorkType = "GESTIONE KIT PER TELEMONITORAGGIO PAZ. COVID";
+                            worktype = "GESTIONE KIT PER TELEMONITORAGGIO PAZ. COVID";
                             break;
                     }
 
@@ -452,7 +454,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
                     //duration = NumerizeDuration(duration);
 
                     // In base alla durata e al WorkType definisco i pacchetti
-                    switch (((string)oss.WorkType).ToUpper())
+                    switch (worktype.ToUpper())
                     {
                         case "ANESTESISTA":
                             val.AccessAneNumber += 1;
@@ -472,6 +474,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
                                 case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (SIAT ASL FROSINONE)":
                                 case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (SIAT ASL ROMA 6)":
                                 case "ASSIST. (OSS) PAZIENTE ALTA COMPLES-H (SIAT ASL ROMA 2)":
+                                case "ATTIVITÀ DI SUPPORTO OSS (SIAT ASL FROSINONE)":
                                     val.HourOssNumber += duration;
                                     break;
                                 default:
@@ -622,9 +625,9 @@ namespace DO.VIVICARE.Report.Valorizzazione
                     val.TotalValue += (val.BasePacketNumber * 120) + (val.ReliefPacketNumber * 108) + (val.HourInfNumber * val.HourInfValue) + (val.HourRehabNumber * val.HourRehabValue);
 
                     //Valorizzazione pacchetto di ore OSS + PRELIEVI
-                    val.TotalValue += (val.HourOssNumbertotal * 21.6M) + val.SampleNumber * 14;
-                    val.HourOssValue = 21.6M;
                     val.SampleValue = 14;
+                    val.TotalValue += (val.HourOssNumbertotal * 21.6M) + val.SampleNumber * val.SampleValue;
+                    val.HourOssValue = 21.6M;
                     val.ReliefPacketNumber += (int)Math.Truncate(val.HourOssNumbertotal / 5);
                     val.HourOssNumber = val.HourOssNumbertotal - ((int)Math.Truncate(val.HourOssNumbertotal / 5) * 5);
 
