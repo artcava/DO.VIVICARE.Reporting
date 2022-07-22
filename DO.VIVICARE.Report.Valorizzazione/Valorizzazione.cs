@@ -450,9 +450,6 @@ namespace DO.VIVICARE.Report.Valorizzazione
 
                     decimal duration = NumerizeDuration(adi.Duration);
 
-                    duration = ((duration >= 1) ? duration : 1);
-                    //duration = NumerizeDuration(duration);
-
                     // In base alla durata e al WorkType definisco i pacchetti
                     switch (worktype.ToUpper())
                     {
@@ -542,6 +539,18 @@ namespace DO.VIVICARE.Report.Valorizzazione
                             val.MonitoringKitNumber += 1;
                             break;
                     }
+                }
+
+                //Arrotondamenti sulle attività a durata
+                foreach(var val in reportValorizzazione)
+                {
+                    val.HourFktNumberTotal = val.HourFktNumberTotal >= 1 ? val.HourFktNumberTotal : 1;
+                    val.HourOssNumber = val.HourOssNumber >= 1 ? val.HourOssNumber : 1;
+                    val.HourInfNumber = val.HourInfNumber >= 1 ? val.HourInfNumber : 1;
+                    val.HourLogNumberTotal = val.HourLogNumberTotal >= 1 ? val.HourLogNumberTotal : 1;
+                    val.HourPsiNumberTotal = val.HourPsiNumberTotal >= 1 ? val.HourPsiNumberTotal : 1;
+                    val.HourTpnNumberTotal = val.HourTpnNumberTotal >= 1 ? val.HourTpnNumberTotal : 1;
+                    val.HourTerNumberTotal = val.HourTerNumberTotal >= 1 ? val.HourTerNumberTotal : 1;
                 }
 
                 // Gestione pacchetti
