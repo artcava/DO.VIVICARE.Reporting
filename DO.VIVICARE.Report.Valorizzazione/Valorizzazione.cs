@@ -369,6 +369,8 @@ namespace DO.VIVICARE.Report.Valorizzazione
                         case "PRELIEVO EMATICO (ADI ALTA INTENSITA' - FROSINONE)":
                         case "PRELIEVO VENOSO (SIAT ASL FROSINONE)":
                         case "PRELIEVO EMATICO (ADI PRESTAZIONALE)":
+                        case "RACCOLTA DI UN CAMPIONE DI URINE (ADI ALTA INTENSITA')":
+                        case "RACCOLTA DI UN CAMPIONE DI URINE (ADI ALTA INTENSITA’)":
                             worktype = "PRELIEVO";
                             break;
                         case "SERVIZIO TRASPORTO SANITARIO (ADI ALTA INTENSITA')":
@@ -442,9 +444,10 @@ namespace DO.VIVICARE.Report.Valorizzazione
                             break;
                         case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (ADI ALTA INTENSITA’)":
                         case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (ADI ALTA INTENSITA')":
-                        case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (SIAT ASL FROSINONE)":
                         case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (SIAT ASL ROMA 2)":
-                            worktype = "GESTIONE KIT PER TELEMONITORAGGIO PAZ. COVID";
+                            //case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (SIAT ASL FROSINONE)": // #1446 Non considerare per Frosinone
+                            //worktype = "GESTIONE KIT PER TELEMONITORAGGIO PAZ. COVID"; // #1446 Mantenere le normali valorizzazioni
+                            val.MonitoringKitNumber = 1; // #1446 Attribuire il costo aggiuntivo ma solo in presenza di pacchetto base da 120€. (vedi attribuzione pacchetto)
                             break;
                     }
 
@@ -535,22 +538,22 @@ namespace DO.VIVICARE.Report.Valorizzazione
                         case "PRESTAZIONI VACCINI (COVID)":
                             val.VaxNumber += 1;
                             break;
-                        case "GESTIONE KIT PER TELEMONITORAGGIO PAZ. COVID":
-                            val.MonitoringKitNumber += 1;
-                            break;
+                            //case "GESTIONE KIT PER TELEMONITORAGGIO PAZ. COVID": // #1446 Da non gestire più singolarmente
+                            //    val.MonitoringKitNumber += 1;
+                            //    break;
                     }
                 }
 
                 //Arrotondamenti sulle attività a durata
                 foreach(var val in reportValorizzazione)
                 {
-                    val.HourFktNumberTotal = val.HourFktNumberTotal >= 1 ? val.HourFktNumberTotal : 1;
-                    val.HourOssNumber = val.HourOssNumber >= 1 ? val.HourOssNumber : 1;
-                    val.HourInfNumber = val.HourInfNumber >= 1 ? val.HourInfNumber : 1;
-                    val.HourLogNumberTotal = val.HourLogNumberTotal >= 1 ? val.HourLogNumberTotal : 1;
-                    val.HourPsiNumberTotal = val.HourPsiNumberTotal >= 1 ? val.HourPsiNumberTotal : 1;
-                    val.HourTpnNumberTotal = val.HourTpnNumberTotal >= 1 ? val.HourTpnNumberTotal : 1;
-                    val.HourTerNumberTotal = val.HourTerNumberTotal >= 1 ? val.HourTerNumberTotal : 1;
+                    val.HourFktNumberTotal = RoundValue(val.HourFktNumberTotal);
+                    val.HourOssNumber = RoundValue(val.HourOssNumber);
+                    val.HourInfNumber = RoundValue(val.HourInfNumber);
+                    val.HourLogNumberTotal = RoundValue(val.HourLogNumberTotal);
+                    val.HourPsiNumberTotal = RoundValue(val.HourPsiNumberTotal);
+                    val.HourTpnNumberTotal = RoundValue(val.HourTpnNumberTotal);
+                    val.HourTerNumberTotal = RoundValue(val.HourTerNumberTotal);
                 }
 
                 // Gestione pacchetti
@@ -558,7 +561,8 @@ namespace DO.VIVICARE.Report.Valorizzazione
                 {
                     val.HourInfNumberTotal = val.HourInfNumber;
                     val.HourOssNumbertotal = val.HourOssNumber;
-                    decimal _pacchettiRiabilitativi = val.HourFktNumberTotal + val.HourLogNumberTotal + val.HourTpnNumberTotal + val.HourTerNumberTotal;
+
+                    decimal _pacchettiRiabilitativi = val.HourFktNumberTotal + val.HourLogNumberTotal + val.HourTpnNumberTotal + val.HourTerNumberTotal; // Prima era così
 
                     val.BasePacketValue = 120;
                     val.ReliefPacketValue = 108;
@@ -573,6 +577,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
                         val.HourRehabValue = 30;
                         val.HourInfNumber = val.HourInfNumberTotal;
                         val.HourRehabNumber = _pacchettiRiabilitativi;
+                        val.MonitoringKitNumber = 0; // #1446 Non considerare se non c'è pacchetto base
                     }
                     else
                     {
@@ -609,16 +614,18 @@ namespace DO.VIVICARE.Report.Valorizzazione
                         }
 
                         var rest = (_pacchettiRiabilitativi + val.HourInfNumber);
-                        while (rest >= 4)
+                        if (val.ASL != "ASL FROSINONE")
                         {
-                            val.ReliefPacketNumber += 1;
-                            rest -= 4;
+                            while (rest >= 4)
+                            {
+                                val.ReliefPacketNumber += 1;
+                                rest -= 4;
+                            }
                         }
 
                         var infrest = val.HourInfNumber % 4;
-                        var rehabrest = _pacchettiRiabilitativi % 4;
+                        //var rehabrest = _pacchettiRiabilitativi % 4;
                         
-                        // Probabilmente qui c'è ancora qualche incongruenza...
                         if (rest >= infrest)
                         {
                             val.HourInfNumber = infrest;
@@ -649,9 +656,11 @@ namespace DO.VIVICARE.Report.Valorizzazione
                     val.TransInfValue = 62;
                     val.TransInfTotal = val.TransInfNumber * val.TransInfValue;
                     val.TotalValue += val.TransInfTotal;
+                    if (val.TransInfTotal < 1) val.TransInfValue = 0; //#1445
                     val.TransDocValue = 106;
                     val.TransDocTotal = val.TransDocNumber * val.TransDocValue;
                     val.TotalValue += val.TransDocTotal;
+                    if (val.TransDocTotal < 1) val.TransDocValue = 0; //#1445
 
                     // Tutte aggiunte il 14/07/2022 per uniformità alle ASL
 
@@ -659,46 +668,55 @@ namespace DO.VIVICARE.Report.Valorizzazione
                     val.RXDomValue = 120;
                     val.RXDomTotal = val.RXDomNumber * val.RXDomValue;
                     val.TotalValue += val.RXDomTotal;
+                    if (val.RXDomTotal < 1) val.RXDomValue = 0; //#1445
 
                     //Valorizzazione ECOGRAFIA DOMICILIARE
                     val.EcoDomValue = 140;
                     val.EcoDomTotal = val.EcoDomNumber * val.EcoDomValue;
                     val.TotalValue += val.EcoDomTotal;
+                    if (val.EcoDomTotal < 1) val.EcoDomValue = 0; //#1445
 
                     //Valorizzazione EMOGAS DOMICILIARE
                     val.EmoGasDomValue = 90;
                     val.EmoGasDomTotal = val.EmoGasDomNumber * val.EmoGasDomValue;
                     val.TotalValue += val.EmoGasDomTotal;
+                    if (val.EmoGasDomTotal < 1) val.EmoGasDomValue = 0; //#1445
 
                     //Valorizzazione EMOGAS DOMICILIARE SOLO PRELIEVO E TRASP
                     val.EmoGasLabDomValue = 30;
                     val.EmoGasLabDomTotal = val.EmoGasLabDomNumber * val.EmoGasLabDomValue;
                     val.TotalValue += val.EmoGasLabDomTotal;
+                    if (val.EmoGasLabDomTotal < 1) val.EmoGasLabDomValue = 0; //#1445
 
                     //Valorizzazione EMOSTRASFUSIONE DOMICILIARE
                     val.EmoTrasfDomValue = (val.ASL == "ASL FROSINONE") ? 200 : 250;
                     val.EmoTrasfDomTotal = val.EmoTrasfDomNumber * val.EmoTrasfDomValue;
                     val.TotalValue += val.EmoTrasfDomTotal;
+                    if (val.EmoTrasfDomTotal < 1) val.EmoTrasfDomValue = 0; //#1445
 
                     //Valorizzazione CAMBIO CATETERE
                     val.CatheterChangeValue = 22;
                     val.CatheterChangeTotal = val.CatheterChangeNumber * val.CatheterChangeValue;
                     val.TotalValue += val.CatheterChangeTotal;
+                    if (val.CatheterChangeTotal < 1) val.CatheterChangeValue = 0; //#1445
 
                     //Valorizzazione TAMPONI ANTIGENICI (COVID)
                     val.SwabValue = 33;
                     val.SwabTotal = val.SwabNumber * val.SwabValue;
                     val.TotalValue += val.SwabTotal;
+                    if (val.SwabTotal < 1) val.SwabValue = 0; //#1445
 
                     //Valorizzazione PRESTAZIONI VACCINI (COVID)
                     val.VaxValue = 44;
                     val.VaxTotal = val.VaxNumber * val.VaxValue;
                     val.TotalValue += val.VaxTotal;
+                    if (val.VaxTotal < 1) val.VaxValue = 0; //#1445
 
                     //Valorizzazione GESTIONE KIT PER TELEMONITORAGGIO PAZ. COVID
                     val.MonitoringKitValue = 40;
                     val.MonitoringKitTotal = val.MonitoringKitNumber * val.MonitoringKitValue;
                     val.TotalValue += val.MonitoringKitTotal;
+                    if (val.MonitoringKitTotal < 1) val.MonitoringKitValue = 0; //#1445
                 }
 
                 //Valorizzazione della quota accesso medici
@@ -757,7 +775,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
                     if (val.HourOssTotal == 0) val.HourOssValue = 0;
                     val.HourPsyTotal = val.HourPsyNumber * val.HourPsyValue;
                     if (val.HourPsyTotal == 0) val.HourPsyValue = 0;
-                    val.SampleTotal = val.SampleNumber * val.SampleValue;
+                    val.SampleTotal = val.SampleNumber2 = val.SampleNumber * val.SampleValue;
                     if (val.SampleTotal == 0) val.SampleValue = 0;
                 }
 
@@ -803,6 +821,15 @@ namespace DO.VIVICARE.Report.Valorizzazione
             var decimalpart = (duration - intpart) * 100;
             if (decimalpart == 0) return new TimeSpan(intpart, 0, 0);
             return new TimeSpan(intpart, (int)decimalpart * 6 / 10, 0);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private decimal RoundValue(decimal value)
+        {
+            return (value > 0) ? ((value >= 1) ? value : 1) : 0;
         }
 
         #region Member
@@ -1032,13 +1059,13 @@ namespace DO.VIVICARE.Report.Valorizzazione
         #endregion
 
         #region GESTIONE KIT PER TELEMONITORAGGIO PAZ. COVID
-        [ReportMemberReference(Column = "BK", Position = 63, ColumnName = "NUMERO GESTIONE KIT PER TELEMONITORAGGIO PAZ. COVID", FieldName = "MonitoringKitNumber")]
+        [ReportMemberReference(Column = "BK", Position = 63, ColumnName = "NUMERO MAGGIOR. MONITORAGGIO PAZ. COVID", FieldName = "MonitoringKitNumber")]
         public decimal MonitoringKitNumber { get; set; }
 
-        [ReportMemberReference(Column = "BL", Position = 64, ColumnName = "VALORE GESTIONE KIT PER TELEMONITORAGGIO PAZ. COVID", FieldName = "MonitoringKitValue")]
+        [ReportMemberReference(Column = "BL", Position = 64, ColumnName = "VALORE MAGGIOR. MONITORAGGIO PAZ. COVID", FieldName = "MonitoringKitValue")]
         public decimal MonitoringKitValue { get; set; }
 
-        [ReportMemberReference(Column = "BM", Position = 65, ColumnName = "TOTALE GESTIONE KIT PER TELEMONITORAGGIO PAZ. COVID", FieldName = "MonitoringKitTotal")]
+        [ReportMemberReference(Column = "BM", Position = 65, ColumnName = "TOTALE MAGGIOR. MONITORAGGIO PAZ. COVID", FieldName = "MonitoringKitTotal")]
         public decimal MonitoringKitTotal { get; set; }
         #endregion
 
