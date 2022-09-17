@@ -505,7 +505,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
                             val.HourTerNumberTotal += duration;
                             break;
                         case "PRELIEVO":
-                            val.SampleNumber += 1;
+                            val.SampleNumber = val.SampleNumber2 += 1;
                             break;
                         case "TRASPORTO CON INFERMIERE":
                             val.TransInfNumber += 1;
@@ -613,29 +613,41 @@ namespace DO.VIVICARE.Report.Valorizzazione
                                 break;
                         }
 
-                        var rest = (_pacchettiRiabilitativi + val.HourInfNumber);
                         if (val.ASL != "ASL FROSINONE")
                         {
+                            var rest = (_pacchettiRiabilitativi + val.HourInfNumber);
                             while (rest >= 4)
                             {
                                 val.ReliefPacketNumber += 1;
                                 rest -= 4;
                             }
-                        }
 
-                        var infrest = val.HourInfNumber % 4;
-                        //var rehabrest = _pacchettiRiabilitativi % 4;
-                        
-                        if (rest >= infrest)
-                        {
-                            val.HourInfNumber = infrest;
-                            val.HourRehabNumber = rest - infrest;
+                            var infrest = val.HourInfNumber % 4;
+
+                            if (rest >= infrest)
+                            {
+                                val.HourInfNumber = infrest;
+                                val.HourRehabNumber = rest - infrest;
+                            }
+                            else
+                            {
+                                val.HourInfNumber = rest;
+                                val.HourRehabNumber = 0;
+                            }
                         }
                         else
                         {
-                            val.HourInfNumber = rest;
-                            val.HourRehabNumber = 0;
+                            var restinf = val.HourInfNumber;
+                            while (restinf >= 4)
+                            {
+                                val.ReliefPacketNumber += 1;
+                                restinf -= 4;
+                            }
+
+                            val.HourInfNumber = val.HourInfNumber % 4;
+                            val.HourRehabNumber = _pacchettiRiabilitativi;
                         }
+
                     }
 
                     val.TotalValue += (val.BasePacketNumber * 120) + (val.ReliefPacketNumber * 108) + (val.HourInfNumber * val.HourInfValue) + (val.HourRehabNumber * val.HourRehabValue);
@@ -775,7 +787,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
                     if (val.HourOssTotal == 0) val.HourOssValue = 0;
                     val.HourPsyTotal = val.HourPsyNumber * val.HourPsyValue;
                     if (val.HourPsyTotal == 0) val.HourPsyValue = 0;
-                    val.SampleTotal = val.SampleNumber2 = val.SampleNumber * val.SampleValue;
+                    val.SampleTotal = val.SampleNumber * val.SampleValue;
                     if (val.SampleTotal == 0) val.SampleValue = 0;
                 }
 
