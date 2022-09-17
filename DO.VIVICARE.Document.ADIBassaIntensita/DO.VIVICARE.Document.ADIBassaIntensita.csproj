@@ -7,8 +7,8 @@
     <ProjectGuid>{AC3B920D-635F-484B-855D-31989C69590E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ValorizzazioniADIAlta</RootNamespace>
-    <AssemblyName>ValorizzazioniADIAlta</AssemblyName>
+    <RootNamespace>DO.VIVICARE.Document.ADIBassaIntensita</RootNamespace>
+    <AssemblyName>DO.VIVICARE.Document.ADIBassaIntensita</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
