@@ -129,6 +129,8 @@ namespace DO.VIVICARE.Report.AllegatoADI
                         sheetrow.ReliefPacketNumber = (sheetrow.HourNumberTotal / 4) >= 0 ? sheetrow.HourOssNumbertotal / 5 : ((sheetrow.HourNumberTotal + sheetrow.HourOssNumbertotal) / 5) <= 0 ? 0 : (sheetrow.HourNumberTotal + sheetrow.HourOssNumbertotal) / 5;
                     }
 
+                    sheetrow.ReliefPacketTotal = adi.ReliefPacketTotal + adi.HourInfTotal + adi.HourRehabTotal + adi.HourOssTotal;
+
                     val.AidTotal += sheetrow.NetTotal;
                     val.ExtraMedicalVisit += sheetrow.AccessDocCost;
                     val.Diagnostic += sheetrow.DiagnosticCost;
@@ -215,7 +217,7 @@ namespace DO.VIVICARE.Report.AllegatoADI
             public decimal ReliefPacketNumber { get; set; }
 
             [ReportMemberReference(Column = "L", Position = 12, ColumnName = "TOTALE SOLLIEVO", FieldName = "ReliefPacketTotal")]
-            public decimal ReliefPacketTotal { get { return (BasePacketNumber + ReliefPacketNumber) * 108; } }
+            public decimal ReliefPacketTotal { get; set; }
 
             [ReportMemberReference(Column = "M", Position = 13, ColumnName = "TOTALE FATTURATO", FieldName = "TotalValue")]
             public decimal TotalValue { get { return BasePrice + ReliefPacketTotal; } }
