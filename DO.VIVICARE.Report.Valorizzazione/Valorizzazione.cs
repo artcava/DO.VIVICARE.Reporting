@@ -570,51 +570,74 @@ namespace DO.VIVICARE.Report.Valorizzazione
                     val.HourInfValue = 27;
                     val.HourRehabValue = 27;
 
+                    val.HourInfNumber = val.HourInfNumberTotal;
 
-                    if((_pacchettiRiabilitativi + val.HourInfNumberTotal) < 4) // non ci sono pacchetti
+                    if (val.ASL == "ASL FROSINONE")
                     {
-                        val.HourInfValue = 30;
                         val.HourRehabValue = 30;
-                        val.HourInfNumber = val.HourInfNumberTotal;
                         val.HourRehabNumber = _pacchettiRiabilitativi;
-                        val.MonitoringKitNumber = 0; // #1446 Non considerare se non c'è pacchetto base
+                        if (val.HourInfNumber >= 4) // c'è il pacchetto base
+                        {
+                            val.BasePacketNumber = 1;
+                            for (int i = 1; i <= 4; i++)
+                            {
+                                if (val.HourInfNumber > 0)
+                                    val.HourInfNumber--;
+                            }
+
+                            while (val.HourInfNumber >= 4)
+                            {
+                                val.ReliefPacketNumber += 1;
+                                val.HourInfNumber -= 4;
+                            }
+                        }
+                        else
+                        {
+                            val.HourInfValue = 30;
+                            val.MonitoringKitNumber = 0; // #1446 Non considerare se non c'è pacchetto base
+                        }
                     }
                     else
                     {
-                        val.BasePacketNumber = 1;
-
-                        val.HourInfNumber = val.HourInfNumberTotal;
-                        switch (val.ASL)
+                        if ((_pacchettiRiabilitativi + val.HourInfNumberTotal) < 4) // non ci sono pacchetti
                         {
-                            case "ASL ROMA 2":
-                            case "ASL ROMA 3":
-                            case "ASL LATINA":
-                                // rehab priority
-                                for (int i = 1; i <= 4; i++)
-                                {
-                                    if (_pacchettiRiabilitativi == 0)
-                                        val.HourInfNumber--;
-                                    else
-                                        _pacchettiRiabilitativi--;
-                                }
-                                break;
-                            case "ASL ROMA 5":
-                            case "ASL ROMA 6":
-                            case "ASL FROSINONE":
-                                // inf priority
-                                val.HourRehabValue = 30; // Unica condizione particolare
-                                for (int i = 1; i <= 4; i++)
-                                {
-                                    if (val.HourInfNumber == 0)
-                                        _pacchettiRiabilitativi--;
-                                    else
-                                        val.HourInfNumber--;
-                                }
-                                break;
+                            val.HourInfValue = 30;
+                            val.HourRehabValue = 30;
+                            val.HourRehabNumber = _pacchettiRiabilitativi;
+                            val.MonitoringKitNumber = 0; // #1446 Non considerare se non c'è pacchetto base
                         }
-
-                        if (val.ASL != "ASL FROSINONE")
+                        else
                         {
+                            val.BasePacketNumber = 1;
+
+                            switch (val.ASL)
+                            {
+                                case "ASL ROMA 2":
+                                case "ASL ROMA 3":
+                                case "ASL LATINA":
+                                    // rehab priority
+                                    for (int i = 1; i <= 4; i++)
+                                    {
+                                        if (_pacchettiRiabilitativi == 0)
+                                            val.HourInfNumber--;
+                                        else
+                                            _pacchettiRiabilitativi--;
+                                    }
+                                    break;
+                                case "ASL ROMA 5":
+                                case "ASL ROMA 6":
+                                    // inf priority
+                                    val.HourRehabValue = 30; // Unica condizione particolare
+                                    for (int i = 1; i <= 4; i++)
+                                    {
+                                        if (val.HourInfNumber == 0)
+                                            _pacchettiRiabilitativi--;
+                                        else
+                                            val.HourInfNumber--;
+                                    }
+                                    break;
+                            }
+
                             var rest = (_pacchettiRiabilitativi + val.HourInfNumber);
                             while (rest >= 4)
                             {
@@ -635,20 +658,8 @@ namespace DO.VIVICARE.Report.Valorizzazione
                                 val.HourRehabNumber = 0;
                             }
                         }
-                        else
-                        {
-                            var restinf = val.HourInfNumber;
-                            while (restinf >= 4)
-                            {
-                                val.ReliefPacketNumber += 1;
-                                restinf -= 4;
-                            }
-
-                            val.HourInfNumber = val.HourInfNumber % 4;
-                            val.HourRehabNumber = _pacchettiRiabilitativi;
-                        }
-
                     }
+                    //Per Frosinone considerare solo ore infermieristiche per il pacchetto base
 
                     val.TotalValue += (val.BasePacketNumber * 120) + (val.ReliefPacketNumber * 108) + (val.HourInfNumber * val.HourInfValue) + (val.HourRehabNumber * val.HourRehabValue);
 

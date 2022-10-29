@@ -89,7 +89,6 @@ namespace DO.VIVICARE.Reporter
             }
             return list;
         }
-
         /// <summary>
         /// 
         /// </summary>
@@ -122,7 +121,29 @@ namespace DO.VIVICARE.Reporter
             }
             return list;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sheet"></param>
+        /// <returns></returns>
+        public static List<ReportMemberReferenceAttribute> GetSheetReportColumns(BaseSheet sheet)
+        {
+            var list = new List<ReportMemberReferenceAttribute>();
 
+            foreach (var prop in sheet.GetType().GetProperties())
+            {
+                var ra = (ReportMemberReferenceAttribute)prop.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false);
+                if (ra == null) continue;
+                list.Add(ra);
+            }
+            return list;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="report"></param>
+        /// <param name="fileWithoutExt"></param>
+        /// <returns></returns>
         public static bool CreateExcelFile(BaseReport report, string fileWithoutExt)
         {
             var list = new List<Tuple<string, string, string>>();
@@ -138,8 +159,8 @@ namespace DO.VIVICARE.Reporter
                 var destinationFilePath = Path.Combine(Manager.Reports, $"{fileWithoutExt}.xlsx");
 
                 if (!manExcel.Create(destinationFilePath, fileWithoutExt)) return false;
-                
 
+                #region Principal sheet
                 var columns = Manager.GetReportColumns(report);
 
                 int rowCount = report.ResultRecords.Count();
@@ -208,6 +229,88 @@ namespace DO.VIVICARE.Reporter
                         manExcel.AddRow(cells, rowIndex++);
                     }
                 }
+                #endregion
+
+                #region other sheets
+                if (report.Phantom != null)
+                {
+                    columns = Manager.GetSheetReportColumns(report.Phantom);
+
+                    foreach (var row in report.ResultRecords)
+                    {
+                        rowCount = row.SheetRecords.Count();
+                        colCount = columns.Count();
+                        rowStart = 2;
+
+                        manExcel.AddSheet(row.SheetName);
+
+                        // header row excel sheet
+                        cells = new List<Cell>();
+                        foreach (var col in columns)
+                        {
+                            var cell = new Cell
+                            {
+                                CellReference = $"{col.Column}1",
+                                CellValue = new CellValue(col.ColumnName),
+                                DataType = CellValues.String
+                            };
+                            cells.Add(cell);
+                        }
+                        manExcel.AddRow(cells, 1);
+
+                        if (rowCount > 0)
+                        {
+                            var records = row.SheetRecords;
+
+
+                            // data rows excel sheet
+                            DocumentFormat.OpenXml.UInt32Value rowIndex = 2;
+                            for (int i = rowStart; i <= (rowCount + 1); i++)
+                            {
+                                var element = row.SheetRecords[i - 2];
+                                cells = new List<Cell>();
+                                foreach (var col in columns)
+                                {
+                                    var cell = new Cell
+                                    {
+                                        CellReference = $"{col.Column}{i}",
+                                        CellValue = new CellValue(""),
+                                        DataType = CellValues.String
+                                    };
+
+                                    var nameField = col.FieldName;
+                                    var propField = element.GetType().GetProperty(nameField);
+
+                                    switch (propField.PropertyType.Name)
+                                    {
+                                        case "DateTime":
+                                            DateTime dateValue = (DateTime)propField.GetValue(element);
+                                            var format = col.Format ?? "yyyyMMdd";
+                                            cell.CellValue = new CellValue(dateValue.ToString(format));
+                                            break;
+                                        case "Double":
+                                            double doubleValue = (double)propField.GetValue(element);
+                                            cell.CellValue = new CellValue(doubleValue.ToString());
+                                            break;
+                                        case "Decimal":
+                                            decimal decimalValue = (decimal)propField.GetValue(element);
+                                            cell.CellValue = new CellValue(decimalValue.ToString());
+                                            break;
+                                        default:
+                                            cell.CellValue = new CellValue((string)propField.GetValue(element));
+                                            break;
+                                    }
+
+                                    cells.Add(cell);
+                                }
+                                manExcel.AddRow(cells, rowIndex++);
+                            }
+                        }
+                    }
+
+                }
+
+                #endregion
 
                 if (!manExcel.Save()) throw new Exception(string.Format("Unable to save file: {0}", destinationFilePath));
 
@@ -224,108 +327,13 @@ namespace DO.VIVICARE.Reporter
                 if(manExcel!=null) manExcel.Dispose();
             }
         }
-
-        //public static bool CreateExcelFileOLD(BaseReport report)
-        //{
-        //    var name = string.Empty;
-        //    var list = new List<Tuple<string, string, string>>();
-        //    try
-        //    {
-        //        var ua = (ReportReferenceAttribute)report.GetType().GetCustomAttribute(typeof(ReportReferenceAttribute));
-        //        if (ua != null)
-        //        {
-        //            name = ua.Name;
-        //        }
-        //        Excel.Application appXls = new Excel.Application();
-        //        appXls.SheetsInNewWorkbook = 1; // imposta il numero di fogli per la nuova cartella Excel
-        //        Excel.Workbook cartellaXls = appXls.Workbooks.Add();
-        //        Excel._Worksheet foglioXls = cartellaXls.Sheets[1];
-
-        //        var columns = Manager.GetReportColumns(report);
-
-        //        int rowCount = report.ResultRecords.Count();
-        //        int colCount = columns.Count();
-        //        int rowStart = 2;
-
-        //        // header row excel sheet
-
-        //        foreach (var col in columns)
-        //        {
-        //            foglioXls.Cells[1, col.Position] = col.ColumnName;
-        //        }
-
-        //        if (rowCount > 0)
-        //        {
-        //            var records = report.ResultRecords;
-
-        //            //var fields = records[0].GetType().GetProperties().Where(x => x.GetCustomAttribute(typeof(ReportMemberReferenceAttribute), false) != null).ToList();
-
-        //            // data rows excel sheet
-        //            for (int i = rowStart; i <= (rowCount + 1); i++)
-        //            {
-        //                var element = report.ResultRecords[i - 2];
-        //                foreach (var col in columns)
-        //                {
-        //                    var nameField = col.FieldName;
-        //                    var propField = element.GetType().GetProperty(nameField);
-        //                    var decimalAttribute = col.DecimalDigits;
-        //                    if (decimalAttribute != 0)
-        //                    {
-        //                        string stringValue = (string)propField.GetValue(element);
-        //                        string strDec = stringValue.Substring(stringValue.Length - 2);
-        //                        string strInt = stringValue.Substring(0, stringValue.Length - 2);
-        //                        string stringNewValue = strInt + "." + strDec;
-        //                        decimal value = Convert.ToDecimal(stringNewValue);
-        //                        foglioXls.Cells[i, col.Position] = value;
-        //                    }
-        //                    else if (isDate)
-        //                    {
-        //                        string stringValue = (string)propField.GetValue(element);
-        //                        DateTime dateValue = DateTime.MinValue;
-        //                        if (DateTime.TryParseExact(stringValue, "yyyyMMdd",
-        //                        CultureInfo.InvariantCulture,
-        //                        DateTimeStyles.None, out dateValue))
-        //                        {
-        //                            foglioXls.Cells[i, col.Position] = dateValue;
-        //                        }
-        //                        else
-        //                        {
-        //                            foglioXls.Cells[i, col.Position] = propField.GetValue(element);
-        //                        }
-        //                    }
-        //                    else
-        //                        foglioXls.Cells[i, col.Position] = propField.GetValue(element);
-        //                }
-        //            }
-        //        }
-        //        var destinationFilePath = Path.Combine(Manager.Reports, $"{name}{DateTime.Now.ToString("dd-MM-yyyy.HH.mm.ss")}.xlsx");
-        //        cartellaXls.SaveAs(destinationFilePath);
-
-        //        GC.Collect();
-        //        GC.WaitForPendingFinalizers();
-
-        //        Marshal.ReleaseComObject(foglioXls);
-
-        //        cartellaXls.Close();
-        //        Marshal.ReleaseComObject(cartellaXls);
-
-        //        appXls.Quit();
-        //        Marshal.ReleaseComObject(appXls);
-
-        //        return true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        list.Add(Tuple.Create("Riga: 0", "Colonna: 0", $"Errore interno: {ex.Message}"));
-        //        return false;
-        //    }
-        //    finally
-        //    {
-        //        WriteLog(list, name);
-        //    }
-        //}
-
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="report"></param>
+        /// <param name="fileWithoutExt"></param>
+        /// <param name="csv"></param>
+        /// <returns></returns>
         public static bool CreateFile(BaseReport report, string fileWithoutExt, bool csv = false)
         {
             var name = string.Empty;
@@ -425,8 +433,6 @@ namespace DO.VIVICARE.Reporter
                 WriteLog(list, fileWithoutExt);
             }
         }
-
-
         /// <summary>
         ///     Use this function to preformat a line with brackets for each param.
         /// </summary>
@@ -441,9 +447,11 @@ namespace DO.VIVICARE.Reporter
             }
             return line + Environment.NewLine;
         }
-
-
-        //verific
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tuples"></param>
+        /// <param name="fileName"></param>
         private static void WriteLog(List<Tuple<string, string, string>> tuples, string fileName)
         {
             try
@@ -477,7 +485,13 @@ namespace DO.VIVICARE.Reporter
             Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
             return bytes;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="chars"></param>
+        /// <param name="fill"></param>
+        /// <returns></returns>
         public static string Left(string value, int chars, char? fill = null)
         {
             try
@@ -498,13 +512,15 @@ namespace DO.VIVICARE.Reporter
                 return "";
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="count"></param>
+        /// <returns></returns>
         public static string Space(int count)
         {
             return new string(' ', count);
         }
-
-        
         /// <summary>
         /// Funzione che restituisce 1:Maschio o 2:Femmina a seconda del sesso recuperato dal CF
         /// </summary>
@@ -526,7 +542,6 @@ namespace DO.VIVICARE.Reporter
                 throw;
             }
         }
-
         /// <summary>
         /// Funzione che restituisce la data di nascita in formato AAAAMMGG recuperata dal CF
         /// </summary>
@@ -554,7 +569,11 @@ namespace DO.VIVICARE.Reporter
                 return null;
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cv"></param>
+        /// <returns></returns>
         public static bool CheckCV(string cv)
         {
             cv = cv.ToUpper();
@@ -635,7 +654,6 @@ namespace DO.VIVICARE.Reporter
                     return 0;
             }
         }
-
         /// <summary>
         /// Se RSA = 1, altrimenti = 2
         /// </summary>
@@ -646,7 +664,6 @@ namespace DO.VIVICARE.Reporter
             if (string.IsNullOrEmpty(hostType)) return null;
             return hostType.ToUpper()=="RSA"?"1":"2";
         }
-
         /// <summary>                                                                      
         /// Funzione che in base documento e record in ingresso restituisce l'importo formattato NNNNNNNNNNDD
         /// </summary>
@@ -685,7 +702,6 @@ namespace DO.VIVICARE.Reporter
 
             return ret;
         }
-
         /// <summary>
         /// Restituisce numero progressivo (ID) con in ingresso ultimo numero progressivo e anno e mese
         /// </summary>
@@ -697,7 +713,12 @@ namespace DO.VIVICARE.Reporter
         {
             return $"VIVPEZZ{y.ToString("0000")}{m.ToString("00")}{lpn.ToString("0000000")}";
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
         public static TimeSpan ConvertToTimeSpan(string value, string format = null)
         {
             TimeSpan ret;
@@ -717,6 +738,12 @@ namespace DO.VIVICARE.Reporter
             }
             return ret;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
         public static DateTime ConvertDate(string value, string format=null)
         {
             DateTime ret;

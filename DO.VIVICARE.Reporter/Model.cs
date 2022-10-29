@@ -72,20 +72,20 @@ namespace DO.VIVICARE.Reporter
                 // IEnumerable<Row> rows = manExcel.GetRows(this.Filters).Skip(rowStart - 1);
                 if (this.Filters != null)
                 {
-                    if (this.Filters.Count()>0)
+                    if (this.Filters.Count() > 0)
                     {
                         rows = manExcel.GetRows(this.Filters);
                     }
                     else
                     {
                         rows = manExcel.GetRows(null).Skip(rowStart - 1);
-                    }                   
+                    }
                 }
                 else
                 {
                     rows = manExcel.GetRows(null).Skip(rowStart - 1);
                 }
-                
+
 
                 var type = this.GetType();
                 Assembly assembly = Assembly.GetAssembly(this.GetType());
@@ -107,7 +107,7 @@ namespace DO.VIVICARE.Reporter
                         }
                         else
                         {
-                            string value = manExcel.GetCellValue(cell);   
+                            string value = manExcel.GetCellValue(cell);
                             SetValue(element, propField, value);
                         }
                     }
@@ -164,7 +164,7 @@ namespace DO.VIVICARE.Reporter
 
                 if (manExcel.Extension.ToLower() == ".xlsx") manExcel.Open(false, SourceFilePath);
                 else manExcel.Open(false);
-                
+
                 var columns = Manager.GetDocumentColumns(this);
 
                 IEnumerable<Row> rows = manExcel.GetRows(null).Skip(rowStart - 1);
@@ -173,7 +173,7 @@ namespace DO.VIVICARE.Reporter
                 foreach (var row in rows)
                 {
                     var cells = row.Descendants<Cell>();
-                    if (cells!=null)
+                    if (cells != null)
                     {
                         foreach (var col in columns)
                         {
@@ -185,9 +185,9 @@ namespace DO.VIVICARE.Reporter
                     //progress.Report(rowCount / i++); // PER TENER TRACCIA DELLO STATO
                 }
 
-              
+
                 manExcel.Dispose();
-                
+
                 return true;
             }
             catch (Exception ex)
@@ -201,7 +201,7 @@ namespace DO.VIVICARE.Reporter
                 WriteLog(list, name);
             }
         }
-        
+
         private void SetValue(BaseDocument el, PropertyInfo p, object value)
         {
             var ax = (DocumentMemberReferenceAttribute[])p.GetCustomAttributes(typeof(DocumentMemberReferenceAttribute), false);
@@ -307,7 +307,7 @@ namespace DO.VIVICARE.Reporter
                                     (value.GetType().FullName == "System.String"
                                      ))
                 {
-                    string format=null;
+                    string format = null;
                     if (ax != null && ax[0] != null && !string.IsNullOrEmpty(ax[0].Format))
                         format = ax[0].Format;
                     var dtmValue = Manager.ConvertDate((string)value, format);
@@ -453,6 +453,13 @@ namespace DO.VIVICARE.Reporter
 
         public List<BaseReport> ResultRecords { get; }
 
+        public List<BaseSheet> SheetRecords { get; }
+
+        public string SheetName { get; set; }
+
+        [Sheet]
+        public BaseSheet Phantom { get; set; }
+
         //public string DestinationFilePath { get; set; }
 
         //public virtual void LoadDocuments(bool withRecords = false) { }
@@ -506,7 +513,7 @@ namespace DO.VIVICARE.Reporter
         public List<BaseReport> GetRecordsFromExcelFile(string nameFileWithoutExt)
         {
             var records = new List<BaseReport>();
-            
+
             var name = string.Empty;
             var list = new List<Tuple<string, string, string>>();
             ExcelManager manExcel = null;
@@ -526,7 +533,7 @@ namespace DO.VIVICARE.Reporter
                 }
 
                 var sourceFilePath = Path.Combine(Manager.Reports, $"{nameFileWithoutExt}.xlsx");
-                
+
 
                 if (string.IsNullOrEmpty(sourceFilePath))
                 {
@@ -591,6 +598,7 @@ namespace DO.VIVICARE.Reporter
             Documents = new List<BaseDocument>();
             ResultRecords = new List<BaseReport>();
             Parameters = new List<ReportParameter>();
+            SheetRecords = new List<BaseSheet>();
         }
 
         private void SetValue(BaseReport el, PropertyInfo p, object value)
@@ -663,8 +671,6 @@ namespace DO.VIVICARE.Reporter
             }
         }
 
-        
-
         private void SetDefault(BaseReport el, PropertyInfo p)
         {
             switch (p.PropertyType.FullName)
@@ -730,6 +736,8 @@ namespace DO.VIVICARE.Reporter
         }
     }
 
+    public class BaseSheet { }
+
     /// <summary>
     /// 
     /// </summary>
@@ -761,6 +769,12 @@ namespace DO.VIVICARE.Reporter
         public object ReturnValue { get; set; }
     }
 
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
+    public class ReportColumnReferenceAttribute : Attribute
+    {
+
+    }
+
     /// <summary>
     /// Attributo a livello di classe per indicare a quale file facciamo riferimento
     /// </summary>
@@ -787,16 +801,19 @@ namespace DO.VIVICARE.Reporter
         //il campo della classe BaseDocument
         public string FieldName { get; set; }
         public string Format { get; set; }
+        public bool HaveSum { get; set; }
+        public int RowsAfterLast { get; set; }
     }
-   
-    
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
+    public class SheetAttribute : Attribute { }
 
     /// <summary>
     /// Direzione dell'allineamento
     /// </summary>
     public enum Alignment
     {
-        Right=0,
-        Left=1
+        Right = 0,
+        Left = 1
     }
 }

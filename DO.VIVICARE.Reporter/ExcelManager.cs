@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Packaging;
+﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using OfficeOpenXml;
 using System;
@@ -15,18 +16,26 @@ namespace DO.VIVICARE.Reporter
 {
     public class ExcelManager : IDisposable
     {
-
         protected MemoryStream msExcel;
+        string _filePath;
 
         SpreadsheetDocument _document;
         WorkbookPart _wbPart;
+        Sheets _sheets;
         Sheet _sheet;
         SheetData _sheetData;
 
         String[] _columnRefs;
-
+        /// <summary>
+        /// 
+        /// </summary>
         public string Extension { get; set; }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="className"></param>
+        /// <returns></returns>
         public bool LoadFile(string filePath, string className)
         {
             if (string.IsNullOrEmpty(filePath)) return false;
@@ -91,14 +100,19 @@ namespace DO.VIVICARE.Reporter
                 return false;
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="sheetName"></param>
+        /// <returns></returns>
         public bool Create(string filePath, string sheetName)
         {
             try
             {
                 if (filePath != null) _document = SpreadsheetDocument.Create(filePath, DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook);
                 else return false;
-
+                _filePath = filePath;
                 // Add a WorkbookPart to the document.
                 WorkbookPart workbookpart = _document.AddWorkbookPart();
                 workbookpart.Workbook = new Workbook();
@@ -109,14 +123,12 @@ namespace DO.VIVICARE.Reporter
                 worksheetPart.Worksheet = new Worksheet(sheetData);
 
                 // Add Sheets to the Workbook.
-                Sheets sheets = _document.WorkbookPart.Workbook.
-                    AppendChild<Sheets>(new Sheets());
+                Sheets sheets = _document.WorkbookPart.Workbook.AppendChild<Sheets>(new Sheets());
 
                 // Append a new worksheet and associate it with the workbook.
                 Sheet sheet = new Sheet()
                 {
-                    Id = _document.WorkbookPart.
-                    GetIdOfPart(worksheetPart),
+                    Id = _document.WorkbookPart.GetIdOfPart(worksheetPart),
                     SheetId = 1,
                     Name = sheetName
                 };
@@ -128,6 +140,8 @@ namespace DO.VIVICARE.Reporter
                 // get the first (or named) sheet of workbook
 
                 _sheetData = sheetData;
+
+                _sheets = sheets;
 
                 _sheet = sheet;
 
@@ -141,11 +155,14 @@ namespace DO.VIVICARE.Reporter
             }
             catch (Exception ex)
             {
-                
                 return false;
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="isEditable"></param>
+        /// <param name="filePath"></param>
         public void Open(bool isEditable, string filePath = null)
         {
             if (filePath != null) _document = SpreadsheetDocument.Open(filePath, isEditable);
@@ -202,7 +219,11 @@ namespace DO.VIVICARE.Reporter
             //_columnRefs = columnRefs.ToArray();
 
         }
-        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
         private string ConnectionString(string file)
         {
             var props = new Dictionary<string, string>
@@ -224,7 +245,11 @@ namespace DO.VIVICARE.Reporter
 
             return sb.ToString();
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="colIndex"></param>
+        /// <returns></returns>
         private string ColumnIndexToColumnLetter(int colIndex)
         {
             int div = colIndex;
@@ -239,7 +264,10 @@ namespace DO.VIVICARE.Reporter
             }
             return colLetter;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public bool Save()
         {
             try
@@ -252,8 +280,51 @@ namespace DO.VIVICARE.Reporter
                 return false;
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sheetName"></param>
+        /// <param name="current"></param>
+        /// <returns></returns>
+        public bool AddSheet(string sheetName, bool current = true)
+        {
+            try
+            {
+                    // Add a blank WorksheetPart.
+                    WorksheetPart newWorksheetPart = _document.WorkbookPart.AddNewPart<WorksheetPart>();
 
-        public bool AddRow(List<Cell> cells, DocumentFormat.OpenXml.UInt32Value rowIndex )
+                    SheetData sheetData = new SheetData();
+                    newWorksheetPart.Worksheet = new Worksheet(sheetData);
+
+                    //Sheets sheets = spreadSheet.WorkbookPart.Workbook.GetFirstChild<Sheets>();
+                    string relationshipId = _document.WorkbookPart.GetIdOfPart(newWorksheetPart);
+
+                    // Get a unique ID for the new worksheet.
+                    uint sheetId = 1;
+                    if (_sheets.Elements<Sheet>().Count() > 0)
+                    {
+                        sheetId = _sheets.Elements<Sheet>().Select(s => s.SheetId.Value).Max() + 1;
+                    }
+
+                    // Append the new worksheet and associate it with the workbook.
+                    Sheet sheet = new Sheet() { Id = relationshipId, SheetId = sheetId, Name = sheetName };
+                    _sheets.Append(sheet);
+                    if (current) _sheetData = sheetData;
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cells"></param>
+        /// <param name="rowIndex"></param>
+        /// <returns></returns>
+        public bool AddRow(List<Cell> cells, UInt32Value rowIndex )
         {
             try
             {
@@ -274,7 +345,11 @@ namespace DO.VIVICARE.Reporter
                 return false;
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filters"></param>
+        /// <returns></returns>
         public IEnumerable<Row> GetRows(List<FilterDocument> filters)
         {
             WorksheetPart worksheetPart = (WorksheetPart)(_wbPart.GetPartById(_sheet.Id));
@@ -300,8 +375,9 @@ namespace DO.VIVICARE.Reporter
             });
             return filteredRows;
         }
-
-     
+        /// <summary>
+        /// 
+        /// </summary>
         public int GetTotalColumns
         {
             get
@@ -316,7 +392,9 @@ namespace DO.VIVICARE.Reporter
                 return _columnRefs.Count();
             }
         }
-        
+        /// <summary>
+        /// 
+        /// </summary>
         public int GetTotalRowsColumns
         {
             get
@@ -329,7 +407,12 @@ namespace DO.VIVICARE.Reporter
                 return rows.Count();
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="rowIndex"></param>
+        /// <param name="colIndex"></param>
+        /// <returns></returns>
         public String GetCellValueByIndex(int rowIndex, int colIndex)
         {
             // just for test
@@ -339,7 +422,13 @@ namespace DO.VIVICARE.Reporter
             //}
             return GetCellValueByIndex(rowIndex, colIndex, false);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="rowIndex"></param>
+        /// <param name="colIndex"></param>
+        /// <param name="cellNameIfNotFound"></param>
+        /// <returns></returns>
         public String GetCellValueByIndex(int rowIndex, int colIndex, bool cellNameIfNotFound)
         {
             try
@@ -352,7 +441,12 @@ namespace DO.VIVICARE.Reporter
                 throw ex;
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cellAddress"></param>
+        /// <param name="cellNameIfNotFound"></param>
+        /// <returns></returns>
         public String GetCellValue(String cellAddress, bool cellNameIfNotFound)
         {
             string value = null;
@@ -379,7 +473,11 @@ namespace DO.VIVICARE.Reporter
 
             return value;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="theCell"></param>
+        /// <returns></returns>
         public String GetCellValue(Cell theCell)
         {
             String value = null;
@@ -433,7 +531,6 @@ namespace DO.VIVICARE.Reporter
 
             return value;
         }
-
         /// <summary>
         /// Given a cell name, parses the specified cell to get the column name.
         /// </summary>
@@ -447,7 +544,9 @@ namespace DO.VIVICARE.Reporter
 
             return match.Value;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         public void Dispose()
         {
             // close file
