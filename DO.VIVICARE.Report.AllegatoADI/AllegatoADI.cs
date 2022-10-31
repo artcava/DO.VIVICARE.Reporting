@@ -162,7 +162,7 @@ namespace DO.VIVICARE.Report.AllegatoADI
         [ReportMemberReference(Column = "A", Position = 1, ColumnName = "DISTRETTO", Length = 50, FieldName = "District")]
         public string District { get; set; }
 
-        [ReportMemberReference(Column = "B", Position = 2, ColumnName = "NOME PAZIENTE", Length = 50, Required = true, FieldName = "PatientName")]
+        [ReportMemberReference(Column = "B", Position = 2, ColumnName = "NOME PAZIENTE", Length = 50, Required = true, FieldName = "PatientName", HaveText =true,TextForSum ="TOTALE FATTURATO")]
         public string PatientName { get; set; }
 
         [ReportMemberReference(Column = "C", Position = 3, ColumnName = "TOTALE ASSISTENZA", FieldName = "AidTotal")]
@@ -177,7 +177,7 @@ namespace DO.VIVICARE.Report.AllegatoADI
         [ReportMemberReference(Column = "F", Position = 6, ColumnName = "TRASPORTI", FieldName = "Transport")]
         public decimal Transport { get; set; }
 
-        [ReportMemberReference(Column = "G", Position = 7, ColumnName = "TOTALE FATTURATO", FieldName = "InvoiceTotal")]
+        [ReportMemberReference(Column = "G", Position = 7, ColumnName = "TOTALE FATTURATO", FieldName = "InvoiceTotal", HaveSum =true)]
         public decimal InvoiceTotal { get { return AidTotal + ExtraMedicalVisit + Diagnostic + Transport; } }
 
 
@@ -186,25 +186,25 @@ namespace DO.VIVICARE.Report.AllegatoADI
             [ReportMemberReference(Column = "A", Position = 1, ColumnName = "CONTRAENTE", Length = 50, FieldName = "District")]
             public string District { get; set; }
 
-            [ReportMemberReference(Column = "B", Position = 2, ColumnName = "PAZIENTE", Length = 50, Required = true, FieldName = "PatientName")]
+            [ReportMemberReference(Column = "B", Position = 2, ColumnName = "PAZIENTE", Length = 50, Required = true, FieldName = "PatientName", HaveText = true, TextForSum = "TOTALI")]
             public string PatientName { get; set; }
 
             [ReportMemberReference(Column = "C", Position = 3, ColumnName = "DATA", FieldName = "ActivityDate", Format = "dd/MM/yyyy")]
             public DateTime ActivityDate { get; set; }
 
-            [ReportMemberReference(Column = "D", Position = 4, ColumnName = "ORE FKT", FieldName = "HourFktNumberTotal")]
+            [ReportMemberReference(Column = "D", Position = 4, ColumnName = "ORE FKT", FieldName = "HourFktNumberTotal", HaveSum =true)]
             public decimal HourFktNumberTotal { get; set; }
 
-            [ReportMemberReference(Column = "E", Position = 5, ColumnName = "ORE INF", FieldName = "HourInfNumberTotal")]
+            [ReportMemberReference(Column = "E", Position = 5, ColumnName = "ORE INF", FieldName = "HourInfNumberTotal", HaveSum = true)]
             public decimal HourInfNumberTotal { get; set; }
 
-            [ReportMemberReference(Column = "F", Position = 6, ColumnName = "ORE LOGO", FieldName = "HourLogNumberTotal")]
+            [ReportMemberReference(Column = "F", Position = 6, ColumnName = "ORE LOGO", FieldName = "HourLogNumberTotal", HaveSum = true)]
             public decimal HourLogNumberTotal { get; set; }
 
-            [ReportMemberReference(Column = "G", Position = 7, ColumnName = "FKT + INF + LOGO", FieldName = "HourNumberTotal")]
+            [ReportMemberReference(Column = "G", Position = 7, ColumnName = "FKT + INF + LOGO", FieldName = "HourNumberTotal", HaveSum = true)]
             public decimal HourNumberTotal { get { return HourFktNumberTotal + HourInfNumberTotal + HourLogNumberTotal; } }
 
-            [ReportMemberReference(Column = "H", Position = 8, ColumnName = "ORE OSS", FieldName = "HourOssNumbertotal")]
+            [ReportMemberReference(Column = "H", Position = 8, ColumnName = "ORE OSS", FieldName = "HourOssNumbertotal", HaveSum = true)]
             public decimal HourOssNumbertotal { get; set; }
 
             [ReportMemberReference(Column = "I", Position = 9, ColumnName = "BASE", FieldName = "BasePrice")]
@@ -228,7 +228,7 @@ namespace DO.VIVICARE.Report.AllegatoADI
             [ReportMemberReference(Column = "O", Position = 15, ColumnName = "€ 0,10", FieldName = "Discount")]
             public decimal Discount { get { return DiscountBase * 0.1M; } }
 
-            [ReportMemberReference(Column = "P", Position = 16, ColumnName = "TOTALE NETTO", FieldName = "NetTotal")]
+            [ReportMemberReference(Column = "P", Position = 16, ColumnName = "TOTALE NETTO", FieldName = "NetTotal", HaveSum = true)]
             public decimal NetTotal { get { return TotalValue-Discount; } }
 
             [ReportMemberReference(Column = "Q", Position = 17, ColumnName = "ACCESSI MEDICO", FieldName = "AccessDocNumber")]
@@ -243,7 +243,7 @@ namespace DO.VIVICARE.Report.AllegatoADI
             [ReportMemberReference(Column = "T", Position = 20, ColumnName = "COSTO TRASPORTO", FieldName = "TransportCost")]
             public decimal TransportCost { get; set; }
 
-            [ReportMemberReference(Column = "U", Position = 21, ColumnName = "TOTALE FATTURA", FieldName = "InvoiceTotal")]
+            [ReportMemberReference(Column = "U", Position = 21, ColumnName = "TOTALE FATTURA", FieldName = "InvoiceTotal", HaveSum = true)]
             public decimal InvoiceTotal { get { return NetTotal + AccessDocCost + DiagnosticCost + TransportCost; } }
         }
         #endregion

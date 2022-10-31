@@ -802,7 +802,8 @@ namespace DO.VIVICARE.Reporter
         public string FieldName { get; set; }
         public string Format { get; set; }
         public bool HaveSum { get; set; }
-        public int RowsAfterLast { get; set; }
+        public bool HaveText { get; set; }
+        public string TextForSum { get; set; }
     }
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]

@@ -341,7 +341,40 @@ namespace DO.VIVICARE.Reporter
             }
             catch (Exception)
             {
+                return false;
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="totals"></param>
+        /// <param name="rowIndex"></param>
+        /// <returns></returns>
+        public bool AddTotals(Dictionary<ReportMemberReferenceAttribute, decimal> totals, UInt32Value rowIndex)
+        {
+            try
+            {
+                Row row = new Row() { RowIndex = rowIndex };
 
+                foreach (var col in totals.Keys)
+                {
+                    if (!col.HaveSum && !col.HaveText) continue;
+
+                    var cell = new Cell
+                    {
+                        CellReference = $"{col.Column}{rowIndex}",
+                        CellValue = new CellValue(col.HaveSum?totals[col].ToString():col.TextForSum),
+                        DataType = CellValues.String
+                    };
+                    row.Append(cell);
+                }
+
+                _sheetData.Append(row);
+
+                return true;
+            }
+            catch (Exception)
+            {
                 return false;
             }
         }

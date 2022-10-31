@@ -155,7 +155,8 @@ namespace DO.VIVICARE.Reporter
                 {
                     string name = ua.Name;
                 }
-                
+
+
                 var destinationFilePath = Path.Combine(Manager.Reports, $"{fileWithoutExt}.xlsx");
 
                 if (!manExcel.Create(destinationFilePath, fileWithoutExt)) return false;
@@ -166,7 +167,8 @@ namespace DO.VIVICARE.Reporter
                 int rowCount = report.ResultRecords.Count();
                 int colCount = columns.Count();
                 int rowStart = 2;
-
+                // totals to write above last row
+                var totals = new Dictionary<ReportMemberReferenceAttribute, decimal>();
                 // header row excel sheet
                 List<Cell> cells = new List<Cell>();
                 foreach (var col in columns)
@@ -178,13 +180,13 @@ namespace DO.VIVICARE.Reporter
                         DataType = CellValues.String
                     };
                     cells.Add(cell);
+                    totals.Add(col, 0);
                 }
                 manExcel.AddRow(cells,1);
 
                 if (rowCount>0)
                 {
                     var records = report.ResultRecords;
-
                    
                     // data rows excel sheet
                     DocumentFormat.OpenXml.UInt32Value rowIndex = 2;
@@ -214,10 +216,12 @@ namespace DO.VIVICARE.Reporter
                                 case "Double":
                                     double doubleValue = (double)propField.GetValue(element);
                                     cell.CellValue = new CellValue(doubleValue.ToString());
+                                    if (col.HaveSum) totals[col] += (decimal)doubleValue;
                                     break;
                                 case "Decimal":
                                     decimal decimalValue = (decimal)propField.GetValue(element);
                                     cell.CellValue = new CellValue(decimalValue.ToString());
+                                    if (col.HaveSum) totals[col] += decimalValue;
                                     break;
                                 default:
                                     cell.CellValue = new CellValue((string)propField.GetValue(element));
@@ -228,6 +232,7 @@ namespace DO.VIVICARE.Reporter
                         }
                         manExcel.AddRow(cells, rowIndex++);
                     }
+                    manExcel.AddTotals(totals, rowIndex + 2);
                 }
                 #endregion
 
@@ -246,6 +251,7 @@ namespace DO.VIVICARE.Reporter
 
                         // header row excel sheet
                         cells = new List<Cell>();
+                        totals = new Dictionary<ReportMemberReferenceAttribute, decimal>();
                         foreach (var col in columns)
                         {
                             var cell = new Cell
@@ -255,13 +261,13 @@ namespace DO.VIVICARE.Reporter
                                 DataType = CellValues.String
                             };
                             cells.Add(cell);
+                            totals.Add(col, 0);
                         }
                         manExcel.AddRow(cells, 1);
 
                         if (rowCount > 0)
                         {
                             var records = row.SheetRecords;
-
 
                             // data rows excel sheet
                             DocumentFormat.OpenXml.UInt32Value rowIndex = 2;
@@ -291,10 +297,12 @@ namespace DO.VIVICARE.Reporter
                                         case "Double":
                                             double doubleValue = (double)propField.GetValue(element);
                                             cell.CellValue = new CellValue(doubleValue.ToString());
+                                            if (col.HaveSum) totals[col] += (decimal)doubleValue;
                                             break;
                                         case "Decimal":
                                             decimal decimalValue = (decimal)propField.GetValue(element);
                                             cell.CellValue = new CellValue(decimalValue.ToString());
+                                            if (col.HaveSum) totals[col] += decimalValue;
                                             break;
                                         default:
                                             cell.CellValue = new CellValue((string)propField.GetValue(element));
@@ -305,6 +313,7 @@ namespace DO.VIVICARE.Reporter
                                 }
                                 manExcel.AddRow(cells, rowIndex++);
                             }
+                            manExcel.AddTotals(totals, rowIndex + 2);
                         }
                     }
 
