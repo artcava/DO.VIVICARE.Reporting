@@ -159,91 +159,91 @@ namespace DO.VIVICARE.Report.AllegatoADI
         }
 
         #region Member
-        [ReportMemberReference(Column = "A", Position = 1, ColumnName = "DISTRETTO", Length = 50, FieldName = "District")]
+        [ReportMemberReference(Column = "A", Position = 1, ColumnName = "DISTRETTO", Length = 50, FieldName = "District", HaveText = true, TextForSum = "TOTALE FATTURATO", HeaderStyleIndex =2, CellStyleIndex = 1)]
         public string District { get; set; }
 
-        [ReportMemberReference(Column = "B", Position = 2, ColumnName = "NOME PAZIENTE", Length = 50, Required = true, FieldName = "PatientName", HaveText =true,TextForSum ="TOTALE FATTURATO")]
+        [ReportMemberReference(Column = "B", Position = 2, ColumnName = "NOME PAZIENTE", Length = 50, Required = true, FieldName = "PatientName", HeaderStyleIndex = 2, CellStyleIndex = 1)]
         public string PatientName { get; set; }
 
-        [ReportMemberReference(Column = "C", Position = 3, ColumnName = "TOTALE ASSISTENZA", FieldName = "AidTotal")]
+        [ReportMemberReference(Column = "C", Position = 3, ColumnName = "TOTALE ASSISTENZA", FieldName = "AidTotal", HeaderStyleIndex = 2, CellStyleIndex = 1)]
         public decimal AidTotal { get; set; }
 
-        [ReportMemberReference(Column = "D", Position = 4, ColumnName = "VISITE MEDICHE EXTRA", FieldName = "ExtraMedicalVisit")]
+        [ReportMemberReference(Column = "D", Position = 4, ColumnName = "VISITE MEDICHE EXTRA", FieldName = "ExtraMedicalVisit", HeaderStyleIndex = 2, CellStyleIndex = 1)]
         public decimal ExtraMedicalVisit { get; set; }
 
-        [ReportMemberReference(Column = "E", Position = 5, ColumnName = "DIAGNOSTICA'", FieldName = "Diagnostic")]
+        [ReportMemberReference(Column = "E", Position = 5, ColumnName = "DIAGNOSTICA", FieldName = "Diagnostic", HeaderStyleIndex = 2, CellStyleIndex = 1)]
         public decimal Diagnostic { get; set; }
 
-        [ReportMemberReference(Column = "F", Position = 6, ColumnName = "TRASPORTI", FieldName = "Transport")]
+        [ReportMemberReference(Column = "F", Position = 6, ColumnName = "TRASPORTI", FieldName = "Transport", HeaderStyleIndex = 2, CellStyleIndex = 1)]
         public decimal Transport { get; set; }
 
-        [ReportMemberReference(Column = "G", Position = 7, ColumnName = "TOTALE FATTURATO", FieldName = "InvoiceTotal", HaveSum =true)]
+        [ReportMemberReference(Column = "G", Position = 7, ColumnName = "TOTALE FATTURATO", FieldName = "InvoiceTotal", HeaderStyleIndex = 2, CellStyleIndex = 1, HaveSum =true)]
         public decimal InvoiceTotal { get { return AidTotal + ExtraMedicalVisit + Diagnostic + Transport; } }
 
 
         public class Patient:BaseSheet
         {
-            [ReportMemberReference(Column = "A", Position = 1, ColumnName = "CONTRAENTE", Length = 50, FieldName = "District")]
+            [ReportMemberReference(Column = "A", Position = 1, ColumnName = "CONTRAENTE", Length = 50, FieldName = "District", HeaderStyleIndex = 4, CellStyleIndex = 1)]
             public string District { get; set; }
 
-            [ReportMemberReference(Column = "B", Position = 2, ColumnName = "PAZIENTE", Length = 50, Required = true, FieldName = "PatientName", HaveText = true, TextForSum = "TOTALI")]
+            [ReportMemberReference(Column = "B", Position = 2, ColumnName = "PAZIENTE", Length = 50, Required = true, FieldName = "PatientName", HeaderStyleIndex = 4, CellStyleIndex = 1, HaveText = true, TextForSum = "TOTALI")]
             public string PatientName { get; set; }
 
-            [ReportMemberReference(Column = "C", Position = 3, ColumnName = "DATA", FieldName = "ActivityDate", Format = "dd/MM/yyyy")]
+            [ReportMemberReference(Column = "C", Position = 3, ColumnName = "DATA", FieldName = "ActivityDate", Format = "dd/MM/yyyy", HeaderStyleIndex = 4, CellStyleIndex = 1)]
             public DateTime ActivityDate { get; set; }
 
-            [ReportMemberReference(Column = "D", Position = 4, ColumnName = "ORE FKT", FieldName = "HourFktNumberTotal", HaveSum =true)]
+            [ReportMemberReference(Column = "D", Position = 4, ColumnName = "ORE FKT", FieldName = "HourFktNumberTotal", HeaderStyleIndex = 4, CellStyleIndex =3, TotalStyleIndex =5, HaveSum =true)]
             public decimal HourFktNumberTotal { get; set; }
 
-            [ReportMemberReference(Column = "E", Position = 5, ColumnName = "ORE INF", FieldName = "HourInfNumberTotal", HaveSum = true)]
+            [ReportMemberReference(Column = "E", Position = 5, ColumnName = "ORE INF", FieldName = "HourInfNumberTotal", HeaderStyleIndex = 4, CellStyleIndex = 3, TotalStyleIndex = 5, HaveSum = true)]
             public decimal HourInfNumberTotal { get; set; }
 
-            [ReportMemberReference(Column = "F", Position = 6, ColumnName = "ORE LOGO", FieldName = "HourLogNumberTotal", HaveSum = true)]
+            [ReportMemberReference(Column = "F", Position = 6, ColumnName = "ORE LOGO", FieldName = "HourLogNumberTotal", HeaderStyleIndex = 4, CellStyleIndex = 3, TotalStyleIndex = 5, HaveSum = true)]
             public decimal HourLogNumberTotal { get; set; }
 
-            [ReportMemberReference(Column = "G", Position = 7, ColumnName = "FKT + INF + LOGO", FieldName = "HourNumberTotal", HaveSum = true)]
+            [ReportMemberReference(Column = "G", Position = 7, ColumnName = "FKT + INF + LOGO", FieldName = "HourNumberTotal", HeaderStyleIndex = 4, CellStyleIndex = 1, TotalStyleIndex = 5, HaveSum = true)]
             public decimal HourNumberTotal { get { return HourFktNumberTotal + HourInfNumberTotal + HourLogNumberTotal; } }
 
-            [ReportMemberReference(Column = "H", Position = 8, ColumnName = "ORE OSS", FieldName = "HourOssNumbertotal", HaveSum = true)]
+            [ReportMemberReference(Column = "H", Position = 8, ColumnName = "ORE OSS", FieldName = "HourOssNumbertotal", HeaderStyleIndex = 4, CellStyleIndex = 3, TotalStyleIndex = 5, HaveSum = true)]
             public decimal HourOssNumbertotal { get; set; }
 
-            [ReportMemberReference(Column = "I", Position = 9, ColumnName = "BASE", FieldName = "BasePrice")]
+            [ReportMemberReference(Column = "I", Position = 9, ColumnName = "BASE", FieldName = "BasePrice", HeaderStyleIndex = 4, CellStyleIndex = 1)]
             public decimal BasePrice { get; set; }
 
-            [ReportMemberReference(Column = "J", Position = 10, ColumnName = "PACCHETTO SOLL INF", FieldName = "BasePacketNumber")]
+            [ReportMemberReference(Column = "J", Position = 10, ColumnName = "PACCHETTO SOLL INF", FieldName = "BasePacketNumber", HeaderStyleIndex = 4, CellStyleIndex = 1)]
             public decimal BasePacketNumber { get; set; }
 
-            [ReportMemberReference(Column = "K", Position = 11, ColumnName = "PACCHETTO SOLL OSS", FieldName = "ReliefPacketNumber")]
+            [ReportMemberReference(Column = "K", Position = 11, ColumnName = "PACCHETTO SOLL OSS", FieldName = "ReliefPacketNumber", HeaderStyleIndex = 4, CellStyleIndex = 1)]
             public decimal ReliefPacketNumber { get; set; }
 
-            [ReportMemberReference(Column = "L", Position = 12, ColumnName = "TOTALE SOLLIEVO", FieldName = "ReliefPacketTotal")]
+            [ReportMemberReference(Column = "L", Position = 12, ColumnName = "TOTALE SOLLIEVO", FieldName = "ReliefPacketTotal", HeaderStyleIndex = 4, CellStyleIndex = 1)]
             public decimal ReliefPacketTotal { get; set; }
 
-            [ReportMemberReference(Column = "M", Position = 13, ColumnName = "TOTALE FATTURATO", FieldName = "TotalValue")]
+            [ReportMemberReference(Column = "M", Position = 13, ColumnName = "TOTALE FATTURATO", FieldName = "TotalValue", HeaderStyleIndex = 4, CellStyleIndex = 1)]
             public decimal TotalValue { get { return BasePrice + ReliefPacketTotal; } }
 
-            [ReportMemberReference(Column = "N", Position = 14, ColumnName = "BASE SCONTO", FieldName = "DiscountBase")]
+            [ReportMemberReference(Column = "N", Position = 14, ColumnName = "BASE SCONTO", FieldName = "DiscountBase", HeaderStyleIndex = 4, CellStyleIndex = 1)]
             public decimal DiscountBase { get { return (TotalValue > 300) ? TotalValue - 300 : 0; } }
 
-            [ReportMemberReference(Column = "O", Position = 15, ColumnName = "€ 0,10", FieldName = "Discount")]
+            [ReportMemberReference(Column = "O", Position = 15, ColumnName = "€ 0,10", FieldName = "Discount", HeaderStyleIndex = 4, CellStyleIndex = 1)]
             public decimal Discount { get { return DiscountBase * 0.1M; } }
 
-            [ReportMemberReference(Column = "P", Position = 16, ColumnName = "TOTALE NETTO", FieldName = "NetTotal", HaveSum = true)]
+            [ReportMemberReference(Column = "P", Position = 16, ColumnName = "TOTALE NETTO", FieldName = "NetTotal", HeaderStyleIndex = 7, CellStyleIndex = 6, TotalStyleIndex = 5, HaveSum = true)]
             public decimal NetTotal { get { return TotalValue-Discount; } }
 
-            [ReportMemberReference(Column = "Q", Position = 17, ColumnName = "ACCESSI MEDICO", FieldName = "AccessDocNumber")]
+            [ReportMemberReference(Column = "Q", Position = 17, ColumnName = "ACCESSI MEDICO", FieldName = "AccessDocNumber", HeaderStyleIndex = 4, CellStyleIndex = 3)]
             public decimal AccessDocNumber { get; set; }
 
-            [ReportMemberReference(Column = "R", Position = 18, ColumnName = "COSTO VIS. MEDICHE EXTRA", FieldName = "AccessDocCost")]
+            [ReportMemberReference(Column = "R", Position = 18, ColumnName = "COSTO VIS. MEDICHE EXTRA", FieldName = "AccessDocCost", HeaderStyleIndex = 4, CellStyleIndex = 3, TotalStyleIndex = 5, HaveSum = true)]
             public decimal AccessDocCost { get; set; }
 
-            [ReportMemberReference(Column = "S", Position = 19, ColumnName = "COSTO DIAGNOSTICA", FieldName = "DiagnosticCost")]
+            [ReportMemberReference(Column = "S", Position = 19, ColumnName = "COSTO DIAGNOSTICA", FieldName = "DiagnosticCost", HeaderStyleIndex = 4, CellStyleIndex = 3, TotalStyleIndex = 5, HaveSum = true)]
             public decimal DiagnosticCost { get; set; }
 
-            [ReportMemberReference(Column = "T", Position = 20, ColumnName = "COSTO TRASPORTO", FieldName = "TransportCost")]
+            [ReportMemberReference(Column = "T", Position = 20, ColumnName = "COSTO TRASPORTO", FieldName = "TransportCost", HeaderStyleIndex = 4, CellStyleIndex = 3, TotalStyleIndex = 5, HaveSum = true)]
             public decimal TransportCost { get; set; }
 
-            [ReportMemberReference(Column = "U", Position = 21, ColumnName = "TOTALE FATTURA", FieldName = "InvoiceTotal", HaveSum = true)]
+            [ReportMemberReference(Column = "U", Position = 21, ColumnName = "TOTALE FATTURA", FieldName = "InvoiceTotal", HeaderStyleIndex = 8, CellStyleIndex = 4, TotalStyleIndex = 9, HaveSum = true)]
             public decimal InvoiceTotal { get { return NetTotal + AccessDocCost + DiagnosticCost + TransportCost; } }
         }
         #endregion

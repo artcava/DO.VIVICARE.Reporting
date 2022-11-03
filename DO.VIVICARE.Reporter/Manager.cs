@@ -1,4 +1,6 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
+﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -176,6 +178,7 @@ namespace DO.VIVICARE.Reporter
                     var cell = new Cell
                     {
                         CellReference = $"{col.Column}1",
+                        StyleIndex = UInt32Value.FromUInt32(col.HeaderStyleIndex),
                         CellValue = new CellValue(col.ColumnName),
                         DataType = CellValues.String
                     };
@@ -187,9 +190,9 @@ namespace DO.VIVICARE.Reporter
                 if (rowCount>0)
                 {
                     var records = report.ResultRecords;
-                   
+
                     // data rows excel sheet
-                    DocumentFormat.OpenXml.UInt32Value rowIndex = 2;
+                    UInt32Value rowIndex = 2;
                     for (int i = rowStart; i <= (rowCount+1); i++)
                     {
                         var element = report.ResultRecords[i - 2];
@@ -199,6 +202,7 @@ namespace DO.VIVICARE.Reporter
                             var cell = new Cell
                             {
                                 CellReference = $"{col.Column}{i}",
+                                StyleIndex = UInt32Value.FromUInt32(col.CellStyleIndex),
                                 CellValue = new CellValue(""),
                                 DataType = CellValues.String
                             };
@@ -232,7 +236,7 @@ namespace DO.VIVICARE.Reporter
                         }
                         manExcel.AddRow(cells, rowIndex++);
                     }
-                    manExcel.AddTotals(totals, rowIndex + 2);
+                    manExcel.AddTotals(totals, rowIndex++);
                 }
                 #endregion
 
@@ -257,6 +261,7 @@ namespace DO.VIVICARE.Reporter
                             var cell = new Cell
                             {
                                 CellReference = $"{col.Column}1",
+                                StyleIndex = UInt32Value.FromUInt32(col.HeaderStyleIndex),
                                 CellValue = new CellValue(col.ColumnName),
                                 DataType = CellValues.String
                             };
@@ -280,6 +285,7 @@ namespace DO.VIVICARE.Reporter
                                     var cell = new Cell
                                     {
                                         CellReference = $"{col.Column}{i}",
+                                        StyleIndex = UInt32Value.FromUInt32(col.CellStyleIndex),
                                         CellValue = new CellValue(""),
                                         DataType = CellValues.String
                                     };
@@ -313,7 +319,7 @@ namespace DO.VIVICARE.Reporter
                                 }
                                 manExcel.AddRow(cells, rowIndex++);
                             }
-                            manExcel.AddTotals(totals, rowIndex + 2);
+                            manExcel.AddTotals(totals, rowIndex++);
                         }
                     }
 

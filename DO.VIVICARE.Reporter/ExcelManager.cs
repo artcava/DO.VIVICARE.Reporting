@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using FontSize = DocumentFormat.OpenXml.Spreadsheet.FontSize;
 
 namespace DO.VIVICARE.Reporter
 {
@@ -24,6 +25,7 @@ namespace DO.VIVICARE.Reporter
         Sheets _sheets;
         Sheet _sheet;
         SheetData _sheetData;
+        WorkbookStylesPart _wbStylesPart;
 
         String[] _columnRefs;
         /// <summary>
@@ -136,6 +138,8 @@ namespace DO.VIVICARE.Reporter
 
                 // Retrieve a reference to the workbook part.
                 _wbPart = _document.WorkbookPart;
+                _wbStylesPart = _wbPart.AddNewPart<WorkbookStylesPart>();
+                GenerateWorkbookStylesPartContent();
 
                 // get the first (or named) sheet of workbook
 
@@ -363,7 +367,8 @@ namespace DO.VIVICARE.Reporter
                     var cell = new Cell
                     {
                         CellReference = $"{col.Column}{rowIndex}",
-                        CellValue = new CellValue(col.HaveSum?totals[col].ToString():col.TextForSum),
+                        StyleIndex = col.TotalStyleIndex,
+                        CellValue = new CellValue(col.HaveSum ? totals[col].ToString() : col.TextForSum),
                         DataType = CellValues.String
                     };
                     row.Append(cell);
@@ -577,6 +582,162 @@ namespace DO.VIVICARE.Reporter
 
             return match.Value;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="workbookStylesPart1"></param>
+        private void GenerateWorkbookStylesPartContent()
+        {
+            Stylesheet stylesheet1 = new Stylesheet() { MCAttributes = new MarkupCompatibilityAttributes() { Ignorable = "x14ac" } };
+            stylesheet1.AddNamespaceDeclaration("mc", "http://schemas.openxmlformats.org/markup-compatibility/2006");
+            stylesheet1.AddNamespaceDeclaration("x14ac", "http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac");
+
+            Fonts fonts = new Fonts(
+                new Font( // Index 0 - default
+                    new FontSize() { Val = 11D },
+                    new Color() { Theme = (UInt32Value)1U },
+                    new FontName() { Val = "Calibri" }
+                ),
+                new Font( // Index 1
+                    new FontSize() { Val = 11D },
+                    new Bold(),
+                    new Color() { Theme = (UInt32Value)1U },
+                    new FontName() { Val = "Calibri" }
+                ),
+                new Font( // Index 2
+                    new FontSize() { Val = 10D },
+                    new Bold(),
+                    new Color() { Rgb = "FFFFFF" },
+                    new FontName() { Val = "Calibri" }
+                ),
+                new Font( // Index 3
+                    new FontSize() { Val = 10D },
+                    new Color() { Rgb = "FFFFFF" },
+                    new FontName() { Val = "Calibri" }
+                )
+            );
+
+            Fills fills = new Fills(
+                new Fill(
+                    new PatternFill()
+                    {
+                        PatternType = PatternValues.None
+                    }
+                ), // Index 0 - default
+                new Fill(
+                    new PatternFill()
+                    {
+                        PatternType = PatternValues.Gray125
+                    }
+                ), // Index 1 - default
+                new Fill(
+                    new PatternFill(new ForegroundColor { Rgb = new HexBinaryValue() { Value = "FF999999" } })
+                    {
+                        PatternType = PatternValues.Solid
+                    }
+                ), // Index 2 - Gray
+                new Fill(
+                    new PatternFill(new ForegroundColor { Rgb = "FFFF99" })
+                    {
+                        PatternType = PatternValues.Solid
+                    }
+                ), // Index 3 - header
+                new Fill(
+                    new PatternFill(new ForegroundColor { Rgb = "FF6600" })
+                    {
+                        PatternType = PatternValues.Solid
+                    }
+                ), // Index 5 - DarkFill
+                new Fill(
+                    new PatternFill(new ForegroundColor { Rgb = "333333" })
+                    {
+                        PatternType = PatternValues.Solid
+                    }
+                ), // Index 6 - BlueFill
+                new Fill(
+                    new PatternFill(new ForegroundColor { Rgb = "99CCFF" })
+                    {
+                        PatternType = PatternValues.Solid
+                    }
+                )
+            );
+
+            Borders borders = new Borders(
+                new Border(), // index 0 default
+                new Border( // index 1 black border
+                    new LeftBorder(new Color() { Auto = true }) { Style = BorderStyleValues.Thin },
+                    new RightBorder(new Color() { Auto = true }) { Style = BorderStyleValues.Thin },
+                    new TopBorder(new Color() { Auto = true }) { Style = BorderStyleValues.Thin },
+                    new BottomBorder(new Color() { Auto = true }) { Style = BorderStyleValues.Thin },
+                    new DiagonalBorder())
+            );
+
+            CellStyleFormats cellStyleFormats1 = new CellStyleFormats() { Count = (UInt32Value)1U };
+            CellFormat cellFormat1 = new CellFormat() { NumberFormatId = (UInt32Value)0U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U };
+
+            cellStyleFormats1.Append(cellFormat1);
+
+            CellFormats cellFormats = new CellFormats(
+                new CellFormat(), // default {StyleIndex = 0}
+                new CellFormat { FontId = 0, FillId = 0, BorderId = 1, ApplyBorder = true }, // Header {StyleIndex = 1}
+                new CellFormat { FontId = 2, FillId = 2, BorderId = 0, ApplyFont = true, ApplyFill = true }, // Gray header {StyleIndex = 2}
+                new CellFormat { FontId = 0, FillId = 3, BorderId = 1, ApplyFill = true, ApplyBorder = true }, // Yellow cell {StyleIndex = 3}
+                new CellFormat { FontId = 1, FillId = 0, BorderId = 1, ApplyFont = true, ApplyBorder = true }, // Header boldbordered {StyleIndex = 4}
+                new CellFormat { FontId = 2, FillId = 4, BorderId = 0, ApplyFont = true, ApplyFill = true }, // Orange sum {StyleIndex = 5}
+                new CellFormat { FontId = 3, FillId = 5, BorderId = 1, ApplyFont = true, ApplyFill = true, ApplyBorder = true }, // Dark cell {StyleIndex = 6}
+                new CellFormat { FontId = 2, FillId = 5, BorderId = 1, ApplyFont = true, ApplyFill = true, ApplyBorder = true }, // Dark header {StyleIndex = 7}
+                new CellFormat { FontId = 1, FillId = 6, BorderId = 1, ApplyFont = true, ApplyFill = true, ApplyBorder = true }, // Blue header {StyleIndex = 8}
+                new CellFormat { FontId = 1, FillId = 6, BorderId = 0, ApplyFont = true, ApplyFill = true } // Blue sum {StyleIndex = 9}
+            );
+
+
+            //CellFormats cellFormats1 = new CellFormats() { Count = (UInt32Value)3U };
+            //CellFormat cellFormat2 = new CellFormat() { NumberFormatId = (UInt32Value)0U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U };
+            //CellFormat cellFormat3 = new CellFormat() { NumberFormatId = (UInt32Value)0U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)1U, FormatId = (UInt32Value)0U, ApplyBorder = true };
+            //CellFormat cellFormat4 = new CellFormat() { NumberFormatId = (UInt32Value)0U, FontId = (UInt32Value)1U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)1U, FormatId = (UInt32Value)0U, ApplyFont = true, ApplyBorder = true };
+
+            //cellFormats1.Append(cellFormat2);
+            //cellFormats1.Append(cellFormat3);
+            //cellFormats1.Append(cellFormat4);
+
+            CellStyles cellStyles1 = new CellStyles() { Count = (UInt32Value)1U };
+            CellStyle cellStyle1 = new CellStyle() { Name = "Normal", FormatId = (UInt32Value)0U, BuiltinId = (UInt32Value)0U };
+
+            cellStyles1.Append(cellStyle1);
+            DifferentialFormats differentialFormats1 = new DifferentialFormats() { Count = (UInt32Value)0U };
+            TableStyles tableStyles1 = new TableStyles() { Count = (UInt32Value)0U, DefaultTableStyle = "TableStyleMedium2", DefaultPivotStyle = "PivotStyleLight16" };
+
+            //StylesheetExtensionList stylesheetExtensionList1 = new StylesheetExtensionList();
+
+            //StylesheetExtension stylesheetExtension1 = new StylesheetExtension() { Uri = "{EB79DEF2-80B8-43e5-95BD-54CBDDF9020C}" };
+            //stylesheetExtension1.AddNamespaceDeclaration("x14", "http://schemas.microsoft.com/office/spreadsheetml/2009/9/main");
+            //X14.SlicerStyles slicerStyles1 = new X14.SlicerStyles() { DefaultSlicerStyle = "SlicerStyleLight1" };
+
+            //stylesheetExtension1.Append(slicerStyles1);
+
+            //StylesheetExtension stylesheetExtension2 = new StylesheetExtension() { Uri = "{9260A510-F301-46a8-8635-F512D64BE5F5}" };
+            //stylesheetExtension2.AddNamespaceDeclaration("x15", "http://schemas.microsoft.com/office/spreadsheetml/2010/11/main");
+            //X15.TimelineStyles timelineStyles1 = new X15.TimelineStyles() { DefaultTimelineStyle = "TimeSlicerStyleLight1" };
+
+            //stylesheetExtension2.Append(timelineStyles1);
+
+            //stylesheetExtensionList1.Append(stylesheetExtension1);
+            //stylesheetExtensionList1.Append(stylesheetExtension2);
+
+            stylesheet1.Append(fonts);
+            stylesheet1.Append(fills);
+            stylesheet1.Append(borders);
+            stylesheet1.Append(cellStyleFormats1);
+            stylesheet1.Append(cellFormats);
+            stylesheet1.Append(cellStyles1);
+            stylesheet1.Append(differentialFormats1);
+            stylesheet1.Append(tableStyles1);
+            //stylesheet1.Append(stylesheetExtensionList1);
+
+            _wbStylesPart.Stylesheet = stylesheet1;
+            _wbStylesPart.Stylesheet.Save();
+        }
+
         /// <summary>
         /// 
         /// </summary>

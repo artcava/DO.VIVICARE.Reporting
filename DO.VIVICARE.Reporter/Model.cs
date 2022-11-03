@@ -1,6 +1,8 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
+﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -211,7 +213,7 @@ namespace DO.VIVICARE.Reporter
                 switch (p.PropertyType.Name)
                 {
                     case "Decimal":
-                        var decimalValue = Convert.ToDecimal(value);
+                        var decimalValue = Convert.ToDecimal(value, CultureInfo.InvariantCulture.NumberFormat);
                         p.SetValue(el, decimalValue);
                         break;
                     case "Int32":
@@ -223,7 +225,7 @@ namespace DO.VIVICARE.Reporter
                         p.SetValue(el, int64Value);
                         break;
                     case "Double":
-                        var intDoubleValue = Convert.ToDouble(value);
+                        var intDoubleValue = Convert.ToDouble(value, CultureInfo.InvariantCulture.NumberFormat);
                         p.SetValue(el, intDoubleValue);
                         break;
                     case "String":
@@ -260,7 +262,7 @@ namespace DO.VIVICARE.Reporter
                                  value.GetType().FullName == "System.String"
                                  ))
                 {
-                    var decimalValue = Convert.ToDecimal(value);
+                    var decimalValue = Convert.ToDecimal(value, CultureInfo.InvariantCulture.NumberFormat);
                     p.SetValue(el, decimalValue);
                 }
                 else if (p.PropertyType.FullName == "System.Int32" &&
@@ -290,7 +292,7 @@ namespace DO.VIVICARE.Reporter
                                      value.GetType().FullName == "System.String"
                                      ))
                 {
-                    var intDoubleValue = Convert.ToDouble(value);
+                    var intDoubleValue = Convert.ToDouble(value, CultureInfo.InvariantCulture.NumberFormat);
                     p.SetValue(el, intDoubleValue);
                 }
                 else if (p.PropertyType.FullName == "System.String" &&
@@ -804,6 +806,9 @@ namespace DO.VIVICARE.Reporter
         public bool HaveSum { get; set; }
         public bool HaveText { get; set; }
         public string TextForSum { get; set; }
+        public uint HeaderStyleIndex { get; set; }
+        public uint CellStyleIndex { get; set; }
+        public uint TotalStyleIndex { get; set; }
     }
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
