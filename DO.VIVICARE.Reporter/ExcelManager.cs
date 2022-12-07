@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using FontSize = DocumentFormat.OpenXml.Spreadsheet.FontSize;
 
 namespace DO.VIVICARE.Reporter
@@ -18,7 +17,6 @@ namespace DO.VIVICARE.Reporter
     public class ExcelManager : IDisposable
     {
         protected MemoryStream msExcel;
-        string _filePath;
 
         SpreadsheetDocument _document;
         WorkbookPart _wbPart;
@@ -114,7 +112,7 @@ namespace DO.VIVICARE.Reporter
             {
                 if (filePath != null) _document = SpreadsheetDocument.Create(filePath, DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook);
                 else return false;
-                _filePath = filePath;
+
                 // Add a WorkbookPart to the document.
                 WorkbookPart workbookpart = _document.AddWorkbookPart();
                 workbookpart.Workbook = new Workbook();
@@ -142,7 +140,6 @@ namespace DO.VIVICARE.Reporter
                 GenerateWorkbookStylesPartContent();
 
                 // get the first (or named) sheet of workbook
-
                 _sheetData = sheetData;
 
                 _sheets = sheets;
@@ -595,13 +592,13 @@ namespace DO.VIVICARE.Reporter
             Fonts fonts = new Fonts(
                 new Font( // Index 0 - default
                     new FontSize() { Val = 11D },
-                    new Color() { Theme = (UInt32Value)1U },
+                    new Color() { Theme = 1U },
                     new FontName() { Val = "Calibri" }
                 ),
                 new Font( // Index 1
                     new FontSize() { Val = 11D },
                     new Bold(),
-                    new Color() { Theme = (UInt32Value)1U },
+                    new Color() { Theme = 1U },
                     new FontName() { Val = "Calibri" }
                 ),
                 new Font( // Index 2
@@ -672,8 +669,8 @@ namespace DO.VIVICARE.Reporter
                     new DiagonalBorder())
             );
 
-            CellStyleFormats cellStyleFormats1 = new CellStyleFormats() { Count = (UInt32Value)1U };
-            CellFormat cellFormat1 = new CellFormat() { NumberFormatId = (UInt32Value)0U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U };
+            CellStyleFormats cellStyleFormats1 = new CellStyleFormats() { Count = 1U };
+            CellFormat cellFormat1 = new CellFormat() { NumberFormatId = 0U, FontId = 0U, FillId = 0U, BorderId = 0U };
 
             cellStyleFormats1.Append(cellFormat1);
 
@@ -690,39 +687,12 @@ namespace DO.VIVICARE.Reporter
                 new CellFormat { FontId = 1, FillId = 6, BorderId = 0, ApplyFont = true, ApplyFill = true } // Blue sum {StyleIndex = 9}
             );
 
-
-            //CellFormats cellFormats1 = new CellFormats() { Count = (UInt32Value)3U };
-            //CellFormat cellFormat2 = new CellFormat() { NumberFormatId = (UInt32Value)0U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U };
-            //CellFormat cellFormat3 = new CellFormat() { NumberFormatId = (UInt32Value)0U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)1U, FormatId = (UInt32Value)0U, ApplyBorder = true };
-            //CellFormat cellFormat4 = new CellFormat() { NumberFormatId = (UInt32Value)0U, FontId = (UInt32Value)1U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)1U, FormatId = (UInt32Value)0U, ApplyFont = true, ApplyBorder = true };
-
-            //cellFormats1.Append(cellFormat2);
-            //cellFormats1.Append(cellFormat3);
-            //cellFormats1.Append(cellFormat4);
-
-            CellStyles cellStyles1 = new CellStyles() { Count = (UInt32Value)1U };
-            CellStyle cellStyle1 = new CellStyle() { Name = "Normal", FormatId = (UInt32Value)0U, BuiltinId = (UInt32Value)0U };
+            CellStyles cellStyles1 = new CellStyles() { Count = 1U };
+            CellStyle cellStyle1 = new CellStyle() { Name = "Normal", FormatId = 0U, BuiltinId = 0U };
 
             cellStyles1.Append(cellStyle1);
-            DifferentialFormats differentialFormats1 = new DifferentialFormats() { Count = (UInt32Value)0U };
-            TableStyles tableStyles1 = new TableStyles() { Count = (UInt32Value)0U, DefaultTableStyle = "TableStyleMedium2", DefaultPivotStyle = "PivotStyleLight16" };
-
-            //StylesheetExtensionList stylesheetExtensionList1 = new StylesheetExtensionList();
-
-            //StylesheetExtension stylesheetExtension1 = new StylesheetExtension() { Uri = "{EB79DEF2-80B8-43e5-95BD-54CBDDF9020C}" };
-            //stylesheetExtension1.AddNamespaceDeclaration("x14", "http://schemas.microsoft.com/office/spreadsheetml/2009/9/main");
-            //X14.SlicerStyles slicerStyles1 = new X14.SlicerStyles() { DefaultSlicerStyle = "SlicerStyleLight1" };
-
-            //stylesheetExtension1.Append(slicerStyles1);
-
-            //StylesheetExtension stylesheetExtension2 = new StylesheetExtension() { Uri = "{9260A510-F301-46a8-8635-F512D64BE5F5}" };
-            //stylesheetExtension2.AddNamespaceDeclaration("x15", "http://schemas.microsoft.com/office/spreadsheetml/2010/11/main");
-            //X15.TimelineStyles timelineStyles1 = new X15.TimelineStyles() { DefaultTimelineStyle = "TimeSlicerStyleLight1" };
-
-            //stylesheetExtension2.Append(timelineStyles1);
-
-            //stylesheetExtensionList1.Append(stylesheetExtension1);
-            //stylesheetExtensionList1.Append(stylesheetExtension2);
+            DifferentialFormats differentialFormats1 = new DifferentialFormats() { Count = 0U };
+            TableStyles tableStyles1 = new TableStyles() { Count = 0U, DefaultTableStyle = "TableStyleMedium2", DefaultPivotStyle = "PivotStyleLight16" };
 
             stylesheet1.Append(fonts);
             stylesheet1.Append(fills);
@@ -732,7 +702,6 @@ namespace DO.VIVICARE.Reporter
             stylesheet1.Append(cellStyles1);
             stylesheet1.Append(differentialFormats1);
             stylesheet1.Append(tableStyles1);
-            //stylesheet1.Append(stylesheetExtensionList1);
 
             _wbStylesPart.Stylesheet = stylesheet1;
             _wbStylesPart.Stylesheet.Save();

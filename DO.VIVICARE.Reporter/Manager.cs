@@ -1,5 +1,4 @@
 ﻿using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Collections.Generic;
@@ -7,10 +6,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using Excel = Microsoft.Office.Interop.Excel;
 using Tuple = System.Tuple;
 
 namespace DO.VIVICARE.Reporter
@@ -157,7 +154,6 @@ namespace DO.VIVICARE.Reporter
                 {
                     string name = ua.Name;
                 }
-
 
                 var destinationFilePath = Path.Combine(Manager.Reports, $"{fileWithoutExt}.xlsx");
 
@@ -322,7 +318,6 @@ namespace DO.VIVICARE.Reporter
                             manExcel.AddTotals(totals, rowIndex++);
                         }
                     }
-
                 }
 
                 #endregion
@@ -794,6 +789,5 @@ namespace DO.VIVICARE.Reporter
             }
             return ret;
         }
-
     }
 }

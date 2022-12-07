@@ -434,6 +434,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
                         case "TEST ANTIGIENICO A DOMICILIO (SIAT ASL ROMA 2)":
                         case "TAMPONE RAPIDO A DOMICILIO - SINGOLO (ADI ALTA INTENSITA’)":
                         case "TAMPONE RAPIDO A DOMICILIO - SINGOLO (ADI ALTA INTENSITA')":
+                        case "TAMPONE ANTIGIENICO DOMICILIARE (ADI ALTA INTENSITA')":
                             worktype = "TAMPONI ANTIGENICI (COVID)";
                             break;
                         case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (SIAT ASL FROSINONE)":

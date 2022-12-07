@@ -20,7 +20,6 @@ namespace DO.VIVICARE.Reporter
             Records = new List<BaseDocument>();
             Filters = new List<FilterDocument>();
         }
-
         public List<FilterDocument> Filters { get; set; }
 
         public string SourceFilePath { get; set; }
@@ -250,10 +249,6 @@ namespace DO.VIVICARE.Reporter
                         p.SetValue(el, value);
                         break;
                 }
-
-
-
-
 
                 if (p.PropertyType.FullName == "System.Decimal" &&
                                 (value.GetType().FullName == "System.Double" ||
