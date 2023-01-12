@@ -18,7 +18,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         /// </summary>
         public Valorizzazione()
         {
-            DocumentNames = new string[] { "LazioHealthWorker", "ADIAltaIntensita" };
+            DocumentNames = new string[] { "LazioHealthWorker", "ADIAltaIntensita", "Prestazioni" };
         }
         /// <summary>
         /// 
@@ -326,6 +326,13 @@ namespace DO.VIVICARE.Report.Valorizzazione
                 }
                 var listLazioHealthWorker = doc.Records;
 
+                doc = documents.Find(x => x.AttributeName == "Prestazioni");
+                if (doc == null)
+                {
+                    throw new Exception("Prestazioni non trovato!");
+                }
+                var listPreastazioni = doc.Records;
+
                 int year = 0;
                 var objYear = GetParamValue("Year");
                 if (objYear != null) year = (int)objYear;
@@ -356,93 +363,116 @@ namespace DO.VIVICARE.Report.Valorizzazione
 
                     var worktype = oss.WorkType;
 
+                    #region Nuova gestione Prestazioni
+                    var prestazioni = listPreastazioni.Where((dynamic hs) => ((string)hs.HealthService).ToUpper() == ((string)adi.Activity).ToUpper()).ToList();
+                    switch (prestazioni.Count)
+                    {
+                        case 0:
+                            break;
+                        case 1:
+                            if (string.IsNullOrEmpty(prestazioni.FirstOrDefault().WorkType)) continue;
+                            worktype = prestazioni.FirstOrDefault().WorkType;
+                            break;
+                        default:
+                            var prestazione = prestazioni.Where((dynamic hs) => ((string)hs.HealthWorkerType).ToUpper() == ((string)oss.WorkType).ToUpper()).FirstOrDefault();
+                            if (prestazione == null)
+                            {
+                                prestazione = prestazioni.Where((dynamic hs) =>  string.IsNullOrEmpty(hs.HealthWorkerType)).FirstOrDefault();
+                                if (prestazione == null) throw new Exception($"[{adi.Activity}] non ha un corrispettivo nel file delle Prestazioni!");
+                            }
+                            worktype = prestazione.WorkType;
+                            break;
+                    }
+                    #endregion
+
                     // Prelievi e Trasporti sono identificati con un WorkType specifico
                     switch (((string)adi.Activity).ToUpper())
                     {
-                        case "PRELIEVO PER EMOTRASFUSIONI (ADI ALTA INTENSITA')":
-                        case "TELEMONITORAGGIO/TELEVISITA/TELECONSULTO (SIAT ASL FROSINONE)":
-                            continue; // 2022/07/14 - Per queste attività non si conteggia nulla 
-                        case "PRELIEVO EMATICO (ADI ALTA INTENSITA')":
-                        case "PRELIEVO EMATICO (ADI ALTA INTENSITA’)":
-                        case "PRELIEVO VENOSO (ADI ALTA INTENSITA')":
-                        case "PRELIEVO ALTRO MATERIALE BIOLOGICO (ADI ALTA INTENSITA')":
-                        case "PRELIEVO EMATICO (ADI ALTA INTENSITA' - FROSINONE)":
-                        case "PRELIEVO VENOSO (SIAT ASL FROSINONE)":
-                        case "PRELIEVO EMATICO (ADI PRESTAZIONALE)":
-                        case "RACCOLTA DI UN CAMPIONE DI URINE (ADI ALTA INTENSITA')":
-                        case "RACCOLTA DI UN CAMPIONE DI URINE (ADI ALTA INTENSITA’)":
-                            worktype = "PRELIEVO";
-                            break;
-                        case "SERVIZIO TRASPORTO SANITARIO (ADI ALTA INTENSITA')":
-                        case "SERVIZIO TRASPORTO SANITARIO (ADI ALTA INTENSITA’)":
-                        case "SERVIZIO TRASPORTO (ADI ALTA INTENSITA')":
-                        case "SERVIZIO TRASPORTO (ADI ALTA INTENSITA’)":
-                            switch (((string)oss.WorkType).ToUpper())
-                            {
-                                case "ANESTESISTA":
-                                case "MEDICO CHIRURGO":
-                                    worktype = "TRASPORTO CON MEDICO";
-                                    break;
-                                default:
-                                    worktype = "TRASPORTO CON INFERMIERE";
-                                    break;
-                            }
-                            break;
-                            // Aggiunte il 14/06/2022 per difformità con l'originale
-                        case "SERVIZIO TRASPORTO AMBULANZE INFERM. (ADI ALTA INTENSITA’)":
-                            worktype = "TRASPORTO CON INFERMIERE";
-                            break;
-                        case "SERVIZIO TRASPORTO AMBULANZE MEDICO (ADI ALTA INTENSITA’)":
-                            worktype = "TRASPORTO CON MEDICO";
-                            break;
-                            // Tutte aggiunte il 14/07/2022 per uniformità alle ASL
-                        case "RADIOGRAFIA DOMICILIARE CON REFERTAZIONE (ADI ALTA INTENSITA’)":
-                        case "RADIOGRAFIA DOMICILIARE CON REFERTAZIONE (ADI ALTA INTENSITA')":
-                        case "ESAMI DIAGNOSTICI RX (ADI ALTA INTENSITA’)":
-                        case "ESAMI DIAGNOSTICI RX (ADI ALTA INTENSITA')":
-                            worktype = "RX DOMICILIARE";
-                            break;
-                        case "ECOGRAFIA DOMICILIARE (ADI ALTA INTENSITA’)":
-                        case "ECOGRAFIA DOMICILIARE (ADI ALTA INTENSITA')":
-                            worktype = "ECOGRAFIA DOMICILIARE";
-                            break;
-                        case "EMOGASANALISI-PRELIEVO.ANALISI.REFERTO (ADI ALTA INTENSITA’)":
-                        case "EMOGASANALISI-PRELIEVO.ANALISI.REFERTO (ADI ALTA INTENSITA')":
-                        case "EMOGASANALISI-PRELIEVO.ANALISI.REFERTO (SIAT ASL FROSINONE)":
-                            worktype = "EMOGAS DOMICILIARE";
-                            break;
-                        case "EMOGASANALISI-PRELIEVO.TRASPORTO.LAB":
-                            worktype = "EMOGAS DOMICILIARE SOLO PRELIEVO E TRASP";
-                            break;
-                        case "EMOTRASFUSIONE (SEMP.) (ADI ALTA INTENSITA’)":
-                        case "EMOTRASFUSIONE (SEMP.) (ADI ALTA INTENSITA')":
-                        case "EMOTRASFUSIONE (SEMP.) (ADI PRESTAZIONALE)":
-                        case "EMOTRASFUSIONE (SEMP.) (SIAT ASL FROSINONE)":
-                        case "EMOTRASFUSIONE DOMICILIARE (ADI ALTA INTENSITA’)":
-                        case "EMOTRASFUSIONE DOMICILIARE (ADI ALTA INTENSITA')":
-                        case "EMOTRASFUSIONE DOMICILIARE (ADI PRESTAZIONALE)":
-                        case "EMOTRASFUSIONE-PREL.PROVE.RITIRO.SACCA (SIAT ASL ROMA 2)":
-                            worktype = "EMOTRASFUSIONE DOMICILIARE";
-                            break;
-                        case "SOSTITUZIONE DEL CATETERE VESCICALE (ADI ALTA INTENSITA’)":
-                        case "SOSTITUZIONE DEL CATETERE VESCICALE (ADI ALTA INTENSITA')":
-                            worktype = "CAMBIO CATETERE";
-                            break;
-                        case "TAMPONE RAPIDO (ADI ALTA INTENSITA’)":
-                        case "TAMPONE RAPIDO (ADI ALTA INTENSITA')":
-                        case "TEST ANTIGIENICO A DOMICILIO (SIAT ASL FROSINONE)":
-                        case "TEST ANTIGIENICO A DOMICILIO (SIAT ASL ROMA 2)":
-                        case "TAMPONE RAPIDO A DOMICILIO - SINGOLO (ADI ALTA INTENSITA’)":
-                        case "TAMPONE RAPIDO A DOMICILIO - SINGOLO (ADI ALTA INTENSITA')":
-                        case "TAMPONE ANTIGIENICO DOMICILIARE (ADI ALTA INTENSITA')":
-                            worktype = "TAMPONI ANTIGENICI (COVID)";
-                            break;
-                        case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (SIAT ASL FROSINONE)":
-                        case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (SIAT ASL ROMA 2)":
-                        case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (ADI ALTA INTENSITA’)":
-                        case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (ADI ALTA INTENSITA')":
-                            worktype = "PRESTAZIONI VACCINI (COVID)";
-                            break;
+                        //case "PRELIEVO PER EMOTRASFUSIONI (ADI ALTA INTENSITA')":
+                        //case "TELEMONITORAGGIO/TELEVISITA/TELECONSULTO (SIAT ASL FROSINONE)":
+                        //    continue; // 2022/07/14 - Per queste attività non si conteggia nulla 
+                        //case "PRELIEVO EMATICO (ADI ALTA INTENSITA')":
+                        //case "PRELIEVO EMATICO (ADI ALTA INTENSITA’)":
+                        //case "PRELIEVO VENOSO (ADI ALTA INTENSITA')":
+                        //case "PRELIEVO ALTRO MATERIALE BIOLOGICO (ADI ALTA INTENSITA')":
+                        //case "PRELIEVO EMATICO (ADI ALTA INTENSITA' - FROSINONE)":
+                        //case "PRELIEVO VENOSO (SIAT ASL FROSINONE)":
+                        //case "PRELIEVO EMATICO (ADI PRESTAZIONALE)":
+                        //case "RACCOLTA DI UN CAMPIONE DI URINE (ADI ALTA INTENSITA')":
+                        //case "RACCOLTA DI UN CAMPIONE DI URINE (ADI ALTA INTENSITA’)":
+                        //    worktype = "PRELIEVO";
+                        //    break;
+                        //case "SERVIZIO TRASPORTO SANITARIO (ADI ALTA INTENSITA')":
+                        //case "SERVIZIO TRASPORTO SANITARIO (ADI ALTA INTENSITA’)":
+                        //case "SERVIZIO TRASPORTO (ADI ALTA INTENSITA')":
+                        //case "SERVIZIO TRASPORTO (ADI ALTA INTENSITA’)":
+                        //    switch (((string)oss.WorkType).ToUpper())
+                        //    {
+                        //        case "ANESTESISTA":
+                        //        case "MEDICO CHIRURGO":
+                        //            worktype = "TRASPORTO CON MEDICO";
+                        //            break;
+                        //        default:
+                        //            worktype = "TRASPORTO CON INFERMIERE";
+                        //            break;
+                        //    }
+                        //    break;
+                        //    // Aggiunte il 14/06/2022 per difformità con l'originale
+                        //case "SERVIZIO TRASPORTO AMBULANZE INFERM. (ADI ALTA INTENSITA’)":
+                        //    worktype = "TRASPORTO CON INFERMIERE";
+                        //    break;
+                        //case "SERVIZIO TRASPORTO AMBULANZE MEDICO (ADI ALTA INTENSITA’)":
+                        //    worktype = "TRASPORTO CON MEDICO";
+                        //    break;
+                        //    // Tutte aggiunte il 14/07/2022 per uniformità alle ASL
+                        //case "RADIOGRAFIA DOMICILIARE CON REFERTAZIONE (ADI ALTA INTENSITA’)":
+                        //case "RADIOGRAFIA DOMICILIARE CON REFERTAZIONE (ADI ALTA INTENSITA')":
+                        //case "ESAMI DIAGNOSTICI RX (ADI ALTA INTENSITA’)":
+                        //case "ESAMI DIAGNOSTICI RX (ADI ALTA INTENSITA')":
+                        //    worktype = "RX DOMICILIARE";
+                        //    break;
+                        //case "ECOGRAFIA DOMICILIARE (ADI ALTA INTENSITA’)":
+                        //case "ECOGRAFIA DOMICILIARE (ADI ALTA INTENSITA')":
+                        //    worktype = "ECOGRAFIA DOMICILIARE";
+                        //    break;
+                        //case "EMOGASANALISI-PRELIEVO.ANALISI.REFERTO (ADI ALTA INTENSITA’)":
+                        //case "EMOGASANALISI-PRELIEVO.ANALISI.REFERTO (ADI ALTA INTENSITA')":
+                        //case "EMOGASANALISI-PRELIEVO.ANALISI.REFERTO (SIAT ASL FROSINONE)":
+                        //    worktype = "EMOGAS DOMICILIARE";
+                        //    break;
+                        //case "EMOGASANALISI-PRELIEVO.TRASPORTO.LAB":
+                        //    worktype = "EMOGAS DOMICILIARE SOLO PRELIEVO E TRASP";
+                        //    break;
+                        //case "EMOTRASFUSIONE (SEMP.) (ADI ALTA INTENSITA’)":
+                        //case "EMOTRASFUSIONE (SEMP.) (ADI ALTA INTENSITA')":
+                        //case "EMOTRASFUSIONE (SEMP.) (ADI PRESTAZIONALE)":
+                        //case "EMOTRASFUSIONE (SEMP.) (SIAT ASL FROSINONE)":
+                        //case "EMOTRASFUSIONE DOMICILIARE (ADI ALTA INTENSITA’)":
+                        //case "EMOTRASFUSIONE DOMICILIARE (ADI ALTA INTENSITA')":
+                        //case "EMOTRASFUSIONE DOMICILIARE (ADI PRESTAZIONALE)":
+                        //case "EMOTRASFUSIONE-PREL.PROVE.RITIRO.SACCA (SIAT ASL ROMA 2)":
+                        //    worktype = "EMOTRASFUSIONE DOMICILIARE";
+                        //    break;
+                        //case "SOSTITUZIONE DEL CATETERE VESCICALE (ADI ALTA INTENSITA’)":
+                        //case "SOSTITUZIONE DEL CATETERE VESCICALE (ADI ALTA INTENSITA')":
+                        //    worktype = "CAMBIO CATETERE";
+                        //    break;
+                        //case "TAMPONE RAPIDO (ADI ALTA INTENSITA’)":
+                        //case "TAMPONE RAPIDO (ADI ALTA INTENSITA')":
+                        //case "TEST ANTIGIENICO A DOMICILIO (SIAT ASL FROSINONE)":
+                        //case "TEST ANTIGIENICO A DOMICILIO (SIAT ASL ROMA 2)":
+                        //case "TAMPONE RAPIDO A DOMICILIO - SINGOLO (ADI ALTA INTENSITA’)":
+                        //case "TAMPONE RAPIDO A DOMICILIO - SINGOLO (ADI ALTA INTENSITA')":
+                        //case "TAMPONE ANTIGIENICO DOMICILIARE (ADI ALTA INTENSITA')":
+                        //case "TAMPONE ANTIGENICO DOMICILIARE (ADI ALTA INTENSITA')":
+                        //    worktype = "TAMPONI ANTIGENICI (COVID)";
+                        //    break;
+                        //case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (SIAT ASL FROSINONE)":
+                        //case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (SIAT ASL ROMA 2)":
+                        //case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (ADI ALTA INTENSITA’)":
+                        //case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (ADI ALTA INTENSITA')":
+                        //    worktype = "PRESTAZIONI VACCINI (COVID)";
+                        //    break;
                         case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (ADI ALTA INTENSITA’)":
                         case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (ADI ALTA INTENSITA')":
                         case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (SIAT ASL ROMA 2)":
