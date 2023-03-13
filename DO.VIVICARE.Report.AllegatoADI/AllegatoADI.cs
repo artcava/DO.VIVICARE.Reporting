@@ -116,6 +116,7 @@ namespace DO.VIVICARE.Report.AllegatoADI
                     sheetrow.AccessDocCost += adi.SpecialistAccessTotal;
                     sheetrow.DiagnosticCost += adi.RXDomTotal + adi.EcoDomTotal;
                     sheetrow.TransportCost += adi.TransInfTotal + adi.TransDocTotal;
+                    sheetrow.SampleCost += adi.SampleTotal;
 
                     //Se non c'è pacchetto base devo togliere il -4
                     if (sheetrow.BasePrice > 0)
@@ -243,8 +244,11 @@ namespace DO.VIVICARE.Report.AllegatoADI
             [ReportMemberReference(Column = "T", Position = 20, ColumnName = "COSTO TRASPORTO", FieldName = "TransportCost", HeaderStyleIndex = 4, CellStyleIndex = 3, TotalStyleIndex = 5, HaveSum = true)]
             public decimal TransportCost { get; set; }
 
-            [ReportMemberReference(Column = "U", Position = 21, ColumnName = "TOTALE FATTURA", FieldName = "InvoiceTotal", HeaderStyleIndex = 8, CellStyleIndex = 4, TotalStyleIndex = 9, HaveSum = true)]
-            public decimal InvoiceTotal { get { return NetTotal + AccessDocCost + DiagnosticCost + TransportCost; } }
+            [ReportMemberReference(Column = "U", Position = 21, ColumnName = "COSTO PRELIEVI", FieldName = "SampleCost", HeaderStyleIndex = 4, CellStyleIndex = 3, TotalStyleIndex = 5, HaveSum = true)]
+            public decimal SampleCost { get; set; }
+
+            [ReportMemberReference(Column = "V", Position = 22, ColumnName = "TOTALE FATTURA", FieldName = "InvoiceTotal", HeaderStyleIndex = 8, CellStyleIndex = 4, TotalStyleIndex = 9, HaveSum = true)]
+            public decimal InvoiceTotal { get { return NetTotal + AccessDocCost + DiagnosticCost + TransportCost + SampleCost; } }
         }
         #endregion
     }
