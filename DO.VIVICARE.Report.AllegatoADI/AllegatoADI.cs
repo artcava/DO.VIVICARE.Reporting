@@ -136,6 +136,7 @@ namespace DO.VIVICARE.Report.AllegatoADI
                     val.ExtraMedicalVisit += sheetrow.AccessDocCost;
                     val.Diagnostic += sheetrow.DiagnosticCost;
                     val.Transport += sheetrow.TransportCost;
+                    val.Sample += sheetrow.SampleCost;
                 }
 
                 ResultRecords.AddRange(reportAllegatoADI);
@@ -178,8 +179,11 @@ namespace DO.VIVICARE.Report.AllegatoADI
         [ReportMemberReference(Column = "F", Position = 6, ColumnName = "TRASPORTI", FieldName = "Transport", HeaderStyleIndex = 2, CellStyleIndex = 1)]
         public decimal Transport { get; set; }
 
-        [ReportMemberReference(Column = "G", Position = 7, ColumnName = "TOTALE FATTURATO", FieldName = "InvoiceTotal", HeaderStyleIndex = 2, CellStyleIndex = 1, HaveSum =true)]
-        public decimal InvoiceTotal { get { return AidTotal + ExtraMedicalVisit + Diagnostic + Transport; } }
+        [ReportMemberReference(Column = "G", Position = 7, ColumnName = "PRELIEVI", FieldName = "Sample", HeaderStyleIndex = 2, CellStyleIndex = 1)]
+        public decimal Sample { get; set; }
+
+        [ReportMemberReference(Column = "H", Position = 8, ColumnName = "TOTALE FATTURATO", FieldName = "InvoiceTotal", HeaderStyleIndex = 2, CellStyleIndex = 1, HaveSum =true)]
+        public decimal InvoiceTotal { get { return AidTotal + ExtraMedicalVisit + Diagnostic + Transport + Sample; } }
 
 
         public class Patient:BaseSheet
