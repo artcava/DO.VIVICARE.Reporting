@@ -1166,3 +1166,10 @@ namespace DO.VIVICARE.Report.Valorizzazione
         #endregion
     }
 }
+
+/*
+Da BN a BR trovo le ore da calcolare in pacchetto base (4 ore). Solo l'eccedenza (a multipli di 4 ore) deve confluire in Colonna L come pacchetto sollievo (riabilitazione).
+
+Colonne AD AE AF da valorizzare sempre a 0
+Mantenere però il valore in BX
+ */

@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>DO.VIVICARE.UI</RootNamespace>
     <AssemblyName>DO.VIVICARE.UI</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <IsWebBootstrapper>true</IsWebBootstrapper>
@@ -23,7 +23,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://artcava.net/Reporting/Setup/</InstallUrl>
+    <InstallUrl>http://artcava.azurewebsites.net/Reporting/Setup/</InstallUrl>
     <ProductName>Reporting</ProductName>
     <PublisherName>DO SRL</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
