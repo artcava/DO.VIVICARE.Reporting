@@ -539,7 +539,9 @@ namespace DO.VIVICARE.Report.Valorizzazione
                             val.SampleNumber = val.SampleNumber2 += 1;
                             break;
                         case "TRASPORTO CON INFERMIERE":
-                            val.TransInfNumber += 1;
+                        // Modifica 17/04/2024 su Tk #1506
+                            val.TransInfNumberTotal += 1;
+                            //val.TransInfNumber += 1;
                             break;
                         case "TRASPORTO CON MEDICO":
                             val.TransDocNumber += 1;
@@ -707,10 +709,13 @@ namespace DO.VIVICARE.Report.Valorizzazione
                     val.TotalValue += val.HourPsiNumberTotal * val.HourPsyValue;
 
                     //Valorizzazione trasporti in ambulanza assistiti
-                    val.TransInfValue = 62;
+                    #region Modifica su Tk #1506
+                    //val.TransInfValue = 62;
+                    val.TransInfValue = 0;
                     val.TransInfTotal = val.TransInfNumber * val.TransInfValue;
                     val.TotalValue += val.TransInfTotal;
                     if (val.TransInfTotal < 1) val.TransInfValue = 0; //#1445
+                    #endregion
                     val.TransDocValue = 106;
                     val.TransDocTotal = val.TransDocNumber * val.TransDocValue;
                     val.TotalValue += val.TransDocTotal;
@@ -888,7 +893,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
 
         #region Member
 
-        #region ANAG
+        #region ANAG (A-H)
         [ReportMemberReference(Column = "A", Position = 1, ColumnName = "NOME PAZIENTE", Length = 50, Required = true, FieldName = "PatientName")]
         public string PatientName { get; set; }
 
@@ -914,7 +919,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         public decimal Discount { get; set; }
         #endregion
 
-        #region PACCHETTI BASE
+        #region PACCHETTI BASE (I-K)
         [ReportMemberReference(Column = "I", Position = 9, ColumnName = "NUMERO PACCHETTI BASE", FieldName = "BasePacketNumber")]
         public decimal BasePacketNumber { get; set; }
 
@@ -925,7 +930,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         public decimal BasePacketTotal { get; set; }
         #endregion
 
-        #region PACCHETTI SOLLIEVO
+        #region PACCHETTI SOLLIEVO (L-N)
         [ReportMemberReference(Column = "L", Position = 12, ColumnName = "NUMERO PACCHETTI SOLLIEVO", FieldName = "ReliefPacketNumber")]
         public decimal ReliefPacketNumber { get; set; }
 
@@ -936,7 +941,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         public decimal ReliefPacketTotal { get; set; }
         #endregion
 
-        #region ORE INFERMIERISTICHE
+        #region ORE INFERMIERISTICHE (O-Q)
         [ReportMemberReference(Column = "O", Position = 15, ColumnName = "NUMERO ORE INF.", FieldName = "HourInfNumber")]
         public decimal HourInfNumber { get; set; }
 
@@ -947,7 +952,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         public decimal HourInfTotal { get; set; }
         #endregion
 
-        #region ORE RIABILITAZIONE
+        #region ORE RIABILITAZIONE (R-T)
         [ReportMemberReference(Column = "R", Position = 18, ColumnName = "NUMERO ORE RIAB. (FKT/LOGO/TPNEE/TO)", FieldName = "HourRehabNumber")]
         public decimal HourRehabNumber { get; set; }
         
@@ -958,7 +963,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         public decimal HourRehabTotal { get; set; }
         #endregion
 
-        #region ORE OSS
+        #region ORE OSS (U-W)
         [ReportMemberReference(Column = "U", Position = 21, ColumnName = "NUMERO ORE OSS", FieldName = "HourOssNumber")]
         public decimal HourOssNumber { get; set; }
         
@@ -969,7 +974,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         public decimal HourOssTotal { get; set; }
         #endregion
 
-        #region ORE PSICOLOGO
+        #region ORE PSICOLOGO (X-Z)
         [ReportMemberReference(Column = "X", Position = 24, ColumnName = "NUMERO ORE PSICOLOGO", FieldName = "HourPsyNumber")]
         public decimal HourPsyNumber { get; set; }
         
@@ -980,7 +985,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         public decimal HourPsyTotal { get; set; }
         #endregion
 
-        #region PRELIEVI
+        #region PRELIEVI (AA-AC)
         [ReportMemberReference(Column = "AA", Position = 27, ColumnName = "NUMERO PRELIEVI", FieldName = "SampleNumber")]
         public decimal SampleNumber { get; set; }
         
@@ -991,7 +996,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         public decimal SampleTotal { get; set; }
         #endregion
 
-        #region TRASPORTI CON INF
+        #region TRASPORTI CON INF (AD-AF)
         [ReportMemberReference(Column = "AD", Position = 30, ColumnName = "NUMERO TRASPORTI CON INF", FieldName = "TransInfNumber")]
         public decimal TransInfNumber { get; set; }
         
@@ -1002,7 +1007,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         public decimal TransInfTotal { get; set; }
         #endregion
 
-        #region TRASPORTI CON MED
+        #region TRASPORTI CON MED (AG-AI)
         [ReportMemberReference(Column = "AG", Position = 33, ColumnName = "NUMERO TRASPORTI CON MED", FieldName = "TransDocNumber")]
         public decimal TransDocNumber { get; set; }
         
@@ -1013,7 +1018,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         public decimal TransDocTotal { get; set; }
         #endregion
 
-        #region ACCESSI SPECIALISTICI
+        #region ACCESSI SPECIALISTICI (AJ-AL)
         [ReportMemberReference(Column = "AJ", Position = 36, ColumnName = "NUMERO ACCESSI SPECIALISTICI", FieldName = "SpecialistAccessNumber")]
         public decimal SpecialistAccessNumber { get; set; }
         
@@ -1024,7 +1029,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         public decimal SpecialistAccessTotal { get; set; }
         #endregion
 
-        #region RX DOMICILIARE
+        #region RX DOMICILIARE (AM-AO)
         [ReportMemberReference(Column = "AM", Position = 39, ColumnName = "NUMERO RX DOMICILIARE", FieldName = "RXDomNumber")]
         public decimal RXDomNumber { get; set; }
 
@@ -1035,7 +1040,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         public decimal RXDomTotal { get; set; }
         #endregion
 
-        #region ECOGRAFIA DOMICILIARE
+        #region ECOGRAFIA DOMICILIARE (AP-AR)
         [ReportMemberReference(Column = "AP", Position = 42, ColumnName = "NUMERO ECOGRAFIA DOMICILIARE", FieldName = "EcoDomNumber")]
         public decimal EcoDomNumber { get; set; }
 
@@ -1046,7 +1051,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         public decimal EcoDomTotal { get; set; }
         #endregion
 
-        #region EMOGAS DOMICILIARE
+        #region EMOGAS DOMICILIARE (AS-AU)
         [ReportMemberReference(Column = "AS", Position = 45, ColumnName = "NUMERO EMOGAS DOMICILIARE", FieldName = "EmoGasDomNumber")]
         public decimal EmoGasDomNumber { get; set; }
 
@@ -1057,7 +1062,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         public decimal EmoGasDomTotal { get; set; }
         #endregion
 
-        #region EMOGAS DOMICILIARE SOLO PRELIEVO E TRASP.
+        #region EMOGAS DOMICILIARE SOLO PRELIEVO E TRASP. (AV-AX)
         [ReportMemberReference(Column = "AV", Position = 48, ColumnName = "NUMERO EMOGAS DOMICILIARE SOLO PRELIEVO E TRASP.", FieldName = "EmoGasLabDomNumber")]
         public decimal EmoGasLabDomNumber { get; set; }
 
@@ -1068,7 +1073,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         public decimal EmoGasLabDomTotal { get; set; }
         #endregion
 
-        #region EMOTRASFUSIONE DOMICILIARE
+        #region EMOTRASFUSIONE DOMICILIARE (AY-BA)
         [ReportMemberReference(Column = "AY", Position = 51, ColumnName = "NUMERO EMOTRASFUSIONE DOMICILIARE", FieldName = "EmoTrasfDomNumber")]
         public decimal EmoTrasfDomNumber { get; set; }
 
@@ -1079,7 +1084,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         public decimal EmoTrasfDomTotal { get; set; }
         #endregion
 
-        #region CAMBIO CATETERE
+        #region CAMBIO CATETERE (BB-BD)
         [ReportMemberReference(Column = "BB", Position = 54, ColumnName = "NUMERO CAMBIO CATETERE", FieldName = "CatheterChangeNumber")]
         public decimal CatheterChangeNumber { get; set; }
 
@@ -1090,7 +1095,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         public decimal CatheterChangeTotal { get; set; }
         #endregion
 
-        #region TAMPONI ANTIGENICI (COVID)
+        #region TAMPONI ANTIGENICI (COVID) (BE-BG)
         [ReportMemberReference(Column = "BE", Position = 57, ColumnName = "NUMERO TAMPONI ANTIGENICI (COVID)", FieldName = "SwabNumber")]
         public decimal SwabNumber { get; set; }
 
@@ -1101,7 +1106,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         public decimal SwabTotal { get; set; }
         #endregion
 
-        #region PRESTAZIONI VACCINI (COVID)
+        #region PRESTAZIONI VACCINI (COVID) (BH-BJ)
         [ReportMemberReference(Column = "BH", Position = 60, ColumnName = "NUMERO PRESTAZIONI VACCINI (COVID)", FieldName = "VaxNumber")]
         public decimal VaxNumber { get; set; }
 
@@ -1112,7 +1117,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         public decimal VaxTotal { get; set; }
         #endregion
 
-        #region GESTIONE KIT PER TELEMONITORAGGIO PAZ. COVID
+        #region GESTIONE KIT PER TELEMONITORAGGIO PAZ. COVID (BK-BM)
         [ReportMemberReference(Column = "BK", Position = 63, ColumnName = "NUMERO MAGGIOR. MONITORAGGIO PAZ. COVID", FieldName = "MonitoringKitNumber")]
         public decimal MonitoringKitNumber { get; set; }
 
@@ -1123,7 +1128,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         public decimal MonitoringKitTotal { get; set; }
         #endregion
 
-        #region ORE TOTALI
+        #region ORE TOTALI (BN-BT)
         [ReportMemberReference(Column = "BN", Position = 66, ColumnName = "NR ORE INF TOTALI", FieldName = "HourInfNumberTotal")]
         public decimal HourInfNumberTotal { get; set; }
         
@@ -1146,7 +1151,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         public decimal HourOssNumbertotal { get; set; }
         #endregion
 
-        #region NUMERO ACCESSI, PRELIEVI, TRASPORTI
+        #region NUMERO ACCESSI, PRELIEVI, TRASPORTI (BU-BY)
         [ReportMemberReference(Column = "BU", Position = 73, ColumnName = "NR ACCESSI ANESTESISTA TOTALI", FieldName = "AccessAneNumber")]
         public decimal AccessAneNumber { get; set; }
         
@@ -1157,7 +1162,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         public decimal SampleNumber2 { get; set; }
 
         [ReportMemberReference(Column = "BX", Position = 76, ColumnName = "NR TRASPORTI INF.", FieldName = "TransInfNumber")]
-        public decimal TransInfNumberTotal { get { return TransInfNumber; } }
+        public decimal TransInfNumberTotal { get; set; }
 
         [ReportMemberReference(Column = "BY", Position = 77, ColumnName = "NR TRASPORTI MED.", FieldName = "TransDocNumber")]
         public decimal TransDocNumberTotal { get { return TransDocNumber; } }
@@ -1169,6 +1174,8 @@ namespace DO.VIVICARE.Report.Valorizzazione
 
 /*
 Da BN a BR trovo le ore da calcolare in pacchetto base (4 ore). Solo l'eccedenza (a multipli di 4 ore) deve confluire in Colonna L come pacchetto sollievo (riabilitazione).
+Probabilmente il problema è dovuto ad una diversa imputazione della colonna ASL (C), nello switch alla riga 644 i case sono riportati come ASL ROMA n. mentre nel file caricato trovo ASL RMn.
+Quindi lo switch non soddisfa alcun case di quelli proposti e quindi passa senza scontare le ore per i pacchetti base.
 
 Colonne AD AE AF da valorizzare sempre a 0
 Mantenere però il valore in BX
