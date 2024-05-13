@@ -242,24 +242,32 @@ namespace DO.VIVICARE.Report.Valorizzazione
                             val.HourFktNumberTotal += duration;
                             break;
                         case "INFERMIERE":
-                            switch (adi.Activity)
+                            if (((string)adi.Activity).Contains("OSS"))
                             {
-                                case "ACCESSO OSS (ADI ALTA INTENSITA' - FROSINONE)":
-                                case "ACCESSO OSS (ADI ALTA INTENSITA’ - FROSINONE)":
-                                case "ACCESSO OSS (ADI ALTA INTENSITA’)":
-                                case "ACCESSO OSS (ADI ALTA INTENSITA')":
-                                case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (ADI ALTA INTENSITA’)":
-                                case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (ADI ALTA INTENSITA')":
-                                case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (SIAT ASL FROSINONE)":
-                                case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (SIAT ASL ROMA 6)":
-                                case "ASSIST. (OSS) PAZIENTE ALTA COMPLES-H (SIAT ASL ROMA 2)":
-                                case "ATTIVITÀ DI SUPPORTO OSS (SIAT ASL FROSINONE)":
-                                    val.HourOssNumber += duration;
-                                    break;
-                                default:
-                                    val.HourInfNumber += duration;
-                                    break;
+                                val.HourOssNumber += duration;
                             }
+                            else
+                            {
+                                val.HourInfNumber += duration;
+                            }
+                            //switch (adi.Activity)
+                            //{
+                            //    case "ACCESSO OSS (ADI ALTA INTENSITA' - FROSINONE)":
+                            //    case "ACCESSO OSS (ADI ALTA INTENSITA’ - FROSINONE)":
+                            //    case "ACCESSO OSS (ADI ALTA INTENSITA’)":
+                            //    case "ACCESSO OSS (ADI ALTA INTENSITA')":
+                            //    case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (ADI ALTA INTENSITA’)":
+                            //    case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (ADI ALTA INTENSITA')":
+                            //    case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (SIAT ASL FROSINONE)":
+                            //    case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (SIAT ASL ROMA 6)":
+                            //    case "ASSIST. (OSS) PAZIENTE ALTA COMPLES-H (SIAT ASL ROMA 2)":
+                            //    case "ATTIVITÀ DI SUPPORTO OSS (SIAT ASL FROSINONE)":
+                            //        val.HourOssNumber += duration;
+                            //        break;
+                            //    default:
+                            //        val.HourInfNumber += duration;
+                            //        break;
+                            //}
                             break;
                         case "INFERMIERE PEDIATRICO":
                             val.HourInfNumber += duration;
@@ -909,7 +917,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         [ReportMemberReference(Column = "BW", Position = 75, ColumnName = "NR PRELIEVI", FieldName = "SampleNumber2")]
         public decimal SampleNumber2 { get; set; }
 
-        [ReportMemberReference(Column = "BX", Position = 76, ColumnName = "NR TRASPORTI INF.", FieldName = "TransInfNumber")]
+        [ReportMemberReference(Column = "BX", Position = 76, ColumnName = "NR TRASPORTI INF.", FieldName = "TransInfNumberTotal")]
         public decimal TransInfNumberTotal { get; set; }
 
         [ReportMemberReference(Column = "BY", Position = 77, ColumnName = "NR TRASPORTI MED.", FieldName = "TransDocNumber")]
