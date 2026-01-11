@@ -4,7 +4,6 @@ on:
   push:
     tags:
       - 'v*'
-  workflow_dispatch:
 
 jobs:
   build-and-release:
@@ -27,7 +26,6 @@ jobs:
         }
         echo "version=$version" >> $env:GITHUB_OUTPUT
         echo "tag=v$version" >> $env:GITHUB_OUTPUT
-        Write-Output "Version: $version"
 
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.1
@@ -59,7 +57,6 @@ jobs:
         Copy-Item "$uiPath\*.config" -Destination "artifacts\UI\" -Force -ErrorAction SilentlyContinue
         
         Compress-Archive -Path "artifacts\UI\*" -DestinationPath "artifacts\DO.VIVICARE.UI-$version.zip" -Force
-        Write-Output "Created: DO.VIVICARE.UI-$version.zip"
 
     - name: Package Reporter library
       shell: powershell
@@ -72,7 +69,6 @@ jobs:
           Copy-Item "$reporterPath\DO.VIVICARE.Reporter.dll" -Destination "artifacts\Reporter\" -ErrorAction SilentlyContinue
           Copy-Item "$reporterPath\*.config" -Destination "artifacts\Reporter\" -Force -ErrorAction SilentlyContinue
           Compress-Archive -Path "artifacts\Reporter\*" -DestinationPath "artifacts\DO.VIVICARE.Reporter-$version.zip" -Force
-          Write-Output "Created: DO.VIVICARE.Reporter-$version.zip"
         }
 
     - name: Package Document DLLs
@@ -92,9 +88,6 @@ jobs:
             Copy-Item "$modulePath\$module.dll" -Destination "artifacts\$module\" -ErrorAction SilentlyContinue
             Copy-Item "$modulePath\*.config" -Destination "artifacts\$module\" -Force -ErrorAction SilentlyContinue
             Compress-Archive -Path "artifacts\$module\*" -DestinationPath "artifacts\$module-$version.zip" -Force
-            Write-Output "Created: $module-$version.zip"
-          } else {
-            Write-Output "Skipped: $module (not found)"
           }
         }
 
@@ -115,9 +108,6 @@ jobs:
             Copy-Item "$modulePath\$module.dll" -Destination "artifacts\$module\" -ErrorAction SilentlyContinue
             Copy-Item "$modulePath\*.config" -Destination "artifacts\$module\" -Force -ErrorAction SilentlyContinue
             Compress-Archive -Path "artifacts\$module\*" -DestinationPath "artifacts\$module-$version.zip" -Force
-            Write-Output "Created: $module-$version.zip"
-          } else {
-            Write-Output "Skipped: $module (not found)"
           }
         }
 
@@ -131,101 +121,7 @@ jobs:
           $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash
           $line = "$hash  $($_.Name)"
           Add-Content -Path $checksumFile -Value $line
-          Write-Output $line
         }
-        
-        Write-Output "Checksums generated in CHECKSUM-SHA256.txt"
-
-    - name: Create release notes
-      shell: powershell
-      run: |
-        $version = "${{ steps.version.outputs.version }}"
-        $releaseNotesFile = "RELEASE-NOTES-v$version.md"
-        $releaseDate = Get-Date -Format 'yyyy-MM-dd HH:mm:ss UTC'
-        $buildDate = Get-Date -Format 'yyyy-MM-dd'
-        
-        $content = @"
-Release v$version
-
-Release Date: $releaseDate
-
-Package Contents
-
-- UI: DO.VIVICARE.UI-$version.zip
-  Main application executable and dependencies
-  Ready for installation via MSI or manual deployment
-  Requires .NET Framework 4.8 or higher
-
-Document Libraries
-- DO.VIVICARE.Document.ADIAltaIntensita-$version.zip
-- DO.VIVICARE.Document.ADIBassaIntensita-$version.zip
-- DO.VIVICARE.Document.ASST-$version.zip
-
-Report Libraries
-- DO.VIVICARE.Report.Dietetica-$version.zip
-- DO.VIVICARE.Report.AllegatoADI-$version.zip
-- DO.VIVICARE.Report.Valorizzazione-$version.zip
-
-Migration from v1.1.0
-
-For End Users:
-1. Backup current installation folder (optional)
-2. Download DO.VIVICARE.UI-$version.zip
-3. Extract and run the installer
-4. Old version will be replaced with new version
-
-For Library Updates:
-1. Launch DO.VIVICARE UI application
-2. Navigate to: Tools -> Settings -> Libraries
-3. Click Check for Updates
-4. Download and install new library versions
-
-Installation Instructions
-
-First-Time Setup (IT Approval Required - Once Only)
-1. Download the MSI installer from GitHub Releases
-2. Execute installer (requires administrative privileges)
-3. Application will be installed and configured for auto-updates
-
-Subsequent Updates (No IT Approval Needed)
-- Application will notify you of available updates automatically
-- Simply click Update Now to download and install
-- Updates are downloaded in the background
-
-Integrity Verification
-
-All packages include SHA256 checksums in CHECKSUM-SHA256.txt. Verify file integrity:
-
-Get-FileHash <filename> -Algorithm SHA256
-
-Compare the output with the corresponding hash in the checksum file.
-
-Notes
-
-- This release requires .NET Framework 4.8 or higher
-- Breaking changes: None from v1.1.0
-- Database migrations: None required
-
-Version: $version
-Build Date: $buildDate
-Repository: https://github.com/artcava/DO.VIVICARE.Reporting
-"@
-        
-        $content | Out-File -FilePath $releaseNotesFile -Encoding UTF8
-        Write-Output "Release notes created: $releaseNotesFile"
-
-    - name: List all artifacts
-      shell: powershell
-      run: |
-        Write-Output "=== Artifacts ==="
-        Get-ChildItem -Path "artifacts" -Recurse | Where-Object { $_.PSIsContainer -eq $false } | ForEach-Object {
-          $size = [math]::Round($_.Length / 1MB, 2)
-          Write-Output "$($_.Name) - $size MB"
-        }
-        
-        Write-Output ""
-        Write-Output "=== Checksums ==="
-        Get-Content "checksums\CHECKSUM-SHA256.txt"
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
@@ -235,38 +131,8 @@ Repository: https://github.com/artcava/DO.VIVICARE.Reporting
         files: |
           artifacts/*.zip
           checksums/CHECKSUM-SHA256.txt
-          RELEASE-NOTES-v${{ steps.version.outputs.version }}.md
         draft: false
         prerelease: false
         generate_release_notes: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Release Summary
-      if: success()
-      shell: powershell
-      run: |
-        Write-Output ""
-        Write-Output "====================================================="
-        Write-Output "Release v${{ steps.version.outputs.version }} Created Successfully"
-        Write-Output "====================================================="
-        Write-Output ""
-        Write-Output "Release URL:"
-        Write-Output "https://github.com/artcava/DO.VIVICARE.Reporting/releases/tag/${{ steps.version.outputs.tag }}"
-        Write-Output ""
-        Write-Output "Artifacts:"
-        Get-ChildItem "artifacts\*.zip" | ForEach-Object {
-          Write-Output "- $($_.Name)"
-        }
-        Write-Output ""
-        Write-Output "Checksums available in: CHECKSUM-SHA256.txt"
-        Write-Output ""
-
-    - name: Release Failed
-      if: failure()
-      shell: powershell
-      run: |
-        Write-Output ""
-        Write-Output "Release creation failed!"
-        Write-Output "Check logs above for details."
-        Write-Output ""
