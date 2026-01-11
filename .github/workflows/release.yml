@@ -116,44 +116,46 @@ jobs:
           make_latest = "true"
         } | ConvertTo-Json
         
-        $releaseUrl = "https://api.github.com/repos/$owner/$repo/releases"
+        $releaseUrl = 'https://api.github.com/repos/' + $owner + '/' + $repo + '/releases'
         
         try {
-          Write-Host "Creating release..."
+          Write-Host 'Creating release...'
           $release = Invoke-RestMethod -Uri $releaseUrl -Method POST -Headers $headers -Body $releaseData -ContentType 'application/json'
           $releaseId = $release.id
-          Write-Host "Release created with ID: $releaseId"
+          Write-Host ('Release created with ID: ' + $releaseId)
           
-          $uploadUrl = "https://uploads.github.com/repos/$owner/$repo/releases/$releaseId/assets"
+          $uploadUrl = 'https://uploads.github.com/repos/' + $owner + '/' + $repo + '/releases/' + $releaseId + '/assets'
           
-          Get-ChildItem "artifacts\*.zip" -ErrorAction SilentlyContinue | ForEach-Object {
+          Get-ChildItem 'artifacts\*.zip' -ErrorAction SilentlyContinue | ForEach-Object {
             $filePath = $_.FullName
             $fileName = $_.Name
-            Write-Host "Uploading: $fileName"
+            Write-Host ('Uploading: ' + $fileName)
             
             $uploadHeaders = @{
               'Authorization' = "token $token"
               'Accept' = 'application/vnd.github.v3+json'
             }
             
-            Invoke-RestMethod -Uri "$uploadUrl?name=$fileName" -Method POST -Headers $uploadHeaders -InFile $filePath -ContentType 'application/zip' | Out-Null
-            Write-Host "Uploaded: $fileName"
+            $assetUrl = $uploadUrl + '?name=' + $fileName
+            Invoke-RestMethod -Uri $assetUrl -Method POST -Headers $uploadHeaders -InFile $filePath -ContentType 'application/zip' | Out-Null
+            Write-Host ('Uploaded: ' + $fileName)
           }
           
-          if (Test-Path "checksums\CHECKSUM-SHA256.txt") {
-            Write-Host "Uploading: CHECKSUM-SHA256.txt"
+          if (Test-Path 'checksums\CHECKSUM-SHA256.txt') {
+            Write-Host 'Uploading: CHECKSUM-SHA256.txt'
             $checksumHeaders = @{
               'Authorization' = "token $token"
               'Accept' = 'application/vnd.github.v3+json'
             }
-            Invoke-RestMethod -Uri "$uploadUrl?name=CHECKSUM-SHA256.txt" -Method POST -Headers $checksumHeaders -InFile "checksums\CHECKSUM-SHA256.txt" -ContentType 'text/plain' | Out-Null
-            Write-Host "Uploaded: CHECKSUM-SHA256.txt"
+            $checksumUrl = $uploadUrl + '?name=CHECKSUM-SHA256.txt'
+            Invoke-RestMethod -Uri $checksumUrl -Method POST -Headers $checksumHeaders -InFile 'checksums\CHECKSUM-SHA256.txt' -ContentType 'text/plain' | Out-Null
+            Write-Host 'Uploaded: CHECKSUM-SHA256.txt'
           }
           
-          Write-Host "Release created successfully!"
-          Write-Host "URL: https://github.com/$owner/$repo/releases/tag/$tag"
+          Write-Host 'Release created successfully!'
+          Write-Host ('URL: https://github.com/' + $owner + '/' + $repo + '/releases/tag/' + $tag)
         } catch {
-          Write-Host "Error: $_"
+          Write-Host ('Error: ' + $_)
           Write-Host $_.Exception.Message
           exit 1
         }
