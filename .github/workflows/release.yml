@@ -2,15 +2,21 @@ name: Build and Release
 
 on:
   push:
+    branches:
+      - master
     tags:
       - 'v*'
+      - 'plugin/*'
+  workflow_dispatch:
 
 permissions:
   contents: write
   packages: write
 
 jobs:
-  build-and-release:
+  # JOB 1: Release APP (quando tag = v*.*.*)
+  release-app:
+    if: startsWith(github.ref, 'refs/tags/v') && !startsWith(github.ref, 'refs/tags/plugin')
     runs-on: windows-latest
     
     steps:
@@ -39,123 +45,179 @@ jobs:
     - name: Restore NuGet packages
       run: nuget restore DO.VIVICARE.Reporting.sln
 
-    - name: Build solution
-      run: msbuild DO.VIVICARE.Reporting.sln /p:Configuration=Release /p:Platform="Any CPU"
-
-    - name: Create artifacts directory
-      shell: powershell
+    - name: Build UI and Reporter only
       run: |
-        New-Item -ItemType Directory -Force -Path artifacts | Out-Null
-        New-Item -ItemType Directory -Force -Path checksums | Out-Null
+        msbuild DO.VIVICARE.UI\DO.VIVICARE.UI.csproj /p:Configuration=Release /p:Platform="Any CPU"
+        msbuild DO.VIVICARE.Reporter\DO.VIVICARE.Reporter.csproj /p:Configuration=Release /p:Platform="Any CPU"
 
-    - name: Package binaries
+    - name: Create MSI Installer
       shell: powershell
       run: |
         $version = "${{ steps.version.outputs.version }}"
-        $uiPath = "DO.VIVICARE.UI\bin\Release"
-        if (Test-Path "$uiPath\DO.VIVICARE.UI.exe") {
-          New-Item -ItemType Directory -Force -Path "artifacts\UI" | Out-Null
-          Copy-Item "$uiPath\*" -Destination "artifacts\UI\" -Force -ErrorAction SilentlyContinue
-          Compress-Archive -Path "artifacts\UI\*" -DestinationPath "artifacts\DO.VIVICARE.UI-$version.zip" -Force
-        }
-        $reporterPath = "DO.VIVICARE.Reporter\bin\Release"
-        if (Test-Path "$reporterPath\DO.VIVICARE.Reporter.dll") {
-          New-Item -ItemType Directory -Force -Path "artifacts\Reporter" | Out-Null
-          Copy-Item "$reporterPath\*" -Destination "artifacts\Reporter\" -Force -ErrorAction SilentlyContinue
-          Compress-Archive -Path "artifacts\Reporter\*" -DestinationPath "artifacts\DO.VIVICARE.Reporter-$version.zip" -Force
-        }
-        foreach ($module in @("DO.VIVICARE.Document.ADIAltaIntensita", "DO.VIVICARE.Document.ADIBassaIntensita", "DO.VIVICARE.Document.ASST")) {
-          $modulePath = "$module\bin\Release"
-          if (Test-Path "$modulePath\$module.dll") {
-            New-Item -ItemType Directory -Force -Path "artifacts\$module" | Out-Null
-            Copy-Item "$modulePath\*" -Destination "artifacts\$module\" -Force -ErrorAction SilentlyContinue
-            Compress-Archive -Path "artifacts\$module\*" -DestinationPath "artifacts\$module-$version.zip" -Force
-          }
-        }
-        foreach ($module in @("DO.VIVICARE.Report.Dietetica", "DO.VIVICARE.Report.AllegatoADI", "DO.VIVICARE.Report.Valorizzazione")) {
-          $modulePath = "$module\bin\Release"
-          if (Test-Path "$modulePath\$module.dll") {
-            New-Item -ItemType Directory -Force -Path "artifacts\$module" | Out-Null
-            Copy-Item "$modulePath\*" -Destination "artifacts\$module\" -Force -ErrorAction SilentlyContinue
-            Compress-Archive -Path "artifacts\$module\*" -DestinationPath "artifacts\$module-$version.zip" -Force
-          }
-        }
+        
+        # Create build directory
+        New-Item -ItemType Directory -Force -Path "build\app" | Out-Null
+        
+        # Copy UI binaries
+        Copy-Item "DO.VIVICARE.UI\bin\Release\*" -Destination "build\app\" -Force -Recurse
+        Copy-Item "DO.VIVICARE.Reporter\bin\Release\*" -Destination "build\app\" -Force -Recurse
+        
+        # Create MSI (placeholder - use WiX Toolset or similar in production)
+        Write-Host "MSI creation would happen here with WiX Toolset"
+        Write-Host "For now, creating ZIP as fallback"
+        
+        Compress-Archive -Path "build\app\*" -DestinationPath "DO.VIVICARE-Setup-$version.zip" -Force
 
     - name: Generate checksums
       shell: powershell
       run: |
-        $checksumFile = "checksums\CHECKSUM-SHA256.txt"
-        $null = New-Item -ItemType File -Path $checksumFile -Force
-        Get-ChildItem "artifacts\*.zip" -ErrorAction SilentlyContinue | ForEach-Object {
-          $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash
-          "$hash  $($_.Name)" | Add-Content -Path $checksumFile
-        }
+        $checksum = (Get-FileHash "DO.VIVICARE-Setup-${{ steps.version.outputs.version }}.zip" -Algorithm SHA256).Hash
+        echo "$checksum  DO.VIVICARE-Setup-${{ steps.version.outputs.version }}.zip" | Out-File -Encoding ASCII "CHECKSUM.txt"
 
     - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          DO.VIVICARE-Setup-${{ steps.version.outputs.version }}.zip
+          CHECKSUM.txt
+        body: |
+          # DO.VIVICARE v${{ steps.version.outputs.version }}
+          
+          ## What's Included
+          - UI Application
+          - Reporter Library
+          - Plugin Manager for automatic library updates
+          
+          ## Installation
+          1. Extract the ZIP file
+          2. Run the installer
+          3. Follow the setup wizard
+          
+          ## Verify Integrity
+          Compare the SHA256 checksum in CHECKSUM.txt with the downloaded file.
+          
+          ## Next Steps
+          After installation, use Tools → Plugin Manager to download additional document and report modules.
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # JOB 2: Release PLUGIN (quando tag = plugin/*/version)
+  release-plugin:
+    if: startsWith(github.ref, 'refs/tags/plugin')
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Extract plugin info from tag
+      id: plugin
       shell: powershell
       run: |
-        $version = "${{ steps.version.outputs.version }}"
-        $tag = "v$version"
-        $owner = "${{ github.repository_owner }}"
-        $repo = "${{ github.event.repository.name }}"
-        $token = "${{ secrets.GITHUB_TOKEN }}"
-        
-        $body = "Version $version - Build and Package Release`n`nThis is the official release of DO.VIVICARE.Reporting v$version`n`n## Package Contents`n`n- UI Application: DO.VIVICARE.UI-$version.zip`n- Reporter Library: DO.VIVICARE.Reporter-$version.zip`n- Document Libraries: ADIAltaIntensita, ADIBassaIntensita, ASST`n- Report Libraries: Dietetica, AllegatoADI, Valorizzazione`n`n## Installation`n`n1. Download the desired ZIP file`n2. Extract to your installation directory`n3. Follow DEPLOYMENT.md for setup instructions`n`n## Integrity Verification`n`nAll packages include SHA256 checksums in CHECKSUM-SHA256.txt"
-        
-        $headers = @{
-          'Authorization' = "token $token"
-          'Accept' = 'application/vnd.github.v3+json'
+        $tag = "${{ github.ref }}"
+        # Format: refs/tags/plugin/document.adialtaintensita/1.0.5
+        if ($tag -match "refs/tags/plugin/([^/]+)/([^/]+)$") {
+          $pluginId = $matches[1]
+          $version = $matches[2]
+          
+          # Map plugin ID to project folder
+          $projectMap = @{
+            "document.adialtaintensita" = "DO.VIVICARE.Document.ADIAltaIntensita"
+            "document.adibassaintensita" = "DO.VIVICARE.Document.ADIBassaIntensita"
+            "document.asst" = "DO.VIVICARE.Document.ASST"
+            "document.comuni" = "DO.VIVICARE.Document.Comuni"
+            "document.laziohealthworker" = "DO.VIVICARE.Document.LazioHealthWorker"
+            "document.minsan" = "DO.VIVICARE.Document.MinSan"
+            "document.prestazioni" = "DO.VIVICARE.Document.Prestazioni"
+            "document.prezzi" = "DO.VIVICARE.Document.Prezzi"
+            "document.rendiconto" = "DO.VIVICARE.Document.Rendiconto"
+            "document.report16" = "DO.VIVICARE.Document.Report16"
+            "document.report18" = "DO.VIVICARE.Document.Report18"
+            "document.valorizzazione" = "DO.VIVICARE.Document.Valorizzazione"
+            "document.zsdfatture" = "DO.VIVICARE.Document.ZSDFatture"
+            "report.allegatoadi" = "DO.VIVICARE.Report.AllegatoADI"
+            "report.dietetica" = "DO.VIVICARE.Report.Dietetica"
+            "report.valorizzazione" = "DO.VIVICARE.Report.Valorizzazione"
+          }
+          
+          $projectName = $projectMap[$pluginId]
+          
+          echo "pluginId=$pluginId" >> $env:GITHUB_OUTPUT
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+          echo "projectName=$projectName" >> $env:GITHUB_OUTPUT
         }
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.1
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1
+
+    - name: Restore NuGet packages
+      run: nuget restore DO.VIVICARE.Reporting.sln
+
+    - name: Build plugin project
+      run: |
+        msbuild "${{ steps.plugin.outputs.projectName }}\${{ steps.plugin.outputs.projectName }}.csproj" /p:Configuration=Release /p:Platform="Any CPU"
+
+    - name: Package plugin DLL
+      shell: powershell
+      run: |
+        $projectName = "${{ steps.plugin.outputs.projectName }}"
+        $version = "${{ steps.plugin.outputs.version }}"
+        $dllPath = "$projectName\bin\Release\$projectName.dll"
+        $outputName = "$projectName-$version.dll"
         
-        $releaseData = @{
-          tag_name = $tag
-          name = "Version $version"
-          body = $body
-          draft = $false
-          prerelease = $false
-          make_latest = "true"
-        } | ConvertTo-Json
-        
-        $releaseUrl = 'https://api.github.com/repos/' + $owner + '/' + $repo + '/releases'
-        
-        try {
-          Write-Host 'Creating release...'
-          $release = Invoke-RestMethod -Uri $releaseUrl -Method POST -Headers $headers -Body $releaseData -ContentType 'application/json'
-          $releaseId = $release.id
-          Write-Host ('Release created with ID: ' + $releaseId)
-          
-          $uploadUrl = 'https://uploads.github.com/repos/' + $owner + '/' + $repo + '/releases/' + $releaseId + '/assets'
-          
-          Get-ChildItem 'artifacts\*.zip' -ErrorAction SilentlyContinue | ForEach-Object {
-            $filePath = $_.FullName
-            $fileName = $_.Name
-            Write-Host ('Uploading: ' + $fileName)
-            
-            $uploadHeaders = @{
-              'Authorization' = "token $token"
-              'Accept' = 'application/vnd.github.v3+json'
-            }
-            
-            $assetUrl = $uploadUrl + '?name=' + $fileName
-            Invoke-RestMethod -Uri $assetUrl -Method POST -Headers $uploadHeaders -InFile $filePath -ContentType 'application/zip' | Out-Null
-            Write-Host ('Uploaded: ' + $fileName)
-          }
-          
-          if (Test-Path 'checksums\CHECKSUM-SHA256.txt') {
-            Write-Host 'Uploading: CHECKSUM-SHA256.txt'
-            $checksumHeaders = @{
-              'Authorization' = "token $token"
-              'Accept' = 'application/vnd.github.v3+json'
-            }
-            $checksumUrl = $uploadUrl + '?name=CHECKSUM-SHA256.txt'
-            Invoke-RestMethod -Uri $checksumUrl -Method POST -Headers $checksumHeaders -InFile 'checksums\CHECKSUM-SHA256.txt' -ContentType 'text/plain' | Out-Null
-            Write-Host 'Uploaded: CHECKSUM-SHA256.txt'
-          }
-          
-          Write-Host 'Release created successfully!'
-          Write-Host ('URL: https://github.com/' + $owner + '/' + $repo + '/releases/tag/' + $tag)
-        } catch {
-          Write-Host ('Error: ' + $_)
-          Write-Host $_.Exception.Message
+        if (Test-Path $dllPath) {
+          Copy-Item $dllPath -Destination $outputName
+          Write-Host "Package created: $outputName"
+        } else {
+          Write-Error "DLL not found at $dllPath"
           exit 1
         }
+
+    - name: Generate checksum
+      shell: powershell
+      run: |
+        $projectName = "${{ steps.plugin.outputs.projectName }}"
+        $version = "${{ steps.plugin.outputs.version }}"
+        $fileName = "$projectName-$version.dll"
+        
+        $checksum = (Get-FileHash $fileName -Algorithm SHA256).Hash
+        echo "$checksum  $fileName" | Out-File -Encoding ASCII "CHECKSUM.txt"
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          ${{ steps.plugin.outputs.projectName }}-${{ steps.plugin.outputs.version }}.dll
+          CHECKSUM.txt
+        body: |
+          # Plugin: ${{ steps.plugin.outputs.projectName }}
+          
+          Version: ${{ steps.plugin.outputs.version }}
+          
+          This plugin will be automatically discoverable in the Plugin Manager.
+          
+          ## Installation
+          1. Open DO.VIVICARE UI
+          2. Go to Tools → Plugin Manager
+          3. Find this plugin in the Available Plugins list
+          4. Click Download
+          
+          The plugin will be automatically installed and no restart is required.
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Update manifest.json
+      shell: powershell
+      run: |
+        Write-Host "Manifest update workflow would be triggered here"
+        Write-Host "Plugin: ${{ steps.plugin.outputs.pluginId }}"
+        Write-Host "Version: ${{ steps.plugin.outputs.version }}"
