@@ -14,7 +14,7 @@ permissions:
   packages: write
 
 jobs:
-  # JOB 1: Release APP (quando tag = v*.*.*)
+  # JOB 1: Release APP (quando tag = v*.*.*)  
   release-app:
     if: startsWith(github.ref, 'refs/tags/v') && !startsWith(github.ref, 'refs/tags/plugin')
     runs-on: windows-latest
@@ -45,10 +45,13 @@ jobs:
     - name: Restore NuGet packages
       run: nuget restore DO.VIVICARE.Reporting.sln
 
-    - name: Build UI and Reporter only
+    - name: Build solution
       run: |
-        msbuild DO.VIVICARE.UI\DO.VIVICARE.UI.csproj /p:Configuration=Release /p:Platform="Any CPU"
-        msbuild DO.VIVICARE.Reporter\DO.VIVICARE.Reporter.csproj /p:Configuration=Release /p:Platform="Any CPU"
+        msbuild DO.VIVICARE.Reporting.sln `
+          /p:Configuration=Release `
+          /p:Platform="Any CPU" `
+          /p:TargetFrameworkVersion=v4.8 `
+          /maxcpucount
 
     - name: Create application package
       shell: powershell
@@ -59,10 +62,16 @@ jobs:
         New-Item -ItemType Directory -Force -Path "build\app" | Out-Null
         
         # Copy UI binaries
-        Copy-Item "DO.VIVICARE.UI\bin\Release\*" -Destination "build\app\" -Force -Recurse
-        Copy-Item "DO.VIVICARE.Reporter\bin\Release\*" -Destination "build\app\" -Force -Recurse
+        if (Test-Path "DO.VIVICARE.UI\bin\Release") {
+          Copy-Item "DO.VIVICARE.UI\bin\Release\*" -Destination "build\app\" -Force -Recurse
+        }
         
-        # Create ZIP as installer package (MSI would require WiX Toolset)
+        # Copy Reporter binaries
+        if (Test-Path "DO.VIVICARE.Reporter\bin\Release") {
+          Copy-Item "DO.VIVICARE.Reporter\bin\Release\*" -Destination "build\app\" -Force -Recurse
+        }
+        
+        # Create ZIP as installer package
         Write-Host "Creating application package..."
         Compress-Archive -Path "build\app\*" -DestinationPath "DO.VIVICARE-Setup-$version.zip" -Force
         Write-Host "Application package created: DO.VIVICARE-Setup-$version.zip"
@@ -211,9 +220,13 @@ jobs:
     - name: Restore NuGet packages
       run: nuget restore DO.VIVICARE.Reporting.sln
 
-    - name: Build plugin project
+    - name: Build solution (all projects)
       run: |
-        msbuild "${{ steps.plugin.outputs.projectName }}\${{ steps.plugin.outputs.projectName }}.csproj" /p:Configuration=Release /p:Platform="Any CPU"
+        msbuild DO.VIVICARE.Reporting.sln `
+          /p:Configuration=Release `
+          /p:Platform="Any CPU" `
+          /p:TargetFrameworkVersion=v4.8 `
+          /maxcpucount
 
     - name: Package plugin DLL
       shell: powershell
