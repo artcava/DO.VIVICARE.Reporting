@@ -99,12 +99,14 @@ jobs:
         $owner = "${{ github.repository_owner }}"
         $repo = "${{ github.event.repository.name }}"
         $token = "${{ secrets.GITHUB_TOKEN }}"
+        
         $body = "Version $version - Build and Package Release`n`nThis is the official release of DO.VIVICARE.Reporting v$version`n`n## Package Contents`n`n- UI Application: DO.VIVICARE.UI-$version.zip`n- Reporter Library: DO.VIVICARE.Reporter-$version.zip`n- Document Libraries: ADIAltaIntensita, ADIBassaIntensita, ASST`n- Report Libraries: Dietetica, AllegatoADI, Valorizzazione`n`n## Installation`n`n1. Download the desired ZIP file`n2. Extract to your installation directory`n3. Follow DEPLOYMENT.md for setup instructions`n`n## Integrity Verification`n`nAll packages include SHA256 checksums in CHECKSUM-SHA256.txt"
+        
         $headers = @{
           'Authorization' = "token $token"
           'Accept' = 'application/vnd.github.v3+json'
-          'Content-Type' = 'application/json'
         }
+        
         $releaseData = @{
           tag_name = $tag
           name = "Version $version"
@@ -113,37 +115,45 @@ jobs:
           prerelease = $false
           make_latest = "true"
         } | ConvertTo-Json
+        
         $releaseUrl = "https://api.github.com/repos/$owner/$repo/releases"
-        Write-Host "Creating release at: $releaseUrl"
+        
         try {
-          $response = Invoke-WebRequest -Uri $releaseUrl -Method POST -Headers $headers -Body $releaseData -ErrorAction Stop
-          $releaseJson = $response.Content | ConvertFrom-Json
-          $releaseId = $releaseJson.id
-          Write-Host "Release created successfully with ID: $releaseId"
+          Write-Host "Creating release..."
+          $release = Invoke-RestMethod -Uri $releaseUrl -Method POST -Headers $headers -Body $releaseData -ContentType 'application/json'
+          $releaseId = $release.id
+          Write-Host "Release created with ID: $releaseId"
+          
           $uploadUrl = "https://uploads.github.com/repos/$owner/$repo/releases/$releaseId/assets"
+          
           Get-ChildItem "artifacts\*.zip" -ErrorAction SilentlyContinue | ForEach-Object {
             $filePath = $_.FullName
             $fileName = $_.Name
             Write-Host "Uploading: $fileName"
+            
             $uploadHeaders = @{
               'Authorization' = "token $token"
-              'Content-Type' = 'application/zip'
+              'Accept' = 'application/vnd.github.v3+json'
             }
-            Invoke-WebRequest -Uri "$uploadUrl?name=$fileName" -Method POST -Headers $uploadHeaders -InFile $filePath -ErrorAction Stop | Out-Null
+            
+            Invoke-RestMethod -Uri "$uploadUrl?name=$fileName" -Method POST -Headers $uploadHeaders -InFile $filePath -ContentType 'application/zip' | Out-Null
             Write-Host "Uploaded: $fileName"
           }
+          
           if (Test-Path "checksums\CHECKSUM-SHA256.txt") {
             Write-Host "Uploading: CHECKSUM-SHA256.txt"
             $checksumHeaders = @{
               'Authorization' = "token $token"
-              'Content-Type' = 'text/plain'
+              'Accept' = 'application/vnd.github.v3+json'
             }
-            Invoke-WebRequest -Uri "$uploadUrl?name=CHECKSUM-SHA256.txt" -Method POST -Headers $checksumHeaders -InFile "checksums\CHECKSUM-SHA256.txt" -ErrorAction Stop | Out-Null
+            Invoke-RestMethod -Uri "$uploadUrl?name=CHECKSUM-SHA256.txt" -Method POST -Headers $checksumHeaders -InFile "checksums\CHECKSUM-SHA256.txt" -ContentType 'text/plain' | Out-Null
             Write-Host "Uploaded: CHECKSUM-SHA256.txt"
           }
+          
           Write-Host "Release created successfully!"
           Write-Host "URL: https://github.com/$owner/$repo/releases/tag/$tag"
         } catch {
-          Write-Host "Error creating release: $_"
+          Write-Host "Error: $_"
+          Write-Host $_.Exception.Message
           exit 1
         }
