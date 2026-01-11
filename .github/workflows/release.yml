@@ -117,5 +117,5 @@ jobs:
         artifacts: |
           artifacts/*.zip
           checksums/CHECKSUM-SHA256.txt
-        generateReleaseNotes: true
+        generateReleaseNotes: false
         token: ${{ secrets.GITHUB_TOKEN }}
