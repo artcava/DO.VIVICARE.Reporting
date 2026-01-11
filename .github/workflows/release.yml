@@ -127,7 +127,7 @@ jobs:
           
           ## 📚 Available Plugins
           
-          ### Document Modules (13)
+          ### Document Modules (14)
           - ADI Alta Intensita
           - ADI Bassa Intensita
           - ASST
@@ -140,6 +140,7 @@ jobs:
           - Report 16
           - Report 18
           - Valorizzazione
+          - Valorizzazioni ADI Alta
           - ZSD Fatture
           
           ### Report Modules (3)
@@ -198,6 +199,7 @@ jobs:
             "document.report16" = "DO.VIVICARE.Document.Report16"
             "document.report18" = "DO.VIVICARE.Document.Report18"
             "document.valorizzazione" = "DO.VIVICARE.Document.Valorizzazione"
+            "document.valorizzazioniadialta" = "DO.VIVICARE.Document.ValorizzazioniADIAlta"
             "document.zsdfatture" = "DO.VIVICARE.Document.ZSDFatture"
             "report.allegatoadi" = "DO.VIVICARE.Report.AllegatoADI"
             "report.dietetica" = "DO.VIVICARE.Report.Dietetica"
