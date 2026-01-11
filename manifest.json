@@ -165,6 +165,18 @@
       "releaseDate": "2026-01-15",
       "dependencies": [],
       "releaseNotes": "Initial release"
+    },
+    {
+      "id": "document.valorizzazioniadialta",
+      "name": "Valorizzazioni ADI Alta",
+      "description": "Document module for high-intensity ADI asset valuation",
+      "version": "1.0.0",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.valorizzazioniadialta/1.0.0/DO.VIVICARE.Document.ValorizzazioniADIAlta-1.0.0.dll",
+      "checksum": "sha256:TBD",
+      "fileSize": 1343488,
+      "releaseDate": "2026-01-15",
+      "dependencies": [],
+      "releaseNotes": "Initial release"
     }
   ],
   "reports": [
