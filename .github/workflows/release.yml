@@ -5,6 +5,10 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   build-and-release:
     runs-on: windows-latest
@@ -19,13 +23,12 @@ jobs:
       id: version
       shell: powershell
       run: |
-        if ("${{ github.ref }}" -match "refs/tags/v(.*)$") {
+        $tag = "${{ github.ref }}"
+        if ($tag -match "refs/tags/v(.*)$") {
           $version = $matches[1]
-        } else {
-          $version = "1.2.0"
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+          echo "tag=v$version" >> $env:GITHUB_OUTPUT
         }
-        echo "version=$version" >> $env:GITHUB_OUTPUT
-        echo "tag=v$version" >> $env:GITHUB_OUTPUT
 
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.1
@@ -45,92 +48,74 @@ jobs:
         New-Item -ItemType Directory -Force -Path artifacts | Out-Null
         New-Item -ItemType Directory -Force -Path checksums | Out-Null
 
-    - name: Package UI binaries
+    - name: Package binaries
       shell: powershell
       run: |
         $version = "${{ steps.version.outputs.version }}"
+        
+        # Package UI
         $uiPath = "DO.VIVICARE.UI\bin\Release"
+        if (Test-Path "$uiPath\DO.VIVICARE.UI.exe") {
+          New-Item -ItemType Directory -Force -Path "artifacts\UI" | Out-Null
+          Copy-Item "$uiPath\*" -Destination "artifacts\UI\" -Force -ErrorAction SilentlyContinue
+          Compress-Archive -Path "artifacts\UI\*" -DestinationPath "artifacts\DO.VIVICARE.UI-$version.zip" -Force
+        }
         
-        New-Item -ItemType Directory -Force -Path "artifacts\UI" | Out-Null
-        Copy-Item "$uiPath\DO.VIVICARE.UI.exe" -Destination "artifacts\UI\" -ErrorAction SilentlyContinue
-        Copy-Item "$uiPath\*.dll" -Destination "artifacts\UI\" -Force -ErrorAction SilentlyContinue
-        Copy-Item "$uiPath\*.config" -Destination "artifacts\UI\" -Force -ErrorAction SilentlyContinue
-        
-        Compress-Archive -Path "artifacts\UI\*" -DestinationPath "artifacts\DO.VIVICARE.UI-$version.zip" -Force
-
-    - name: Package Reporter library
-      shell: powershell
-      run: |
-        $version = "${{ steps.version.outputs.version }}"
+        # Package Reporter
         $reporterPath = "DO.VIVICARE.Reporter\bin\Release"
-        
         if (Test-Path "$reporterPath\DO.VIVICARE.Reporter.dll") {
           New-Item -ItemType Directory -Force -Path "artifacts\Reporter" | Out-Null
-          Copy-Item "$reporterPath\DO.VIVICARE.Reporter.dll" -Destination "artifacts\Reporter\" -ErrorAction SilentlyContinue
-          Copy-Item "$reporterPath\*.config" -Destination "artifacts\Reporter\" -Force -ErrorAction SilentlyContinue
+          Copy-Item "$reporterPath\*" -Destination "artifacts\Reporter\" -Force -ErrorAction SilentlyContinue
           Compress-Archive -Path "artifacts\Reporter\*" -DestinationPath "artifacts\DO.VIVICARE.Reporter-$version.zip" -Force
         }
-
-    - name: Package Document DLLs
-      shell: powershell
-      run: |
-        $version = "${{ steps.version.outputs.version }}"
-        $docModules = @(
-          "DO.VIVICARE.Document.ADIAltaIntensita",
-          "DO.VIVICARE.Document.ADIBassaIntensita",
-          "DO.VIVICARE.Document.ASST"
-        )
         
-        foreach ($module in $docModules) {
+        # Package Document modules
+        foreach ($module in @("DO.VIVICARE.Document.ADIAltaIntensita", "DO.VIVICARE.Document.ADIBassaIntensita", "DO.VIVICARE.Document.ASST")) {
           $modulePath = "$module\bin\Release"
           if (Test-Path "$modulePath\$module.dll") {
             New-Item -ItemType Directory -Force -Path "artifacts\$module" | Out-Null
-            Copy-Item "$modulePath\$module.dll" -Destination "artifacts\$module\" -ErrorAction SilentlyContinue
-            Copy-Item "$modulePath\*.config" -Destination "artifacts\$module\" -Force -ErrorAction SilentlyContinue
+            Copy-Item "$modulePath\*" -Destination "artifacts\$module\" -Force -ErrorAction SilentlyContinue
+            Compress-Archive -Path "artifacts\$module\*" -DestinationPath "artifacts\$module-$version.zip" -Force
+          }
+        }
+        
+        # Package Report modules
+        foreach ($module in @("DO.VIVICARE.Report.Dietetica", "DO.VIVICARE.Report.AllegatoADI", "DO.VIVICARE.Report.Valorizzazione")) {
+          $modulePath = "$module\bin\Release"
+          if (Test-Path "$modulePath\$module.dll") {
+            New-Item -ItemType Directory -Force -Path "artifacts\$module" | Out-Null
+            Copy-Item "$modulePath\*" -Destination "artifacts\$module\" -Force -ErrorAction SilentlyContinue
             Compress-Archive -Path "artifacts\$module\*" -DestinationPath "artifacts\$module-$version.zip" -Force
           }
         }
 
-    - name: Package Report DLLs
-      shell: powershell
-      run: |
-        $version = "${{ steps.version.outputs.version }}"
-        $reportModules = @(
-          "DO.VIVICARE.Report.Dietetica",
-          "DO.VIVICARE.Report.AllegatoADI",
-          "DO.VIVICARE.Report.Valorizzazione"
-        )
-        
-        foreach ($module in $reportModules) {
-          $modulePath = "$module\bin\Release"
-          if (Test-Path "$modulePath\$module.dll") {
-            New-Item -ItemType Directory -Force -Path "artifacts\$module" | Out-Null
-            Copy-Item "$modulePath\$module.dll" -Destination "artifacts\$module\" -ErrorAction SilentlyContinue
-            Copy-Item "$modulePath\*.config" -Destination "artifacts\$module\" -Force -ErrorAction SilentlyContinue
-            Compress-Archive -Path "artifacts\$module\*" -DestinationPath "artifacts\$module-$version.zip" -Force
-          }
-        }
-
-    - name: Generate SHA256 checksums
+    - name: Generate checksums
       shell: powershell
       run: |
         $checksumFile = "checksums\CHECKSUM-SHA256.txt"
         $null = New-Item -ItemType File -Path $checksumFile -Force
-        
-        Get-ChildItem "artifacts\*.zip" | ForEach-Object {
+        Get-ChildItem "artifacts\*.zip" -ErrorAction SilentlyContinue | ForEach-Object {
           $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash
-          $line = "$hash  $($_.Name)"
-          Add-Content -Path $checksumFile -Value $line
+          "$hash  $($_.Name)" | Add-Content -Path $checksumFile
         }
 
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v2
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        tag_name: ${{ steps.version.outputs.tag }}
-        files: |
-          artifacts/*.zip
-          checksums/CHECKSUM-SHA256.txt
+        name: release-packages
+        path: |
+          artifacts/
+          checksums/
+
+    - name: Create Release
+      uses: ncipollo/release-action@v1
+      with:
+        tag: ${{ steps.version.outputs.tag }}
+        name: Version ${{ steps.version.outputs.version }}
         draft: false
         prerelease: false
-        generate_release_notes: true
+        artifacts: |
+          artifacts/*.zip
+          checksums/CHECKSUM-SHA256.txt
+        generateReleaseNotes: true
+        token: ${{ secrets.GITHUB_TOKEN }}
