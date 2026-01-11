@@ -1,0 +1,208 @@
+{
+  "app": {
+    "version": "1.2.0",
+    "name": "DO.VIVICARE Reporting UI",
+    "description": "Main application UI and reporting engine",
+    "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.0/DO.VIVICARE-Setup-1.2.0.msi",
+    "checksum": "sha256:TBD",
+    "releaseDate": "2026-01-15",
+    "minFramework": "4.8",
+    "releaseNotes": "Initial release with all core functionality and plugin management system"
+  },
+  "documents": [
+    {
+      "id": "document.adialtaintensita",
+      "name": "ADI Alta Intensita",
+      "description": "Document module for high-intensity ADI reporting",
+      "version": "1.0.0",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.adialtaintensita/1.0.0/DO.VIVICARE.Document.ADIAltaIntensita-1.0.0.dll",
+      "checksum": "sha256:TBD",
+      "fileSize": 1258291,
+      "releaseDate": "2026-01-15",
+      "dependencies": [],
+      "releaseNotes": "Initial release"
+    },
+    {
+      "id": "document.adibassaintensita",
+      "name": "ADI Bassa Intensita",
+      "description": "Document module for low-intensity ADI reporting",
+      "version": "1.0.0",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.adibassaintensita/1.0.0/DO.VIVICARE.Document.ADIBassaIntensita-1.0.0.dll",
+      "checksum": "sha256:TBD",
+      "fileSize": 1155072,
+      "releaseDate": "2026-01-15",
+      "dependencies": [],
+      "releaseNotes": "Initial release"
+    },
+    {
+      "id": "document.asst",
+      "name": "ASST",
+      "description": "Document module for ASST reporting",
+      "version": "1.0.0",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.asst/1.0.0/DO.VIVICARE.Document.ASST-1.0.0.dll",
+      "checksum": "sha256:TBD",
+      "fileSize": 942080,
+      "releaseDate": "2026-01-15",
+      "dependencies": [],
+      "releaseNotes": "Initial release"
+    },
+    {
+      "id": "document.comuni",
+      "name": "Comuni",
+      "description": "Document module for municipal reporting",
+      "version": "1.0.0",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.comuni/1.0.0/DO.VIVICARE.Document.Comuni-1.0.0.dll",
+      "checksum": "sha256:TBD",
+      "fileSize": 819200,
+      "releaseDate": "2026-01-15",
+      "dependencies": [],
+      "releaseNotes": "Initial release"
+    },
+    {
+      "id": "document.laziohealthworker",
+      "name": "Lazio Health Worker",
+      "description": "Document module for Lazio health worker data",
+      "version": "1.0.0",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.laziohealthworker/1.0.0/DO.VIVICARE.Document.LazioHealthWorker-1.0.0.dll",
+      "checksum": "sha256:TBD",
+      "fileSize": 1572864,
+      "releaseDate": "2026-01-15",
+      "dependencies": [],
+      "releaseNotes": "Initial release"
+    },
+    {
+      "id": "document.minsan",
+      "name": "Ministero Sanita",
+      "description": "Document module for Ministry of Health reporting",
+      "version": "1.0.0",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.minsan/1.0.0/DO.VIVICARE.Document.MinSan-1.0.0.dll",
+      "checksum": "sha256:TBD",
+      "fileSize": 716800,
+      "releaseDate": "2026-01-15",
+      "dependencies": [],
+      "releaseNotes": "Initial release"
+    },
+    {
+      "id": "document.prestazioni",
+      "name": "Prestazioni",
+      "description": "Document module for service performance reporting",
+      "version": "1.0.0",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.prestazioni/1.0.0/DO.VIVICARE.Document.Prestazioni-1.0.0.dll",
+      "checksum": "sha256:TBD",
+      "fileSize": 1024000,
+      "releaseDate": "2026-01-15",
+      "dependencies": [],
+      "releaseNotes": "Initial release"
+    },
+    {
+      "id": "document.prezzi",
+      "name": "Prezzi",
+      "description": "Document module for pricing data",
+      "version": "1.0.0",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.prezzi/1.0.0/DO.VIVICARE.Document.Prezzi-1.0.0.dll",
+      "checksum": "sha256:TBD",
+      "fileSize": 614400,
+      "releaseDate": "2026-01-15",
+      "dependencies": [],
+      "releaseNotes": "Initial release"
+    },
+    {
+      "id": "document.rendiconto",
+      "name": "Rendiconto",
+      "description": "Document module for financial reporting",
+      "version": "1.0.0",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.rendiconto/1.0.0/DO.VIVICARE.Document.Rendiconto-1.0.0.dll",
+      "checksum": "sha256:TBD",
+      "fileSize": 1327104,
+      "releaseDate": "2026-01-15",
+      "dependencies": [],
+      "releaseNotes": "Initial release"
+    },
+    {
+      "id": "document.report16",
+      "name": "Report 16",
+      "description": "Document module for 16-field report format",
+      "version": "1.0.0",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.report16/1.0.0/DO.VIVICARE.Document.Report16-1.0.0.dll",
+      "checksum": "sha256:TBD",
+      "fileSize": 1126400,
+      "releaseDate": "2026-01-15",
+      "dependencies": [],
+      "releaseNotes": "Initial release"
+    },
+    {
+      "id": "document.report18",
+      "name": "Report 18",
+      "description": "Document module for 18-field report format",
+      "version": "1.0.0",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.report18/1.0.0/DO.VIVICARE.Document.Report18-1.0.0.dll",
+      "checksum": "sha256:TBD",
+      "fileSize": 1228800,
+      "releaseDate": "2026-01-15",
+      "dependencies": [],
+      "releaseNotes": "Initial release"
+    },
+    {
+      "id": "document.valorizzazione",
+      "name": "Valorizzazione",
+      "description": "Document module for asset valuation reporting",
+      "version": "1.0.0",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.valorizzazione/1.0.0/DO.VIVICARE.Document.Valorizzazione-1.0.0.dll",
+      "checksum": "sha256:TBD",
+      "fileSize": 921600,
+      "releaseDate": "2026-01-15",
+      "dependencies": [],
+      "releaseNotes": "Initial release"
+    },
+    {
+      "id": "document.zsdfatture",
+      "name": "ZSD Fatture",
+      "description": "Document module for invoicing",
+      "version": "1.0.0",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.zsdfatture/1.0.0/DO.VIVICARE.Document.ZSDFatture-1.0.0.dll",
+      "checksum": "sha256:TBD",
+      "fileSize": 1433600,
+      "releaseDate": "2026-01-15",
+      "dependencies": [],
+      "releaseNotes": "Initial release"
+    }
+  ],
+  "reports": [
+    {
+      "id": "report.allegatoadi",
+      "name": "Allegato ADI",
+      "description": "Report module for ADI attachment generation",
+      "version": "1.0.0",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/report.allegatoadi/1.0.0/DO.VIVICARE.Report.AllegatoADI-1.0.0.dll",
+      "checksum": "sha256:TBD",
+      "fileSize": 1105920,
+      "releaseDate": "2026-01-15",
+      "dependencies": [],
+      "releaseNotes": "Initial release"
+    },
+    {
+      "id": "report.dietetica",
+      "name": "Dietetica",
+      "description": "Report module for dietary/nutritional planning",
+      "version": "1.0.0",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/report.dietetica/1.0.0/DO.VIVICARE.Report.Dietetica-1.0.0.dll",
+      "checksum": "sha256:TBD",
+      "fileSize": 1005568,
+      "releaseDate": "2026-01-15",
+      "dependencies": [],
+      "releaseNotes": "Initial release"
+    },
+    {
+      "id": "report.valorizzazione",
+      "name": "Valorizzazione",
+      "description": "Report module for asset valuation reports",
+      "version": "1.0.0",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/report.valorizzazione/1.0.0/DO.VIVICARE.Report.Valorizzazione-1.0.0.dll",
+      "checksum": "sha256:TBD",
+      "fileSize": 967680,
+      "releaseDate": "2026-01-15",
+      "dependencies": [],
+      "releaseNotes": "Initial release"
+    }
+  ]
+}
