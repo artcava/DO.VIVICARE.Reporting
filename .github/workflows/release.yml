@@ -99,23 +99,111 @@ jobs:
           "$hash  $($_.Name)" | Add-Content -Path $checksumFile
         }
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: release-packages
-        path: |
-          artifacts/
-          checksums/
-
     - name: Create Release
-      uses: ncipollo/release-action@v1
-      with:
-        tag: ${{ steps.version.outputs.tag }}
-        name: Version ${{ steps.version.outputs.version }}
-        draft: false
-        prerelease: false
-        artifacts: |
-          artifacts/*.zip
-          checksums/CHECKSUM-SHA256.txt
-        generateReleaseNotes: false
-        token: ${{ secrets.GITHUB_TOKEN }}
+      shell: powershell
+      run: |
+        $version = "${{ steps.version.outputs.version }}"
+        $tag = "v$version"
+        $owner = "${{ github.repository_owner }}"
+        $repo = "${{ github.event.repository.name }}"
+        $token = "${{ secrets.GITHUB_TOKEN }}"
+        
+        # Prepare release description
+        $body = @"
+Version $version - Build and Package Release
+
+This is the official release of DO.VIVICARE.Reporting v$version
+
+## Package Contents
+
+- **UI Application**: DO.VIVICARE.UI-$version.zip
+- **Reporter Library**: DO.VIVICARE.Reporter-$version.zip
+- **Document Libraries**: ADIAltaIntensita, ADIBassaIntensita, ASST
+- **Report Libraries**: Dietetica, AllegatoADI, Valorizzazione
+
+## Installation
+
+1. Download the desired ZIP file
+2. Extract to your installation directory
+3. Follow DEPLOYMENT.md for setup instructions
+
+## Integrity Verification
+
+All packages include SHA256 checksums in CHECKSUM-SHA256.txt
+"@
+        
+        # Create release via REST API
+        $headers = @{
+            'Authorization' = "token $token"
+            'Accept' = 'application/vnd.github.v3+json'
+            'Content-Type' = 'application/json'
+        }
+        
+        $releaseData = @{
+            tag_name = $tag
+            name = "Version $version"
+            body = $body
+            draft = $false
+            prerelease = $false
+            make_latest = "true"
+        } | ConvertTo-Json
+        
+        $releaseUrl = "https://api.github.com/repos/$owner/$repo/releases"
+        Write-Host "Creating release at: $releaseUrl"
+        
+        try {
+            $response = Invoke-WebRequest -Uri $releaseUrl `
+                -Method POST `
+                -Headers $headers `
+                -Body $releaseData `
+                -ErrorAction Stop
+            
+            $releaseJson = $response.Content | ConvertFrom-Json
+            $releaseId = $releaseJson.id
+            Write-Host "Release created successfully with ID: $releaseId"
+            
+            # Upload artifacts
+            $uploadUrl = "https://uploads.github.com/repos/$owner/$repo/releases/$releaseId/assets"
+            
+            Get-ChildItem "artifacts\*.zip" -ErrorAction SilentlyContinue | ForEach-Object {
+                $filePath = $_.FullName
+                $fileName = $_.Name
+                Write-Host "Uploading: $fileName"
+                
+                $uploadHeaders = @{
+                    'Authorization' = "token $token"
+                    'Content-Type' = 'application/zip'
+                }
+                
+                Invoke-WebRequest -Uri "$uploadUrl?name=$fileName" `
+                    -Method POST `
+                    -Headers $uploadHeaders `
+                    -InFile $filePath `
+                    -ErrorAction Stop | Out-Null
+                
+                Write-Host "Uploaded: $fileName"
+            }
+            
+            # Upload checksums
+            if (Test-Path "checksums\CHECKSUM-SHA256.txt") {
+                Write-Host "Uploading: CHECKSUM-SHA256.txt"
+                $checksumHeaders = @{
+                    'Authorization' = "token $token"
+                    'Content-Type' = 'text/plain'
+                }
+                
+                Invoke-WebRequest -Uri "$uploadUrl?name=CHECKSUM-SHA256.txt" `
+                    -Method POST `
+                    -Headers $checksumHeaders `
+                    -InFile "checksums\CHECKSUM-SHA256.txt" `
+                    -ErrorAction Stop | Out-Null
+                
+                Write-Host "Uploaded: CHECKSUM-SHA256.txt"
+            }
+            
+            Write-Host "Release created successfully!"
+            Write-Host "URL: https://github.com/$owner/$repo/releases/tag/$tag"
+        } catch {
+            Write-Host "Error creating release: $_"
+            exit 1
+        }
