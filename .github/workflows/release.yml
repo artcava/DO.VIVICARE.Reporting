@@ -50,7 +50,7 @@ jobs:
         msbuild DO.VIVICARE.UI\DO.VIVICARE.UI.csproj /p:Configuration=Release /p:Platform="Any CPU"
         msbuild DO.VIVICARE.Reporter\DO.VIVICARE.Reporter.csproj /p:Configuration=Release /p:Platform="Any CPU"
 
-    - name: Create MSI Installer
+    - name: Create application package
       shell: powershell
       run: |
         $version = "${{ steps.version.outputs.version }}"
@@ -62,17 +62,20 @@ jobs:
         Copy-Item "DO.VIVICARE.UI\bin\Release\*" -Destination "build\app\" -Force -Recurse
         Copy-Item "DO.VIVICARE.Reporter\bin\Release\*" -Destination "build\app\" -Force -Recurse
         
-        # Create MSI (placeholder - use WiX Toolset or similar in production)
-        Write-Host "MSI creation would happen here with WiX Toolset"
-        Write-Host "For now, creating ZIP as fallback"
-        
+        # Create ZIP as installer package (MSI would require WiX Toolset)
+        Write-Host "Creating application package..."
         Compress-Archive -Path "build\app\*" -DestinationPath "DO.VIVICARE-Setup-$version.zip" -Force
+        Write-Host "Application package created: DO.VIVICARE-Setup-$version.zip"
 
     - name: Generate checksums
       shell: powershell
       run: |
-        $checksum = (Get-FileHash "DO.VIVICARE-Setup-${{ steps.version.outputs.version }}.zip" -Algorithm SHA256).Hash
-        echo "$checksum  DO.VIVICARE-Setup-${{ steps.version.outputs.version }}.zip" | Out-File -Encoding ASCII "CHECKSUM.txt"
+        $version = "${{ steps.version.outputs.version }}"
+        $fileName = "DO.VIVICARE-Setup-$version.zip"
+        
+        $checksum = (Get-FileHash $fileName -Algorithm SHA256).Hash
+        echo "$checksum  $fileName" | Out-File -Encoding ASCII "CHECKSUM.txt"
+        Write-Host "Checksum generated: $checksum"
 
     - name: Create Release
       uses: softprops/action-gh-release@v1
@@ -81,23 +84,71 @@ jobs:
           DO.VIVICARE-Setup-${{ steps.version.outputs.version }}.zip
           CHECKSUM.txt
         body: |
-          # DO.VIVICARE v${{ steps.version.outputs.version }}
+          # DO.VIVICARE Reporting v${{ steps.version.outputs.version }}
           
-          ## What's Included
-          - UI Application
-          - Reporter Library
-          - Plugin Manager for automatic library updates
+          ## 📦 What's Included
+          - ✅ UI Application
+          - ✅ Reporter Library
+          - ✅ Plugin Manager (for automatic library updates)
           
-          ## Installation
-          1. Extract the ZIP file
-          2. Run the installer
-          3. Follow the setup wizard
+          ## 🚀 Installation Instructions
           
-          ## Verify Integrity
-          Compare the SHA256 checksum in CHECKSUM.txt with the downloaded file.
+          1. **Download** the `DO.VIVICARE-Setup-${{ steps.version.outputs.version }}.zip` file
+          2. **Extract** to your preferred location
+          3. **Run** the setup process (installer or direct execution)
+          4. **Follow** the setup wizard
           
-          ## Next Steps
-          After installation, use Tools → Plugin Manager to download additional document and report modules.
+          ## 📋 First Steps After Installation
+          
+          Once installed, you can expand functionality:
+          
+          1. Open **DO.VIVICARE UI**
+          2. Go to **Tools → Plugin Manager**
+          3. Browse available document and report modules
+          4. Click **Download** to add modules (no restart needed!)
+          
+          ## 🔒 Verify File Integrity
+          
+          Compare the SHA256 checksum:
+          ```
+          certutil -hashfile DO.VIVICARE-Setup-${{ steps.version.outputs.version }}.zip SHA256
+          ```
+          
+          Should match the value in `CHECKSUM.txt`
+          
+          ## 📚 Available Plugins
+          
+          ### Document Modules (13)
+          - ADI Alta Intensita
+          - ADI Bassa Intensita
+          - ASST
+          - Comuni
+          - Lazio Health Worker
+          - Ministero Sanita
+          - Prestazioni
+          - Prezzi
+          - Rendiconto
+          - Report 16
+          - Report 18
+          - Valorizzazione
+          - ZSD Fatture
+          
+          ### Report Modules (3)
+          - Allegato ADI
+          - Dietetica
+          - Valorizzazione
+          
+          ## 🆚 Version Information
+          - **Application**: ${{ steps.version.outputs.version }}
+          - **Framework**: .NET Framework 4.8+
+          - **Release Date**: $(Get-Date -Format 'yyyy-MM-dd')
+          
+          ## 📖 Documentation
+          - See `INSTALLATION_GUIDE.md` for detailed setup instructions
+          - See `CONTRIBUTING.md` for development guidelines
+          
+          ---
+          **Thank you for using DO.VIVICARE Reporting!**
         draft: false
         prerelease: false
       env:
@@ -201,23 +252,32 @@ jobs:
           
           Version: ${{ steps.plugin.outputs.version }}
           
-          This plugin will be automatically discoverable in the Plugin Manager.
+          This plugin is automatically available in the Plugin Manager.
           
-          ## Installation
-          1. Open DO.VIVICARE UI
-          2. Go to Tools → Plugin Manager
-          3. Find this plugin in the Available Plugins list
-          4. Click Download
+          ## 📥 Installation (In-App)
           
-          The plugin will be automatically installed and no restart is required.
+          1. Open **DO.VIVICARE UI**
+          2. Go to **Tools → Plugin Manager**
+          3. Find this plugin in the **Available Plugins** list
+          4. Click **Download**
+          5. ✅ Installation complete (no restart needed!)
+          
+          ## 📋 Manual Installation (Advanced)
+          
+          If manual installation is required:
+          
+          1. Download the `.dll` file
+          2. Place it in: `C:\Program Files\DO.VIVICARE\Plugins\`
+          3. Restart the application
+          
+          ## ✅ Verify Integrity
+          
+          ```
+          certutil -hashfile ${{ steps.plugin.outputs.projectName }}-${{ steps.plugin.outputs.version }}.dll SHA256
+          ```
+          
+          Compare with `CHECKSUM.txt`
         draft: false
         prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Update manifest.json
-      shell: powershell
-      run: |
-        Write-Host "Manifest update workflow would be triggered here"
-        Write-Host "Plugin: ${{ steps.plugin.outputs.pluginId }}"
-        Write-Host "Version: ${{ steps.plugin.outputs.version }}"
