@@ -25,13 +25,21 @@ namespace DO.VIVICARE.UI
 
         private void SetDataGrid()
         {
+            // Configure Document grid
             dgvElencoDocuments.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvElencoDocuments.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold);
             dgvElencoDocuments.Columns["NomeFileDocument"].FillWeight = 150;
+            dgvElencoDocuments.Columns["VersionInstalledDocument"].FillWeight = 100;
+            dgvElencoDocuments.Columns["HasUpdateDocument"].FillWeight = 100;
+            dgvElencoDocuments.Columns["DownloadDocument"].FillWeight = 80;
 
+            // Configure Report grid
             dgvElencoReports.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvElencoReports.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold);
             dgvElencoReports.Columns["NomeFileReport"].FillWeight = 150;
+            dgvElencoReports.Columns["VersionInstalledReport"].FillWeight = 100;
+            dgvElencoReports.Columns["HasUpdateReport"].FillWeight = 100;
+            dgvElencoReports.Columns["DownloadReport"].FillWeight = 80;
         }
 
         /// <summary>
@@ -88,12 +96,18 @@ namespace DO.VIVICARE.UI
 
                 var status = installedVersion == "Non installato" 
                     ? "Download" 
-                    : (hasUpdate ? "⬇ Aggiorna" : "✓ Aggiornato");
+                    : (hasUpdate ? "⬇️ Aggiorna" : "✓ Aggiornato");
+
+                var updateStatus = installedVersion == "Non installato"
+                    ? "Non disponibile"
+                    : (hasUpdate ? "⬆️ Disponibile" : "✓ No");
 
                 var row = new DataGridViewRow();
                 var rowIndex = dgvElencoDocuments.Rows.Add(row);
                 dgvElencoDocuments.Rows[rowIndex].Cells["NomeFileDocument"].Value = plugin.Name;
                 dgvElencoDocuments.Rows[rowIndex].Cells["NomeFileDocumentCompleto"].Value = plugin.Id;
+                dgvElencoDocuments.Rows[rowIndex].Cells["VersionInstalledDocument"].Value = installedVersion;
+                dgvElencoDocuments.Rows[rowIndex].Cells["HasUpdateDocument"].Value = updateStatus;
                 dgvElencoDocuments.Rows[rowIndex].Cells["DownloadDocument"].Value = status;
                 dgvElencoDocuments.Rows[rowIndex].Tag = plugin; // Salva il plugin object nel tag
             }
@@ -124,12 +138,18 @@ namespace DO.VIVICARE.UI
 
                 var status = installedVersion == "Non installato" 
                     ? "Download" 
-                    : (hasUpdate ? "⬇ Aggiorna" : "✓ Aggiornato");
+                    : (hasUpdate ? "⬇️ Aggiorna" : "✓ Aggiornato");
+
+                var updateStatus = installedVersion == "Non installato"
+                    ? "Non disponibile"
+                    : (hasUpdate ? "⬆️ Disponibile" : "✓ No");
 
                 var row = new DataGridViewRow();
                 var rowIndex = dgvElencoReports.Rows.Add(row);
                 dgvElencoReports.Rows[rowIndex].Cells["NomeFileReport"].Value = plugin.Name;
                 dgvElencoReports.Rows[rowIndex].Cells["NomeFileReportCompleto"].Value = plugin.Id;
+                dgvElencoReports.Rows[rowIndex].Cells["VersionInstalledReport"].Value = installedVersion;
+                dgvElencoReports.Rows[rowIndex].Cells["HasUpdateReport"].Value = updateStatus;
                 dgvElencoReports.Rows[rowIndex].Cells["DownloadReport"].Value = status;
                 dgvElencoReports.Rows[rowIndex].Tag = plugin;
             }
