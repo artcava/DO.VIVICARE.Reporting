@@ -23,27 +23,27 @@ Il sistema è organizzato in tre layer distinti:
 
 ```
 ┌─────────────────────────────┐
-│   PRESENTATION LAYER                        │
-│   DO.VIVICARE.UI                             │
-│   (WinForms / WPF UI)                        │
+│   PRESENTATION LAYER        │
+│   DO.VIVICARE.UI            │
+│   (WinForms / WPF UI)       │
 └──────────────┬──────────────┘
-                │
+               │
+┌──────────────────────────────────┐
+│   BUSINESS LOGIC LAYER           │
+│   DO.VIVICARE.Reporter (Manager) │
+│   - Orchestrazione generazione   │
+│   - Logica di business           │
+│   - Coordinamento moduli         │
+└──────────────┬───────────────────┘
+               │
+               │ Comunica con
+               │
 ┌─────────────────────────────┐
-│   BUSINESS LOGIC LAYER                       │
-│   DO.VIVICARE.Reporter (Manager)             │
-│   - Orchestrazione generazione               │
-│   - Logica di business                       │
-│   - Coordinamento moduli                     │
-└──────────────┬──────────────┘
-        │
-        │ Comunica con
-        │
-┌─────────────────────────────┐
-│   DATA LAYER                                  │
-│   Document + Report Modules                  │
-│   - Strutturazione dati                     │
-│   - Mapping entità                          │
-│   - Validazione                              │
+│   DATA LAYER                │
+│   Document + Report Modules │
+│   - Strutturazione dati     │
+│   - Mapping entità          │
+│   - Validazione             │
 └─────────────────────────────┘
 ```
 
@@ -61,11 +61,11 @@ Ciascun dominio sanitario ha un modulo dedicato.
 - Team paralleli possono lavorare su moduli diversi
 - Bug isolati in modulo specifico
 - Deployment selettivo di moduli
-- Versionamento indipendente (futuro)
+- Versionamento indipendente
 
 ### 3. Configurazione Centralizzata
 
-Tutti i parametri sono gestiti centralizzatamente via XML.
+Tutti i parametri sono gestiti centralmente via XML.
 
 **Vantaggi:**
 - Cambio parametri senza ricompilazione
@@ -108,135 +108,6 @@ Tutti i parametri sono gestiti centralizzatamente via XML.
 - Coordinamento tra moduli
 - Gestione stato applicazione
 
-**Componenti Chiave:**
-
-#### Manager.cs (~32 KB)
-
-```csharp
-public class Manager
-{
-    // Orchestrazione principale
-    public string GenerateReport(
-        ReportType type,
-        ReportData data,
-        ReportSettings settings)
-    {
-        // 1. Validazione business rules
-        ValidateReportData(data);
-        
-        // 2. Preparazione dati
-        var processedData = PrepareData(data);
-        
-        // 3. Invocazione report specifico
-        var report = GetReportModule(type);
-        var excelData = report.Generate(processedData);
-        
-        // 4. Generazione Excel
-        var outputPath = ExcelManager.Save(excelData, settings);
-        
-        // 5. Post-processing (se necessario)
-        PostProcess(outputPath, settings);
-        
-        return outputPath;
-    }
-}
-```
-
-#### Model.cs (~31 KB)
-
-Define le strutture dati di business:
-
-```csharp
-public class ReportData
-{
-    public DateTime ReportDate { get; set; }
-    public string HealthFacility { get; set; }
-    public IEnumerable<Patient> Patients { get; set; }
-    public IEnumerable<Service> Services { get; set; }
-    public IEnumerable<Pricing> Pricing { get; set; }
-    // ... altre proprietà
-}
-
-public class Patient
-{
-    public string PatientId { get; set; }
-    public string Name { get; set; }
-    public DateTime DateOfBirth { get; set; }
-    public ADIIntensity Intensity { get; set; }
-    public IEnumerable<ServiceRecord> Services { get; set; }
-}
-```
-
-#### ExcelManager.cs (~28 KB)
-
-Gestione generazione file Excel:
-
-```csharp
-public class ExcelManager
-{
-    // Creazione workbook con formattazione
-    public static ExcelPackage CreateReport(
-        ReportData data,
-        ReportSettings settings)
-    {
-        var package = new ExcelPackage();
-        
-        // Creazione worksheets
-        var wsData = package.Workbook.Worksheets.Add("Dati");
-        var wsSummary = package.Workbook.Worksheets.Add("Riepilogo");
-        var wsCharts = package.Workbook.Worksheets.Add("Grafici");
-        
-        // Popolazione dati
-        PopulateDataSheet(wsData, data);
-        PopulateSummary(wsSummary, data);
-        PopulateCharts(wsCharts, data);
-        
-        // Formattazione
-        ApplyFormatting(package, settings);
-        
-        // Protezione (facoltativa)
-        ProtectSheets(package, settings);
-        
-        return package;
-    }
-    
-    // Formule e calcoli
-    private static void ApplyFormulas(ExcelWorksheet ws, ReportData data)
-    {
-        // Formule SUM, AVERAGE, etc.
-        // Validazione dati
-        // Formattazione condizionale
-    }
-}
-```
-
-#### XMLSettings.cs (~11 KB)
-
-Gestione configurazione:
-
-```csharp
-public class XMLSettings
-{
-    public string OutputPath { get; set; }
-    public string TemplatesPath { get; set; }
-    public ExcelFormatting ExcelFormat { get; set; }
-    public DataFormatting DataFormat { get; set; }
-    public ReportTemplates Templates { get; set; }
-    
-    public static XMLSettings Load(string configPath)
-    {
-        var xml = XDocument.Load(configPath);
-        return DeserializeFromXml(xml);
-    }
-    
-    public void Save(string configPath)
-    {
-        var xml = SerializeToXml(this);
-        xml.Save(configPath);
-    }
-}
-```
-
 ### Data Layer (Document + Report Modules)
 
 **Responsabilità:**
@@ -247,73 +118,7 @@ public class XMLSettings
 
 **Moduli Document** (~50 in totale tra i 14 progetti)
 
-Esempio: ADIAltaIntensita.cs
-
-```csharp
-public class ADIAltaIntensita
-{
-    public string PatientId { get; set; }
-    public string PatientName { get; set; }
-    public DateTime DateOfBirth { get; set; }
-    
-    // Intensità e tracciamento
-    public ADIIntensityLevel IntensityLevel { get; set; }
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
-    
-    // Servizi erogati
-    public IEnumerable<ServiceRecord> Services { get; set; }
-    
-    // Valutazione
-    public double TotalCost { get; set; }
-    public double PayerAmount { get; set; }
-    public double UserAmount { get; set; }
-    
-    // Metodi di trasformazione
-    public DataRow ToDataRow() { /* ... */ }
-    public Dictionary<string, object> ToDictionary() { /* ... */ }
-}
-```
-
 **Moduli Report** (Logica di generazione)
-
-Esempio: AllegatoADI.cs
-
-```csharp
-public class AllegatoADIReport
-{
-    public ExcelWorksheet GenerateReport(
-        IEnumerable<ADIAltaIntensita> adiData,
-        IEnumerable<ADIBassaIntensita> adiDataLow)
-    {
-        var ws = new ExcelWorksheet();
-        
-        // 1. Header e meta-informazioni
-        ws.Cells[1, 1].Value = "ALLEGATO ADI";
-        
-        // 2. Dati pazienti
-        int row = 5;
-        foreach (var patient in adiData)
-        {
-            ws.Cells[row, 1].Value = patient.PatientId;
-            ws.Cells[row, 2].Value = patient.PatientName;
-            // ... ulteriori colonne
-            row++;
-        }
-        
-        // 3. Tabelle pivot / aggregazioni
-        AddPivotTables(ws, adiData);
-        
-        // 4. Grafici statistici
-        AddCharts(ws, adiData);
-        
-        // 5. Note e disclaimers
-        AddNotes(ws, row);
-        
-        return ws;
-    }
-}
-```
 
 ---
 
@@ -589,13 +394,13 @@ public class JSONWriter : IOutputWriter { /* ... */ }
 **Colli di bottiglia noti:**
 - Generazione Excel grande (>100MB) può essere lenta
 - Caricamento dati da file CSV su dischi lenti
-- Formattazione condizionale su largenumero righe
+- Formattazione condizionale su grande numero di righe
 
 ### Strategie di Ottimizzazione
 
 1. **Chunking dei Dati**:
    - Processare dati in batch di 10K righe
-   - Scrivere incrementalmente a file
+   - Scrivere incrementalmente su file
 
 2. **Async Operations** (futuro):
    ```csharp
@@ -648,4 +453,4 @@ public class JSONWriter : IOutputWriter { /* ... */ }
 
 ---
 
-**Documento aggiornato**: 11 Gennaio 2026
+**Documento aggiornato**: 13 Gennaio 2026
