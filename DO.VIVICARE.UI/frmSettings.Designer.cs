@@ -40,6 +40,8 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgvElencoDocuments = new System.Windows.Forms.DataGridView();
             this.NomeFileDocument = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.VersionInstalledDocument = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.HasUpdateDocument = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.NomeFileDocumentCompleto = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DownloadDocument = new System.Windows.Forms.DataGridViewLinkColumn();
             this.tabControl = new System.Windows.Forms.TabControl();
@@ -47,6 +49,8 @@
             this.tabPageReports = new System.Windows.Forms.TabPage();
             this.dgvElencoReports = new System.Windows.Forms.DataGridView();
             this.NomeFileReport = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.VersionInstalledReport = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.HasUpdateReport = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.NomeFileReportCompleto = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DownloadReport = new System.Windows.Forms.DataGridViewLinkColumn();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -80,6 +84,8 @@
             this.dgvElencoDocuments.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvElencoDocuments.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.NomeFileDocument,
+            this.VersionInstalledDocument,
+            this.HasUpdateDocument,
             this.NomeFileDocumentCompleto,
             this.DownloadDocument});
             dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -112,11 +118,27 @@
             // 
             // NomeFileDocument
             // 
-            this.NomeFileDocument.HeaderText = "Nome file";
+            this.NomeFileDocument.HeaderText = "Nome Plugin";
             this.NomeFileDocument.MinimumWidth = 6;
             this.NomeFileDocument.Name = "NomeFileDocument";
             this.NomeFileDocument.ReadOnly = true;
-            this.NomeFileDocument.Width = 125;
+            this.NomeFileDocument.Width = 150;
+            // 
+            // VersionInstalledDocument
+            // 
+            this.VersionInstalledDocument.HeaderText = "Versione Installata";
+            this.VersionInstalledDocument.MinimumWidth = 6;
+            this.VersionInstalledDocument.Name = "VersionInstalledDocument";
+            this.VersionInstalledDocument.ReadOnly = true;
+            this.VersionInstalledDocument.Width = 100;
+            // 
+            // HasUpdateDocument
+            // 
+            this.HasUpdateDocument.HeaderText = "Aggiornamento";
+            this.HasUpdateDocument.MinimumWidth = 6;
+            this.HasUpdateDocument.Name = "HasUpdateDocument";
+            this.HasUpdateDocument.ReadOnly = true;
+            this.HasUpdateDocument.Width = 100;
             // 
             // NomeFileDocumentCompleto
             // 
@@ -129,11 +151,11 @@
             // 
             // DownloadDocument
             // 
-            this.DownloadDocument.HeaderText = "Download";
+            this.DownloadDocument.HeaderText = "Azione";
             this.DownloadDocument.MinimumWidth = 6;
             this.DownloadDocument.Name = "DownloadDocument";
             this.DownloadDocument.ReadOnly = true;
-            this.DownloadDocument.Width = 125;
+            this.DownloadDocument.Width = 80;
             // 
             // tabControl
             // 
@@ -188,6 +210,8 @@
             this.dgvElencoReports.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvElencoReports.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.NomeFileReport,
+            this.VersionInstalledReport,
+            this.HasUpdateReport,
             this.NomeFileReportCompleto,
             this.DownloadReport});
             dataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -220,11 +244,27 @@
             // 
             // NomeFileReport
             // 
-            this.NomeFileReport.HeaderText = "Nome file";
+            this.NomeFileReport.HeaderText = "Nome Plugin";
             this.NomeFileReport.MinimumWidth = 6;
             this.NomeFileReport.Name = "NomeFileReport";
             this.NomeFileReport.ReadOnly = true;
-            this.NomeFileReport.Width = 125;
+            this.NomeFileReport.Width = 150;
+            // 
+            // VersionInstalledReport
+            // 
+            this.VersionInstalledReport.HeaderText = "Versione Installata";
+            this.VersionInstalledReport.MinimumWidth = 6;
+            this.VersionInstalledReport.Name = "VersionInstalledReport";
+            this.VersionInstalledReport.ReadOnly = true;
+            this.VersionInstalledReport.Width = 100;
+            // 
+            // HasUpdateReport
+            // 
+            this.HasUpdateReport.HeaderText = "Aggiornamento";
+            this.HasUpdateReport.MinimumWidth = 6;
+            this.HasUpdateReport.Name = "HasUpdateReport";
+            this.HasUpdateReport.ReadOnly = true;
+            this.HasUpdateReport.Width = 100;
             // 
             // NomeFileReportCompleto
             // 
@@ -237,11 +277,11 @@
             // 
             // DownloadReport
             // 
-            this.DownloadReport.HeaderText = "Download";
+            this.DownloadReport.HeaderText = "Azione";
             this.DownloadReport.MinimumWidth = 6;
             this.DownloadReport.Name = "DownloadReport";
             this.DownloadReport.ReadOnly = true;
-            this.DownloadReport.Width = 125;
+            this.DownloadReport.Width = 80;
             // 
             // groupBox3
             // 
@@ -315,11 +355,15 @@
         private System.Windows.Forms.TabPage tabPageReports;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.DataGridViewTextBoxColumn NomeFileDocument;
+        private System.Windows.Forms.DataGridViewTextBoxColumn VersionInstalledDocument;
+        private System.Windows.Forms.DataGridViewTextBoxColumn HasUpdateDocument;
         private System.Windows.Forms.DataGridViewTextBoxColumn NomeFileDocumentCompleto;
         private System.Windows.Forms.DataGridViewLinkColumn DownloadDocument;
         private System.Windows.Forms.DataGridView dgvElencoReports;
         private System.Windows.Forms.Label lblResult;
         private System.Windows.Forms.DataGridViewTextBoxColumn NomeFileReport;
+        private System.Windows.Forms.DataGridViewTextBoxColumn VersionInstalledReport;
+        private System.Windows.Forms.DataGridViewTextBoxColumn HasUpdateReport;
         private System.Windows.Forms.DataGridViewTextBoxColumn NomeFileReportCompleto;
         private System.Windows.Forms.DataGridViewLinkColumn DownloadReport;
     }
