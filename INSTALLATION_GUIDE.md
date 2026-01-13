@@ -1,281 +1,142 @@
 # DO.VIVICARE Reporting - Installation & Plugin Management
 
-## 📋 Architettura
+Complete guide to installation, setup and plugin management for DO.VIVICARE Reporting.
+
+## Table of Contents
+
+- [System Requirements](#system-requirements)
+- [Installation for Users](#installation-for-users)
+- [Plugin Management](#plugin-management)
+- [Developer Setup](#developer-setup)
+- [Troubleshooting](#troubleshooting)
+
+---
+
+## System Requirements
+
+### Operating Systems
+- Windows 7 SP1 or higher
+- Windows Server 2008 R2 or higher
+
+### Software Prerequisites
+- **.NET Framework 4.6.1 or higher** (4.8 recommended)
+- **Visual Studio 2019 or higher** (for development only)
+- **Microsoft Excel** (optional, for output viewing)
+
+### Hardware
+- Processor: x86/x64 compatible
+- RAM: 2 GB minimum (4 GB recommended)
+- Disk Space: ~500 MB for application
+
+---
+
+## Installation for Users
+
+### First-Time Installation
+
+1. **Download Installer**
+   - Go to [GitHub Releases](https://github.com/artcava/DO.VIVICARE.Reporting/releases/latest)
+   - Download `DO.VIVICARE-Setup-[version].msi`
+
+2. **Run Installer**
+   - Double-click the `.msi` file
+   - Follow the installation wizard
+   - Default location: `C:\Program Files\DO.VIVICARE\`
+
+3. **Launch Application**
+   - Desktop icon created automatically
+   - Or navigate to installation directory and run `DO.VIVICARE.UI.exe`
+
+✅ **Result**: Application ready with plugin download capability
+
+### Verify Installation
+
+After installation:
+
+```bash
+# Check if application launches
+C:\Program Files\DO.VIVICARE\DO.VIVICARE.UI.exe
+
+# Verify .NET Framework
+dir %WINDIR%\Microsoft.NET\Framework*\*4.8*
+```
+
+---
+
+## Plugin Management
+
+### What are Plugins?
+
+Plugins are independent libraries that extend functionality:
+
+- **Document Libraries** (14 modules) - Data structure definitions
+- **Report Libraries** (3 modules) - Report generation logic
+
+### Installing Plugins via UI
+
+1. **Launch Application**
+   - Open `DO.VIVICARE.UI.exe`
+
+2. **Access Plugin Manager**
+   - Menu: **Tools** > **Plugin Manager**
+   - Or use keyboard shortcut
+
+3. **Available Plugins Tab**
+   - View all available plugins with versions
+   - See installed vs available versions
+
+4. **Install Plugin**
+   - Click `[Download]` button next to desired plugin
+   - Automatic download and installation
+   - ✅ No restart required (hot-reload)
+
+5. **Verify Installation**
+   - Switch to "Installed" tab
+   - Confirm plugin appears with correct version
+
+### Plugin Architecture
 
 ```
-APPLICAZIONE (v1.2.0)
+APPLICATION (v1.2.0)
 ├─ Single installer: DO.VIVICARE-Setup-1.2.0.msi
-├─ Include: UI + Reporter library
-└─ Versionamento: Unificato per app
+└─ Include: UI + Reporter library
 
-LIBRERIE PLUGIN (Indipendenti)
+PLUGIN LIBRARIES (Independent versions)
 ├─ Document Libraries (14 modules)
-│  ├─ DO.VIVICARE.Document.ADIAltaIntensita
-│  ├─ DO.VIVICARE.Document.ADIBassaIntensita
-│  ├─ DO.VIVICARE.Document.ASST
-│  ├─ DO.VIVICARE.Document.Comuni
-│  ├─ DO.VIVICARE.Document.LazioHealthWorker
-│  ├─ DO.VIVICARE.Document.MinSan
-│  ├─ DO.VIVICARE.Document.Prestazioni
-│  ├─ DO.VIVICARE.Document.Prezzi
-│  ├─ DO.VIVICARE.Document.Rendiconto
-│  ├─ DO.VIVICARE.Document.Report16
-│  ├─ DO.VIVICARE.Document.Report18
-│  ├─ DO.VIVICARE.Document.Valorizzazione
-│  ├─ DO.VIVICARE.Document.ValorizzazioniADIAlta
-│  └─ DO.VIVICARE.Document.ZSDFatture
+│  ├─ ADI Alta Intensita
+│  ├─ ADI Bassa Intensita
+│  ├─ ASST
+│  ├─ Comuni
+│  ├─ Lazio Health Worker
+│  ├─ Min San
+│  ├─ Prestazioni
+│  ├─ Prezzi
+│  ├─ Rendiconto
+│  ├─ Report 16
+│  ├─ Report 18
+│  ├─ Valorizzazione
+│  ├─ Valorizzazioni ADI Alta
+│  └─ ZSD Fatture
 │
 └─ Report Libraries (3 modules)
-   ├─ DO.VIVICARE.Report.AllegatoADI
-   ├─ DO.VIVICARE.Report.Dietetica
-   └─ DO.VIVICARE.Report.Valorizzazione
-
-VERSIONAMENTO:
-├─ App versioning: MAJOR.MINOR.PATCH (e.g., 1.2.0)
-└─ Plugin versioning: Indipendente per ogni libreria (e.g., 1.0.0, 1.1.0, etc.)
+   ├─ Allegato ADI
+   ├─ Dietetica
+   └─ Valorizzazione
 ```
 
----
+### Plugin Manifest
 
-## 🚀 Installazione Utenti
-
-### 1️⃣ Prima Installazione
-
-```bash
-# Scarica da GitHub Releases
-https://github.com/artcava/DO.VIVICARE.Reporting/releases/latest
-
-# File unico:
-DO.VIVICARE-Setup-1.2.0.msi
-```
-
-**Procedura:**
-1. Doppio-click su `DO.VIVICARE-Setup-1.2.0.msi`
-2. Segui wizard installazione
-3. App si installa in `C:\Program Files\DO.VIVICARE\`
-4. Icona desktop creata automaticamente
-5. Avvia app
-
-✅ **Risultato:** App funzionante con capacità di scaricare plugin
-
----
-
-### 2️⃣ Aggiungere/Aggiornare Plugin (Librerie)
-
-**In-App:**
-
-1. Avvia `DO.VIVICARE.UI.exe`
-2. Menu: **Tools → Plugin Manager**
-3. Tab: **Available Plugins**
-4. Vedi lista di:
-   - ✅ Document Libraries (14)
-   - ✅ Report Libraries (3)
-   - ✅ Versione installata
-   - ✅ Versione disponibile online
-
-5. Per ogni plugin:
-   ```
-   [Plugin Name]     [Installed v1.0.0]  [Available v1.1.0]  [↓ Download]
-   ```
-
-6. Click `[↓ Download]` → Scarica e installa automaticamente
-7. ✅ Nessun riavvio richiesto (hot-reload)
-
----
-
-## 🛠️ Distribuzione per Sviluppatori
-
-### Release APP (es. v1.2.0)
-
-**Solo quando cambia l'applicativo principale (UI + Reporter)**
-
-```bash
-# 1. Aggiorna versione in AssemblyInfo.cs
-# [assembly: AssemblyVersion("1.2.0.0")]
-
-# 2. Commit e push
-git add .
-git commit -m "Release v1.2.0: UI and Reporter updates"
-git push origin master
-
-# 3. Crea tag (GitHub Actions si avvia automaticamente)
-git tag -a v1.2.0 -m "Release version 1.2.0"
-git push origin v1.2.0
-```
-
-**GitHub Actions automaticamente:**
-- ✅ Build MSI installer: `DO.VIVICARE-Setup-1.2.0.msi`
-- ✅ Carica in GitHub Releases
-- ✅ Genera checksum SHA256
-
----
-
-### Release SINGOLO PLUGIN (es. Document.ADIAltaIntensita v1.1.0)
-
-**Quando aggiorni UNA sola libreria**
-
-```bash
-# 1. Modifica solo il progetto interessato
-# Esempio: DO.VIVICARE.Document.ADIAltaIntensita/Properties/AssemblyInfo.cs
-# [assembly: AssemblyVersion("1.1.0.0")]
-
-# 2. Commit
-git add DO.VIVICARE.Document.ADIAltaIntensita/
-git commit -m "Update: Document.ADIAltaIntensita v1.1.0"
-git push origin master
-
-# 3. Tag specifico per questo plugin
-git tag -a plugin/document.adialtaintensita/1.1.0 -m "ADI Alta Intensita update"
-git push origin plugin/document.adialtaintensita/1.1.0
-```
-
-**GitHub Actions automaticamente:**
-- ✅ Build solo `DO.VIVICARE.Document.ADIAltaIntensita-1.1.0.dll`
-- ✅ Carica in GitHub Releases
-- ✅ Aggiorna manifest.json
-
----
-
-## 📄 Manifest Schema
-
-**File: `manifest.json` (su GitHub)**
+Plugins are managed via `manifest.json` which contains:
 
 ```json
 {
-  "app": {
-    "version": "1.2.0",
-    "name": "DO.VIVICARE Reporting UI",
-    "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.0/DO.VIVICARE-Setup-1.2.0.msi",
-    "checksum": "sha256:...",
-    "releaseDate": "2026-01-15",
-    "minFramework": "4.8"
-  },
   "documents": [
     {
       "id": "document.adialtaintensita",
       "name": "ADI Alta Intensita",
       "version": "1.0.5",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.adialtaintensita/1.0.5/DO.VIVICARE.Document.ADIAltaIntensita-1.0.5.dll",
-      "checksum": "sha256:...",
-      "releaseDate": "2025-12-10",
-      "dependencies": []
-    },
-    {
-      "id": "document.adibassaintensita",
-      "name": "ADI Bassa Intensita",
-      "version": "1.0.3",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.adibassaintensita/1.0.3/DO.VIVICARE.Document.ADIBassaIntensita-1.0.3.dll",
-      "checksum": "sha256:...",
-      "releaseDate": "2025-11-28",
-      "dependencies": []
-    },
-    {
-      "id": "document.asst",
-      "name": "ASST",
-      "version": "1.0.2",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.asst/1.0.2/DO.VIVICARE.Document.ASST-1.0.2.dll",
-      "checksum": "sha256:...",
-      "releaseDate": "2025-11-15",
-      "dependencies": []
-    },
-    {
-      "id": "document.comuni",
-      "name": "Comuni",
-      "version": "1.0.1",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.comuni/1.0.1/DO.VIVICARE.Document.Comuni-1.0.1.dll",
-      "checksum": "sha256:...",
-      "releaseDate": "2025-11-01",
-      "dependencies": []
-    },
-    {
-      "id": "document.laziohealthworker",
-      "name": "Lazio Health Worker",
-      "version": "1.0.0",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.laziohealthworker/1.0.0/DO.VIVICARE.Document.LazioHealthWorker-1.0.0.dll",
-      "checksum": "sha256:...",
-      "releaseDate": "2025-10-20",
-      "dependencies": []
-    },
-    {
-      "id": "document.minsan",
-      "name": "Ministero Sanità",
-      "version": "1.0.0",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.minsan/1.0.0/DO.VIVICARE.Document.MinSan-1.0.0.dll",
-      "checksum": "sha256:...",
-      "releaseDate": "2025-10-15",
-      "dependencies": []
-    },
-    {
-      "id": "document.prestazioni",
-      "name": "Prestazioni",
-      "version": "1.0.0",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.prestazioni/1.0.0/DO.VIVICARE.Document.Prestazioni-1.0.0.dll",
-      "checksum": "sha256:...",
-      "releaseDate": "2025-10-10",
-      "dependencies": []
-    },
-    {
-      "id": "document.prezzi",
-      "name": "Prezzi",
-      "version": "1.0.0",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.prezzi/1.0.0/DO.VIVICARE.Document.Prezzi-1.0.0.dll",
-      "checksum": "sha256:...",
-      "releaseDate": "2025-10-05",
-      "dependencies": []
-    },
-    {
-      "id": "document.rendiconto",
-      "name": "Rendiconto",
-      "version": "1.0.0",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.rendiconto/1.0.0/DO.VIVICARE.Document.Rendiconto-1.0.0.dll",
-      "checksum": "sha256:...",
-      "releaseDate": "2025-09-30",
-      "dependencies": []
-    },
-    {
-      "id": "document.report16",
-      "name": "Report 16",
-      "version": "1.0.0",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.report16/1.0.0/DO.VIVICARE.Document.Report16-1.0.0.dll",
-      "checksum": "sha256:...",
-      "releaseDate": "2025-09-25",
-      "dependencies": []
-    },
-    {
-      "id": "document.report18",
-      "name": "Report 18",
-      "version": "1.0.0",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.report18/1.0.0/DO.VIVICARE.Document.Report18-1.0.0.dll",
-      "checksum": "sha256:...",
-      "releaseDate": "2025-09-20",
-      "dependencies": []
-    },
-    {
-      "id": "document.valorizzazione",
-      "name": "Valorizzazione",
-      "version": "1.0.0",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.valorizzazione/1.0.0/DO.VIVICARE.Document.Valorizzazione-1.0.0.dll",
-      "checksum": "sha256:...",
-      "releaseDate": "2025-09-15",
-      "dependencies": []
-    },
-    {
-      "id": "document.valorizzazioniadialta",
-      "name": "Valorizzazioni ADI Alta",
-      "version": "1.0.0",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.valorizzazioniadialta/1.0.0/DO.VIVICARE.Document.ValorizzazioniADIAlta-1.0.0.dll",
-      "checksum": "sha256:...",
-      "releaseDate": "2026-01-13",
-      "dependencies": []
-    },
-    {
-      "id": "document.zsdfatture",
-      "name": "ZSD Fatture",
-      "version": "1.0.0",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.zsdfatture/1.0.0/DO.VIVICARE.Document.ZSDFatture-1.0.0.dll",
-      "checksum": "sha256:...",
-      "releaseDate": "2025-09-10",
-      "dependencies": []
+      "downloadUrl": "https://...",
+      "releaseDate": "2025-12-10"
     }
   ],
   "reports": [
@@ -283,28 +144,8 @@ git push origin plugin/document.adialtaintensita/1.1.0
       "id": "report.allegatoadi",
       "name": "Allegato ADI",
       "version": "1.0.3",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/report.allegatoadi/1.0.3/DO.VIVICARE.Report.AllegatoADI-1.0.3.dll",
-      "checksum": "sha256:...",
-      "releaseDate": "2025-12-15",
-      "dependencies": []
-    },
-    {
-      "id": "report.dietetica",
-      "name": "Dietetica",
-      "version": "1.0.2",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/report.dietetica/1.0.2/DO.VIVICARE.Report.Dietetica-1.0.2.dll",
-      "checksum": "sha256:...",
-      "releaseDate": "2025-12-01",
-      "dependencies": []
-    },
-    {
-      "id": "report.valorizzazione",
-      "name": "Valorizzazione",
-      "version": "1.0.1",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/report.valorizzazione/1.0.1/DO.VIVICARE.Report.Valorizzazione-1.0.1.dll",
-      "checksum": "sha256:...",
-      "releaseDate": "2025-11-20",
-      "dependencies": []
+      "downloadUrl": "https://...",
+      "releaseDate": "2025-12-15"
     }
   ]
 }
@@ -312,127 +153,197 @@ git push origin plugin/document.adialtaintensita/1.1.0
 
 ---
 
-## 🔄 GitHub Actions Workflow (Aggiornato)
+## Developer Setup
 
-**File: `.github/workflows/build-and-release.yml`**
+### Clone Repository
 
-### Trigger 1: Release APP (tag `v*`)
-```
-git tag v1.2.0
-git push origin v1.2.0
-  ↓
-✅ Build UI + Reporter
-✅ Crea DO.VIVICARE-Setup-1.2.0.msi
-✅ Upload in GitHub Releases
+```bash
+git clone https://github.com/artcava/DO.VIVICARE.Reporting.git
+cd DO.VIVICARE.Reporting
 ```
 
-### Trigger 2: Release PLUGIN (tag `plugin/*`)
+### Open Solution
+
+```bash
+# With Visual Studio
+start DO.VIVICARE.Reporting.sln
+
+# Or from command line
+devenv DO.VIVICARE.Reporting.sln
 ```
-git tag plugin/document.adialtaintensita/1.1.0
-git push origin plugin/document.adialtaintensita/1.1.0
-  ↓
-✅ Build solo Document.ADIAltaIntensita.dll
-✅ Upload in GitHub Releases
-✅ Aggiorna manifest.json
+
+### Restore Dependencies
+
+```bash
+nuget restore DO.VIVICARE.Reporting.sln
 ```
+
+Or let Visual Studio handle it automatically.
+
+### Build Solution
+
+**Via Visual Studio:**
+- Menu: Build > Build Solution (Ctrl+Shift+B)
+- Select configuration: Debug or Release
+
+**Via Command Line:**
+```bash
+msbuild DO.VIVICARE.Reporting.sln /p:Configuration=Release /p:Platform="Any CPU"
+```
+
+### Verify Build
+
+```bash
+# Check compiled files
+dir DO.VIVICARE.Reporter\bin\Release\DO.VIVICARE.Reporter.dll
+dir DO.VIVICARE.UI\bin\Release\DO.VIVICARE.UI.exe
+```
+
+### Configuration Files
+
+**Development Configuration:**
+- Location: `DO.VIVICARE.Reporter/app.config`
+- Settings: Database connections, output paths, logging
+
+**User Configuration** (after installation):
+- Location: `%APPDATA%\DO.VIVICARE\config.json`
+- Managed by Plugin Manager
 
 ---
 
-## 📥 Plugin Manager UI (Concetto)
+## Release Process
 
-**In-App Window: Tools → Plugin Manager**
+### For Application Updates (v1.2.0 -> v1.2.1)
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│ DO.VIVICARE Plugin Manager                                      │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│ [Available Plugins] [Installed] [Updates]                       │
-│                                                                  │
-│ Document Libraries (14 total)                                    │
-│ ┌──────────────────────────────────────────────────────────────┐
-│ │ ADI Alta Intensita        v1.0.5  [↓ Download]  1.2 MB      │
-│ │ ADI Bassa Intensita       v1.0.3  [↓ Download]  1.1 MB      │
-│ │ ASST                      v1.0.2  [↓ Download]  0.9 MB      │
-│ │ Comuni                    v1.0.1  [↓ Download]  0.8 MB      │
-│ │ Lazio Health Worker       v1.0.0  [↓ Download]  1.5 MB      │
-│ │ Ministero Sanità          v1.0.0  [↓ Download]  0.7 MB      │
-│ │ Prestazioni               v1.0.0  [↓ Download]  1.0 MB      │
-│ │ Prezzi                    v1.0.0  [↓ Download]  0.6 MB      │
-│ │ Rendiconto                v1.0.0  [↓ Download]  1.3 MB      │
-│ │ Report 16                 v1.0.0  [↓ Download]  1.1 MB      │
-│ │ Report 18                 v1.0.0  [↓ Download]  1.2 MB      │
-│ │ Valorizzazione            v1.0.0  [↓ Download]  0.9 MB      │
-│ │ Valorizzazioni ADI Alta   v1.0.0  [↓ Download]  0.8 MB      │
-│ │ ZSD Fatture               v1.0.0  [↓ Download]  1.4 MB      │
-│ └──────────────────────────────────────────────────────────────┘
-│                                                                  │
-│ Report Libraries (3 total)                                       │
-│ ┌──────────────────────────────────────────────────────────────┐
-│ │ Allegato ADI              v1.0.3  [✓ Installed]             │
-│ │ Dietetica                 v1.0.2  [Update v1.0.3] ↓         │
-│ │ Valorizzazione            v1.0.1  [Update v1.0.2] ↓         │
-│ └──────────────────────────────────────────────────────────────┘
-│                                                                  │
-│ Status: Ready                                        [Close]     │
-└─────────────────────────────────────────────────────────────────┘
-```
+1. **Update Version**
+   - Edit `Properties/AssemblyInfo.cs`:
+   ```csharp
+   [assembly: AssemblyVersion("1.2.1.0")]
+   ```
 
----
+2. **Commit & Push**
+   ```bash
+   git add .
+   git commit -m "Release v1.2.1: UI and Reporter updates"
+   git push origin master
+   ```
 
-## ⚙️ Configurazione Utente
+3. **Create Release Tag**
+   ```bash
+   git tag -a v1.2.1 -m "Release version 1.2.1"
+   git push origin v1.2.1
+   ```
 
-**Config file: `%APPDATA%\DO.VIVICARE\config.json`**
+**GitHub Actions automatically:**
+- ✅ Builds MSI installer
+- ✅ Uploads to GitHub Releases
+- ✅ Generates SHA256 checksum
 
-```json
-{
-  "app": {
-    "version": "1.2.0",
-    "autoUpdate": true,
-    "checkInterval": 3600
-  },
-  "plugins": {
-    "autoUpdate": true,
-    "checkInterval": 86400,
-    "installDir": "C:\\Program Files\\DO.VIVICARE\\Plugins",
-    "installed": {
-      "document.adialtaintensita": {
-        "version": "1.0.5",
-        "installedDate": "2025-12-10",
-        "enabled": true
-      },
-      "report.dietetica": {
-        "version": "1.0.2",
-        "installedDate": "2025-11-30",
-        "enabled": true
-      }
-    }
-  }
-}
-```
+### For Plugin Updates (e.g., ADI Alta Intensita v1.1.0)
+
+1. **Update Plugin Version**
+   - Edit `DO.VIVICARE.Document.ADIAltaIntensita/Properties/AssemblyInfo.cs`:
+   ```csharp
+   [assembly: AssemblyVersion("1.1.0.0")]
+   ```
+
+2. **Commit Changes**
+   ```bash
+   git add DO.VIVICARE.Document.ADIAltaIntensita/
+   git commit -m "Update: Document.ADIAltaIntensita v1.1.0"
+   git push origin master
+   ```
+
+3. **Create Plugin Tag**
+   ```bash
+   git tag -a plugin/document.adialtaintensita/1.1.0 -m "ADI Alta Intensita update"
+   git push origin plugin/document.adialtaintensita/1.1.0
+   ```
+
+**GitHub Actions automatically:**
+- ✅ Builds only the specified plugin
+- ✅ Uploads DLL to GitHub Releases
+- ✅ Updates manifest.json
 
 ---
 
-## 📋 Riassunto Distribuzione
+## Troubleshooting
 
-| Aspetto | Prima | Dopo |
-|---------|-------|------|
-| **Installer APP** | Multipli (UI, Reporter, Libs) | 🎯 **Un unico file: DO.VIVICARE-Setup-1.2.0.msi** |
-| **Librerie** | Incluse nell'installer | 🎯 **Scaricabili online da applicativo** |
-| **Versionamento** | Confuso | 🎯 **App: MAJOR.MINOR.PATCH** |
-| | | **Plugins: Indipendenti** |
-| **Aggiornamenti** | Manuale | 🎯 **Auto via applicativo** |
-| **Zero Downtime** | ❌ Riavvio richiesto | 🎯 ✅ **Hot-reload plugin** |
-| **Controllo Versioni** | Nessuno | 🎯 **Manifest.json centralizzato** |
+### Installation Issues
+
+#### Error: "MSI installation failed"
+- Ensure .NET Framework 4.8 is installed
+- Check disk space (minimum 500 MB)
+- Run installer with administrator privileges
+- Check Windows Event Viewer for detailed error
+
+#### Error: "Application won't start"
+- Verify .NET Framework 4.6.1+ installed:
+  ```bash
+  reg query "HKLM\Software\Microsoft\NET Framework Setup\NDP\v4" /s
+  ```
+- Check application log: `%APPDATA%\DO.VIVICARE\logs\`
+- Reinstall application
+
+### Plugin Issues
+
+#### Plugins not appearing in Plugin Manager
+- Check internet connection
+- Verify manifest.json is accessible
+- Clear application cache: `%APPDATA%\DO.VIVICARE\cache\`
+- Restart application
+
+#### Plugin download fails
+- Check disk space
+- Verify write permissions to plugin directory
+- Check firewall/antivirus restrictions
+- Try manual download from GitHub Releases
+
+#### Plugin not loading after install
+- Restart application
+- Check plugin version compatibility
+- Review application log for errors
+- Verify plugin DLL integrity: `certutil -hashfile plugin.dll SHA256`
+
+### Report Generation Issues
+
+#### Report generation is slow
+- Close other applications to free memory
+- Reduce report data size or date range
+- Check disk I/O performance
+- See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for optimization tips
+
+#### Excel file corruption
+- Update EPPlus library (see packages.config)
+- Increase available disk space
+- Check file permissions in output directory
+- Try different output location
+
+### Configuration Issues
+
+#### Settings not persisting
+- Verify config.json location: `%APPDATA%\DO.VIVICARE\config.json`
+- Check file permissions
+- Ensure application has write access
+- Review configuration format validity
 
 ---
 
-## 🚀 Prossimi Step
+## Support & Resources
 
-1. ✅ Creare manifest.json template
-2. ✅ Aggiornare GitHub Actions workflow (tag diversi per app vs plugin)
-3. ✅ Implementare Plugin Manager UI in frmSettings.cs
-4. ✅ Implementare auto-download + checksum validation
-5. ✅ Testare completo end-to-end
+### Documentation
+- [README.md](README.md) - Project overview
+- [ARCHITECTURE.md](ARCHITECTURE.md) - Technical architecture
+- [DEPLOYMENT.md](DEPLOYMENT.md) - Release and versioning
+- [PLUGIN_MANAGER.md](PLUGIN_MANAGER.md) - Detailed plugin guide
 
-**Documento aggiornato**: 13 Gennaio 2026 - Aggiunto ValorizzazioniADIAlta (14° document module)
+### Getting Help
+1. Check [GitHub Issues](https://github.com/artcava/DO.VIVICARE.Reporting/issues)
+2. Search [GitHub Discussions](https://github.com/artcava/DO.VIVICARE.Reporting/discussions)
+3. Review [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for common problems
+4. Contact: mcavallo@welol.it
+
+---
+
+**Last Updated**: January 13, 2026  
+**Maintained by**: Marco Cavallo
