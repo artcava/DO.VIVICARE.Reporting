@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -5,28 +6,32 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace DO.VIVICARE.UI
 {
     /// <summary>
-    /// Gestisce il download, installazione e aggiornamento dei plugin
+    /// Gestisce il download, verifica e caricamento dei plugin
     /// </summary>
     public class PluginManager
     {
-        private const string MANIFEST_URL = 
+        private const string MANIFEST_URL =
             "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/manifest.json";
-        
+
+        private const string GITHUB_RELEASES =
+            "https://api.github.com/repos/artcava/DO.VIVICARE.Reporting/releases";
+
         private readonly string _pluginDirectory;
+        private List<PluginInfo> _plugins;
 
         public PluginManager(string pluginDirectory = null)
         {
-            _pluginDirectory = pluginDirectory ?? 
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), 
+            _pluginDirectory = pluginDirectory ??
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
                             "DO.VIVICARE", "Plugins");
-            
+
             if (!Directory.Exists(_pluginDirectory))
                 Directory.CreateDirectory(_pluginDirectory);
         }
@@ -41,13 +46,13 @@ namespace DO.VIVICARE.UI
                 using (var client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add("User-Agent", "DO.VIVICARE");
-                    
+
                     var response = await client.GetAsync(MANIFEST_URL);
                     response.EnsureSuccessStatusCode();
-                    
+
                     var json = await response.Content.ReadAsStringAsync();
                     var manifest = JsonConvert.DeserializeObject<PluginManifest>(json);
-                    
+
                     return manifest;
                 }
             }
@@ -65,11 +70,11 @@ namespace DO.VIVICARE.UI
         {
             if (installed == null || available == null)
                 return false;
-            
+
             if (!Version.TryParse(installed.Version, out var installedVersion) ||
                 !Version.TryParse(available.Version, out var availableVersion))
                 return false;
-            
+
             return availableVersion > installedVersion;
         }
 
@@ -86,30 +91,30 @@ namespace DO.VIVICARE.UI
                 using (var client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add("User-Agent", "DO.VIVICARE");
-                    
+
                     // Download con progress
                     var response = await client.GetAsync(
-                        plugin.DownloadUrl, 
+                        plugin.DownloadUrl,
                         HttpCompletionOption.ResponseHeadersRead,
                         cancellationToken);
-                    
+
                     response.EnsureSuccessStatusCode();
-                    
+
                     var totalBytes = response.Content.Headers.ContentLength ?? 0L;
                     var filePath = Path.Combine(_pluginDirectory, plugin.FileName);
-                    
+
                     using (var contentStream = await response.Content.ReadAsStreamAsync())
                     using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, useAsync: true))
                     {
                         var totalRead = 0L;
                         var buffer = new byte[8192];
                         int bytesRead;
-                        
+
                         while ((bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) != 0)
                         {
                             await fileStream.WriteAsync(buffer, 0, bytesRead, cancellationToken);
                             totalRead += bytesRead;
-                            
+
                             progress?.Report(new DownloadProgress
                             {
                                 PluginId = plugin.Id,
@@ -119,17 +124,14 @@ namespace DO.VIVICARE.UI
                             });
                         }
                     }
-                    
-                    // Verifica checksum solo se non è TBD
-                    if (plugin.Checksum != "sha256:TBD" && !string.IsNullOrEmpty(plugin.Checksum))
+
+                    // Verifica checksum
+                    if (!await VerifyChecksumAsync(filePath, plugin.Checksum))
                     {
-                        if (!await VerifyChecksumAsync(filePath, plugin.Checksum))
-                        {
-                            File.Delete(filePath);
-                            throw new Exception($"Checksum verification failed for {plugin.Name}");
-                        }
+                        File.Delete(filePath);
+                        throw new Exception($"Checksum verification failed for {plugin.Name}");
                     }
-                    
+
                     return true;
                 }
             }
@@ -150,9 +152,9 @@ namespace DO.VIVICARE.UI
                 using (var sha256 = SHA256.Create())
                 using (var stream = File.OpenRead(filePath))
                 {
-                    var hash = await Task.Run(() => sha256.ComputeHash(stream));
+                    var hash = sha256.ComputeHash(stream);
                     var computedChecksum = "sha256:" + BitConverter.ToString(hash).Replace("-", "").ToLower();
-                    
+
                     return computedChecksum == expectedChecksum.ToLower();
                 }
             }
@@ -171,10 +173,10 @@ namespace DO.VIVICARE.UI
             {
                 var pluginFile = Directory.GetFiles(_pluginDirectory)
                     .FirstOrDefault(f => f.Contains(pluginId));
-                
+
                 if (pluginFile == null)
                     throw new FileNotFoundException($"Plugin {pluginId} not found");
-                
+
                 var assemblyName = AssemblyName.GetAssemblyName(pluginFile);
                 return Assembly.Load(assemblyName);
             }
@@ -191,14 +193,11 @@ namespace DO.VIVICARE.UI
         public List<InstalledPlugin> GetInstalledPlugins()
         {
             var installed = new List<InstalledPlugin>();
-            
+
             try
             {
-                if (!Directory.Exists(_pluginDirectory))
-                    return installed;
-
                 var files = Directory.GetFiles(_pluginDirectory, "*.dll");
-                
+
                 foreach (var file in files)
                 {
                     try
@@ -216,54 +215,85 @@ namespace DO.VIVICARE.UI
                 }
             }
             catch { /* Directory may not exist */ }
-            
+
             return installed;
         }
+    }
 
-        /// <summary>
-        /// Verifica e risolve dipendenze plugin
-        /// </summary>
-        public List<PluginInfo> ResolveDependencies(PluginInfo plugin, PluginManifest manifest)
-        {
-            var dependencies = new List<PluginInfo> { plugin };
-            var allPlugins = new List<PluginInfo>();
-            allPlugins.AddRange(manifest.Documents ?? new List<PluginInfo>());
-            allPlugins.AddRange(manifest.Reports ?? new List<PluginInfo>());
-            
-            foreach (var depId in plugin.Dependencies ?? new List<string>())
-            {
-                var dep = allPlugins.FirstOrDefault(p => p.Id == depId);
-                if (dep != null && !dependencies.Any(d => d.Id == depId))
-                {
-                    dependencies.AddRange(ResolveDependencies(dep, manifest));
-                }
-            }
-            
-            return dependencies;
-        }
+    /// <summary>
+    /// Model classes
+    /// </summary>
+    public class PluginManifest
+    {
+        public AppInfo App { get; set; }
+        public List<PluginInfo> Documents { get; set; }
+        public List<PluginInfo> Reports { get; set; }
+    }
 
-        /// <summary>
-        /// Uninstalla un plugin
-        /// </summary>
-        public bool UninstallPlugin(string pluginId)
-        {
-            try
-            {
-                var pluginFile = Directory.GetFiles(_pluginDirectory)
-                    .FirstOrDefault(f => Path.GetFileName(f).Contains(pluginId));
-                
-                if (pluginFile != null)
-                {
-                    File.Delete(pluginFile);
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error uninstalling plugin: {ex.Message}");
-                return false;
-            }
-        }
+    public class AppInfo
+    {
+        [JsonProperty("version")]
+        public string Version { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("downloadUrl")]
+        public string DownloadUrl { get; set; }
+
+        [JsonProperty("checksum")]
+        public string Checksum { get; set; }
+
+        [JsonProperty("releaseDate")]
+        public string ReleaseDate { get; set; }
+    }
+
+    public class PluginInfo
+    {
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("description")]
+        public string Description { get; set; }
+
+        [JsonProperty("version")]
+        public string Version { get; set; }
+
+        [JsonProperty("downloadUrl")]
+        public string DownloadUrl { get; set; }
+
+        [JsonProperty("checksum")]
+        public string Checksum { get; set; }
+
+        [JsonProperty("fileSize")]
+        public long FileSize { get; set; }
+
+        [JsonProperty("releaseDate")]
+        public string ReleaseDate { get; set; }
+
+        [JsonProperty("dependencies")]
+        public List<string> Dependencies { get; set; } = new List<string>();
+
+        [JsonIgnore]
+        public string FileName => $"{Id.Replace(".", "-")}-{Version}.dll";
+    }
+
+    public class InstalledPlugin
+    {
+        public string Name { get; set; }
+        public string Version { get; set; }
+        public string FilePath { get; set; }
+        public long FileSize { get; set; }
+    }
+
+    public class DownloadProgress
+    {
+        public string PluginId { get; set; }
+        public long BytesDownloaded { get; set; }
+        public long TotalBytes { get; set; }
+        public int PercentComplete { get; set; }
     }
 }
