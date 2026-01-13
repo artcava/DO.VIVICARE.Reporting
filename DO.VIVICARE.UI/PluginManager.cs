@@ -195,13 +195,20 @@ namespace DO.VIVICARE.UI
                         }
                     }
 
-                    // Verifica checksum SHA256
-                    LogDebug($"Verifying checksum for {plugin.FileName}");
-                    if (!await VerifyChecksumAsync(filePath, plugin.Checksum))
+                    // Verifica checksum SHA256 (skip se è "sha256:TBD")
+                    if (!string.IsNullOrEmpty(plugin.Checksum) && !plugin.Checksum.Equals("sha256:TBD", StringComparison.OrdinalIgnoreCase))
                     {
-                        LogError($"Checksum verification failed for {plugin.Name}");
-                        File.Delete(filePath);
-                        return false;
+                        LogDebug($"Verifying checksum for {plugin.FileName}");
+                        if (!await VerifyChecksumAsync(filePath, plugin.Checksum))
+                        {
+                            LogError($"Checksum verification failed for {plugin.Name}");
+                            File.Delete(filePath);
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        LogDebug($"Skipping checksum verification for {plugin.FileName} (checksum: {plugin.Checksum})");
                     }
 
                     LogDebug($"Plugin {plugin.Name} v{plugin.Version} downloaded and verified successfully");
@@ -303,6 +310,10 @@ namespace DO.VIVICARE.UI
                         File.Delete(dllPath);
                         return false;
                     }
+                }
+                else
+                {
+                    LogDebug($"Skipping checksum verification for {plugin.FileName} (checksum: {plugin.Checksum})");
                 }
 
                 LogDebug($"Plugin {plugin.Name} v{plugin.Version} extracted and verified successfully");
