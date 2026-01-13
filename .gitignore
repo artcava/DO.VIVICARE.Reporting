@@ -10,12 +10,18 @@
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
-# Build results - MODIFIED: Exclude bin/Release DLL files
+# Build results - Ignore most content but allow plugin DLLs
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
-!*/bin/Release/*.dll
-!*/bin/Release/
+!DO.VIVICARE.Document.*/bin/Release/DO.VIVICARE.Document.*.dll
+!DO.VIVICARE.Document.*/bin/
+!DO.VIVICARE.Report.*/bin/Release/DO.VIVICARE.Report.*.dll
+!DO.VIVICARE.Report.*/bin/
+!DO.VIVICARE.Reporter/bin/Release/DO.VIVICARE.Reporter.dll
+!DO.VIVICARE.Reporter/bin/
+!AllegatiADIAlta/bin/Release/AllegatiADIAlta.dll
+!AllegatiADIAlta/bin/
 x64/
 x86/
 bld/
