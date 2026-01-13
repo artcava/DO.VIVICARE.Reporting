@@ -6,14 +6,13 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace DO.VIVICARE.UI
 {
     /// <summary>
-    /// Gestisce il download, verifica e caricamento dei plugin
+    /// Gestisce il download, verifica e caricamento dei plugin da GitHub
     /// </summary>
     public class PluginManager
     {
@@ -24,7 +23,6 @@ namespace DO.VIVICARE.UI
             "https://api.github.com/repos/artcava/DO.VIVICARE.Reporting/releases";
 
         private readonly string _pluginDirectory;
-        private List<PluginInfo> _plugins;
 
         public PluginManager(string pluginDirectory = null)
         {
@@ -37,7 +35,7 @@ namespace DO.VIVICARE.UI
         }
 
         /// <summary>
-        /// Scarica il manifest con lista di tutti i plugin disponibili
+        /// Scarica il manifest con lista di tutti i plugin disponibili da GitHub
         /// </summary>
         public async Task<PluginManifest> GetManifestAsync()
         {
@@ -46,13 +44,11 @@ namespace DO.VIVICARE.UI
                 using (var client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add("User-Agent", "DO.VIVICARE");
-
                     var response = await client.GetAsync(MANIFEST_URL);
                     response.EnsureSuccessStatusCode();
 
                     var json = await response.Content.ReadAsStringAsync();
                     var manifest = JsonConvert.DeserializeObject<PluginManifest>(json);
-
                     return manifest;
                 }
             }
@@ -79,7 +75,7 @@ namespace DO.VIVICARE.UI
         }
 
         /// <summary>
-        /// Scarica un plugin con progress tracking
+        /// Scarica un plugin da GitHub con progress tracking
         /// </summary>
         public async Task<bool> DownloadPluginAsync(
             PluginInfo plugin,
@@ -92,7 +88,6 @@ namespace DO.VIVICARE.UI
                 {
                     client.DefaultRequestHeaders.Add("User-Agent", "DO.VIVICARE");
 
-                    // Download con progress
                     var response = await client.GetAsync(
                         plugin.DownloadUrl,
                         HttpCompletionOption.ResponseHeadersRead,
@@ -125,7 +120,7 @@ namespace DO.VIVICARE.UI
                         }
                     }
 
-                    // Verifica checksum
+                    // Verifica checksum SHA256
                     if (!await VerifyChecksumAsync(filePath, plugin.Checksum))
                     {
                         File.Delete(filePath);
@@ -154,7 +149,6 @@ namespace DO.VIVICARE.UI
                 {
                     var hash = sha256.ComputeHash(stream);
                     var computedChecksum = "sha256:" + BitConverter.ToString(hash).Replace("-", "").ToLower();
-
                     return computedChecksum == expectedChecksum.ToLower();
                 }
             }
@@ -165,7 +159,7 @@ namespace DO.VIVICARE.UI
         }
 
         /// <summary>
-        /// Carica un DLL plugin in memoria (hot-reload)
+        /// Carica un DLL plugin in memoria (hot-reload senza riavvio app)
         /// </summary>
         public Assembly LoadPluginAssembly(string pluginId)
         {
@@ -188,7 +182,7 @@ namespace DO.VIVICARE.UI
         }
 
         /// <summary>
-        /// Ottiene lista di plugin installati
+        /// Ottiene lista di plugin installati localmente in C:\Program Files\DO.VIVICARE\Plugins
         /// </summary>
         public List<InstalledPlugin> GetInstalledPlugins()
         {
@@ -197,7 +191,6 @@ namespace DO.VIVICARE.UI
             try
             {
                 var files = Directory.GetFiles(_pluginDirectory, "*.dll");
-
                 foreach (var file in files)
                 {
                     try
@@ -221,15 +214,23 @@ namespace DO.VIVICARE.UI
     }
 
     /// <summary>
-    /// Model classes
+    /// Root object del manifest.json con lista plugin disponibili
     /// </summary>
     public class PluginManifest
     {
+        [JsonProperty("app")]
         public AppInfo App { get; set; }
-        public List<PluginInfo> Documents { get; set; }
-        public List<PluginInfo> Reports { get; set; }
+
+        [JsonProperty("documents")]
+        public List<PluginInfo> Documents { get; set; } = new List<PluginInfo>();
+
+        [JsonProperty("reports")]
+        public List<PluginInfo> Reports { get; set; } = new List<PluginInfo>();
     }
 
+    /// <summary>
+    /// Info app principale
+    /// </summary>
     public class AppInfo
     {
         [JsonProperty("version")]
@@ -248,6 +249,9 @@ namespace DO.VIVICARE.UI
         public string ReleaseDate { get; set; }
     }
 
+    /// <summary>
+    /// Info singolo plugin dal manifest.json
+    /// </summary>
     public class PluginInfo
     {
         [JsonProperty("id")]
@@ -281,6 +285,9 @@ namespace DO.VIVICARE.UI
         public string FileName => $"{Id.Replace(".", "-")}-{Version}.dll";
     }
 
+    /// <summary>
+    /// Info plugin già installato localmente
+    /// </summary>
     public class InstalledPlugin
     {
         public string Name { get; set; }
@@ -289,6 +296,9 @@ namespace DO.VIVICARE.UI
         public long FileSize { get; set; }
     }
 
+    /// <summary>
+    /// Progresso download plugin (per IProgress<T>)
+    /// </summary>
     public class DownloadProgress
     {
         public string PluginId { get; set; }
