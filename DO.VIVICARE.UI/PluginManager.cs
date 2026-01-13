@@ -16,8 +16,9 @@ namespace DO.VIVICARE.UI
     /// </summary>
     public class PluginManager
     {
+        // Use GitHub API instead of raw.githubusercontent.com to avoid caching issues
         private const string MANIFEST_URL =
-            "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/manifest.json";
+            "https://api.github.com/repos/artcava/DO.VIVICARE.Reporting/contents/manifest.json?ref=master";
 
         private const string GITHUB_RELEASES =
             "https://api.github.com/repos/artcava/DO.VIVICARE.Reporting/releases";
@@ -35,13 +36,13 @@ namespace DO.VIVICARE.UI
         }
 
         /// <summary>
-        /// Scarica il manifest con lista di tutti i plugin disponibili da GitHub
+        /// Scarica il manifest con lista di tutti i plugin disponibili da GitHub API
         /// </summary>
         public async Task<PluginManifest> GetManifestAsync()
         {
             try
             {
-                LogDebug($"Fetching manifest from: {MANIFEST_URL}");
+                LogDebug($"Fetching manifest from GitHub API: {MANIFEST_URL}");
 
                 using (var client = new HttpClient())
                 {
@@ -59,9 +60,24 @@ namespace DO.VIVICARE.UI
                     }
 
                     var json = await response.Content.ReadAsStringAsync();
-                    LogDebug($"Manifest JSON received: {json.Length} bytes");
+                    LogDebug($"GitHub API response received: {json.Length} bytes");
 
-                    var manifest = JsonConvert.DeserializeObject<PluginManifest>(json);
+                    // Parse GitHub API response to get content
+                    var githubFileResponse = JsonConvert.DeserializeObject<dynamic>(json);
+                    if (githubFileResponse == null || githubFileResponse["content"] == null)
+                    {
+                        LogError("Invalid GitHub API response");
+                        return null;
+                    }
+
+                    // Decode base64 content from GitHub API
+                    string encodedContent = githubFileResponse["content"];
+                    byte[] decodedBytes = Convert.FromBase64String(encodedContent);
+                    string manifestJson = System.Text.Encoding.UTF8.GetString(decodedBytes);
+
+                    LogDebug($"Manifest JSON decoded: {manifestJson.Length} bytes");
+
+                    var manifest = JsonConvert.DeserializeObject<PluginManifest>(manifestJson);
                     
                     if (manifest == null)
                     {
