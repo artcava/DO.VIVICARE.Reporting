@@ -78,16 +78,13 @@ namespace DO.VIVICARE.UI
             if (plugins == null || plugins.Count == 0)
                 return;
 
-            var installed = _pluginManager.GetInstalledPlugins();
             dgvElencoDocuments.Rows.Clear();
 
             foreach (var plugin in plugins)
             {
-                // Cerca se il plugin è già installato
-                var installedPlugin = installed.FirstOrDefault(
-                    p => p.Name.Contains(plugin.Id) || p.Name.Contains(plugin.Name.Replace(" ", "").ToLower()));
-
-                var installedVersion = installedPlugin?.Version ?? "Non installato";
+                // Cerca se il plugin è già installato usando l'ID del plugin
+                var installedVersion = _pluginManager.GetInstalledPluginVersion(plugin.Id) ?? "Non installato";
+                
                 var hasUpdate = installedVersion != "Non installato" && 
                     _pluginManager.HasUpdate(
                         new PluginInfo { Version = installedVersion },
@@ -121,15 +118,13 @@ namespace DO.VIVICARE.UI
             if (plugins == null || plugins.Count == 0)
                 return;
 
-            var installed = _pluginManager.GetInstalledPlugins();
             dgvElencoReports.Rows.Clear();
 
             foreach (var plugin in plugins)
             {
-                var installedPlugin = installed.FirstOrDefault(
-                    p => p.Name.Contains(plugin.Id) || p.Name.Contains(plugin.Name.Replace(" ", "").ToLower()));
+                // Cerca se il plugin è già installato usando l'ID del plugin
+                var installedVersion = _pluginManager.GetInstalledPluginVersion(plugin.Id) ?? "Non installato";
 
-                var installedVersion = installedPlugin?.Version ?? "Non installato";
                 var hasUpdate = installedVersion != "Non installato" && 
                     _pluginManager.HasUpdate(
                         new PluginInfo { Version = installedVersion },
