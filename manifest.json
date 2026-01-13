@@ -182,7 +182,7 @@
       "type": "Document",
       "size": 1024000,
       "checksum": "sha256:TBD",
-      "downloadUrl": "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.ZSDFatture/bin/Release/DO.VIVICARE.Document.ValorizzazioniADIAlta.dll",
+      "downloadUrl": "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.ValorizzazioniADIAlta/bin/Release/DO.VIVICARE.Document.ValorizzazioniADIAlta.dll",
       "fileName": "document-valorizzazioniadialta-1.0.0.dll",
       "dependencies": [],
       "required": false
