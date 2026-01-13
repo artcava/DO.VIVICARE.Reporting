@@ -35,7 +35,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DO.VIVICARE.Document.ADIAlt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DO.VIVICARE.Report.Valorizzazione", "DO.VIVICARE.Report.Valorizzazione\DO.VIVICARE.Report.Valorizzazione.csproj", "{7D3C8CF5-EA4C-479C-92DE-E3C8BE968D30}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DO.VIVICARE.Document.ValorizzazioniADIAlta", "AllegatiADIAlta\DO.VIVICARE.Document.ValorizzazioniADIAlta.csproj", "{D758EAE3-D39F-4DBA-84AA-5AF792DC4510}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DO.VIVICARE.Document.ValorizzazioniADIAlta", "DO.VIVICARE.Document.ValorizzazioniADIAlta\DO.VIVICARE.Document.ValorizzazioniADIAlta.csproj", "{D758EAE3-D39F-4DBA-84AA-5AF792DC4510}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DO.VIVICARE.Document.ADIBassaIntensita", "DO.VIVICARE.Document.ADIBassaIntensita\DO.VIVICARE.Document.ADIBassaIntensita.csproj", "{AC3B920D-635F-484B-855D-31989C69590E}"
 EndProject
