@@ -9,7 +9,7 @@ APPLICAZIONE (v1.2.0)
 └─ Versionamento: Unificato per app
 
 LIBRERIE PLUGIN (Indipendenti)
-├─ Document Libraries (13 modules)
+├─ Document Libraries (14 modules)
 │  ├─ DO.VIVICARE.Document.ADIAltaIntensita
 │  ├─ DO.VIVICARE.Document.ADIBassaIntensita
 │  ├─ DO.VIVICARE.Document.ASST
@@ -22,6 +22,7 @@ LIBRERIE PLUGIN (Indipendenti)
 │  ├─ DO.VIVICARE.Document.Report16
 │  ├─ DO.VIVICARE.Document.Report18
 │  ├─ DO.VIVICARE.Document.Valorizzazione
+│  ├─ DO.VIVICARE.Document.ValorizzazioniADIAlta
 │  └─ DO.VIVICARE.Document.ZSDFatture
 │
 └─ Report Libraries (3 modules)
@@ -67,7 +68,7 @@ DO.VIVICARE-Setup-1.2.0.msi
 2. Menu: **Tools → Plugin Manager**
 3. Tab: **Available Plugins**
 4. Vedi lista di:
-   - ✅ Document Libraries (13)
+   - ✅ Document Libraries (14)
    - ✅ Report Libraries (3)
    - ✅ Versione installata
    - ✅ Versione disponibile online
@@ -259,6 +260,15 @@ git push origin plugin/document.adialtaintensita/1.1.0
       "dependencies": []
     },
     {
+      "id": "document.valorizzazioniadialta",
+      "name": "Valorizzazioni ADI Alta",
+      "version": "1.0.0",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.valorizzazioniadialta/1.0.0/DO.VIVICARE.Document.ValorizzazioniADIAlta-1.0.0.dll",
+      "checksum": "sha256:...",
+      "releaseDate": "2026-01-13",
+      "dependencies": []
+    },
+    {
       "id": "document.zsdfatture",
       "name": "ZSD Fatture",
       "version": "1.0.0",
@@ -339,7 +349,7 @@ git push origin plugin/document.adialtaintensita/1.1.0
 │                                                                  │
 │ [Available Plugins] [Installed] [Updates]                       │
 │                                                                  │
-│ Document Libraries                                               │
+│ Document Libraries (14 total)                                    │
 │ ┌──────────────────────────────────────────────────────────────┐
 │ │ ADI Alta Intensita        v1.0.5  [↓ Download]  1.2 MB      │
 │ │ ADI Bassa Intensita       v1.0.3  [↓ Download]  1.1 MB      │
@@ -353,10 +363,11 @@ git push origin plugin/document.adialtaintensita/1.1.0
 │ │ Report 16                 v1.0.0  [↓ Download]  1.1 MB      │
 │ │ Report 18                 v1.0.0  [↓ Download]  1.2 MB      │
 │ │ Valorizzazione            v1.0.0  [↓ Download]  0.9 MB      │
+│ │ Valorizzazioni ADI Alta   v1.0.0  [↓ Download]  0.8 MB      │
 │ │ ZSD Fatture               v1.0.0  [↓ Download]  1.4 MB      │
 │ └──────────────────────────────────────────────────────────────┘
 │                                                                  │
-│ Report Libraries                                                 │
+│ Report Libraries (3 total)                                       │
 │ ┌──────────────────────────────────────────────────────────────┐
 │ │ Allegato ADI              v1.0.3  [✓ Installed]             │
 │ │ Dietetica                 v1.0.2  [Update v1.0.3] ↓         │
@@ -424,4 +435,4 @@ git push origin plugin/document.adialtaintensita/1.1.0
 4. ✅ Implementare auto-download + checksum validation
 5. ✅ Testare completo end-to-end
 
-**Documento creato**: 11 Gennaio 2026
+**Documento aggiornato**: 13 Gennaio 2026 - Aggiunto ValorizzazioniADIAlta (14° document module)
