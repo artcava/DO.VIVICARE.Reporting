@@ -11,7 +11,6 @@ Advanced report and document generation system for Italian healthcare facilities
 - [Project Architecture](#project-architecture)
 - [Technology Stack](#technology-stack)
 - [Documentation](#documentation)
-- [Contributing](#contributing)
 - [Support](#support)
 - [License](#license)
 
@@ -127,6 +126,7 @@ DO.VIVICARE.Reporting/
 │   ├── ADIBassaIntensita/         # Low-intensity home care
 │   ├── ASST/                      # Regional health organizations
 │   ├── Comuni/                    # Local entities reports
+│   ├── LazioHealthWorker/         # Lazio-specific features
 │   ├── MinSan/                    # Ministry of Health
 │   ├── Prestazioni/               # Healthcare services
 │   ├── Prezzi/                    # Price catalog
@@ -135,8 +135,7 @@ DO.VIVICARE.Reporting/
 │   ├── Report18/                  # Legislative Report 18
 │   ├── Valorizzazione/            # Service valorization
 │   ├── ValorizzazioniADIAlta/     # ADI High valorization
-│   ├── ZSDFatture/                # Invoicing management
-│   └── LazioHealthWorker/         # Lazio-specific features
+│   └── ZSDFatture/                # Invoicing management
 │
 ├── DO.VIVICARE.Report.*/          [REPORT LAYER - 3 MODULES]
 │   ├── AllegatoADI/               # ADI report logic
@@ -149,33 +148,33 @@ DO.VIVICARE.Reporting/
 ### Architectural Flow
 
 ```
-┌─────────────────────────────┐
-│   UI Layer                  │  User parameter collection
+┌──────────────────────────────────────┐
+│   UI Layer                   │  User parameter collection
 │   DO.VIVICARE.UI            │
-└──────────────┬──────────────┘
-               │
-┌──────────────────────────────────┐
-│   Business Logic Layer           │  Manager orchestration
-│   DO.VIVICARE.Reporter           │
-└──────────────┬───────────────────┘
-               │
-       ┌───────┴────────┐
-       ▼                ▼
-┌────────────┐   ┌──────────────┐
-│ Document   │   │ Configuration│
-│ Modules    │   │ (XML)        │
-└────────────┘   └──────────────┘
-       │
-       ▼
-┌─────────────────────────────┐
-│ Excel Generation            │  Excel file formatting
-│ ExcelManager.cs             │
-└──────────────┬──────────────┘
-               │
-               ▼
-        ┌─────────────┐
-        │ .xlsx File  │
-        └─────────────┘
+└──────────────────┬───────────┘
+                   │
+┌──────────────────────────────────────────┐
+│   Business Logic Layer        │  Manager orchestration
+│   DO.VIVICARE.Reporter        │
+└──────────────────┬──────────────────────┘
+                   │
+        ┌──────────┴──────────┐
+        ▼                     ▼
+┌─────────────┐    ┌──────────────┐
+│ Document    │    │ Configuration│
+│ Modules     │    │ (XML)        │
+└─────────────┘    └──────────────┘
+        │
+        ▼
+┌──────────────────────────────────────┐
+│ Excel Generation         │  Excel file formatting
+│ ExcelManager.cs          │
+└──────────────────┬───────┘
+                   │
+                   ▼
+            ┌─────────────┐
+            │ .xlsx File  │
+            └─────────────┘
 ```
 
 ### Core Components
@@ -221,41 +220,26 @@ Complete documentation is available in separate guides:
 | [INSTALLATION.md](INSTALLATION.md) | Setup, installation and plugin management |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Technical architecture and design patterns |
 | [DEPLOYMENT.md](DEPLOYMENT.md) | Release process and versioning |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Development guidelines and contribution process |
-| [ROADMAP.md](ROADMAP.md) | Future development plans |
+| [ROADMAP.md](ROADMAP.md) | Future development plans (in progress) |
 | [MIGRATION.md](MIGRATION.md) | Migration from previous systems |
 | [TROUBLESHOOTING.md](TROUBLESHOOTING.md) | Common issues and solutions |
 | [PLUGIN_MANAGER.md](PLUGIN_MANAGER.md) | Plugin management guide |
 
 ---
 
-## Contributing
-
-### How to Contribute
-
-1. **Fork** the repository
-2. Create **feature branch**: `git checkout -b feature/new-feature`
-3. **Commit** changes: `git commit -m 'Add: feature description'`
-4. **Push** to branch: `git push origin feature/new-feature`
-5. Open **Pull Request**
-
-### Guidelines
-
-- Follow [C# Coding Conventions](https://docs.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions)
-- Use descriptive names for variables and methods
-- Add comments for complex logic
-- Write tests for new features
-- Update documentation if needed
-
----
-
 ## Support
+
+### Documentation
+- Start with [Quick Start](#quick-start) section above
+- Review [INSTALLATION.md](INSTALLATION.md) for setup issues
+- Check [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for common problems
+- See [ARCHITECTURE.md](ARCHITECTURE.md) for technical details
 
 ### Report Issues
 
 1. Go to [GitHub Issues](https://github.com/artcava/DO.VIVICARE.Reporting/issues)
-2. Click "New Issue"
-3. Describe the problem with:
+2. Search for similar problems
+3. If not found, create new issue with:
    - Clear description
    - Steps to reproduce
    - Expected vs actual behavior
@@ -264,8 +248,8 @@ Complete documentation is available in separate guides:
 ### Ask Questions
 
 Use [GitHub Discussions](https://github.com/artcava/DO.VIVICARE.Reporting/discussions) for:
-- Feature requests
 - General questions
+- Feature suggestions
 - Architecture discussions
 - Enhancement proposals
 
