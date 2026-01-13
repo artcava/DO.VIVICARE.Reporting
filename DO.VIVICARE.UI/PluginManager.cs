@@ -27,7 +27,7 @@ namespace DO.VIVICARE.UI
         public PluginManager(string pluginDirectory = null)
         {
             _pluginDirectory = pluginDirectory ??
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                             "DO.VIVICARE", "Plugins");
 
             if (!Directory.Exists(_pluginDirectory))
@@ -182,7 +182,7 @@ namespace DO.VIVICARE.UI
         }
 
         /// <summary>
-        /// Ottiene lista di plugin installati localmente in C:\Program Files\DO.VIVICARE\Plugins
+        /// Ottiene lista di plugin installati localmente in MyDocuments\DO.VIVICARE\Plugins
         /// </summary>
         public List<InstalledPlugin> GetInstalledPlugins()
         {
