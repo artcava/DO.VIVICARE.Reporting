@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
@@ -113,6 +114,7 @@ namespace DO.VIVICARE.UI
 
         /// <summary>
         /// Scarica un plugin da GitHub con progress tracking
+        /// Supporta sia download diretto DLL che estrazione da ZIP setup package
         /// </summary>
         public async Task<bool> DownloadPluginAsync(
             PluginInfo plugin,
@@ -123,6 +125,33 @@ namespace DO.VIVICARE.UI
             {
                 LogDebug($"Starting download of plugin: {plugin.Name} v{plugin.Version}");
 
+                // Verifica se il plugin è contenuto nel setup ZIP
+                if (plugin.DownloadUrl.Contains("DO.VIVICARE-Setup"))
+                {
+                    return await DownloadPluginFromSetupZipAsync(plugin, progress, cancellationToken);
+                }
+                else
+                {
+                    return await DownloadPluginDirectAsync(plugin, progress, cancellationToken);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError($"Error downloading plugin {plugin.Name}: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Scarica plugin direttamente (quando è un DLL singolo)
+        /// </summary>
+        private async Task<bool> DownloadPluginDirectAsync(
+            PluginInfo plugin,
+            IProgress<DownloadProgress> progress,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
                 using (var client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add("User-Agent", "DO.VIVICARE");
@@ -184,10 +213,121 @@ namespace DO.VIVICARE.UI
                 LogError($"Download cancelled for {plugin.Name}");
                 return false;
             }
-            catch (Exception ex)
+        }
+
+        /// <summary>
+        /// Scarica il setup ZIP e estrae il DLL del plugin richiesto
+        /// </summary>
+        private async Task<bool> DownloadPluginFromSetupZipAsync(
+            PluginInfo plugin,
+            IProgress<DownloadProgress> progress,
+            CancellationToken cancellationToken)
+        {
+            var setupZipPath = null as string;
+            try
             {
-                LogError($"Error downloading plugin {plugin.Name}: {ex.Message}");
+                setupZipPath = Path.Combine(_pluginDirectory, "setup_temp.zip");
+                
+                LogDebug($"Downloading setup package from {plugin.DownloadUrl}");
+
+                using (var client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Add("User-Agent", "DO.VIVICARE");
+                    client.Timeout = TimeSpan.FromMinutes(10);
+
+                    var response = await client.GetAsync(
+                        plugin.DownloadUrl,
+                        HttpCompletionOption.ResponseHeadersRead,
+                        cancellationToken);
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        LogError($"Download failed for setup package. Status: {response.StatusCode}");
+                        return false;
+                    }
+
+                    var totalBytes = response.Content.Headers.ContentLength ?? 0L;
+
+                    using (var contentStream = await response.Content.ReadAsStreamAsync())
+                    using (var fileStream = new FileStream(setupZipPath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, useAsync: true))
+                    {
+                        var totalRead = 0L;
+                        var buffer = new byte[8192];
+                        int bytesRead;
+
+                        while ((bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) != 0)
+                        {
+                            await fileStream.WriteAsync(buffer, 0, bytesRead, cancellationToken);
+                            totalRead += bytesRead;
+
+                            progress?.Report(new DownloadProgress
+                            {
+                                PluginId = plugin.Id,
+                                BytesDownloaded = totalRead,
+                                TotalBytes = totalBytes,
+                                PercentComplete = (int)(totalRead * 100 / Math.Max(totalBytes, 1))
+                            });
+                        }
+                    }
+                }
+
+                // Estrai il DLL dal ZIP
+                LogDebug($"Extracting {plugin.FileName} from setup package");
+                var dllPath = Path.Combine(_pluginDirectory, plugin.FileName);
+
+                using (var archive = ZipFile.OpenRead(setupZipPath))
+                {
+                    // Cerca il DLL nel ZIP (potrebbe essere in sottocartelle)
+                    var entry = archive.Entries.FirstOrDefault(e => 
+                        e.Name.Equals(plugin.FileName, StringComparison.OrdinalIgnoreCase) ||
+                        e.FullName.EndsWith(plugin.FileName, StringComparison.OrdinalIgnoreCase));
+
+                    if (entry == null)
+                    {
+                        LogError($"Plugin file {plugin.FileName} not found in setup package");
+                        LogDebug($"Available files in setup: {string.Join(", ", archive.Entries.Select(e => e.Name).Distinct())}");
+                        return false;
+                    }
+
+                    entry.ExtractToFile(dllPath, overwrite: true);
+                    LogDebug($"Plugin extracted successfully to {dllPath}");
+                }
+
+                // Verifica checksum se disponibile
+                if (!string.IsNullOrEmpty(plugin.Checksum) && !plugin.Checksum.Equals("sha256:TBD", StringComparison.OrdinalIgnoreCase))
+                {
+                    LogDebug($"Verifying checksum for {plugin.FileName}");
+                    if (!await VerifyChecksumAsync(dllPath, plugin.Checksum))
+                    {
+                        LogError($"Checksum verification failed for {plugin.Name}");
+                        File.Delete(dllPath);
+                        return false;
+                    }
+                }
+
+                LogDebug($"Plugin {plugin.Name} v{plugin.Version} extracted and verified successfully");
+                return true;
+            }
+            catch (OperationCanceledException)
+            {
+                LogError($"Download cancelled for {plugin.Name}");
                 return false;
+            }
+            finally
+            {
+                // Pulizia: elimina il ZIP temporaneo
+                if (!string.IsNullOrEmpty(setupZipPath) && File.Exists(setupZipPath))
+                {
+                    try
+                    {
+                        File.Delete(setupZipPath);
+                        LogDebug("Temporary setup package deleted");
+                    }
+                    catch (Exception ex)
+                    {
+                        LogDebug($"Could not delete temporary file: {ex.Message}");
+                    }
+                }
             }
         }
 
@@ -203,11 +343,12 @@ namespace DO.VIVICARE.UI
                 {
                     var hash = sha256.ComputeHash(stream);
                     var computedChecksum = "sha256:" + BitConverter.ToString(hash).Replace("-", "").ToLower();
-                    return computedChecksum == expectedChecksum.ToLower();
+                    return computedChecksum.Equals(expectedChecksum, StringComparison.OrdinalIgnoreCase);
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                LogError($"Checksum verification error: {ex.Message}");
                 return false;
             }
         }
