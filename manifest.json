@@ -1,8 +1,11 @@
 {
   "app": {
     "name": "DO.VIVICARE Reporting",
-    "version": "1.2.0",
-    "lastUpdate": "2026-01-13T10:00:00Z"
+    "version": "1.2.1",
+    "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.1/DO.VIVICARE-Setup-1.2.1.zip",
+    "checksum": "sha256:TBD",
+    "releaseDate": "2026-01-13",
+    "lastUpdate": "2026-01-13T15:22:00Z"
   },
   "documents": [
     {
