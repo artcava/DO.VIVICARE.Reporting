@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -14,12 +13,6 @@ namespace DO.VIVICARE.UI
 {
     public partial class frmSettings : Form
     {
-        WebClient client;
-        private const string _path = "http://artcava.azurewebsites.net/reporting/";
-        private const string _fileDocuments = "listDocuments.txt";
-        private const string _fileReports = "listReports.txt";
-        private const string _voce = "Scarica";
-
         private PluginManager _pluginManager;
         private PluginManifest _manifest;
 
@@ -42,13 +35,13 @@ namespace DO.VIVICARE.UI
         }
 
         /// <summary>
-        /// Carica la lista di plugin disponibili dal manifest.json
+        /// Carica la lista di plugin disponibili dal manifest.json di GitHub
         /// </summary>
         private async Task LoadPluginManifestAsync()
         {
             try
             {
-                lblResult.Text = "Caricamento plugin disponibili dal manifest...";
+                lblResult.Text = "Caricamento plugin disponibili dal manifest GitHub...";
                 _manifest = await _pluginManager.GetManifestAsync();
 
                 if (_manifest != null)
@@ -59,17 +52,18 @@ namespace DO.VIVICARE.UI
                 }
                 else
                 {
-                    lblResult.Text = "Errore nel caricamento del manifest";
+                    lblResult.Text = "Errore nel caricamento del manifest da GitHub";
                 }
             }
             catch (Exception ex)
             {
                 lblResult.Text = $"Errore: {ex.Message}";
+                MessageBox.Show($"Errore nel caricamento del manifest:\n{ex.Message}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         /// <summary>
-        /// Popola la griglia con i plugin disponibili dal manifest
+        /// Popola la griglia con i plugin documents disponibili dal manifest
         /// </summary>
         private void PopulateDocumentPlugins(List<PluginInfo> plugins)
         {
@@ -106,7 +100,7 @@ namespace DO.VIVICARE.UI
         }
 
         /// <summary>
-        /// Popola la griglia report
+        /// Popola la griglia con i plugin reports disponibili dal manifest
         /// </summary>
         private void PopulateReportPlugins(List<PluginInfo> plugins)
         {
@@ -152,7 +146,6 @@ namespace DO.VIVICARE.UI
                 {
                     BeginInvoke((MethodInvoker)delegate
                     {
-                        // lblResult per il progress (senza progressBar1 che non esiste nel Designer)
                         lblResult.Text = $"Download {plugin.Name}... {p.PercentComplete}% ({FormatBytes(p.BytesDownloaded)} / {FormatBytes(p.TotalBytes)})";
                     });
                 });
@@ -196,97 +189,13 @@ namespace DO.VIVICARE.UI
         }
 
         /// <summary>
-        /// Formatta byte in formato leggibile
+        /// Formatta byte in formato leggibile (B, KB, MB)
         /// </summary>
         private string FormatBytes(long bytes)
         {
             if (bytes < 1024) return $"{bytes} B";
             if (bytes < 1024 * 1024) return $"{bytes / 1024.0:F1} KB";
             return $"{bytes / (1024.0 * 1024):F1} MB";
-        }
-
-        private void GetListDocumentsUpdated()
-        {
-            using (client = new WebClient())
-            {
-                try
-                {
-                    Stream stream = client.OpenRead(_path + _fileDocuments);
-                    StreamReader reader = new StreamReader(stream);
-                    string content = reader.ReadToEnd();
-
-                    string[] sep = new string[] { "\r\n" };
-                    string[] lines = content.Split(sep, StringSplitOptions.None);
-
-                    dgvElencoDocuments.Rows.Clear();
-                    foreach (var dll in lines)
-                    {
-                        string[] nome = dll.Split(';');
-                        var row = new DataGridViewRow();
-                        var rowIndex = dgvElencoDocuments.Rows.Add(row);
-                        dgvElencoDocuments.Rows[rowIndex].Cells["NomeFileDocument"].Value = nome[0];
-                        dgvElencoDocuments.Rows[rowIndex].Cells["NomeFileDocumentCompleto"].Value = nome[1];
-                        dgvElencoDocuments.Rows[rowIndex].Cells["DownloadDocument"].Value = _voce;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-            }
-        }
-
-        private void GetListReportsUpdated()
-        {
-            using (client = new WebClient())
-            {
-                try
-                {
-                    Stream stream = client.OpenRead(_path + _fileReports);
-                    StreamReader reader = new StreamReader(stream);
-                    string content = reader.ReadToEnd();
-
-                    string[] sep = new string[] { "\r\n" };
-                    string[] lines = content.Split(sep, StringSplitOptions.None);
-
-                    dgvElencoReports.Rows.Clear();
-                    foreach (var dll in lines)
-                    {
-                        string[] nome = dll.Split(';');
-                        var row = new DataGridViewRow();
-                        var rowIndex = dgvElencoReports.Rows.Add(row);
-                        dgvElencoReports.Rows[rowIndex].Cells["NomeFileReport"].Value = nome[0];
-                        dgvElencoReports.Rows[rowIndex].Cells["NomeFileReportCompleto"].Value = nome[1];
-                        dgvElencoReports.Rows[rowIndex].Cells["DownloadReport"].Value = _voce;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-            }
-        }
-
-        private void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
-        {
-            if (e.Error == null)
-            {
-                BeginInvoke((MethodInvoker)delegate
-                {
-                    lblResult.Text = "Aggiornamento completato!";
-                });
-            }
-            else
-                MessageBox.Show(e.Error.Message);
-
-            ((WebClient)sender).Dispose();
-        }
-
-        private void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-        {
-            //BeginInvoke((MethodInvoker)delegate {
-            //    lblResult.Text = "Aggiornamento in corso... " + e.ProgressPercentage.ToString() + "%";
-            //});
         }
 
         private void btnExit_Click(object sender, System.EventArgs e)
@@ -296,22 +205,18 @@ namespace DO.VIVICARE.UI
 
         private void frmSettings_Shown(object sender, EventArgs e)
         {
-            // Carica prima il manifest (nuovo sistema PluginManager)
+            // Carica il manifest da GitHub all'apertura del form
             _ = LoadPluginManifestAsync();
         }
 
         private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
+            // Quando cambia tab, ripopola se il manifest è stato caricato
             if (tabControl.SelectedTab == tabControl.TabPages["tabPageDocuments"])
             {
-                // Carica dai plugin manager se disponibili
                 if (_manifest?.Documents != null && _manifest.Documents.Count > 0)
                 {
                     PopulateDocumentPlugins(_manifest.Documents);
-                }
-                else
-                {
-                    GetListDocumentsUpdated();
                 }
             }
             else if (tabControl.SelectedTab == tabControl.TabPages["tabPageReports"])
@@ -319,10 +224,6 @@ namespace DO.VIVICARE.UI
                 if (_manifest?.Reports != null && _manifest.Reports.Count > 0)
                 {
                     PopulateReportPlugins(_manifest.Reports);
-                }
-                else
-                {
-                    GetListReportsUpdated();
                 }
             }
         }
@@ -336,23 +237,10 @@ namespace DO.VIVICARE.UI
             switch (dgvElencoDocuments.Columns[e.ColumnIndex].Name)
             {
                 case "DownloadDocument":
-                    // Se esiste il Tag, significa che viene dal manifest
+                    // Usa sempre il PluginManager dal manifest GitHub
                     if (row.Tag is PluginInfo plugin)
                     {
                         _ = DownloadAndInstallPluginAsync(plugin);
-                    }
-                    else
-                    {
-                        // Fallback al sistema legacy
-                        Thread thread = new Thread(() =>
-                        {
-                            client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
-                            client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
-
-                            Uri URL = new Uri(_path + "Doc" + "/" + row.Cells["NomeFileDocumentCompleto"].Value.ToString());
-                            client.DownloadFileAsync(URL, Path.Combine(Manager.DocumentLibraries, row.Cells["NomeFileDocumentCompleto"].Value.ToString()));
-                        });
-                        thread.Start();
                     }
                     break;
             }
@@ -367,21 +255,10 @@ namespace DO.VIVICARE.UI
             switch (dgvElencoReports.Columns[e.ColumnIndex].Name)
             {
                 case "DownloadReport":
+                    // Usa sempre il PluginManager dal manifest GitHub
                     if (row.Tag is PluginInfo plugin)
                     {
                         _ = DownloadAndInstallPluginAsync(plugin);
-                    }
-                    else
-                    {
-                        Thread thread = new Thread(() =>
-                        {
-                            client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
-                            client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
-
-                            Uri URL = new Uri(_path + "Rep" + "/" + row.Cells["NomeFileReportCompleto"].Value.ToString());
-                            client.DownloadFileAsync(URL, Path.Combine(Manager.ReportLibraries, row.Cells["NomeFileReportCompleto"].Value.ToString()));
-                        });
-                        thread.Start();
                     }
                     break;
             }
