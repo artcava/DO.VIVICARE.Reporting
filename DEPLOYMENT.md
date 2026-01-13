@@ -1,83 +1,83 @@
-# Strategia di Distribuzione e Deployment DO.VIVICARE Reporting
+# Deployment and Distribution Strategy - DO.VIVICARE Reporting
 
-Documento strategico che definisce come evolvere da Azure Web App a una distribuzione moderna basata su GitHub con automazione CI/CD.
+Strategic document defining the modern distribution approach using GitHub with automated CI/CD pipelines.
 
-## 📋 Indice
+## 📋 Table of Contents
 
-1. [Situazione Attuale](#situazione-attuale)
-2. [Problemi Identificati](#problemi-identificati)
-3. [Soluzione Proposta](#soluzione-proposta)
-4. [Architettura della Distribuzione](#architettura-della-distribuzione)
-5. [Implementazione Tecnica](#implementazione-tecnica)
-6. [Processo per Sviluppatori](#processo-per-sviluppatori)
-7. [Processo per Utenti](#processo-per-utenti)
-8. [Roadmap di Implementazione](#roadmap-di-implementazione)
-9. [Fallback e Recovery](#fallback-e-recovery)
+1. [Current State](#current-state)
+2. [Identified Issues](#identified-issues)
+3. [Proposed Solution](#proposed-solution)
+4. [Distribution Architecture](#distribution-architecture)
+5. [Technical Implementation](#technical-implementation)
+6. [Developer Workflow](#developer-workflow)
+7. [User Workflow](#user-workflow)
+8. [Implementation Roadmap](#implementation-roadmap)
+9. [Fallback and Recovery](#fallback-and-recovery)
 
 ---
 
-## Situazione Attuale
+## Current State
 
-### Architettura Attuale
+### Current Architecture
 
 ```
-USER (Utente finale)
+USER (End User)
   │
   ├─ DO.VIVICARE.UI.exe (ClickOnce / .NET Framework)
-  │   Scaricato da: http://artcava.azurewebsites.net/ [NON PIÙ DISPONIBILE]
-  │   Aggiornamento: Automatico via ClickOnce (richiede IT auth)
+  │   Legacy deployment mechanism
+  │   Manual update process
   │
-  └─ Librerie Dinamiche
+  └─ Dynamic Libraries
       ├─ Document*.dll
       ├─ Report*.dll
-      └─ Scaricate manualmente da: http://artcava.azurewebsites.net/reporting/
-          Meccanismo: Click su bottone in frmSettings.cs
-          File di lista: listDocuments.txt, listReports.txt
+      └─ Manual download mechanism
+          Managed by: Button click in frmSettings.cs
+          File list: listDocuments.txt, listReports.txt
 
 DEVELOPER
   │
   └─ Visual Studio
-      ├─ Compila soluzione
-      ├─ Pubblica in Azure Web App (ClickOnce)
-      └─ Upload delle librerie sul server
+      ├─ Compiles solution
+      ├─ Manual build and versioning
+      └─ Manual library upload
 ```
 
-### Problemi
+### Problems
 
-#### Problema 1: Distribuzione UI - ClickOnce Obsoleto
-- ❌ Azure Web App non è più disponibile
-- ❌ ClickOnce richiede autenticazione IT ogni volta che si scarica l'app
-- ❌ Difficile gestire versioni multiple
-- ❌ Nessun versionamento chiaro
-- ❌ Nessuno storico di release
-- ❌ Nessuna automazione: tutto manuale
+#### Problem 1: UI Distribution - Legacy ClickOnce
+- ❌ Manual distribution process
+- ❌ Authentication required for each update
+- ❌ Difficult version management
+- ❌ No clear versioning
+- ❌ No release history
+- ❌ No automation
 
-#### Problema 2: Distribuzione Librerie - Semi-Manuale
-- ⚠️ Sviluppatore compila e upload manuale
-- ⚠️ File di lista (listDocuments.txt) gestito manualmente
-- ✓ Utente può scaricare (migliore di UI, ma non ottimale)
-- ❌ Nessuna traccia di versioni
-- ❌ Nessun controllo di integrità
-- ❌ Nessun rollback facile
+#### Problem 2: Library Distribution - Semi-Manual
+- ⚠️ Developer compiles and manually uploads
+- ⚠️ File list (listDocuments.txt) manually managed
+- ✓ User can download (better than UI, but not optimal)
+- ❌ No version tracking
+- ❌ No integrity verification
+- ❌ Difficult rollback
 
-#### Problema 3: Mancanza di Governance
-- ❌ Nessun CI/CD pipeline
-- ❌ Build manuale e testing manuale
-- ❌ Nessun controllo di qualità automatizzato
-- ❌ Nessun audit trail di deployment
+#### Problem 3: Lack of Governance
+- ❌ No CI/CD pipeline
+- ❌ Manual build and testing
+- ❌ No automated quality control
+- ❌ No audit trail for deployments
 
 ---
 
-## Soluzione Proposta
+## Proposed Solution
 
-### Vision Finale
+### Final Vision
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │ GitHub DO.VIVICARE.Reporting                                    │
 │ ├─ Master branch (stable)                                       │
 │ ├─ Develop branch (dev)                                         │
-│ └─ GitHub Releases (versionate)                                 │
+│ └─ GitHub Releases (versioned)                                  │
 │    ├─ DO.VIVICARE.UI v1.2.0                                    │
 │    ├─ Document.ADI v1.2.0                                      │
 │    └─ Report.AllegatoADI v1.2.0                                │
@@ -86,43 +86,43 @@ DEVELOPER
           ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │ GitHub Actions (CI/CD Pipeline)                                 │
-│ ├─ Trigger: Push su develop/master o PR                         │
-│ ├─ Build: MSBuild soluzione                                     │
-│ ├─ Test: Esecuzione test suite (futuro)                        │
-│ ├─ Package: Creazione .zip e .msi                              │
-│ ├─ Release: Upload su GitHub Releases                          │
-│ └─ Notify: Email agli stakeholder                              │
+│ ├─ Trigger: Push to develop/master or PR                        │
+│ ├─ Build: MSBuild solution                                      │
+│ ├─ Test: Execute test suite (future)                           │
+│ ├─ Package: Create .zip and .msi                               │
+│ ├─ Release: Upload to GitHub Releases                          │
+│ └─ Notify: Email stakeholders                                  │
 └─────────────────────────────────────────────────────────────────┘
           │
-          ├─ UI Exe (ClickOnce moderno o MSIX)
+          ├─ UI Exe (Modern ClickOnce or MSIX)
           ├─ Document DLLs
           ├─ Report DLLs
           └─ Release Notes
           │
           ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│ Utenti Finali                                                    │
+│ End Users                                                        │
 │                                                                  │
-│ OPZIONE 1: Auto-Update (Raccomandato)                           │
-│ ├─ App controlla GitHub API ogni avvio                          │
-│ ├─ Se nuova versione: Scarica e installa automaticamente       │
-│ └─ IT approva solo prima installazione                          │
+│ OPTION 1: Auto-Update (Recommended)                             │
+│ ├─ App checks GitHub API on startup                             │
+│ ├─ If new version: Downloads and installs automatically         │
+│ └─ IT approval required only for initial setup                  │
 │                                                                  │
-│ OPZIONE 2: Manual Update (Fallback)                             │
-│ ├─ Vai a GitHub Releases                                        │
-│ ├─ Scarica DO.VIVICARE-Setup-v1.2.0.msi                        │
-│ └─ Esegui installer (IT-approved)                              │
+│ OPTION 2: Manual Update (Fallback)                              │
+│ ├─ Visit GitHub Releases                                        │
+│ ├─ Download DO.VIVICARE-Setup-v1.2.0.msi                       │
+│ └─ Run installer (IT-approved)                                 │
 │                                                                  │
-│ OPZIONE 3: Plugin Manager (Librerie)                            │
-│ ├─ Bottone in frmSettings: "Check for Updates"                 │
-│ ├─ Scarica automaticamente nuove versioni                       │
-│ └─ Nessuna richiesta IT (già autorizzate nel setup iniziale)   │
+│ OPTION 3: Plugin Manager (Libraries)                            │
+│ ├─ Button in frmSettings: "Check for Updates"                  │
+│ ├─ Automatically downloads new versions                         │
+│ └─ No IT request needed (pre-authorized in initial setup)      │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Architettura della Distribuzione
+## Distribution Architecture
 
 ### 1. GitHub Releases Structure
 
@@ -143,10 +143,10 @@ Releases (Semantic Versioning: MAJOR.MINOR.PATCH)
 │  └─ MANIFEST.json
 │
 ├─ v1.1.5
-│  └─ [Precedenti asset]
+│  └─ [Previous assets]
 │
 └─ v1.0.0
-   └─ [Iniziali asset]
+   └─ [Initial assets]
 
 Asset Manifest (MANIFEST.json)
 {
@@ -182,27 +182,27 @@ Asset Manifest (MANIFEST.json)
 
 ```
 1.2.3
-│ │ └─ PATCH: Bug fixes, piccole correzioni
-│ └──── MINOR: Nuove features compatibili
-└────── MAJOR: Cambiamenti incompatibili
+│ │ └─ PATCH: Bug fixes, minor corrections
+│ └──── MINOR: New compatible features
+└────── MAJOR: Breaking changes
 
-Esempi:
+Examples:
 - 1.0.0 → 1.0.1: Bug fix in Report engine
-- 1.0.1 → 1.1.0: Nuovo modulo Document.Dietetica
-- 1.1.0 → 2.0.0: Migrazione da .NET Framework 4.8 a .NET 6
+- 1.0.1 → 1.1.0: New Document.Dietetica module
+- 1.1.0 → 2.0.0: Migration from .NET Framework 4.8 to .NET 6
 
-Tagging in Git:
-v1.2.0-ui      (UI specifico)
+Git Tagging:
+v1.2.0-ui      (UI specific)
 v1.2.0-docs    (Document modules)
 v1.2.0-reports (Report modules)
-v1.2.0         (Release completa)
+v1.2.0         (Complete release)
 ```
 
 ---
 
-## Implementazione Tecnica
+## Technical Implementation
 
-### Phase 1: Setup GitHub Actions CI/CD
+### Phase 1: GitHub Actions CI/CD Setup
 
 **File: `.github/workflows/build-and-release.yml`**
 
@@ -267,7 +267,7 @@ jobs:
           "DO.VIVICARE.Document.ADIAltaIntensita",
           "DO.VIVICARE.Document.ADIBassaIntensita",
           "DO.VIVICARE.Document.ASST",
-          # ... altri moduli
+          # ... other modules
         )
         
         foreach ($module in $docModules) {
@@ -313,7 +313,7 @@ jobs:
         echo "Build completed successfully: v${{ steps.version.outputs.version }}"
 ```
 
-### Phase 2: Update Manager per UI
+### Phase 2: Update Manager for UI
 
 **File: `DO.VIVICARE.UI/UpdateManager.cs`**
 
@@ -348,7 +348,7 @@ public class GitHubUpdateManager
     }
 
     /// <summary>
-    /// Controlla se esiste una nuova versione su GitHub
+    /// Checks if a new version exists on GitHub
     /// </summary>
     public static async Task<ReleaseInfo> CheckForUpdatesAsync()
     {
@@ -370,7 +370,7 @@ public class GitHubUpdateManager
     }
 
     /// <summary>
-    /// Confronta versioni semantiche
+    /// Compares semantic versions
     /// </summary>
     public static bool IsUpdateAvailable(string currentVersion, string newVersion)
     {
@@ -382,7 +382,7 @@ public class GitHubUpdateManager
     }
 
     /// <summary>
-    /// Download aggiornamento
+    /// Download update
     /// </summary>
     public static async Task<bool> DownloadUpdateAsync(
         string downloadUrl,
@@ -434,19 +434,17 @@ public class GitHubUpdateManager
 
     private static ReleaseInfo ParseGitHubRelease(string json)
     {
-        // Parsing JSON (alternare a Newtonsoft.Json se preferibile)
-        // Questo è pseudo-codice, usa JSON library appropriata
+        // Parse JSON from GitHub API response
         var release = new ReleaseInfo
         {
-            // Parse dalla risposta GitHub API
-            // ...
+            // Implementation details...
         };
         return release;
     }
 }
 ```
 
-**Integrazione in MDIParent.cs:**
+**Integration in MDIParent.cs:**
 
 ```csharp
 public partial class MDIParent : Form
@@ -462,12 +460,12 @@ public partial class MDIParent : Form
                 GitHubUpdateManager.IsUpdateAvailable(currentVersion, latestRelease.Version))
             {
                 var result = MessageBox.Show(
-                    $"È disponibile un nuovo aggiornamento:\n\n" +
-                    $"Versione: {latestRelease.Version}\n" +
-                    $"Data: {latestRelease.PublishedAt:dd/MM/yyyy}\n\n" +
-                    $"Note:\n{latestRelease.Body}\n\n" +
-                    $"Scaricare e installare agora?",
-                    "Aggiornamento Disponibile",
+                    $"A new update is available:\n\n" +
+                    $"Version: {latestRelease.Version}\n" +
+                    $"Date: {latestRelease.PublishedAt:yyyy-MM-dd}\n\n" +
+                    $"Release Notes:\n{latestRelease.Body}\n\n" +
+                    $"Download and install now?",
+                    "Update Available",
                     MessageBoxButtons.YesNoCancel,
                     MessageBoxIcon.Information
                 );
@@ -502,23 +500,23 @@ public partial class MDIParent : Form
 
             if (success)
             {
-                // Estrai e installa
+                // Extract and install
                 InstallUpdate(tempPath);
-                MessageBox.Show("Aggiornamento installato! L'applicazione verrà riavviata.", "Successo");
+                MessageBox.Show("Update installed! The application will restart.", "Success");
                 Application.Restart();
             }
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Errore durante l'aggiornamento: {ex.Message}", "Errore");
+            MessageBox.Show($"Error during update: {ex.Message}", "Error");
         }
     }
 }
 ```
 
-### Phase 3: Enhanced Plugin Manager per Librerie
+### Phase 3: Enhanced Plugin Manager for Libraries
 
-**File: `DO.VIVICARE.UI/frmSettings.cs` (Versione Aggiornata)**
+**File: `DO.VIVICARE.UI/frmSettings.cs` (Updated Version)**
 
 ```csharp
 public partial class frmSettings : Form
@@ -541,7 +539,7 @@ public partial class frmSettings : Form
     {
         try
         {
-            lblStatus.Text = "Caricamento elenco librerie...";
+            lblStatus.Text = "Loading library list...";
             
             var manifest = await _libraryManager.GetManifestAsync();
             
@@ -551,11 +549,11 @@ public partial class frmSettings : Form
                 PopulateReportGrid(manifest.Reports);
             }
 
-            lblStatus.Text = "Pronto";
+            lblStatus.Text = "Ready";
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Errore: {ex.Message}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
@@ -563,10 +561,10 @@ public partial class frmSettings : Form
     {
         dgvElencoDocuments.DataSource = documents.Select(d => new
         {
-            Nome = d.Name,
-            VersioneAttuale = GetInstalledVersion(d.Name),
-            VersioneDisponibile = d.Version,
-            EsceAggiornamento = d.Version != GetInstalledVersion(d.Name),
+            Name = d.Name,
+            InstalledVersion = GetInstalledVersion(d.Name),
+            AvailableVersion = d.Version,
+            UpdateAvailable = d.Version != GetInstalledVersion(d.Name),
             File = d.FileName
         }).ToList();
     }
@@ -580,7 +578,7 @@ public partial class frmSettings : Form
             
             try
             {
-                lblStatus.Text = $"Scaricamento {fileName}...";
+                lblStatus.Text = $"Downloading {fileName}...";
                 var destinationPath = Path.Combine(Manager.DocumentLibraries, fileName);
                 
                 var progress = new Progress<DownloadProgressChangedEventArgs>(p =>
@@ -590,15 +588,15 @@ public partial class frmSettings : Form
 
                 await _libraryManager.DownloadLibraryAsync(fileName, destinationPath, progress);
                 
-                lblStatus.Text = "Download completato!";
-                MessageBox.Show("Libreria scaricata con successo!", "Successo");
+                lblStatus.Text = "Download completed!";
+                MessageBox.Show("Library downloaded successfully!", "Success");
                 
-                // Ricarica l'elenco
+                // Reload list
                 await LoadLibrariesFromGitHubAsync();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Errore download: {ex.Message}", "Errore");
+                MessageBox.Show($"Download error: {ex.Message}", "Error");
             }
         }
     }
@@ -611,11 +609,11 @@ public partial class frmSettings : Form
             if (File.Exists(assemblyPath))
             {
                 var version = AssemblyName.GetAssemblyName(assemblyPath).Version;
-                return version?.ToString() ?? "Sconosciuta";
+                return version?.ToString() ?? "Unknown";
             }
         }
         catch { }
-        return "Non installata";
+        return "Not installed";
     }
 }
 
@@ -695,62 +693,62 @@ public class LibraryInfo
 
 ---
 
-## Processo per Sviluppatori
+## Developer Workflow
 
-### Come Rilasciare una Nuova Versione
+### How to Release a New Version
 
-**Step 1: Preparare il Release**
+**Step 1: Prepare the Release**
 
 ```bash
-# 1. Verificare che tutto sia committato su master
+# 1. Verify everything is committed to master
 git status
 
-# 2. Aggiornare versione in AssemblyInfo.cs
-# Esempio: Modificare
+# 2. Update version in AssemblyInfo.cs
+# Example: Modify to
 # [assembly: AssemblyVersion("1.2.0.0")]
 
-# 3. Aggiornare RELEASE_NOTES.md
-# Descrivere cambiamenti, bug fix, features nuove
+# 3. Update RELEASE_NOTES.md
+# Describe changes, bug fixes, and new features
 
-# 4. Commit finale
+# 4. Final commit
 git add .
 git commit -m "Release v1.2.0"
 ```
 
-**Step 2: Creare il Tag Git**
+**Step 2: Create Git Tag**
 
 ```bash
-# Creare tag semantico
+# Create semantic version tag
 git tag -a v1.2.0 -m "Release version 1.2.0"
 
-# Push tag al repository (trigger GitHub Actions)
+# Push tag to repository (triggers GitHub Actions)
 git push origin v1.2.0
 
-# Oppure push tutto
+# Or push everything
 git push origin master --tags
 ```
 
-**Step 3: GitHub Actions Automatizza il Resto**
+**Step 3: GitHub Actions Automates Everything Else**
 
 ```
-GitHub Actions rileva il tag v1.2.0
+GitHub Actions detects tag v1.2.0
   ↓
-Build soluzione
+Build solution
   ↓
-Crea package .zip
+Create .zip packages
   ↓
-Calcola checksum SHA256
+Calculate SHA256 checksums
   ↓
-Crea GitHub Release
+Create GitHub Release
   ↓
-Upload asset (UI, DLLs, Notes)
+Upload assets (UI, DLLs, Notes)
   ↓
-✅ Release pubblicata e disponibile
+✅ Release published and available
 ```
 
-### Monitoring Build Status
+### Monitor Build Status
 
-Vai su: https://github.com/artcava/DO.VIVICARE.Reporting/actions
+Visit: https://github.com/artcava/DO.VIVICARE.Reporting/actions
 
 ```
 Build History
@@ -762,105 +760,105 @@ Build History
 
 ---
 
-## Processo per Utenti
+## User Workflow
 
-### Scenario 1: Auto-Update (Raccomandato)
+### Scenario 1: Auto-Update (Recommended)
 
-**Primo Setup (Richiede IT Auth):**
-1. Scarica `DO.VIVICARE-Setup-v1.2.0.msi` da GitHub Releases
-2. Esegui installer (IT approva installazione)
-3. App si installa con auto-update abilitato
+**Initial Setup (IT Authentication Required):**
+1. Download `DO.VIVICARE-Setup-v1.2.0.msi` from GitHub Releases
+2. Run installer (IT approves installation)
+3. App installs with auto-update enabled
 
-**Aggiornamenti Successivi (NO IT Auth):**
-1. App si avvia
-2. Controlla GitHub API se nuova versione
-3. Se disponibile, mostra notifica
+**Subsequent Updates (NO IT Authentication):**
+1. App starts
+2. Checks GitHub API for new version
+3. If available, shows notification
 4. Click "Update Now"
-5. Scarica e installa automaticamente
-6. Riavvia app
+5. Automatically downloads and installs
+6. App restarts
 
 ### Scenario 2: Manual Download
 
-1. Vai a https://github.com/artcava/DO.VIVICARE.Reporting/releases
-2. Scarica `DO.VIVICARE-Setup-v1.2.0.msi`
-3. Esegui installer
-4. Autorizza aggiornamento automatico nel dialog di setup
+1. Visit https://github.com/artcava/DO.VIVICARE.Reporting/releases
+2. Download `DO.VIVICARE-Setup-v1.2.0.msi`
+3. Run installer
+4. Authorize automatic updates in setup dialog
 
-### Scenario 3: Aggiorna Librerie (Documento e Report)
+### Scenario 3: Update Libraries (Document and Report)
 
-1. Apri DO.VIVICARE.UI
+1. Open DO.VIVICARE.UI
 2. Menu: Tools → Settings
-3. Tab: "Librerie e Moduli"
-4. Click: "Controlla Aggiornamenti"
-5. App scarica manifest da GitHub
-6. Mostra quali librerie hanno aggiornamenti
-7. Click download per ciascuna libreria desiderata
-8. Auto-scarica e installa
-9. Nessun riavvio richiesto (librerie hotload)
+3. Tab: "Libraries and Modules"
+4. Click: "Check for Updates"
+5. App downloads manifest from GitHub
+6. Shows which libraries have available updates
+7. Click download for each desired library
+8. Auto-downloads and installs
+9. No restart required (libraries are hot-loaded)
 
 ---
 
-## Roadmap di Implementazione
+## Implementation Roadmap
 
-### Phase 1 (Week 1-2): Setup Infrastruttura
-- [ ] Creato .github/workflows/build-and-release.yml
-- [ ] GitHub Actions testato
-- [ ] Versioning strategy documentato
-- [ ] Release manifesto creato
+### Phase 1 (Week 1-2): Infrastructure Setup
+- [ ] GitHub Actions workflow created
+- [ ] GitHub Actions tested
+- [ ] Versioning strategy documented
+- [ ] Release manifest created
 
-**Effort:** ~8 ore
+**Effort:** ~8 hours
 
-### Phase 2 (Week 3-4): Update Manager UI
-- [ ] UpdateManager.cs implementato
-- [ ] MDIParent.cs integrato
-- [ ] Test auto-update localmente
-- [ ] Documentazione sviluppatore
+### Phase 2 (Week 3-4): Update Manager for UI
+- [ ] UpdateManager.cs implemented
+- [ ] MDIParent.cs integrated
+- [ ] Auto-update tested locally
+- [ ] Developer documentation
 
-**Effort:** ~12 ore
+**Effort:** ~12 hours
 
 ### Phase 3 (Week 5): Enhanced Plugin Manager
-- [ ] GitHubLibraryManager.cs implementato
-- [ ] frmSettings.cs refactor
-- [ ] Manifest JSON schema definito
-- [ ] Test download e install
+- [ ] GitHubLibraryManager.cs implemented
+- [ ] frmSettings.cs refactored
+- [ ] Manifest JSON schema defined
+- [ ] Download and install testing
 
-**Effort:** ~10 ore
+**Effort:** ~10 hours
 
-### Phase 4 (Week 6): Testing e Deployment
-- [ ] Test complete end-to-end
+### Phase 4 (Week 6): Testing and Deployment
+- [ ] Complete end-to-end testing
 - [ ] Beta release (v1.2.0-beta.1)
 - [ ] Feedback collection
 - [ ] Bug fixing
 - [ ] Production release (v1.2.0)
 
-**Effort:** ~12 ore
+**Effort:** ~12 hours
 
-**Total Effort:** ~42 ore (≈ 1 settimana di lavoro a tempo pieno)
+**Total Effort:** ~42 hours (≈ 1 week full-time development)
 
 ---
 
-## Fallback e Recovery
+## Fallback and Recovery
 
-### Caso: Build GitHub Actions Fallisce
+### Case: GitHub Actions Build Fails
 
-**Soluzione:**
-1. Vai su https://github.com/artcava/DO.VIVICARE.Reporting/actions
-2. Clicca sulla build fallita
-3. Analizza log di errore
-4. Modifica il codice
-5. Push su develop branch
-6. GitHub Actions retry automaticamente
+**Solution:**
+1. Visit https://github.com/artcava/DO.VIVICARE.Reporting/actions
+2. Click failed build
+3. Analyze error log
+4. Modify code
+5. Push to develop branch
+6. GitHub Actions automatically retries
 
-### Caso: Utente Scarica Versione Sbagliata
+### Case: User Downloads Wrong Version
 
-**Protezione:**
-- Manifest.json ha campo `minFramework`
-- App controlla compatibilità prima di install
-- Se incompatibile, mostra messaggio e blocca
+**Protection:**
+- Manifest.json has `minFramework` field
+- App verifies compatibility before installation
+- If incompatible, shows message and blocks
 
-### Caso: Checksum Non Corrisponde
+### Case: Checksum Mismatch
 
-**Protezione:**
+**Protection:**
 ```csharp
 public bool VerifyChecksum(string filePath, string expectedChecksum)
 {
@@ -874,20 +872,20 @@ public bool VerifyChecksum(string filePath, string expectedChecksum)
 }
 ```
 
-### Caso: Rollback Versione Precedente
+### Case: Rollback to Previous Version
 
-**Per Utenti:**
+**For Users:**
 ```
-GitHub Releases → v1.1.5 → Download e installa
+GitHub Releases → v1.1.5 → Download and install
 ```
 
-**Per Sviluppatori:**
+**For Developers:**
 ```bash
-# Se release è buggy:
-git tag -d v1.2.0  # Elimina tag locale
-git push origin :refs/tags/v1.2.0  # Elimina da GitHub
+# If release is buggy:
+git tag -d v1.2.0  # Delete local tag
+git push origin :refs/tags/v1.2.0  # Delete from GitHub
 
-# Risolvi bug
+# Fix bug
 git commit -am "Hotfix"
 
 # Re-release
@@ -897,40 +895,40 @@ git push origin v1.2.1
 
 ---
 
-## Comparativa: Before vs After
+## Before vs After Comparison
 
-| Aspetto | Before | After |
-|---------|--------|-------|
-| **Distribuzione UI** | Azure ClickOnce (⚠️ non disponibile) | GitHub MSI + Auto-update ✅ |
-| **Autorizzazione IT** | Ogni volta (noioso) | Solo prima volta ✅ |
-| **Distribuzione Librerie** | Semi-manuale + Click button | Auto-update + GitHub Releases ✅ |
-| **Versioning** | Nessuno (confuso) | Semantic versioning ✅ |
-| **Release Notes** | Nessuno | GitHub Releases + MANIFEST ✅ |
-| **CI/CD** | Manuale (0%) | GitHub Actions (100%) ✅ |
-| **Checksum Verification** | Nessuna | SHA256 + Validation ✅ |
-| **Rollback** | Difficile | Facile (GitHub Releases) ✅ |
-| **Automazione Developer** | Manuale build + upload | Automatico con tag ✅ |
-| **Monitoring** | Nessuno | GitHub Actions logs ✅ |
+| Aspect | Before | After |
+|--------|--------|-------|
+| **UI Distribution** | Manual legacy process | GitHub MSI + Auto-update ✅ |
+| **IT Authorization** | Every time (tedious) | Initial setup only ✅ |
+| **Library Distribution** | Semi-manual + Click button | Auto-update + GitHub Releases ✅ |
+| **Versioning** | None (confusing) | Semantic versioning ✅ |
+| **Release Notes** | None | GitHub Releases + MANIFEST ✅ |
+| **CI/CD** | Manual (0%) | GitHub Actions (100%) ✅ |
+| **Checksum Verification** | None | SHA256 + Validation ✅ |
+| **Rollback** | Difficult | Easy (GitHub Releases) ✅ |
+| **Developer Automation** | Manual build + upload | Automatic with tag ✅ |
+| **Monitoring** | None | GitHub Actions logs ✅ |
 
 ---
 
-## Conclusione
+## Conclusion
 
-Questa soluzione trasforma DO.VIVICARE da distribuzione "legacy" manuale a una **distribuzione moderna, automatizzata e supportata da infrastruttura cloud**.
+This solution transforms DO.VIVICARE from a legacy manual distribution model to a **modern, automated, cloud-native deployment infrastructure**.
 
-**Vantaggi:**
+**Benefits:**
 - ✅ Zero downtime updates
-- ✅ Versionamento chiaro e tracciabile
-- ✅ Autorizzazione IT una sola volta
-- ✅ Automazione completa per developers
-- ✅ Rollback facile
-- ✅ Audit trail completo
+- ✅ Clear and traceable versioning
+- ✅ IT approval only once
+- ✅ Complete automation for developers
+- ✅ Easy rollback capability
+- ✅ Complete audit trail
 - ✅ Community-friendly (GitHub standard)
 
-**Timeline:** 6 settimane per implementazione completa
+**Timeline:** 6 weeks for full implementation
 
-**ROI:** Altissimo - riduce overhead operativo per sempre
+**ROI:** Extremely high - reduces operational overhead forever
 
 ---
 
-**Documento aggiornato**: 11 Gennaio 2026
+**Document Last Updated**: January 13, 2026
