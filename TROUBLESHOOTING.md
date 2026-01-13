@@ -550,7 +550,7 @@ Common issues, solutions, and best practices for using DO.VIVICARE Reporting.
    - Attach logs or screenshots
 
 3. **Contact Support**
-   - Email: mcavallo@welol.it
+   - Email: cavallo.marco@gmail.com
    - Include issue number from GitHub
    - Attach application log and screenshots
 
