@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,16 +14,16 @@ namespace DO.VIVICARE.UI
 {
     /// <summary>
     /// Gestisce il download, verifica e caricamento dei plugin da GitHub
+    /// Usa GitHub API con token da environment variable per compatibilità con repo privati
     /// </summary>
     public class PluginManager
     {
-        // Download manifest from GitHub Releases (integrated with app version)
-        // URL format: https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v{VERSION}/manifest.json
-        // For now, pointing to master branch via jsDelivr CDN which works with private repos
-        private const string MANIFEST_URL =
-            "https://cdn.jsdelivr.net/gh/artcava/DO.VIVICARE.Reporting@master/manifest.json";
+        // GitHub API endpoint per manifest.json
+        private const string MANIFEST_API_URL =
+            "https://api.github.com/repos/artcava/DO.VIVICARE.Reporting/contents/manifest.json?ref=master";
 
         private readonly string _pluginDirectory;
+        private readonly string _githubToken;
 
         public PluginManager(string pluginDirectory = null)
         {
@@ -32,30 +33,55 @@ namespace DO.VIVICARE.UI
 
             if (!Directory.Exists(_pluginDirectory))
                 Directory.CreateDirectory(_pluginDirectory);
+
+            // Leggi token da environment variable
+            _githubToken = Environment.GetEnvironmentVariable("GITHUB_TOKEN");
+            
+            if (string.IsNullOrEmpty(_githubToken))
+            {
+                LogDebug("GITHUB_TOKEN environment variable not set. Manifest download may fail with private repos.");
+            }
         }
 
         /// <summary>
-        /// Scarica il manifest con lista di tutti i plugin disponibili da GitHub Releases
-        /// Fallback: jsDelivr CDN per compatibilità con repo privati
+        /// Scarica il manifest con lista di tutti i plugin disponibili da GitHub API
+        /// Usa token da environment variable per accedere a repo privati
         /// </summary>
         public async Task<PluginManifest> GetManifestAsync()
         {
             try
             {
-                LogDebug($"Fetching manifest from: {MANIFEST_URL}");
+                LogDebug($"Fetching manifest from GitHub API: {MANIFEST_API_URL}");
+                LogDebug($"Authentication: {(string.IsNullOrEmpty(_githubToken) ? "None (public access)" : "Token from GITHUB_TOKEN variable")}");
 
                 using (var client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add("User-Agent", "DO.VIVICARE");
+                    client.DefaultRequestHeaders.Add("Accept", "application/vnd.github.v3.raw");
+                    
+                    // Aggiungi token se disponibile
+                    if (!string.IsNullOrEmpty(_githubToken))
+                    {
+                        client.DefaultRequestHeaders.Add("Authorization", $"token {_githubToken}");
+                    }
+                    
                     client.Timeout = TimeSpan.FromSeconds(30);
                     
-                    var response = await client.GetAsync(MANIFEST_URL);
+                    var response = await client.GetAsync(MANIFEST_API_URL);
                     
                     LogDebug($"HTTP Status: {response.StatusCode}");
 
                     if (!response.IsSuccessStatusCode)
                     {
                         LogError($"Failed to download manifest. Status: {response.StatusCode}");
+                        
+                        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                            LogError("manifest.json not found in repository");
+                        else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                            LogError("Invalid or missing GitHub token. Check GITHUB_TOKEN environment variable.");
+                        else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                            LogError("Access forbidden. Token may lack required permissions.");
+                        
                         return null;
                     }
 
