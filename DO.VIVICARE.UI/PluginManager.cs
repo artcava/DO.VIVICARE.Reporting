@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -388,6 +389,51 @@ namespace DO.VIVICARE.UI
         }
 
         /// <summary>
+        /// Ottiene la versione installata di un plugin specifico (ricerca per ID)
+        /// </summary>
+        public string GetInstalledPluginVersion(string pluginId)
+        {
+            try
+            {
+                // Cerca file nel formato: {pluginId-lowercase}-{version}.dll
+                var pattern = pluginId.Replace(".", "-").ToLower() + "-*.dll";
+                var file = Directory.GetFiles(_pluginDirectory, pattern).FirstOrDefault();
+
+                if (file == null)
+                    return null;
+
+                // Estrai versione dal nome file: document-adialtaintensita-1.0.0.dll
+                var fileName = Path.GetFileNameWithoutExtension(file);
+                var parts = fileName.Split(new[] { "-" }, StringSplitOptions.None);
+
+                if (parts.Length >= 2)
+                {
+                    // L'ultima parte è la versione
+                    var version = parts[parts.Length - 1];
+                    if (Version.TryParse(version, out var _))
+                    {
+                        return version;
+                    }
+                }
+
+                // Se non riesco a estrarre, prova a leggere dall'assembly
+                try
+                {
+                    var assembly = AssemblyName.GetAssemblyName(file);
+                    return assembly.Version?.ToString() ?? "Unknown";
+                }
+                catch
+                {
+                    return "Unknown";
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Ottiene lista di plugin installati localmente in MyDocuments\DO.VIVICARE\Plugins
         /// </summary>
         public List<InstalledPlugin> GetInstalledPlugins()
@@ -401,13 +447,16 @@ namespace DO.VIVICARE.UI
                 {
                     try
                     {
+                        var fileName = Path.GetFileNameWithoutExtension(file);
                         var assembly = AssemblyName.GetAssemblyName(file);
+                        
                         installed.Add(new InstalledPlugin
                         {
                             Name = assembly.Name,
                             Version = assembly.Version?.ToString() ?? "Unknown",
                             FilePath = file,
-                            FileSize = new FileInfo(file).Length
+                            FileSize = new FileInfo(file).Length,
+                            FileName = fileName
                         });
                     }
                     catch { /* Skip invalid assemblies */ }
@@ -516,6 +565,7 @@ namespace DO.VIVICARE.UI
         public string Version { get; set; }
         public string FilePath { get; set; }
         public long FileSize { get; set; }
+        public string FileName { get; set; }
     }
 
     /// <summary>
