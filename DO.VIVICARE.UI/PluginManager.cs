@@ -41,20 +41,56 @@ namespace DO.VIVICARE.UI
         {
             try
             {
+                LogDebug($"Fetching manifest from: {MANIFEST_URL}");
+
                 using (var client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add("User-Agent", "DO.VIVICARE");
+                    client.Timeout = TimeSpan.FromSeconds(30);
+                    
                     var response = await client.GetAsync(MANIFEST_URL);
-                    response.EnsureSuccessStatusCode();
+                    
+                    LogDebug($"HTTP Status: {response.StatusCode}");
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        LogError($"Failed to download manifest. Status: {response.StatusCode}");
+                        return null;
+                    }
 
                     var json = await response.Content.ReadAsStringAsync();
+                    LogDebug($"Manifest JSON received: {json.Length} bytes");
+
                     var manifest = JsonConvert.DeserializeObject<PluginManifest>(json);
+                    
+                    if (manifest == null)
+                    {
+                        LogError("Failed to deserialize manifest JSON");
+                        return null;
+                    }
+
+                    LogDebug($"Manifest loaded successfully: {manifest.Documents?.Count ?? 0} documents, {manifest.Reports?.Count ?? 0} reports");
                     return manifest;
                 }
             }
+            catch (HttpRequestException hre)
+            {
+                LogError($"HTTP Error: {hre.Message}");
+                return null;
+            }
+            catch (TaskCanceledException tce)
+            {
+                LogError($"Request timeout: {tce.Message}");
+                return null;
+            }
+            catch (JsonException je)
+            {
+                LogError($"JSON parse error: {je.Message}");
+                return null;
+            }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error loading manifest: {ex.Message}");
+                LogError($"Unexpected error loading manifest: {ex.Message}");
                 return null;
             }
         }
@@ -84,19 +120,28 @@ namespace DO.VIVICARE.UI
         {
             try
             {
+                LogDebug($"Starting download of plugin: {plugin.Name} v{plugin.Version}");
+
                 using (var client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add("User-Agent", "DO.VIVICARE");
+                    client.Timeout = TimeSpan.FromMinutes(5);
 
                     var response = await client.GetAsync(
                         plugin.DownloadUrl,
                         HttpCompletionOption.ResponseHeadersRead,
                         cancellationToken);
 
-                    response.EnsureSuccessStatusCode();
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        LogError($"Download failed for {plugin.Name}. Status: {response.StatusCode}");
+                        return false;
+                    }
 
                     var totalBytes = response.Content.Headers.ContentLength ?? 0L;
                     var filePath = Path.Combine(_pluginDirectory, plugin.FileName);
+
+                    LogDebug($"Downloading {plugin.FileName} ({totalBytes} bytes) to {filePath}");
 
                     using (var contentStream = await response.Content.ReadAsStreamAsync())
                     using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, useAsync: true))
@@ -121,18 +166,26 @@ namespace DO.VIVICARE.UI
                     }
 
                     // Verifica checksum SHA256
+                    LogDebug($"Verifying checksum for {plugin.FileName}");
                     if (!await VerifyChecksumAsync(filePath, plugin.Checksum))
                     {
+                        LogError($"Checksum verification failed for {plugin.Name}");
                         File.Delete(filePath);
-                        throw new Exception($"Checksum verification failed for {plugin.Name}");
+                        return false;
                     }
 
+                    LogDebug($"Plugin {plugin.Name} v{plugin.Version} downloaded and verified successfully");
                     return true;
                 }
             }
+            catch (OperationCanceledException)
+            {
+                LogError($"Download cancelled for {plugin.Name}");
+                return false;
+            }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error downloading plugin: {ex.Message}");
+                LogError($"Error downloading plugin {plugin.Name}: {ex.Message}");
                 return false;
             }
         }
@@ -176,7 +229,7 @@ namespace DO.VIVICARE.UI
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error loading plugin: {ex.Message}");
+                LogError($"Error loading plugin: {ex.Message}");
                 return null;
             }
         }
@@ -210,6 +263,22 @@ namespace DO.VIVICARE.UI
             catch { /* Directory may not exist */ }
 
             return installed;
+        }
+
+        /// <summary>
+        /// Log message helper
+        /// </summary>
+        private static void LogDebug(string message)
+        {
+            System.Diagnostics.Debug.WriteLine($"[PluginManager] {message}");
+        }
+
+        /// <summary>
+        /// Log error helper
+        /// </summary>
+        private static void LogError(string message)
+        {
+            System.Diagnostics.Debug.WriteLine($"[PluginManager ERROR] {message}");
         }
     }
 
