@@ -83,7 +83,7 @@ namespace DO.VIVICARE.UI
             {
                 // Cerca se il plugin è già installato
                 var installedPlugin = installed.FirstOrDefault(
-                    i => i.Name.Contains(plugin.Id) || i.Name.Contains(plugin.Name.Replace(" ", "").ToLower()));
+                    p => p.Name.Contains(plugin.Id) || p.Name.Contains(plugin.Name.Replace(" ", "").ToLower()));
 
                 var installedVersion = installedPlugin?.Version ?? "Non installato";
                 var hasUpdate = installedVersion != "Non installato" && 
@@ -97,11 +97,11 @@ namespace DO.VIVICARE.UI
                     : (hasUpdate ? "⬇ Aggiorna" : "✓ Aggiornato");
 
                 var row = new DataGridViewRow();
-                var i = dgvElencoDocuments.Rows.Add(row);
-                dgvElencoDocuments.Rows[i].Cells["NomeFileDocument"].Value = plugin.Name;
-                dgvElencoDocuments.Rows[i].Cells["NomeFileDocumentCompleto"].Value = plugin.Id; // Usa l'ID come identificativo
-                dgvElencoDocuments.Rows[i].Cells["DownloadDocument"].Value = status;
-                dgvElencoDocuments.Rows[i].Tag = plugin; // Salva il plugin object nel tag
+                var rowIndex = dgvElencoDocuments.Rows.Add(row);
+                dgvElencoDocuments.Rows[rowIndex].Cells["NomeFileDocument"].Value = plugin.Name;
+                dgvElencoDocuments.Rows[rowIndex].Cells["NomeFileDocumentCompleto"].Value = plugin.Id;
+                dgvElencoDocuments.Rows[rowIndex].Cells["DownloadDocument"].Value = status;
+                dgvElencoDocuments.Rows[rowIndex].Tag = plugin; // Salva il plugin object nel tag
             }
         }
 
@@ -119,7 +119,7 @@ namespace DO.VIVICARE.UI
             foreach (var plugin in plugins)
             {
                 var installedPlugin = installed.FirstOrDefault(
-                    i => i.Name.Contains(plugin.Id) || i.Name.Contains(plugin.Name.Replace(" ", "").ToLower()));
+                    p => p.Name.Contains(plugin.Id) || p.Name.Contains(plugin.Name.Replace(" ", "").ToLower()));
 
                 var installedVersion = installedPlugin?.Version ?? "Non installato";
                 var hasUpdate = installedVersion != "Non installato" && 
@@ -133,11 +133,11 @@ namespace DO.VIVICARE.UI
                     : (hasUpdate ? "⬇ Aggiorna" : "✓ Aggiornato");
 
                 var row = new DataGridViewRow();
-                var i = dgvElencoReports.Rows.Add(row);
-                dgvElencoReports.Rows[i].Cells["NomeFileReport"].Value = plugin.Name;
-                dgvElencoReports.Rows[i].Cells["NomeFileReportCompleto"].Value = plugin.Id;
-                dgvElencoReports.Rows[i].Cells["DownloadReport"].Value = status;
-                dgvElencoReports.Rows[i].Tag = plugin;
+                var rowIndex = dgvElencoReports.Rows.Add(row);
+                dgvElencoReports.Rows[rowIndex].Cells["NomeFileReport"].Value = plugin.Name;
+                dgvElencoReports.Rows[rowIndex].Cells["NomeFileReportCompleto"].Value = plugin.Id;
+                dgvElencoReports.Rows[rowIndex].Cells["DownloadReport"].Value = status;
+                dgvElencoReports.Rows[rowIndex].Tag = plugin;
             }
         }
 
@@ -152,7 +152,7 @@ namespace DO.VIVICARE.UI
                 {
                     BeginInvoke((MethodInvoker)delegate
                     {
-                        progressBar1.Value = Math.Min(p.PercentComplete, 100);
+                        // lblResult per il progress (senza progressBar1 che non esiste nel Designer)
                         lblResult.Text = $"Download {plugin.Name}... {p.PercentComplete}% ({FormatBytes(p.BytesDownloaded)} / {FormatBytes(p.TotalBytes)})";
                     });
                 });
@@ -211,7 +211,6 @@ namespace DO.VIVICARE.UI
             {
                 try
                 {
-                    WebClient client = new WebClient();
                     Stream stream = client.OpenRead(_path + _fileDocuments);
                     StreamReader reader = new StreamReader(stream);
                     string content = reader.ReadToEnd();
@@ -224,10 +223,10 @@ namespace DO.VIVICARE.UI
                     {
                         string[] nome = dll.Split(';');
                         var row = new DataGridViewRow();
-                        var i = dgvElencoDocuments.Rows.Add(row);
-                        dgvElencoDocuments.Rows[i].Cells["NomeFileDocument"].Value = nome[0];
-                        dgvElencoDocuments.Rows[i].Cells["NomeFileDocumentCompleto"].Value = nome[1];
-                        dgvElencoDocuments.Rows[i].Cells["DownloadDocument"].Value = _voce;
+                        var rowIndex = dgvElencoDocuments.Rows.Add(row);
+                        dgvElencoDocuments.Rows[rowIndex].Cells["NomeFileDocument"].Value = nome[0];
+                        dgvElencoDocuments.Rows[rowIndex].Cells["NomeFileDocumentCompleto"].Value = nome[1];
+                        dgvElencoDocuments.Rows[rowIndex].Cells["DownloadDocument"].Value = _voce;
                     }
                 }
                 catch (Exception ex)
@@ -243,7 +242,6 @@ namespace DO.VIVICARE.UI
             {
                 try
                 {
-                    WebClient client = new WebClient();
                     Stream stream = client.OpenRead(_path + _fileReports);
                     StreamReader reader = new StreamReader(stream);
                     string content = reader.ReadToEnd();
@@ -256,10 +254,10 @@ namespace DO.VIVICARE.UI
                     {
                         string[] nome = dll.Split(';');
                         var row = new DataGridViewRow();
-                        var i = dgvElencoReports.Rows.Add(row);
-                        dgvElencoReports.Rows[i].Cells["NomeFileReport"].Value = nome[0];
-                        dgvElencoReports.Rows[i].Cells["NomeFileReportCompleto"].Value = nome[1];
-                        dgvElencoReports.Rows[i].Cells["DownloadReport"].Value = _voce;
+                        var rowIndex = dgvElencoReports.Rows.Add(row);
+                        dgvElencoReports.Rows[rowIndex].Cells["NomeFileReport"].Value = nome[0];
+                        dgvElencoReports.Rows[rowIndex].Cells["NomeFileReportCompleto"].Value = nome[1];
+                        dgvElencoReports.Rows[rowIndex].Cells["DownloadReport"].Value = _voce;
                     }
                 }
                 catch (Exception ex)
