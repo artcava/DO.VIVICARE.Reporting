@@ -1,10 +1,13 @@
-﻿using DO.VIVICARE.Reporter;
+using DO.VIVICARE.Reporter;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DO.VIVICARE.UI
@@ -13,15 +16,18 @@ namespace DO.VIVICARE.UI
     {
         WebClient client;
         private const string _path = "http://artcava.azurewebsites.net/reporting/";
-
         private const string _fileDocuments = "listDocuments.txt";
         private const string _fileReports = "listReports.txt";
         private const string _voce = "Scarica";
+
+        private PluginManager _pluginManager;
+        private PluginManifest _manifest;
 
         public frmSettings()
         {
             InitializeComponent();
             SetDataGrid();
+            _pluginManager = new PluginManager();
         }
 
         private void SetDataGrid()
@@ -33,6 +39,170 @@ namespace DO.VIVICARE.UI
             dgvElencoReports.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvElencoReports.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold);
             dgvElencoReports.Columns["NomeFileReport"].FillWeight = 150;
+        }
+
+        /// <summary>
+        /// Carica la lista di plugin disponibili dal manifest.json
+        /// </summary>
+        private async Task LoadPluginManifestAsync()
+        {
+            try
+            {
+                lblResult.Text = "Caricamento plugin disponibili dal manifest...";
+                _manifest = await _pluginManager.GetManifestAsync();
+
+                if (_manifest != null)
+                {
+                    PopulateDocumentPlugins(_manifest.Documents);
+                    PopulateReportPlugins(_manifest.Reports);
+                    lblResult.Text = $"Manifest caricato: {_manifest.Documents.Count} document plugin, {_manifest.Reports.Count} report plugin";
+                }
+                else
+                {
+                    lblResult.Text = "Errore nel caricamento del manifest";
+                }
+            }
+            catch (Exception ex)
+            {
+                lblResult.Text = $"Errore: {ex.Message}";
+            }
+        }
+
+        /// <summary>
+        /// Popola la griglia con i plugin disponibili dal manifest
+        /// </summary>
+        private void PopulateDocumentPlugins(List<PluginInfo> plugins)
+        {
+            if (plugins == null || plugins.Count == 0)
+                return;
+
+            var installed = _pluginManager.GetInstalledPlugins();
+            dgvElencoDocuments.Rows.Clear();
+
+            foreach (var plugin in plugins)
+            {
+                // Cerca se il plugin è già installato
+                var installedPlugin = installed.FirstOrDefault(
+                    i => i.Name.Contains(plugin.Id) || i.Name.Contains(plugin.Name.Replace(" ", "").ToLower()));
+
+                var installedVersion = installedPlugin?.Version ?? "Non installato";
+                var hasUpdate = installedVersion != "Non installato" && 
+                    _pluginManager.HasUpdate(
+                        new PluginInfo { Version = installedVersion },
+                        plugin
+                    );
+
+                var status = installedVersion == "Non installato" 
+                    ? "Download" 
+                    : (hasUpdate ? "⬇ Aggiorna" : "✓ Aggiornato");
+
+                var row = new DataGridViewRow();
+                var i = dgvElencoDocuments.Rows.Add(row);
+                dgvElencoDocuments.Rows[i].Cells["NomeFileDocument"].Value = plugin.Name;
+                dgvElencoDocuments.Rows[i].Cells["NomeFileDocumentCompleto"].Value = plugin.Id; // Usa l'ID come identificativo
+                dgvElencoDocuments.Rows[i].Cells["DownloadDocument"].Value = status;
+                dgvElencoDocuments.Rows[i].Tag = plugin; // Salva il plugin object nel tag
+            }
+        }
+
+        /// <summary>
+        /// Popola la griglia report
+        /// </summary>
+        private void PopulateReportPlugins(List<PluginInfo> plugins)
+        {
+            if (plugins == null || plugins.Count == 0)
+                return;
+
+            var installed = _pluginManager.GetInstalledPlugins();
+            dgvElencoReports.Rows.Clear();
+
+            foreach (var plugin in plugins)
+            {
+                var installedPlugin = installed.FirstOrDefault(
+                    i => i.Name.Contains(plugin.Id) || i.Name.Contains(plugin.Name.Replace(" ", "").ToLower()));
+
+                var installedVersion = installedPlugin?.Version ?? "Non installato";
+                var hasUpdate = installedVersion != "Non installato" && 
+                    _pluginManager.HasUpdate(
+                        new PluginInfo { Version = installedVersion },
+                        plugin
+                    );
+
+                var status = installedVersion == "Non installato" 
+                    ? "Download" 
+                    : (hasUpdate ? "⬇ Aggiorna" : "✓ Aggiornato");
+
+                var row = new DataGridViewRow();
+                var i = dgvElencoReports.Rows.Add(row);
+                dgvElencoReports.Rows[i].Cells["NomeFileReport"].Value = plugin.Name;
+                dgvElencoReports.Rows[i].Cells["NomeFileReportCompleto"].Value = plugin.Id;
+                dgvElencoReports.Rows[i].Cells["DownloadReport"].Value = status;
+                dgvElencoReports.Rows[i].Tag = plugin;
+            }
+        }
+
+        /// <summary>
+        /// Scarica e installa un plugin con progress tracking
+        /// </summary>
+        private async Task DownloadAndInstallPluginAsync(PluginInfo plugin)
+        {
+            try
+            {
+                var progress = new Progress<DownloadProgress>(p =>
+                {
+                    BeginInvoke((MethodInvoker)delegate
+                    {
+                        progressBar1.Value = Math.Min(p.PercentComplete, 100);
+                        lblResult.Text = $"Download {plugin.Name}... {p.PercentComplete}% ({FormatBytes(p.BytesDownloaded)} / {FormatBytes(p.TotalBytes)})";
+                    });
+                });
+
+                var success = await _pluginManager.DownloadPluginAsync(plugin, progress, CancellationToken.None);
+
+                BeginInvoke((MethodInvoker)delegate
+                {
+                    if (success)
+                    {
+                        lblResult.Text = $"{plugin.Name} v{plugin.Version} installato con successo! (Hot-reload: nessun riavvio richiesto)";
+                        MessageBox.Show(
+                            $"{plugin.Name} v{plugin.Version} installato con successo!\n\nNessun riavvio dell'applicazione richiesto (hot-reload enabled).",
+                            "Successo",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information
+                        );
+                        // Ricarica la lista
+                        _ = LoadPluginManifestAsync();
+                    }
+                    else
+                    {
+                        lblResult.Text = $"Errore nell'installazione di {plugin.Name}";
+                        MessageBox.Show(
+                            $"Impossibile installare {plugin.Name}\n\nVerificare la connessione di rete e riprovare.",
+                            "Errore",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                BeginInvoke((MethodInvoker)delegate
+                {
+                    lblResult.Text = $"Errore: {ex.Message}";
+                    MessageBox.Show($"Errore: {ex.Message}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                });
+            }
+        }
+
+        /// <summary>
+        /// Formatta byte in formato leggibile
+        /// </summary>
+        private string FormatBytes(long bytes)
+        {
+            if (bytes < 1024) return $"{bytes} B";
+            if (bytes < 1024 * 1024) return $"{bytes / 1024.0:F1} KB";
+            return $"{bytes / (1024.0 * 1024):F1} MB";
         }
 
         private void GetListDocumentsUpdated()
@@ -128,18 +298,34 @@ namespace DO.VIVICARE.UI
 
         private void frmSettings_Shown(object sender, EventArgs e)
         {
-            GetListDocumentsUpdated();
+            // Carica prima il manifest (nuovo sistema PluginManager)
+            _ = LoadPluginManifestAsync();
         }
 
         private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (tabControl.SelectedTab == tabControl.TabPages["tabPageDocuments"])
             {
-                GetListDocumentsUpdated();
+                // Carica dai plugin manager se disponibili
+                if (_manifest?.Documents != null && _manifest.Documents.Count > 0)
+                {
+                    PopulateDocumentPlugins(_manifest.Documents);
+                }
+                else
+                {
+                    GetListDocumentsUpdated();
+                }
             }
             else if (tabControl.SelectedTab == tabControl.TabPages["tabPageReports"])
             {
-                GetListReportsUpdated();
+                if (_manifest?.Reports != null && _manifest.Reports.Count > 0)
+                {
+                    PopulateReportPlugins(_manifest.Reports);
+                }
+                else
+                {
+                    GetListReportsUpdated();
+                }
             }
         }
 
@@ -152,15 +338,24 @@ namespace DO.VIVICARE.UI
             switch (dgvElencoDocuments.Columns[e.ColumnIndex].Name)
             {
                 case "DownloadDocument":
-                    Thread thread = new Thread(() =>
+                    // Se esiste il Tag, significa che viene dal manifest
+                    if (row.Tag is PluginInfo plugin)
                     {
-                        client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
-                        client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
+                        _ = DownloadAndInstallPluginAsync(plugin);
+                    }
+                    else
+                    {
+                        // Fallback al sistema legacy
+                        Thread thread = new Thread(() =>
+                        {
+                            client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
+                            client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
 
-                        Uri URL = new Uri(_path + "Doc" + "/" + row.Cells["NomeFileDocumentCompleto"].Value.ToString());
-                        client.DownloadFileAsync(URL, Path.Combine(Manager.DocumentLibraries, row.Cells["NomeFileDocumentCompleto"].Value.ToString()));
-                    });
-                    thread.Start();
+                            Uri URL = new Uri(_path + "Doc" + "/" + row.Cells["NomeFileDocumentCompleto"].Value.ToString());
+                            client.DownloadFileAsync(URL, Path.Combine(Manager.DocumentLibraries, row.Cells["NomeFileDocumentCompleto"].Value.ToString()));
+                        });
+                        thread.Start();
+                    }
                     break;
             }
         }
@@ -174,19 +369,24 @@ namespace DO.VIVICARE.UI
             switch (dgvElencoReports.Columns[e.ColumnIndex].Name)
             {
                 case "DownloadReport":
-
-                    Thread thread = new Thread(() =>
+                    if (row.Tag is PluginInfo plugin)
                     {
-                        client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
-                        client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
+                        _ = DownloadAndInstallPluginAsync(plugin);
+                    }
+                    else
+                    {
+                        Thread thread = new Thread(() =>
+                        {
+                            client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
+                            client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
 
-                        Uri URL = new Uri(_path + "Rep" + "/" + row.Cells["NomeFileReportCompleto"].Value.ToString());
-                        client.DownloadFileAsync(URL, Path.Combine(Manager.ReportLibraries, row.Cells["NomeFileReportCompleto"].Value.ToString()));
-                    });
-                    thread.Start();
+                            Uri URL = new Uri(_path + "Rep" + "/" + row.Cells["NomeFileReportCompleto"].Value.ToString());
+                            client.DownloadFileAsync(URL, Path.Combine(Manager.ReportLibraries, row.Cells["NomeFileReportCompleto"].Value.ToString()));
+                        });
+                        thread.Start();
+                    }
                     break;
             }
-
         }
     }
 }
