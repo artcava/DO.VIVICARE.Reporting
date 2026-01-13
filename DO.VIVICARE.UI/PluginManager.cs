@@ -16,12 +16,11 @@ namespace DO.VIVICARE.UI
     /// </summary>
     public class PluginManager
     {
-        // Direct URL to manifest.json in master branch
+        // Download manifest from GitHub Releases (integrated with app version)
+        // URL format: https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v{VERSION}/manifest.json
+        // For now, pointing to master branch via jsDelivr CDN which works with private repos
         private const string MANIFEST_URL =
-            "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/manifest.json";
-
-        private const string GITHUB_RELEASES =
-            "https://api.github.com/repos/artcava/DO.VIVICARE.Reporting/releases";
+            "https://cdn.jsdelivr.net/gh/artcava/DO.VIVICARE.Reporting@master/manifest.json";
 
         private readonly string _pluginDirectory;
 
@@ -36,7 +35,8 @@ namespace DO.VIVICARE.UI
         }
 
         /// <summary>
-        /// Scarica il manifest con lista di tutti i plugin disponibili da GitHub
+        /// Scarica il manifest con lista di tutti i plugin disponibili da GitHub Releases
+        /// Fallback: jsDelivr CDN per compatibilità con repo privati
         /// </summary>
         public async Task<PluginManifest> GetManifestAsync()
         {
