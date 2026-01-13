@@ -36,6 +36,60 @@ namespace DO.VIVICARE.UI
         }
 
         /// <summary>
+        /// Verifica se esiste una nuova versione dell'applicazione disponibile su GitHub
+        /// </summary>
+        /// <returns>AppUpdateInfo se un aggiornamento è disponibile, null altrimenti</returns>
+        public async Task<AppUpdateInfo> CheckAppUpdateAsync()
+        {
+            try
+            {
+                LogDebug("Checking for application updates...");
+
+                var manifest = await GetManifestAsync();
+                if (manifest?.App == null)
+                {
+                    LogError("Unable to retrieve app info from manifest");
+                    return null;
+                }
+
+                // Ottieni versione corrente dell'applicazione
+                var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
+                LogDebug($"Current app version: {currentVersion}");
+
+                // Parse versione disponibile dal manifest
+                if (!Version.TryParse(manifest.App.Version, out var availableVersion))
+                {
+                    LogError($"Invalid version format in manifest: {manifest.App.Version}");
+                    return null;
+                }
+
+                LogDebug($"Available app version: {availableVersion}");
+
+                // Confronta versioni
+                if (availableVersion > currentVersion)
+                {
+                    LogDebug($"Update available: {currentVersion} -> {availableVersion}");
+                    return new AppUpdateInfo
+                    {
+                        CurrentVersion = currentVersion.ToString(),
+                        AvailableVersion = manifest.App.Version,
+                        DownloadUrl = manifest.App.DownloadUrl,
+                        ReleaseDate = manifest.App.ReleaseDate,
+                        Checksum = manifest.App.Checksum
+                    };
+                }
+
+                LogDebug("No update available - current version is up to date");
+                return null;
+            }
+            catch (Exception ex)
+            {
+                LogError($"Error checking for app updates: {ex.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Scarica il manifest con lista di tutti i plugin disponibili da GitHub
         /// </summary>
         public async Task<PluginManifest> GetManifestAsync()
@@ -518,6 +572,37 @@ namespace DO.VIVICARE.UI
 
         [JsonProperty("releaseDate")]
         public string ReleaseDate { get; set; }
+    }
+
+    /// <summary>
+    /// Informazioni su un aggiornamento dell'applicazione disponibile
+    /// </summary>
+    public class AppUpdateInfo
+    {
+        /// <summary>
+        /// Versione attualmente installata
+        /// </summary>
+        public string CurrentVersion { get; set; }
+
+        /// <summary>
+        /// Versione disponibile per il download
+        /// </summary>
+        public string AvailableVersion { get; set; }
+
+        /// <summary>
+        /// URL per scaricare la nuova versione
+        /// </summary>
+        public string DownloadUrl { get; set; }
+
+        /// <summary>
+        /// Data di rilascio della nuova versione
+        /// </summary>
+        public string ReleaseDate { get; set; }
+
+        /// <summary>
+        /// Checksum SHA256 del file di setup
+        /// </summary>
+        public string Checksum { get; set; }
     }
 
     /// <summary>
