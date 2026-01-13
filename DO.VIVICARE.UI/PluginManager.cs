@@ -275,7 +275,7 @@ namespace DO.VIVICARE.UI
                 LogDebug($"Extracting {plugin.FileName} from setup package");
                 var dllPath = Path.Combine(_pluginDirectory, plugin.FileName);
 
-                using (var archive = ZipFile.OpenRead(setupZipPath))
+                using (var archive = System.IO.Compression.ZipFile.OpenRead(setupZipPath))
                 {
                     // Cerca il DLL nel ZIP (potrebbe essere in sottocartelle)
                     var entry = archive.Entries.FirstOrDefault(e => 
