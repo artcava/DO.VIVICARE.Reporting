@@ -1,231 +1,249 @@
-# Architettura DO.VIVICARE Reporting
+# Architecture - DO.VIVICARE Reporting
 
-Documento dettagliato sull'architettura tecnica del sistema.
+Detailed technical architecture and design of the DO.VIVICARE Reporting system.
 
-## Indice
+## Table of Contents
 
-1. [Principi Architetturali](#principi-architetturali)
-2. [Layers Applicativi](#layers-applicativi)
-3. [Descrizione Dettagliata Componenti](#descrizione-dettagliata-componenti)
-4. [Flussi di Dati](#flussi-di-dati)
+1. [Architectural Principles](#architectural-principles)
+2. [Layered Architecture](#layered-architecture)
+3. [Core Components](#core-components)
+4. [Data Flow](#data-flow)
 5. [Design Patterns](#design-patterns)
 6. [Dependency Graph](#dependency-graph)
-7. [Estensibilità](#estensibilità)
-8. [Performance e Scalabilità](#performance-e-scalabilità)
+7. [Extensibility](#extensibility)
+8. [Performance Considerations](#performance-considerations)
 
 ---
 
-## Principi Architetturali
+## Architectural Principles
 
-### 1. Separazione dei Livelli (Layered Architecture)
+### 1. Separation of Concerns (Layered Architecture)
 
-Il sistema è organizzato in tre layer distinti:
+The system is organized into three distinct layers:
 
 ```
 ┌─────────────────────────────┐
-│   PRESENTATION LAYER        │
-│   DO.VIVICARE.UI            │
-│   (WinForms / WPF UI)       │
-└──────────────┬──────────────┘
+│   PRESENTATION LAYER          │
+│   DO.VIVICARE.UI              │
+│   (WinForms UI Components)    │
+└────────────┬───────────────────┘
                │
 ┌──────────────────────────────────┐
 │   BUSINESS LOGIC LAYER           │
 │   DO.VIVICARE.Reporter (Manager) │
-│   - Orchestrazione generazione   │
-│   - Logica di business           │
-│   - Coordinamento moduli         │
-└──────────────┬───────────────────┘
-               │
-               │ Comunica con
+│   - Orchestration                │
+│   - Coordination                 │
+└────────────┬───────────────────┘
                │
 ┌─────────────────────────────┐
-│   DATA LAYER                │
-│   Document + Report Modules │
-│   - Strutturazione dati     │
-│   - Mapping entità          │
-│   - Validazione             │
+│   DATA LAYER                  │
+│   Document + Report Modules   │
+│   - Data structures           │
+│   - Validation                │
 └─────────────────────────────┘
 ```
 
-**Benefici:**
-- Testabilità: Ogni layer può essere testato indipendentemente
-- Manutenibilità: Modifiche isolate per ogni layer
-- Estensibilità: Facile aggiungere nuovi moduli
-- Riusabilità: Layer condivisi tra report diversi
+**Benefits:**
+- **Testability**: Each layer independently testable
+- **Maintainability**: Isolated changes per layer
+- **Extensibility**: Easy to add new modules
+- **Reusability**: Shared layers across report types
 
-### 2. Modularità
+### 2. Modularity
 
-Ciascun dominio sanitario ha un modulo dedicato.
+Each healthcare domain has a dedicated module:
+- Independent team development
+- Isolated bug fixes
+- Selective deployment
+- Independent versioning
 
-**Vantaggi:**
-- Team paralleli possono lavorare su moduli diversi
-- Bug isolati in modulo specifico
-- Deployment selettivo di moduli
-- Versionamento indipendente
+### 3. Centralized Configuration
 
-### 3. Configurazione Centralizzata
-
-Tutti i parametri sono gestiti centralmente via XML.
-
-**Vantaggi:**
-- Cambio parametri senza ricompilazione
-- Facile deployment su diversi ambienti
-- Audit trail delle configurazioni
-- Versionamento della configurazione (tramite Git)
+All parameters managed via XML:
+- Configuration without recompilation
+- Environment-specific settings
+- Audit trail via Git
+- Version control integration
 
 ---
 
-## Layers Applicativi
+## Layered Architecture
 
 ### Presentation Layer (DO.VIVICARE.UI)
 
-**Responsabilità:**
-- Interfaccia utente (WinForms/WPF)
-- Raccolta parametri dall'utente
-- Validazione input UI-side
-- Visualizzazione risultati e stato
+**Responsibilities:**
+- User interface (WinForms)
+- Parameter collection
+- Input validation (UI-side)
+- Results visualization
 
-**Tecnologie:**
-- Windows Forms o WPF
+**Technologies:**
+- Windows Forms
 - .NET Framework 4.6.1+
 
-**Componenti Principali:**
-- Forms per selezione tipo report
-- Data entry form per parametri
-- Progress indicator durante generazione
-- Message boxes per feedback
+**Key Components:**
+- Report type selection forms
+- Parameter entry dialogs
+- Progress indicators
+- Plugin Manager interface
 
-**Non conosce:**
-- Dettagli di generazione Excel
-- Struttura DB (se presente)
-- Logica di report complessa
+**Does NOT know about:**
+- Excel generation details
+- Database structures
+- Complex report logic
 
 ### Business Logic Layer (DO.VIVICARE.Reporter)
 
-**Responsabilità:**
-- Orchestrazione della generazione report
-- Validazione business rules
-- Coordinamento tra moduli
-- Gestione stato applicazione
+**Responsibilities:**
+- Report generation orchestration
+- Business rule validation
+- Module coordination
+- State management
+
+**Core Files:**
+- `Manager.cs` - Main orchestration
+- `Model.cs` - Shared data models
+- `ExcelManager.cs` - Excel operations
+- `XMLSettings.cs` - Configuration loader
+
+**Key Methods:**
+```csharp
+public class Manager
+{
+    public string GenerateADIReport(ReportData data, XMLSettings settings);
+    public string GenerateReport(ReportType type, ReportData data);
+    public ExcelPackage FormatReport(ExcelPackage package, FormatSettings settings);
+}
+```
 
 ### Data Layer (Document + Report Modules)
 
-**Responsabilità:**
-- Rappresentazione dati specifica per dominio
-- Mapping tra sorgenti esterne e modello interno
-- Validazione dei dati
-- Trasformazione per generazione report
+**Responsibilities:**
+- Domain-specific data structures
+- External source mapping
+- Data validation
+- Transformation for reporting
 
-**Moduli Document** (~50 in totale tra i 14 progetti)
+#### Document Modules (14 total)
 
-**Moduli Report** (Logica di generazione)
+Each module defines:
+- Data structures for specific healthcare domain
+- Validation rules
+- Mapping from external sources
+- Export capabilities
+
+**Example: ADIAltaIntensita Module**
+```
+DO.VIVICARE.Document.ADIAltaIntensita/
+├─ ADIAltaIntensita.cs         # Main data class
+├─ Validation.cs              # Domain validation
+├─ Mapping.cs                 # External data mapping
+└─ Properties/                # Assembly metadata
+```
+
+#### Report Modules (3 total)
+
+Each module implements report generation:
+
+1. **AllegatoADI** - Combines high/low intensity ADI data
+2. **Dietetica** - Dietary and nutritional reports
+3. **Valorizzazione** - Financial aggregation reports
 
 ---
 
-## Descrizione Dettagliata Componenti
+## Core Components
 
 ### DO.VIVICARE.Reporter
 
-**Scopo**: Core engine di generazione report
-
-**Contenuti**:
-- `Manager.cs` - Orchestrazione
-- `Model.cs` - Modelli dati condivisi
-- `ExcelManager.cs` - Gestione Excel
-- `XMLSettings.cs` - Configurazione
-- `Properties/` - Metadati assembly
-- `packages.config` - Dipendenze NuGet
-- `app.config` - Configurazione app
-
-**Dipendenze**:
-- EPPlus 4.5.x (generazione Excel)
-- System.Xml (parsing XML)
-- System.Data (se DB)
+Central orchestration engine:
+- Coordinates report generation across modules
+- Manages configuration
+- Handles Excel operations
+- Provides standardized interfaces
 
 ### DO.VIVICARE.UI
 
-**Scopo**: Interfaccia utente per generazione interattiva
+User interface:
+- WinForms application
+- Report selection and configuration
+- Plugin Manager integration
+- Result display and file management
 
-**Funzionalità:**
-- Selezione tipo report
-- Data entry parametri
-- Visualizzazione progress
-- Apertura file output
+### Document Modules (14)
 
-**Riferimenti**:
-- DO.VIVICARE.Reporter (per logica)
-- System.Windows.Forms (per UI)
+Data layer specifications:
+- ADIAltaIntensita - High intensity home care data
+- ADIBassaIntensita - Low intensity home care data
+- ASST - Regional health organization data
+- Comuni - Local municipality reports
+- LazioHealthWorker - Lazio-specific worker data
+- MinSan - Ministry of Health data
+- Prestazioni - Healthcare services catalog
+- Prezzi - Service pricing data
+- Rendiconto - Administrative accounting
+- Report16, Report18 - Legislative reports
+- Valorizzazione - Service valorization
+- ValorizzazioniADIAlta - ADI high valorization
+- ZSDFatture - Invoicing data
 
-### Moduli Document (14 in totale)
+### Report Modules (3)
 
-**Struttura comune:**
-```
-DO.VIVICARE.Document.[NomeDominio]/
-├── [NomeDominio].cs          # Classe principale
-├── *.csproj                   # Configurazione progetto
-├── app.config                 # Configurazione runtime
-└── Properties/                # Metadati
-```
-
-**Responsabilità comuni:**
-- Definire strutture dati specifiche
-- Validazione dati di dominio
-- Mapping da sorgenti esterne
-- Export in formati per report
-
-### Moduli Report (3 in totale)
-
-**Specializzazioni:**
-
-1. **AllegatoADI**: Combina ADIAltaIntensita + ADIBassaIntensita
-2. **Dietetica**: Gestisce dati nutrizionali
-3. **Valorizzazione**: Aggregazione economica
+Report generation logic:
+- AllegatoADI - ADI attachment reports
+- Dietetica - Dietary/nutritional reports
+- Valorizzazione - Financial reports
 
 ---
 
-## Flussi di Dati
+## Data Flow
 
-### Flusso 1: Generazione Report ADI
-
-```
-1. UI raccoglie parametri utente
-   │ (data inizio, data fine, struttura, etc.)
-   │
-2. Manager valida parametri
-   │
-3. Manager carica XMLSettings
-   │
-4. Manager istanzia ADIAltaIntensita module
-   │
-5. ADIAltaIntensita carica/trasforma dati
-   │
-6. Manager istanzia AllegatoADIReport
-   │
-7. AllegatoADIReport genera worksheet con:
-      - Intestazioni
-      - Dati pazienti
-      - Aggregazioni
-      - Formule di calcolo
-      - Grafici
-   │
-8. ExcelManager formatta e protegge
-   │
-9. ExcelManager salva file .xlsx
-   │
-10. UI apre file risultante
-```
-
-### Flusso 2: Generazione Report Batch
+### Typical Report Generation Flow
 
 ```
-1. Applicazione console legge lista di report da generare
-2. Per ogni report:
-   a. Carica configurazione
-   b. Carica dati
-   c. Invoca Manager.GenerateReport()
-   d. Salva risultato
-   e. Log risultato
-3. Riepilogo risultati (successi/errori)
+1. UI collects user parameters
+   └─ Date range, facility, report type, etc.
+
+2. Manager validates parameters
+
+3. Manager loads XMLSettings
+
+4. Manager instantiates Document module
+   └─ ADIAltaIntensita, etc.
+
+5. Document module loads/transforms data
+
+6. Manager instantiates Report module
+   └─ AllegatoADIReport, etc.
+
+7. Report module generates Excel worksheet
+   └─ Headers, data, formulas, charts
+
+8. ExcelManager formats and protects
+
+9. ExcelManager saves .xlsx file
+
+10. UI opens and displays result
+```
+
+### Data Transformation Pipeline
+
+```
+External Data
+   │
+   ▼
+Document Module (Parsing)
+   │
+   ▼
+Internal Data Model
+   │
+   ▼
+Report Module (Aggregation)
+   │
+   ▼
+Excel Worksheet (Formatting)
+   │
+   ▼
+.xlsx File (Output)
 ```
 
 ---
@@ -234,29 +252,29 @@ DO.VIVICARE.Document.[NomeDominio]/
 
 ### 1. Factory Pattern
 
+Creating reports based on type:
+
 ```csharp
 public class ReportFactory
 {
     public static IReport CreateReport(ReportType type)
     {
-        switch(type)
+        return type switch
         {
-            case ReportType.ADI:
-                return new AllegatoADIReport();
-            case ReportType.Dietetica:
-                return new DieticaReport();
-            case ReportType.Valorizzazione:
-                return new ValorizzazioneReport();
-            default:
-                throw new ArgumentException();
-        }
+            ReportType.ADI => new AllegatoADIReport(),
+            ReportType.Dietetica => new DieticaReport(),
+            ReportType.Valorizzazione => new ValorizzazioneReport(),
+            _ => throw new ArgumentException()
+        };
     }
 }
 ```
 
-**Vantaggio**: Isolamento della logica di creazione
+**Benefit**: Isolates report creation logic
 
 ### 2. Strategy Pattern
+
+Different formatting strategies:
 
 ```csharp
 public interface IExcelFormatter
@@ -268,23 +286,27 @@ public class StandardFormatter : IExcelFormatter { }
 public class AlternateFormatter : IExcelFormatter { }
 ```
 
-**Vantaggio**: Switching dinamico tra strategie di formattazione
+**Benefit**: Switch formatting strategies at runtime
 
 ### 3. Builder Pattern
+
+Step-by-step report construction:
 
 ```csharp
 public class ReportBuilder
 {
     public ReportBuilder WithData(ReportData data) { /* ... */ }
-    public ReportBuilder WithFormatting(ExcelFormatting format) { /* ... */ }
+    public ReportBuilder WithFormatting(ExcelFormat format) { /* ... */ }
     public ReportBuilder WithCharts() { /* ... */ }
     public ExcelPackage Build() { /* ... */ }
 }
 ```
 
-**Vantaggio**: Costruzione step-by-step di report complessi
+**Benefit**: Flexible complex object construction
 
 ### 4. Singleton Pattern
+
+Single configuration instance:
 
 ```csharp
 public class XMLSettings
@@ -310,7 +332,7 @@ public class XMLSettings
 }
 ```
 
-**Vantaggio**: Unica istanza di configurazione in memoria
+**Benefit**: Single configuration instance in memory
 
 ---
 
@@ -318,62 +340,62 @@ public class XMLSettings
 
 ```
 DO.VIVICARE.UI
-  └── DO.VIVICARE.Reporter
-        ├── DO.VIVICARE.Document.* (selettivi)
-        ├── DO.VIVICARE.Report.* (selettivi)
-        ├── EPPlus
-        └── System.*
+  └─ DO.VIVICARE.Reporter
+        ├─ DO.VIVICARE.Document.* (selected)
+        ├─ DO.VIVICARE.Report.* (selected)
+        ├─ EPPlus 4.5.x
+        └─ System.*
 
 DO.VIVICARE.Report.*
-  └── DO.VIVICARE.Document.* (dipendenza specifica)
+  └─ DO.VIVICARE.Document.* (specific)
 
 DO.VIVICARE.Document.*
-  └── System.*
+  └─ System.*
 ```
 
-**Regola d'Oro**: Layer superiore può dipendere da layer inferiore, MA NON viceversa.
+**Golden Rule**: Upper layers can depend on lower layers, but NOT vice versa.
 
 ---
 
-## Estensibilità
+## Extensibility
 
-### Come Aggiungere un Nuovo Report
+### Adding a New Report Type
 
-1. **Creare modulo Document**:
+1. **Create Document Module**
    ```
-   DO.VIVICARE.Document.NuovoDominio/
-   ├── NuovoDominio.cs
-   ├── DO.VIVICARE.Document.NuovoDominio.csproj
-   └── Properties/
-   ```
-
-2. **Creare modulo Report**:
-   ```
-   DO.VIVICARE.Report.NuovoDominio/
-   ├── NuovoDominioReport.cs (implementa IReport)
-   ├── DO.VIVICARE.Report.NuovoDominio.csproj
-   └── Properties/
+   DO.VIVICARE.Document.NewDomain/
+   ├─ NewDomain.cs
+   ├─ Validation.cs
+   ├─ Mapping.cs
+   └─ Properties/
    ```
 
-3. **Implementare interfaccia IReport**:
+2. **Create Report Module**
+   ```
+   DO.VIVICARE.Report.NewDomain/
+   ├─ NewDomainReport.cs (implements IReport)
+   └─ Properties/
+   ```
+
+3. **Implement IReport Interface**
    ```csharp
    public interface IReport
    {
-       ExcelWorksheet GenerateReport(IEnumerable<T> data);
+       ExcelWorksheet GenerateReport(IEnumerable<dynamic> data);
    }
    ```
 
-4. **Registrare in ReportFactory**:
+4. **Register in Factory** (if needed)
    ```csharp
-   case ReportType.NuovoDominio:
-       return new NuovoDominioReport();
+   case ReportType.NewDomain:
+       return new NewDomainReport();
    ```
 
-5. **Aggiornare UI** con nuova opzione
+5. **Update UI** with new option
 
-### Come Aggiungere Nuovo Formato Output
+### Adding a New Output Format
 
-Creare interfaccia adapter:
+Create adapter interface:
 
 ```csharp
 public interface IOutputWriter
@@ -387,70 +409,70 @@ public class JSONWriter : IOutputWriter { /* ... */ }
 
 ---
 
-## Performance e Scalabilità
+## Performance Considerations
 
-### Considerazioni Attuali
+### Known Bottlenecks
 
-**Colli di bottiglia noti:**
-- Generazione Excel grande (>100MB) può essere lenta
-- Caricamento dati da file CSV su dischi lenti
-- Formattazione condizionale su grande numero di righe
+- Large Excel files (>100MB) generation can be slow
+- CSV file loading on slow disks
+- Conditional formatting on large datasets
 
-### Strategie di Ottimizzazione
+### Optimization Strategies
 
-1. **Chunking dei Dati**:
-   - Processare dati in batch di 10K righe
-   - Scrivere incrementalmente su file
+**1. Data Chunking**
+- Process data in batches of 10K rows
+- Write incrementally to file
 
-2. **Async Operations** (futuro):
-   ```csharp
-   public async Task<string> GenerateReportAsync(
-       ReportType type,
-       ReportData data)
-   {
-       return await Task.Run(() => GenerateReport(type, data));
-   }
-   ```
+**2. Async Operations** (future)
+```csharp
+public async Task<string> GenerateReportAsync(
+    ReportType type,
+    ReportData data)
+{
+    return await Task.Run(() => GenerateReport(type, data));
+}
+```
 
-3. **Caching**:
-   - Cache configurazione (già fatto con XMLSettings)
-   - Cache formule ricorrenti
-   - Cache aggregazioni intermedie
+**3. Caching**
+- Configuration caching (already implemented)
+- Formula caching
+- Aggregation caching
 
-4. **Multithreading**:
-   - Processing parallelo di moduli indipendenti
-   - Uso di Parallel.ForEach per loop-heavy
+**4. Parallelization**
+- Process independent modules in parallel
+- Use Parallel.ForEach for data loops
 
-### Benchmark Target
+### Performance Targets
 
-- **Report piccolo** (<5K righe): <5 secondi
-- **Report medio** (5-50K righe): <30 secondi
-- **Report grande** (50K+ righe): <2 minuti
+- **Small report** (<5K rows): <5 seconds
+- **Medium report** (5-50K rows): <30 seconds
+- **Large report** (50K+ rows): <2 minutes
 
 ---
 
-## Roadmap Architetturale
+## Future Enhancements
 
-### Phase 1: Modernizzazione (.NET 6+)
-- Migrazione da Framework
+### Phase 1: Modernization (.NET 6+)
+- Migration from Framework to .NET 6+
 - Async/await patterns
 - Dependency Injection container
 
 ### Phase 2: API Layer
-- REST API per generazione
-- gRPC per alta performance
-- GraphQL per query flessibili
+- REST API for report generation
+- gRPC for high-performance scenarios
+- GraphQL for flexible queries
 
 ### Phase 3: Database
-- Sostituzione file/XML con DB relazionale
-- ORM (Entity Framework Core)
-- Migrazioni versionate
+- Replace XML with relational database
+- Entity Framework Core ORM
+- Versioned migrations
 
 ### Phase 4: Cloud
 - Serverless functions (Azure Functions)
-- Scalabilità orizzontale
+- Horizontal scalability
 - Multi-tenancy support
 
 ---
 
-**Documento aggiornato**: 13 Gennaio 2026
+**Last Updated**: January 13, 2026  
+**Maintained by**: Marco Cavallo
