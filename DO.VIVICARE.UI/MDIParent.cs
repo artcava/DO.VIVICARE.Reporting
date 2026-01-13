@@ -144,10 +144,50 @@ namespace DO.VIVICARE.UI
 
         }
 
-        private void MDIParent_Load(object sender, EventArgs e)
+        private async void MDIParent_Load(object sender, EventArgs e)
         {
             if (ApplicationDeployment.IsNetworkDeployed)
                 Text = $"Reporting [{ApplicationDeployment.CurrentDeployment.CurrentVersion}]";
+
+            // Check for application updates
+            await CheckForApplicationUpdatesAsync();
+        }
+
+        /// <summary>
+        /// Controlla se è disponibile una nuova versione dell'applicazione e notifica l'utente
+        /// </summary>
+        private async System.Threading.Tasks.Task CheckForApplicationUpdatesAsync()
+        {
+            try
+            {
+                var pluginManager = new PluginManager();
+                var updateInfo = await pluginManager.CheckAppUpdateAsync();
+
+                if (updateInfo != null)
+                {
+                    var message = $"È disponibile una nuova versione: {updateInfo.AvailableVersion}\n\n" +
+                                  $"Versione corrente: {updateInfo.CurrentVersion}\n" +
+                                  $"Data rilascio: {updateInfo.ReleaseDate}\n\n" +
+                                  $"Vuoi scaricare l'aggiornamento ora?";
+
+                    var result = MessageBox.Show(
+                        message,
+                        "Aggiornamento Disponibile",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Information);
+
+                    if (result == DialogResult.Yes)
+                    {
+                        // Apri il browser per scaricare l'aggiornamento
+                        System.Diagnostics.Process.Start(updateInfo.DownloadUrl);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log silently - non mostrare errori all'utente per il check update
+                System.Diagnostics.Debug.WriteLine($"Error checking for updates: {ex.Message}");
+            }
         }
     }
 }
