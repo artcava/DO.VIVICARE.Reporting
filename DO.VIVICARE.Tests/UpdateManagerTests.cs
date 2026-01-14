@@ -2,7 +2,6 @@ using Xunit;
 using System;
 using System.IO;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace DO.VIVICARE.Tests
 {
