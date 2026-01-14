@@ -17,7 +17,7 @@ namespace DO.VIVICARE.UI
         {
             Form childForm = new Form();
             childForm.MdiParent = this;
-            childForm.Text = "Window " + childFormNumber++;
+            childForm.Text = "Finestra " + childFormNumber++;
             childForm.Show();
         }
 
@@ -25,7 +25,7 @@ namespace DO.VIVICARE.UI
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            openFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+            openFileDialog.Filter = "File di testo (*.txt)|*.txt|Tutti i file (*.*)|*.*";
             if (openFileDialog.ShowDialog(this) == DialogResult.OK)
             {
                 string FileName = openFileDialog.FileName;
@@ -36,7 +36,7 @@ namespace DO.VIVICARE.UI
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            saveFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+            saveFileDialog.Filter = "File di testo (*.txt)|*.txt|Tutti i file (*.*)|*.*";
             if (saveFileDialog.ShowDialog(this) == DialogResult.OK)
             {
                 string FileName = saveFileDialog.FileName;
@@ -165,14 +165,14 @@ namespace DO.VIVICARE.UI
 
                 if (updateInfo != null)
                 {
-                    var message = $"A new version is available: {updateInfo.AvailableVersion}\n\n" +
-                                  $"Current version: {updateInfo.CurrentVersion}\n" +
-                                  $"Release date: {updateInfo.ReleaseDate}\n\n" +
-                                  $"Do you want to download the update now?";
+                    var message = $"È disponibile una nuova versione: {updateInfo.AvailableVersion}\n\n" +
+                                  $"Versione corrente: {updateInfo.CurrentVersion}\n" +
+                                  $"Data rilascio: {updateInfo.ReleaseDate}\n\n" +
+                                  $"Vuoi scaricare l'aggiornamento ora?";
 
                     var result = MessageBox.Show(
                         message,
-                        "Update Available",
+                        "Aggiornamento Disponibile",
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Information);
 
