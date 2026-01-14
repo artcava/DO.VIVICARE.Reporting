@@ -12,6 +12,11 @@ jobs:
   build:
     runs-on: windows-latest
     
+    permissions:
+      contents: read        # Permesso per leggere il repository
+      checks: write         # Permesso per creare check run (richiesto da dorny/test-reporter)
+      pull-requests: write  # Permesso per commentare su PR
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
