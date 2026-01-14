@@ -1,4 +1,4 @@
-﻿using DO.VIVICARE.Report.Dietetica;
+using DO.VIVICARE.Report.Dietetica;
 using DO.VIVICARE.Reporter;
 using System;
 using System.Drawing;
@@ -29,19 +29,19 @@ namespace DO.VIVICARE.UI
         private void btnExecute_Click(object sender, EventArgs e)
         {
             //MessageBox.Show("SUPER PROCESS STARTS!!!");
-            // solo per test
+            // For testing purposes only
 
             if (lvReport.SelectedItems.Count == 0)
             {
-                MessageBox.Show("Nessun report selezionato!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("No report selected!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             var listViewItemReport = lvReport.SelectedItems[0];
 
             var returnMessage = string.Empty;
-            if (Execute(listViewItemReport, out returnMessage)) MessageBox.Show(returnMessage, "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            else MessageBox.Show(returnMessage, "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (Execute(listViewItemReport, out returnMessage)) MessageBox.Show(returnMessage, "Notice", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else MessageBox.Show(returnMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             LoadReports();
             return;
@@ -49,7 +49,7 @@ namespace DO.VIVICARE.UI
             var docASST = Manager.GetDocuments().Find(a => a.Attribute.Name == "ASST");
             if (docASST == null)
             {
-                MessageBox.Show("File ASST non trovato!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("ASST file not found!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -64,7 +64,7 @@ namespace DO.VIVICARE.UI
 
             if (docASST.Document.Records.Count == 0)
             {
-                MessageBox.Show("ASST nessun record caricato!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("ASST: no records loaded!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             var listASST = docASST.Document.Records;
@@ -76,7 +76,7 @@ namespace DO.VIVICARE.UI
 
             if (ASST == null)
             {
-                MessageBox.Show($"ASST {ASSTCode} non trovata!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"ASST {ASSTCode} not found!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -107,11 +107,11 @@ namespace DO.VIVICARE.UI
 
             if (reportDietetica.ResultRecords.Count() == 0)
             {
-                MessageBox.Show("Nessun dato da elaborare per Dietetica!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("No data to process for Dietary report!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
             else
             {
-                MessageBox.Show("File excel e file tracciato Dietetica creato correttamente!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Excel file and Dietary trace file created successfully!", "Notice", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
             LoadReports();
@@ -122,13 +122,13 @@ namespace DO.VIVICARE.UI
         {
             switch (cmbChoose.SelectedIndex)
             {
-                case 0: // "ICONE GRANDI"
+                case 0: // "LARGE ICONS"
                     lvReport.View = View.LargeIcon;
                     break;
-                case 1: // "ICONE PICCOLE"
+                case 1: // "SMALL ICONS"
                     lvReport.View = View.SmallIcon;
                     break;
-                case 2: // "DETTAGLI"
+                case 2: // "DETAILS"
                     lvReport.View = View.Details;
                     break;
             }
@@ -190,7 +190,7 @@ namespace DO.VIVICARE.UI
                 }
             }
 
-            // DA SOSTITUIRE CON LA LISTA DEGLI OGGETTI DOCUMENT
+            // TO BE REPLACED WITH THE DOCUMENT OBJECTS LIST
             //for (int it = 0; it < 3; it++)
             //{
             //    var row = new DataGridViewRow();
@@ -214,7 +214,7 @@ namespace DO.VIVICARE.UI
                 foreach (var f in Manager.GetReports())
                 {
                     var name = "";
-                    // looking for last report created
+                    // Looking for last created report
                     var lastReportValues = Manager.Settings.GetLastReportValues(f.Attribute.Name);
                     if (lastReportValues != null)
                     {
@@ -234,11 +234,11 @@ namespace DO.VIVICARE.UI
                 lvReport.SmallImageList = imageListPiccole;
                 lvReport.LargeImageList = imageListGrandi;
                 lvReport.MountHeaders(
-                       "Nome Report", 150, HorizontalAlignment.Left,
-                       "Descrizione", 250, HorizontalAlignment.Left,
+                       "Report Name", 150, HorizontalAlignment.Left,
+                       "Description", 250, HorizontalAlignment.Left,
                        "File", 150, HorizontalAlignment.Left,
-                       "Destinazione File", 300, HorizontalAlignment.Left,
-                       "Ultimo creato", 120, HorizontalAlignment.Right
+                       "File Destination", 300, HorizontalAlignment.Left,
+                       "Last Created", 120, HorizontalAlignment.Right
                        );
             }
             catch (Exception ex)
@@ -254,7 +254,7 @@ namespace DO.VIVICARE.UI
             {
                 BaseReport report = (BaseReport)selectedReport.Tag;
 
-                var nameReport = "unkown";
+                var nameReport = "unknown";
                 var ua = (ReportReferenceAttribute)report.GetType().GetCustomAttribute(typeof(ReportReferenceAttribute));
                 if (ua != null)
                 {
@@ -264,20 +264,20 @@ namespace DO.VIVICARE.UI
                 report.CreateParameters();
                 if (report.Parameters.Count > 0)
                 {
-                    //open window input parameters and fill all ReturnValue parameters
+                    // Open window for input parameters and fill all ReturnValue parameters
 
-                    frmInputReportParameter f = new frmInputReportParameter($"Parametri report {nameReport}", report.Parameters);
+                    frmInputReportParameter f = new frmInputReportParameter($"Report parameters {nameReport}", report.Parameters);
                     DialogResult result = f.ShowDialog();
                     if (result != DialogResult.OK)
                     {
-                        message = "Operazione annullata dall'utente!";
+                        message = "Operation cancelled by user!";
                         return false;
                     }
-                    //check return values
+                    // Check return values
                     var invalidValues = report.Parameters.Exists(p => p.ReturnValue == null);
                     if (invalidValues)
                     {
-                        message = "Indicare tutti i valori per i parametri richiesti!";
+                        message = "Please provide all required parameter values!";
                         return false;
                     }
                 }
@@ -292,16 +292,16 @@ namespace DO.VIVICARE.UI
 
                 if (report.ResultRecords.Count() == 0)
                 {
-                    message = $"Nessun dato da elaborare per {nameReport}!";
+                    message = $"No data to process for {nameReport}!";
                     return false;
                 }
 
-                message = $"File excel e file tracciato {nameReport} creato correttamente!";
+                message = $"Excel file and trace file {nameReport} created successfully!";
                 return true;
             }
             catch (Exception ex)
             {
-                message = $"Internal error:{ex.Message}";
+                message = $"Internal error: {ex.Message}";
                 return false;
             }
         }
@@ -311,16 +311,16 @@ namespace DO.VIVICARE.UI
         {
             var listViewItemReport = lvReport.SelectedItems[0];
             var returnMessage = string.Empty;
-            if (Execute(listViewItemReport, out returnMessage)) MessageBox.Show(returnMessage, "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            else MessageBox.Show(returnMessage, "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (Execute(listViewItemReport, out returnMessage)) MessageBox.Show(returnMessage, "Notice", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else MessageBox.Show(returnMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             LoadReports();
         }
         private void openFileExcelToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // APRE FILE xlsx CON EXCEL SEPARATAMENTE o il programma impostato per i file xlsx
+            // Opens the Excel file separately or with the default program set for xlsx files
             var listViewItemReport = lvReport.SelectedItems[0];
             if (listViewItemReport.SubItems[2].Text == "...")
-                MessageBox.Show($"Non hai ancora eseguito nessun report [{listViewItemReport.SubItems[1].Text}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"You haven't executed any report [{listViewItemReport.SubItems[1].Text}] yet!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
             {
                 var destination = listViewItemReport.SubItems[3].Text;
@@ -330,17 +330,17 @@ namespace DO.VIVICARE.UI
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"file [{destination}] errore [{ex.Message}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show($"File [{destination}] error [{ex.Message}]!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
 
         }
         private void openFileCSVToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // APRE FILE csv CON EXCEL SEPARATAMENTE o il programma impostato per i file csv
+            // Opens the CSV file separately or with the default program set for csv files
             var listViewItemReport = lvReport.SelectedItems[0];
             if (listViewItemReport.SubItems[2].Text == "...")
-                MessageBox.Show($"Non hai ancora eseguito nessun report [{listViewItemReport.SubItems[1].Text}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"You haven't executed any report [{listViewItemReport.SubItems[1].Text}] yet!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
             {
                 var destination = listViewItemReport.SubItems[3].Text;
@@ -351,17 +351,17 @@ namespace DO.VIVICARE.UI
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"file [{destination}] errore [{ex.Message}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show($"File [{destination}] error [{ex.Message}]!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
 
         }
         private void openFileTxtToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // APRE FILE txt CON EXCEL SEPARATAMENTE o il programma impostato per i file txt
+            // Opens the text file separately or with the default program set for txt files
             var listViewItemReport = lvReport.SelectedItems[0];
             if (listViewItemReport.SubItems[2].Text == "...")
-                MessageBox.Show($"Non hai ancora eseguito nessun report [{listViewItemReport.SubItems[1].Text}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"You haven't executed any report [{listViewItemReport.SubItems[1].Text}] yet!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
             {
                 var destination = listViewItemReport.SubItems[3].Text;
@@ -372,16 +372,16 @@ namespace DO.VIVICARE.UI
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"file [{destination}] errore [{ex.Message}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show($"File [{destination}] error [{ex.Message}]!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
         }
         private void openFileErrorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // APRE FILE log CON EXCEL SEPARATAMENTE o il programma impostato per i file log
+            // Opens the log file separately or with the default program set for log files
             var listViewItemReport = lvReport.SelectedItems[0];
             if (listViewItemReport.SubItems[2].Text == "...")
-                MessageBox.Show($"Non hai ancora eseguito nessun report [{listViewItemReport.SubItems[1].Text}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"You haven't executed any report [{listViewItemReport.SubItems[1].Text}] yet!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
             {
                 var destination = listViewItemReport.SubItems[3].Text;
@@ -392,7 +392,7 @@ namespace DO.VIVICARE.UI
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"file [{destination}] errore [{ex.Message}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show($"File [{destination}] error [{ex.Message}]!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
         }
@@ -400,11 +400,11 @@ namespace DO.VIVICARE.UI
         {
             var listViewItemReport = lvReport.SelectedItems[0];
             if (listViewItemReport.SubItems[2].Text == "...")
-                MessageBox.Show($"Non hai ancora eseguito nessun report [{listViewItemReport.SubItems[1].Text}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"You haven't executed any report [{listViewItemReport.SubItems[1].Text}] yet!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
             {
                 var report = listViewItemReport.SubItems[0].Text;
-                frmReportHistory f = new frmReportHistory($"Report Storico {report}", report);
+                frmReportHistory f = new frmReportHistory($"Report History {report}", report);
                 DialogResult result = f.ShowDialog();
             }
 
@@ -414,12 +414,12 @@ namespace DO.VIVICARE.UI
             var listViewItemReport = lvReport.SelectedItems[0];
             if (listViewItemReport.SubItems[2].Text == "...")
             {
-                MessageBox.Show($"Non hai ancora eseguito nessun report [{listViewItemReport.SubItems[1].Text}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"You haven't executed any report [{listViewItemReport.SubItems[1].Text}] yet!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             var returnMessage = string.Empty;
-            if (Regenerate(listViewItemReport, out returnMessage)) MessageBox.Show(returnMessage, "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            else MessageBox.Show(returnMessage, "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (Regenerate(listViewItemReport, out returnMessage)) MessageBox.Show(returnMessage, "Notice", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else MessageBox.Show(returnMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         #endregion
 
@@ -442,16 +442,16 @@ namespace DO.VIVICARE.UI
 
                 if (report.ResultRecords.Count() == 0)
                 {
-                    message = "Nessun dato da rigenerare per Dietetica!";
+                    message = "No data to regenerate for Dietary report!";
                     return false;
                 }
 
-                message = "File file CSV/Testo Dietetica rigenerati correttamente!";
+                message = "CSV/Text files for Dietary report regenerated successfully!";
                 return true;
             }
             catch (Exception ex)
             {
-                message = $"Internal error:{ex.Message}";
+                message = $"Internal error: {ex.Message}";
                 return false;
             }
         }
