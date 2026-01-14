@@ -1,4 +1,4 @@
-﻿using DO.VIVICARE.Reporter;
+using DO.VIVICARE.Reporter;
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -20,13 +20,13 @@ namespace DO.VIVICARE.UI
         {
             switch (cmbChoose.SelectedIndex)
             {
-                case 0: // "ICONE GRANDI"
+                case 0: // "LARGE ICONS"
                     lvReport.View = View.LargeIcon;
                     break;
-                case 1: // "ICONE PICCOLE"
+                case 1: // "SMALL ICONS"
                     lvReport.View = View.SmallIcon;
                     break;
-                case 2: // "DETTAGLI"
+                case 2: // "DETAILS"
                     lvReport.View = View.Details;
                     break;
             }
@@ -54,17 +54,17 @@ namespace DO.VIVICARE.UI
         #region ToolStripMenuItem_Click
         private void apriFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // APRE FILE CON EXCEL SEPARATAMENTE
+            // Opens the file with Excel separately
             var nome = lvReport.SelectedItems[0];
             if (nome.SubItems[2].Text == "...")
-                MessageBox.Show($"Non hai ancora caricato nessun file per il documento [{nome.SubItems[0].Text}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"You haven't loaded any file for document [{nome.SubItems[0].Text}] yet!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
                 System.Diagnostics.Process.Start(Path.Combine(Manager.Documents, nome.SubItems[2].Text));
         }
 
         private void caricaFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // UPLOAD NUOVO FILE IN ARCHIVIO.. SOVRASCRIVENDOLO
+            // Upload new file to archive, overwriting it
             var nome = lvReport.SelectedItems[0];
             openFileDialog1.Title = "Excel File";
             openFileDialog1.FileName = "";
@@ -79,7 +79,7 @@ namespace DO.VIVICARE.UI
                     ((BaseDocument)nome.Tag).SourceFilePath = nomeFile;
 
                     //=================================================================
-                    label2.Text = "Attendere...";
+                    label2.Text = "Please wait...";
                     progressBar1.Value = 0;
                     var progress = new Progress<int>(p =>
                     {
@@ -90,7 +90,7 @@ namespace DO.VIVICARE.UI
                     //var ok = await Task.Run(() => ((BaseDocument)nome.Tag).CheckFields(progress));
                     var ok = ((BaseDocument)nome.Tag).CheckFields(progress);
                     Cursor.Current = Cursors.Default;
-                    label2.Text = "Completato!";
+                    label2.Text = "Completed!";
                     //=================================================================
 
                     var status = XMLSettings.DocumentStatus.FileOK;
@@ -98,9 +98,9 @@ namespace DO.VIVICARE.UI
                     if (!ok)
                     {
                         status = XMLSettings.DocumentStatus.FileInError;
-                        //===> Caricare in qualche modo il file di log generato in Path.Combine(Manager.Documents, nome.SubItems[0].Text + ".log")
-                        msg += "Errore nel caricamento del file";
-                        //foreach (var m in ok.Take(5))  //===> qua magari fagliene vedere 5 alla volta.. così non saturi tutto
+                        // Load the generated log file from Path.Combine(Manager.Documents, nome.SubItems[0].Text + ".log")
+                        msg += "Error loading file";
+                        //foreach (var m in ok.Take(5))  // Show 5 at a time to avoid saturation
                         //{
                         //    msg += "\n" + m.ToString();
                         //}
@@ -111,30 +111,30 @@ namespace DO.VIVICARE.UI
                     var now = DateTime.Now;
                     Manager.Settings.UpdateDocument(nome.SubItems[0].Text, extension, nomeFile, now, now, now, status);
                     if (ok)
-                        MessageBox.Show($"File {nome.SubItems[1].Text} caricato correttamente!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show($"File {nome.SubItems[1].Text} loaded successfully!", "Notice", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     else
-                        MessageBox.Show(msg, "Errore!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        MessageBox.Show(msg, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     LoadDocuments();
                 }
             }
         }
         private void apriFileDiorigineToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // APRE FILE CON EXCEL SEPARATAMENTE
+            // Opens the original file with Excel separately
             var nome = lvReport.SelectedItems[0];
             if (nome.SubItems[3].Text == "...")
-                MessageBox.Show($"Non hai ancora caricato nessun file per il documento [{nome.SubItems[0].Text}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"You haven't loaded any file for document [{nome.SubItems[0].Text}] yet!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
                 System.Diagnostics.Process.Start(nome.SubItems[3].Text);
         }
 
         private async void verificaFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // VERIFICA FILE IN ARCHIVIO..
+            // Verify file in archive
             var nome = lvReport.SelectedItems[0];
             if (nome.SubItems[2].Text == "...")
             {
-                MessageBox.Show($"Non hai ancora caricato nessun file per il documento [{nome.SubItems[0].Text}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"You haven't loaded any file for document [{nome.SubItems[0].Text}] yet!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -143,7 +143,7 @@ namespace DO.VIVICARE.UI
             ((BaseDocument)nome.Tag).SourceFilePath = nomeFile;
 
             //=================================================================
-            label2.Text = "Attendere...";
+            label2.Text = "Please wait...";
             progressBar1.Value = 0;
             var progress = new Progress<int>(p =>
             {
@@ -151,7 +151,7 @@ namespace DO.VIVICARE.UI
 
             });
             var res = await Task.Run(() => ((BaseDocument)nome.Tag).CheckFields(progress));
-            label2.Text = "Completato!";
+            label2.Text = "Completed!";
             //=================================================================
 
             var status = XMLSettings.DocumentStatus.FileOK;
@@ -159,8 +159,8 @@ namespace DO.VIVICARE.UI
             if (!res)
             {
                 status = XMLSettings.DocumentStatus.FileInError;
-                //===> qua caricare un nuovo form con la lista degli errori rilevati (da prendere nel log)
-                //foreach (var m in res.Take(5))  //===> qua magari fagliene vedere 5 alla volta.. così non saturi tutto
+                // Load a new form with the list of detected errors (to be taken from the log)
+                //foreach (var m in res.Take(5))  // Show 5 at a time to avoid saturation
                 //{
                 //    msg += "\n" + m.ToString();
                 //}
@@ -169,17 +169,17 @@ namespace DO.VIVICARE.UI
             var now = DateTime.Now;
             Manager.Settings.UpdateDocument(nome.SubItems[0].Text, extension, nomeFile, null, null, now, status);
             if (status == XMLSettings.DocumentStatus.FileOK)
-                MessageBox.Show($"File {nome.SubItems[1].Text} vericato correttamente!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($"File {nome.SubItems[1].Text} verified successfully!", "Notice", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else
-                MessageBox.Show(msg, "Errore!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(msg, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             LoadDocuments();
         }
 
         private void legendaToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form childForm = new frmDocumentLegend($"Legenda {lvReport.SelectedItems[0].Text}", (BaseDocument)lvReport.SelectedItems[0].Tag);
+            Form childForm = new frmDocumentLegend($"Legend {lvReport.SelectedItems[0].Text}", (BaseDocument)lvReport.SelectedItems[0].Tag);
             childForm.MdiParent = this.MdiParent;
-            childForm.Text = $"Legenda {lvReport.SelectedItems[0].Text}";
+            childForm.Text = $"Legend {lvReport.SelectedItems[0].Text}";
             childForm.Show();
         }
         #endregion
@@ -207,13 +207,13 @@ namespace DO.VIVICARE.UI
                 lvReport.SmallImageList = imageListPiccole;
                 lvReport.LargeImageList = imageListGrandi;
                 lvReport.MountHeaders(
-                        "Nome Documento", 100, HorizontalAlignment.Left,
-                        "Descrizione", 180, HorizontalAlignment.Left,
+                        "Document Name", 100, HorizontalAlignment.Left,
+                        "Description", 180, HorizontalAlignment.Left,
                         "File", 120, HorizontalAlignment.Left,
-                        "File di origine", 200, HorizontalAlignment.Left,
-                        "Ultimo caricamento", 120, HorizontalAlignment.Right,
-                        "Ultima modifica", 120, HorizontalAlignment.Right,
-                        "Ultima verifica", 120, HorizontalAlignment.Right);
+                        "Source File", 200, HorizontalAlignment.Left,
+                        "Last Upload", 120, HorizontalAlignment.Right,
+                        "Last Modification", 120, HorizontalAlignment.Right,
+                        "Last Verification", 120, HorizontalAlignment.Right);
             }
             catch (Exception ex)
             {
