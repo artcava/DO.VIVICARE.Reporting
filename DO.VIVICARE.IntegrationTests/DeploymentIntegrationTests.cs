@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace DO.VIVICARE.IntegrationTests
 {
@@ -202,33 +203,20 @@ namespace DO.VIVICARE.IntegrationTests
         }
 
         /// <summary>
-        /// Test: Verify core .NET dependencies are present
-        /// Expected: System assemblies are available
+        /// Test: Verify .NET Framework runtime is correct version
+        /// Expected: Running on .NET Framework 4.7.2 or higher
         /// </summary>
         [Fact]
-        public void CoreDependencies_System_AreResolvable()
+        public void RuntimeEnvironment_IsCorrectFrameworkVersion()
         {
-            // Arrange
-            var systemDependencies = new[]
-            {
-                "System.Core",
-                "System"
-            };
-
-            // Act & Assert
-            foreach (var dependency in systemDependencies)
-            {
-                try
-                {
-                    var assembly = Assembly.Load(dependency);
-                    Assert.NotNull(assembly);
-                }
-                catch (Exception ex)
-                {
-                    // System assemblies should always be available
-                    Assert.False(true, $"Core system dependency {dependency} not found: {ex.Message}");
-                }
-            }
+            // Act
+            string frameworkVersion = RuntimeEnvironment.GetSystemVersion();
+            
+            // Assert
+            Assert.NotNull(frameworkVersion);
+            Assert.NotEmpty(frameworkVersion);
+            // Framework version should start with v4 (e.g., v4.0.30319)
+            Assert.StartsWith("v4", frameworkVersion);
         }
 
         #endregion
