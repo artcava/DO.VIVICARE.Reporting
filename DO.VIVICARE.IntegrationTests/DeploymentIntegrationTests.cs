@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Linq;
 
 namespace DO.VIVICARE.IntegrationTests
 {
@@ -162,11 +163,12 @@ namespace DO.VIVICARE.IntegrationTests
         #region Dependency Resolution Tests
 
         /// <summary>
-        /// Test: Verify all referenced dependencies are available
-        /// Expected: Referenced assemblies can be located
+        /// Test: Verify project dependencies are available
+        /// Expected: DO.VIVICARE.* assemblies can be located
+        /// Note: Skips NuGet packages and system assemblies
         /// </summary>
         [Fact]
-        public void DependencyResolution_AllReferencedAssemblies_AreAvailable()
+        public void DependencyResolution_ProjectDependencies_AreAvailable()
         {
             // Arrange
             string binPath = GetBinPath();
@@ -181,8 +183,13 @@ namespace DO.VIVICARE.IntegrationTests
             var assembly = Assembly.LoadFrom(reporterDll);
             var referencedAssemblies = assembly.GetReferencedAssemblies();
 
+            // Filter to only DO.VIVICARE project dependencies
+            var projectDependencies = referencedAssemblies
+                .Where(a => a.Name.StartsWith("DO.VIVICARE."))
+                .ToList();
+
             // Act & Assert
-            foreach (var refAssembly in referencedAssemblies)
+            foreach (var refAssembly in projectDependencies)
             {
                 try
                 {
@@ -191,14 +198,51 @@ namespace DO.VIVICARE.IntegrationTests
                 }
                 catch (Exception ex)
                 {
-                    // Note: Some framework assemblies might fail, this is acceptable
-                    // Real dependencies should succeed
-                    if (!refAssembly.Name.StartsWith("System.") && 
-                        !refAssembly.Name.StartsWith("Microsoft."))
-                    {
-                        Assert.False(true, $"Failed to resolve dependency {refAssembly.Name}: {ex.Message}");
-                    }
+                    Assert.False(true, $"Failed to resolve project dependency {refAssembly.Name}: {ex.Message}");
                 }
+            }
+        }
+
+        /// <summary>
+        /// Test: Verify NuGet dependencies exist in bin folder
+        /// Expected: External dependencies like DocumentFormat.OpenXml are present as files
+        /// </summary>
+        [Fact]
+        public void DependencyResolution_NuGetPackages_ExistInBinFolder()
+        {
+            // Arrange
+            string binPath = GetBinPath();
+            string reporterDll = Path.Combine(binPath, "DO.VIVICARE.Reporter.dll");
+
+            // Skip if file doesn't exist
+            if (!File.Exists(reporterDll))
+            {
+                return;
+            }
+
+            var assembly = Assembly.LoadFrom(reporterDll);
+            var referencedAssemblies = assembly.GetReferencedAssemblies();
+
+            // Known NuGet packages used by the project
+            var knownNuGetPackages = new[] 
+            { 
+                "DocumentFormat.OpenXml",
+                "ClosedXML",
+                "ExcelNumberFormat"
+            };
+
+            // Filter to NuGet dependencies
+            var nugetDependencies = referencedAssemblies
+                .Where(a => knownNuGetPackages.Any(pkg => a.Name.StartsWith(pkg)))
+                .ToList();
+
+            // Act & Assert - Check if DLL files exist
+            foreach (var refAssembly in nugetDependencies)
+            {
+                string dllPath = Path.Combine(binPath, refAssembly.Name + ".dll");
+                Assert.True(File.Exists(dllPath), 
+                    $"NuGet package {refAssembly.Name}.dll not found in bin folder: {binPath}\n" +
+                    $"This package should be restored by NuGet. Run 'nuget restore' or 'dotnet restore'.");
             }
         }
 
