@@ -39,7 +39,7 @@ namespace DO.VIVICARE.UI
         }
 
         /// <summary>
-        /// Carica la lista di plugin disponibili dal manifest.json di GitHub
+        /// Loads the list of available plugins from GitHub's manifest.json
         /// </summary>
         private async Task LoadPluginManifestAsync()
         {
@@ -67,7 +67,7 @@ namespace DO.VIVICARE.UI
         }
 
         /// <summary>
-        /// Popola la griglia con i plugin documents disponibili dal manifest
+        /// Populates the grid with available document plugins from the manifest
         /// </summary>
         private void PopulateDocumentPlugins(List<PluginInfo> plugins)
         {
@@ -78,7 +78,7 @@ namespace DO.VIVICARE.UI
 
             foreach (var plugin in plugins)
             {
-                // Cerca se il plugin è già installato usando l'ID del plugin
+                // Check if the plugin is already installed using the plugin ID
                 var installedVersion = _pluginManager.GetInstalledPluginVersion(plugin.Id) ?? "Non installato";
 
                 var hasUpdate = installedVersion != "Non installato" &&
@@ -102,12 +102,12 @@ namespace DO.VIVICARE.UI
                 dgvElencoDocuments.Rows[rowIndex].Cells["VersionInstalledDocument"].Value = installedVersion;
                 dgvElencoDocuments.Rows[rowIndex].Cells["HasUpdateDocument"].Value = updateStatus;
                 dgvElencoDocuments.Rows[rowIndex].Cells["DownloadDocument"].Value = status;
-                dgvElencoDocuments.Rows[rowIndex].Tag = plugin; // Salva il plugin object nel tag
+                dgvElencoDocuments.Rows[rowIndex].Tag = plugin; // Save the plugin object in the tag
             }
         }
 
         /// <summary>
-        /// Popola la griglia con i plugin reports disponibili dal manifest
+        /// Populates the grid with available report plugins from the manifest
         /// </summary>
         private void PopulateReportPlugins(List<PluginInfo> plugins)
         {
@@ -118,7 +118,7 @@ namespace DO.VIVICARE.UI
 
             foreach (var plugin in plugins)
             {
-                // Cerca se il plugin è già installato usando l'ID del plugin
+                // Check if the plugin is already installed using the plugin ID
                 var installedVersion = _pluginManager.GetInstalledPluginVersion(plugin.Id) ?? "Non installato";
 
                 var hasUpdate = installedVersion != "Non installato" &&
@@ -147,7 +147,7 @@ namespace DO.VIVICARE.UI
         }
 
         /// <summary>
-        /// Scarica e installa un plugin con progress tracking
+        /// Downloads and installs a plugin with progress tracking
         /// </summary>
         private async Task DownloadAndInstallPluginAsync(PluginInfo plugin)
         {
@@ -174,7 +174,7 @@ namespace DO.VIVICARE.UI
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Information
                         );
-                        // Ricarica la lista
+                        // Reload the list
                         _ = LoadPluginManifestAsync();
                     }
                     else
@@ -200,7 +200,7 @@ namespace DO.VIVICARE.UI
         }
 
         /// <summary>
-        /// Formatta byte in formato leggibile (B, KB, MB)
+        /// Formats bytes in human-readable format (B, KB, MB)
         /// </summary>
         private string FormatBytes(long bytes)
         {
@@ -216,13 +216,13 @@ namespace DO.VIVICARE.UI
 
         private void frmSettings_Shown(object sender, EventArgs e)
         {
-            // Carica il manifest da GitHub all'apertura del form
+            // Load the manifest from GitHub when the form opens
             _ = LoadPluginManifestAsync();
         }
 
         private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // Quando cambia tab, ripopola se il manifest è stato caricato
+            // When tab changes, repopulate if the manifest has been loaded
             if (tabControl.SelectedTab == tabControl.TabPages["tabPageDocuments"])
             {
                 if (_manifest?.Documents != null && _manifest.Documents.Count > 0)
@@ -248,7 +248,7 @@ namespace DO.VIVICARE.UI
             switch (dgvElencoDocuments.Columns[e.ColumnIndex].Name)
             {
                 case "DownloadDocument":
-                    // Usa sempre il PluginManager dal manifest GitHub
+                    // Always use PluginManager from GitHub manifest
                     if (row.Tag is PluginInfo plugin)
                     {
                         _ = DownloadAndInstallPluginAsync(plugin);
@@ -266,7 +266,7 @@ namespace DO.VIVICARE.UI
             switch (dgvElencoReports.Columns[e.ColumnIndex].Name)
             {
                 case "DownloadReport":
-                    // Usa sempre il PluginManager dal manifest GitHub
+                    // Always use PluginManager from GitHub manifest
                     if (row.Tag is PluginInfo plugin)
                     {
                         _ = DownloadAndInstallPluginAsync(plugin);
