@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Deployment.Application;
 using System.Windows.Forms;
 
@@ -17,7 +17,7 @@ namespace DO.VIVICARE.UI
         {
             Form childForm = new Form();
             childForm.MdiParent = this;
-            childForm.Text = "Finestra " + childFormNumber++;
+            childForm.Text = "Window " + childFormNumber++;
             childForm.Show();
         }
 
@@ -25,7 +25,7 @@ namespace DO.VIVICARE.UI
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            openFileDialog.Filter = "File di testo (*.txt)|*.txt|Tutti i file (*.*)|*.*";
+            openFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
             if (openFileDialog.ShowDialog(this) == DialogResult.OK)
             {
                 string FileName = openFileDialog.FileName;
@@ -36,7 +36,7 @@ namespace DO.VIVICARE.UI
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            saveFileDialog.Filter = "File di testo (*.txt)|*.txt|Tutti i file (*.*)|*.*";
+            saveFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
             if (saveFileDialog.ShowDialog(this) == DialogResult.OK)
             {
                 string FileName = saveFileDialog.FileName;
@@ -154,7 +154,7 @@ namespace DO.VIVICARE.UI
         }
 
         /// <summary>
-        /// Controlla se è disponibile una nuova versione dell'applicazione e notifica l'utente
+        /// Checks if a new version of the application is available and notifies the user
         /// </summary>
         private async System.Threading.Tasks.Task CheckForApplicationUpdatesAsync()
         {
@@ -165,27 +165,27 @@ namespace DO.VIVICARE.UI
 
                 if (updateInfo != null)
                 {
-                    var message = $"È disponibile una nuova versione: {updateInfo.AvailableVersion}\n\n" +
-                                  $"Versione corrente: {updateInfo.CurrentVersion}\n" +
-                                  $"Data rilascio: {updateInfo.ReleaseDate}\n\n" +
-                                  $"Vuoi scaricare l'aggiornamento ora?";
+                    var message = $"A new version is available: {updateInfo.AvailableVersion}\n\n" +
+                                  $"Current version: {updateInfo.CurrentVersion}\n" +
+                                  $"Release date: {updateInfo.ReleaseDate}\n\n" +
+                                  $"Do you want to download the update now?";
 
                     var result = MessageBox.Show(
                         message,
-                        "Aggiornamento Disponibile",
+                        "Update Available",
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Information);
 
                     if (result == DialogResult.Yes)
                     {
-                        // Apri il browser per scaricare l'aggiornamento
+                        // Open browser to download the update
                         System.Diagnostics.Process.Start(updateInfo.DownloadUrl);
                     }
                 }
             }
             catch (Exception ex)
             {
-                // Log silently - non mostrare errori all'utente per il check update
+                // Log silently - don't show update check errors to the user
                 System.Diagnostics.Debug.WriteLine($"Error checking for updates: {ex.Message}");
             }
         }
