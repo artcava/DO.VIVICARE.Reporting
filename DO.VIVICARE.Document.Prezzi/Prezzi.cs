@@ -3,7 +3,7 @@
 namespace DO.VIVICARE.Document.Prezzi
 {
     [DocumentReference(Name = "Prezzi", Description = "Elenco dei prezzi per articolo o servizio", RowStart = 2)]
-    public class Prezzi: BaseDocument
+    public class Prezzi : BaseDocument
     {
         [DocumentMemberReference(Column = "A", Position = 1, FieldName = "ASSTDescription")]
         public string ASSTDescription { get; set; }

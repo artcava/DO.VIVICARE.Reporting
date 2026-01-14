@@ -2,7 +2,8 @@
 using System;
 
 namespace DO.VIVICARE.Document.Report16
-{    [DocumentReference(Name = "Report16", Description = "Lista degli articoli somministrati ai pazienti", RowStart =3)]
+{
+    [DocumentReference(Name = "Report16", Description = "Lista degli articoli somministrati ai pazienti", RowStart = 3)]
     public class Report16 : BaseDocument
     {
         [DocumentMemberReference(Column = "E", Position = 5, FieldName = "FiscalCode")]

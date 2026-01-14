@@ -1,13 +1,8 @@
 ﻿using DO.VIVICARE.Reporter;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DO.VIVICARE.UI
@@ -57,12 +52,12 @@ namespace DO.VIVICARE.UI
                 }
                 else
                 {
-                    foreach(DocumentMemberReferenceAttribute attribute in list.OrderBy(d=>d.Position))
+                    foreach (DocumentMemberReferenceAttribute attribute in list.OrderBy(d => d.Position))
                     {
                         lvReport.AddRow(0, attribute.Column, attribute.Position.ToString(), attribute.FieldName);
                     }
                 }
-                
+
                 lvReport.MountHeaders(
                        "Colonna", 100, HorizontalAlignment.Center,
                        "Posizione", 100, HorizontalAlignment.Right,

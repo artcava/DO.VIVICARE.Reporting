@@ -1,12 +1,7 @@
 ﻿using DO.VIVICARE.Reporter;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DO.VIVICARE.UI
@@ -64,9 +59,9 @@ namespace DO.VIVICARE.UI
                 BaseReport objReport = null;
 
                 var reports = Manager.GetReports();
-                if (reports.Count>0)
+                if (reports.Count > 0)
                 {
-                    var reportingReport = reports.FirstOrDefault(r=>r.Attribute.Name == report);
+                    var reportingReport = reports.FirstOrDefault(r => r.Attribute.Name == report);
                     if (reportingReport != null) objReport = reportingReport.Report;
                 }
                 lvReport.Tag = objReport;
@@ -80,7 +75,7 @@ namespace DO.VIVICARE.UI
                     }
                     else
                     {
-                        lvReport.AddRow(0, list[0] == null ? "..." : r +"."+ list[2], list[3] ?? "...", list[4] ?? "...");
+                        lvReport.AddRow(0, list[0] == null ? "..." : r + "." + list[2], list[3] ?? "...", list[4] ?? "...");
                     }
                 }
                 lvReport.SmallImageList = imageListPiccole;
@@ -185,7 +180,7 @@ namespace DO.VIVICARE.UI
             {
                 var fileNoExt = selectedReport.SubItems[0].Text;
                 fileNoExt = fileNoExt.Substring(0, fileNoExt.Length - 5);
-                
+
                 Cursor.Current = Cursors.WaitCursor;
 
                 report.Regenerate(fileNoExt);

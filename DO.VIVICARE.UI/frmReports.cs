@@ -3,11 +3,9 @@ using DO.VIVICARE.Reporter;
 using System;
 using System.Drawing;
 using System.IO;
-using System.Windows.Forms;
 using System.Linq;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Globalization;
+using System.Windows.Forms;
 
 namespace DO.VIVICARE.UI
 {
@@ -49,7 +47,7 @@ namespace DO.VIVICARE.UI
             return;
 
             var docASST = Manager.GetDocuments().Find(a => a.Attribute.Name == "ASST");
-            if (docASST==null)
+            if (docASST == null)
             {
                 MessageBox.Show("File ASST non trovato!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -63,8 +61,8 @@ namespace DO.VIVICARE.UI
             }
             docASST.Document.AttributeName = docASST.Attribute.Name;
             docASST.Document.LoadRecords();
-            
-            if (docASST.Document.Records.Count==0)
+
+            if (docASST.Document.Records.Count == 0)
             {
                 MessageBox.Show("ASST nessun record caricato!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -76,7 +74,7 @@ namespace DO.VIVICARE.UI
 
             BaseDocument ASST = listASST.Where((dynamic w) => w.ASSTCode == ASSTCode).FirstOrDefault();
 
-            if (ASST==null)
+            if (ASST == null)
             {
                 MessageBox.Show($"ASST {ASSTCode} non trovata!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -107,7 +105,7 @@ namespace DO.VIVICARE.UI
             reportDietetica.Execute();
 
 
-            if (reportDietetica.ResultRecords.Count()==0)
+            if (reportDietetica.ResultRecords.Count() == 0)
             {
                 MessageBox.Show("Nessun dato da elaborare per Dietetica!", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
@@ -117,7 +115,7 @@ namespace DO.VIVICARE.UI
             }
 
             LoadReports();
-            
+
         }
 
         private void cmbChoose_SelectionChangeCommitted(object sender, EventArgs e)
@@ -166,7 +164,7 @@ namespace DO.VIVICARE.UI
             var report = (BaseReport)selectedReport.Tag;
 
             report.LoadDocuments();
-            
+
             dgvElenco.Rows.Clear();
 
             var documents = report.Documents;
@@ -176,7 +174,7 @@ namespace DO.VIVICARE.UI
                 var row = new DataGridViewRow();
                 var i = dgvElenco.Rows.Add(row);
                 var list = Manager.Settings.GetDocumentValues(XMLSettings.LibraryType.Document, document.AttributeName);
-                if (list!=null)
+                if (list != null)
                 {
                     dgvElenco.Rows[i].Cells["Document"].Value = document.AttributeName;
                     dgvElenco.Rows[i].Cells["FileName"].Value = list.Count == 0 ? "..." : list[1] == null ? "..." : document.AttributeName + list[1];
@@ -223,13 +221,13 @@ namespace DO.VIVICARE.UI
                         if (lastReportValues.Count != 0) name = lastReportValues[0];
                     }
                     var list = Manager.Settings.GetDocumentValues(XMLSettings.LibraryType.Report, name);
-                    if (list==null)
+                    if (list == null)
                     {
-                        lvReport.AddRow(0, f.Attribute.Name, f.Attribute.Description, "..." , "...", "...");
+                        lvReport.AddRow(0, f.Attribute.Name, f.Attribute.Description, "...", "...", "...");
                     }
                     else
                     {
-                        lvReport.AddRow(0, f.Attribute.Name, f.Attribute.Description, list[0] == null ? "..." : name +"."+ list[2], list[3] ?? "...", list[4] ?? "...");
+                        lvReport.AddRow(0, f.Attribute.Name, f.Attribute.Description, list[0] == null ? "..." : name + "." + list[2], list[3] ?? "...", list[4] ?? "...");
                     }
                     lvReport.Items[lvReport.Items.Count - 1].Tag = f.Report;
                 }
@@ -264,7 +262,7 @@ namespace DO.VIVICARE.UI
                 }
 
                 report.CreateParameters();
-                if (report.Parameters.Count>0)
+                if (report.Parameters.Count > 0)
                 {
                     //open window input parameters and fill all ReturnValue parameters
 
@@ -297,7 +295,7 @@ namespace DO.VIVICARE.UI
                     message = $"Nessun dato da elaborare per {nameReport}!";
                     return false;
                 }
-                
+
                 message = $"File excel e file tracciato {nameReport} creato correttamente!";
                 return true;
             }
@@ -313,7 +311,7 @@ namespace DO.VIVICARE.UI
         {
             var listViewItemReport = lvReport.SelectedItems[0];
             var returnMessage = string.Empty;
-            if (Execute(listViewItemReport, out returnMessage)) MessageBox.Show(returnMessage , "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            if (Execute(listViewItemReport, out returnMessage)) MessageBox.Show(returnMessage, "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else MessageBox.Show(returnMessage, "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
             LoadReports();
         }
@@ -335,7 +333,7 @@ namespace DO.VIVICARE.UI
                     MessageBox.Show($"file [{destination}] errore [{ex.Message}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
-                
+
         }
         private void openFileCSVToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -346,7 +344,7 @@ namespace DO.VIVICARE.UI
             else
             {
                 var destination = listViewItemReport.SubItems[3].Text;
-                destination = destination.Substring(0, destination.Length - 4)+"csv";
+                destination = destination.Substring(0, destination.Length - 4) + "csv";
                 try
                 {
                     System.Diagnostics.Process.Start(destination);
@@ -356,7 +354,7 @@ namespace DO.VIVICARE.UI
                     MessageBox.Show($"file [{destination}] errore [{ex.Message}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
-                
+
         }
         private void openFileTxtToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -418,7 +416,7 @@ namespace DO.VIVICARE.UI
             {
                 MessageBox.Show($"Non hai ancora eseguito nessun report [{listViewItemReport.SubItems[1].Text}]!", "Attenzione!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
-            }          
+            }
             var returnMessage = string.Empty;
             if (Regenerate(listViewItemReport, out returnMessage)) MessageBox.Show(returnMessage, "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else MessageBox.Show(returnMessage, "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -430,14 +428,14 @@ namespace DO.VIVICARE.UI
             message = string.Empty;
             try
             {
-                
+
                 var fileNoExt = selectedReport.SubItems[2].Text;
-                fileNoExt = fileNoExt.Substring(0,fileNoExt.Length-5);
-                
+                fileNoExt = fileNoExt.Substring(0, fileNoExt.Length - 5);
+
                 BaseReport report = (BaseReport)selectedReport.Tag;
 
                 Cursor.Current = Cursors.WaitCursor;
-                
+
                 report.Regenerate(fileNoExt);
 
                 Cursor.Current = Cursors.Default;

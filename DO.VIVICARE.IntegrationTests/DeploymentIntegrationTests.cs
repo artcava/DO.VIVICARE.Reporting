@@ -1,9 +1,9 @@
-using Xunit;
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Linq;
+using Xunit;
 
 namespace DO.VIVICARE.IntegrationTests
 {
@@ -34,7 +34,7 @@ namespace DO.VIVICARE.IntegrationTests
             foreach (var assembly in requiredAssemblies)
             {
                 string assemblyPath = Path.Combine(binPath, assembly);
-                Assert.True(File.Exists(assemblyPath), 
+                Assert.True(File.Exists(assemblyPath),
                     $"Assembly {assembly} not found at {assemblyPath}\n" +
                     $"Searched in: {binPath}\n" +
                     $"Test running from: {AppDomain.CurrentDomain.BaseDirectory}");
@@ -223,8 +223,8 @@ namespace DO.VIVICARE.IntegrationTests
             var referencedAssemblies = assembly.GetReferencedAssemblies();
 
             // Known NuGet packages used by the project
-            var knownNuGetPackages = new[] 
-            { 
+            var knownNuGetPackages = new[]
+            {
                 "DocumentFormat.OpenXml",
                 "ClosedXML",
                 "ExcelNumberFormat"
@@ -239,7 +239,7 @@ namespace DO.VIVICARE.IntegrationTests
             foreach (var refAssembly in nugetDependencies)
             {
                 string dllPath = Path.Combine(binPath, refAssembly.Name + ".dll");
-                Assert.True(File.Exists(dllPath), 
+                Assert.True(File.Exists(dllPath),
                     $"NuGet package {refAssembly.Name}.dll not found in bin folder: {binPath}\n" +
                     $"This package should be restored by NuGet. Run 'nuget restore' or 'dotnet restore'.");
             }
@@ -254,7 +254,7 @@ namespace DO.VIVICARE.IntegrationTests
         {
             // Act
             string frameworkVersion = RuntimeEnvironment.GetSystemVersion();
-            
+
             // Assert
             Assert.NotNull(frameworkVersion);
             Assert.NotEmpty(frameworkVersion);
@@ -308,7 +308,7 @@ namespace DO.VIVICARE.IntegrationTests
         {
             // Start from test assembly location
             string currentDir = AppDomain.CurrentDomain.BaseDirectory;
-            
+
             // Navigate up to find solution root (contains .sln file)
             DirectoryInfo dir = new DirectoryInfo(currentDir);
             while (dir != null && !File.Exists(Path.Combine(dir.FullName, "DO.VIVICARE.Reporting.sln")))
@@ -401,7 +401,7 @@ namespace DO.VIVICARE.IntegrationTests
 
             // At least some modules should be deployed
             // (Don't fail if not all are compiled yet)
-            Assert.True(existingModules >= 0, 
+            Assert.True(existingModules >= 0,
                 $"Expected document modules in {binPath}. Found {existingModules}/{documentModules.Length}");
         }
 
@@ -435,7 +435,7 @@ namespace DO.VIVICARE.IntegrationTests
             }
 
             // At least some modules should be deployed
-            Assert.True(existingModules >= 0, 
+            Assert.True(existingModules >= 0,
                 $"Expected report modules in {binPath}. Found {existingModules}/{reportModules.Length}");
         }
 
@@ -447,7 +447,7 @@ namespace DO.VIVICARE.IntegrationTests
         {
             // Start from test assembly location
             string currentDir = AppDomain.CurrentDomain.BaseDirectory;
-            
+
             // Navigate up to find solution root
             DirectoryInfo dir = new DirectoryInfo(currentDir);
             while (dir != null && !File.Exists(Path.Combine(dir.FullName, "DO.VIVICARE.Reporting.sln")))

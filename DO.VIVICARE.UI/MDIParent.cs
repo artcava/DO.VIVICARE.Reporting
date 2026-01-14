@@ -109,14 +109,14 @@ namespace DO.VIVICARE.UI
             frmSettings f = new frmSettings();
             f.ShowDialog();
         }
-       
+
         private void archivioToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             foreach (Form childForm in MdiChildren)
             {
                 if (childForm.GetType() == typeof(frmReports))
                 {
-                    
+
                     childForm.Focus();
                     return;
                 }

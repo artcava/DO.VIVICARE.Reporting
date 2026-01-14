@@ -26,13 +26,13 @@ namespace DO.VIVICARE.Reporter
         /// <summary>
         /// 
         /// </summary>
-        public static XMLSettings Settings 
-        { 
-            get 
+        public static XMLSettings Settings
+        {
+            get
             {
                 if (_settings == null) _settings = new XMLSettings();
                 return _settings;
-            } 
+            }
         }
         /// <summary>
         /// 
@@ -181,15 +181,15 @@ namespace DO.VIVICARE.Reporter
                     cells.Add(cell);
                     totals.Add(col, 0);
                 }
-                manExcel.AddRow(cells,1);
+                manExcel.AddRow(cells, 1);
 
-                if (rowCount>0)
+                if (rowCount > 0)
                 {
                     var records = report.ResultRecords;
 
                     // data rows excel sheet
                     UInt32Value rowIndex = 2;
-                    for (int i = rowStart; i <= (rowCount+1); i++)
+                    for (int i = rowStart; i <= (rowCount + 1); i++)
                     {
                         var element = report.ResultRecords[i - 2];
                         cells = new List<Cell>();
@@ -202,7 +202,7 @@ namespace DO.VIVICARE.Reporter
                                 CellValue = new CellValue(""),
                                 DataType = CellValues.String
                             };
-                           
+
                             var nameField = col.FieldName;
                             var propField = element.GetType().GetProperty(nameField);
 
@@ -334,7 +334,7 @@ namespace DO.VIVICARE.Reporter
             finally
             {
                 WriteLog(list, fileWithoutExt);
-                if(manExcel!=null) manExcel.Dispose();
+                if (manExcel != null) manExcel.Dispose();
             }
         }
         /// <summary>
@@ -355,9 +355,9 @@ namespace DO.VIVICARE.Reporter
                 {
                     name = ua.Name;
                 }
-               
+
                 int rowCount = report.ResultRecords.Count();
-                
+
 
                 List<string> file = new List<string>();
                 var records = report.ResultRecords;
@@ -385,11 +385,11 @@ namespace DO.VIVICARE.Reporter
                                     }
                                     else
                                     {
-                                        line += $"\"{ propField.GetValue(record)}\";";
+                                        line += $"\"{propField.GetValue(record)}\";";
                                     }
                                     break;
                                 default:
-                                    line += $"\"{ propField.GetValue(record)}\";";
+                                    line += $"\"{propField.GetValue(record)}\";";
                                     break;
                             }
                         }
@@ -558,7 +558,7 @@ namespace DO.VIVICARE.Reporter
         /// <param name="cv"></param>
         /// <returns></returns>
         public static string DatCV(string cv)
-        {               
+        {
             string Months = "ABCDEHLMPRST";
 
             try
@@ -672,7 +672,7 @@ namespace DO.VIVICARE.Reporter
         public static string ErogaRSA(string hostType)
         {
             if (string.IsNullOrEmpty(hostType)) return null;
-            return hostType.ToUpper()=="RSA"?"1":"2";
+            return hostType.ToUpper() == "RSA" ? "1" : "2";
         }
         /// <summary>                                                                      
         /// Funzione che in base documento e record in ingresso restituisce l'importo formattato NNNNNNNNNNDD
@@ -754,7 +754,7 @@ namespace DO.VIVICARE.Reporter
         /// <param name="value"></param>
         /// <param name="format"></param>
         /// <returns></returns>
-        public static DateTime ConvertDate(string value, string format=null)
+        public static DateTime ConvertDate(string value, string format = null)
         {
             DateTime ret;
             if (format != null)
@@ -785,7 +785,7 @@ namespace DO.VIVICARE.Reporter
                             throw new FormatException("Not valid format", ex);
                         }
                     }
-                }                  
+                }
             }
             return ret;
         }

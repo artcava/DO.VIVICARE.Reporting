@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DO.VIVICARE.Report.AllegatoADI
 {
@@ -86,7 +84,7 @@ namespace DO.VIVICARE.Report.AllegatoADI
                 {
                     if (adi.ASL != "ASL LATINA") continue;
 
-                    var val = reportAllegatoADI.Where(r => (r.PatientName == adi.PatientName) 
+                    var val = reportAllegatoADI.Where(r => (r.PatientName == adi.PatientName)
                                                         && (r.District == adi.ASL + " " + adi.District)).FirstOrDefault();
                     if (val == null)
                     {
@@ -122,7 +120,7 @@ namespace DO.VIVICARE.Report.AllegatoADI
                     if (sheetrow.BasePrice > 0)
                     {
                         sheetrow.BasePacketNumber = ((sheetrow.HourNumberTotal - 4) / 4) <= 0 ? 0 : ((sheetrow.HourNumberTotal - 4) / 4);
-                        sheetrow.ReliefPacketNumber= ((sheetrow.HourNumberTotal - 4) / 4) >= 0 ? sheetrow.HourOssNumbertotal / 5 : ((sheetrow.HourNumberTotal + sheetrow.HourOssNumbertotal - 4) / 5) <= 0 ? 0 : (sheetrow.HourNumberTotal + sheetrow.HourOssNumbertotal - 4) / 5;
+                        sheetrow.ReliefPacketNumber = ((sheetrow.HourNumberTotal - 4) / 4) >= 0 ? sheetrow.HourOssNumbertotal / 5 : ((sheetrow.HourNumberTotal + sheetrow.HourOssNumbertotal - 4) / 5) <= 0 ? 0 : (sheetrow.HourNumberTotal + sheetrow.HourOssNumbertotal - 4) / 5;
                     }
                     else
                     {
@@ -161,7 +159,7 @@ namespace DO.VIVICARE.Report.AllegatoADI
         }
 
         #region Member
-        [ReportMemberReference(Column = "A", Position = 1, ColumnName = "DISTRETTO", Length = 50, FieldName = "District", HaveText = true, TextForSum = "TOTALE FATTURATO", HeaderStyleIndex =2, CellStyleIndex = 1)]
+        [ReportMemberReference(Column = "A", Position = 1, ColumnName = "DISTRETTO", Length = 50, FieldName = "District", HaveText = true, TextForSum = "TOTALE FATTURATO", HeaderStyleIndex = 2, CellStyleIndex = 1)]
         public string District { get; set; }
 
         [ReportMemberReference(Column = "B", Position = 2, ColumnName = "NOME PAZIENTE", Length = 50, Required = true, FieldName = "PatientName", HeaderStyleIndex = 2, CellStyleIndex = 1)]
@@ -182,11 +180,11 @@ namespace DO.VIVICARE.Report.AllegatoADI
         [ReportMemberReference(Column = "G", Position = 7, ColumnName = "PRELIEVI", FieldName = "Sample", HeaderStyleIndex = 2, CellStyleIndex = 1)]
         public decimal Sample { get; set; }
 
-        [ReportMemberReference(Column = "H", Position = 8, ColumnName = "TOTALE FATTURATO", FieldName = "InvoiceTotal", HeaderStyleIndex = 2, CellStyleIndex = 1, HaveSum =true)]
+        [ReportMemberReference(Column = "H", Position = 8, ColumnName = "TOTALE FATTURATO", FieldName = "InvoiceTotal", HeaderStyleIndex = 2, CellStyleIndex = 1, HaveSum = true)]
         public decimal InvoiceTotal { get { return AidTotal + ExtraMedicalVisit + Diagnostic + Transport + Sample; } }
 
 
-        public class Patient:BaseSheet
+        public class Patient : BaseSheet
         {
             [ReportMemberReference(Column = "A", Position = 1, ColumnName = "CONTRAENTE", Length = 50, FieldName = "District", HeaderStyleIndex = 4, CellStyleIndex = 1)]
             public string District { get; set; }
@@ -197,7 +195,7 @@ namespace DO.VIVICARE.Report.AllegatoADI
             [ReportMemberReference(Column = "C", Position = 3, ColumnName = "DATA", FieldName = "ActivityDate", Format = "dd/MM/yyyy", HeaderStyleIndex = 4, CellStyleIndex = 1)]
             public DateTime ActivityDate { get; set; }
 
-            [ReportMemberReference(Column = "D", Position = 4, ColumnName = "ORE FKT", FieldName = "HourFktNumberTotal", HeaderStyleIndex = 4, CellStyleIndex =3, TotalStyleIndex =5, HaveSum =true)]
+            [ReportMemberReference(Column = "D", Position = 4, ColumnName = "ORE FKT", FieldName = "HourFktNumberTotal", HeaderStyleIndex = 4, CellStyleIndex = 3, TotalStyleIndex = 5, HaveSum = true)]
             public decimal HourFktNumberTotal { get; set; }
 
             [ReportMemberReference(Column = "E", Position = 5, ColumnName = "ORE INF", FieldName = "HourInfNumberTotal", HeaderStyleIndex = 4, CellStyleIndex = 3, TotalStyleIndex = 5, HaveSum = true)]
@@ -234,7 +232,7 @@ namespace DO.VIVICARE.Report.AllegatoADI
             public decimal Discount { get { return DiscountBase * 0.1M; } }
 
             [ReportMemberReference(Column = "P", Position = 16, ColumnName = "TOTALE NETTO", FieldName = "NetTotal", HeaderStyleIndex = 7, CellStyleIndex = 6, TotalStyleIndex = 5, HaveSum = true)]
-            public decimal NetTotal { get { return TotalValue-Discount; } }
+            public decimal NetTotal { get { return TotalValue - Discount; } }
 
             [ReportMemberReference(Column = "Q", Position = 17, ColumnName = "ACCESSI MEDICO", FieldName = "AccessDocNumber", HeaderStyleIndex = 4, CellStyleIndex = 3)]
             public decimal AccessDocNumber { get; set; }

@@ -11,7 +11,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
     /// 
     /// </summary>
     [ReportReference(Name = "Valorizzazione", Description = "Report Valorizzazione ADI Lazio")]
-    public class Valorizzazione:BaseReport
+    public class Valorizzazione : BaseReport
     {
         /// <summary>
         /// 
@@ -96,7 +96,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
                 foreach (dynamic adi in listADIAltaIntensita)
                 {
                     // Creo o utilizzo una riga esistente di valorizzazione
-                    var val = reportValorizzazione.Where(r => r.PatientName == adi.Patient && r.FiscalCode== adi.FiscalCode && r.ASL == adi.ASL && r.District == adi.District && r.ActivityDate == adi.Date).FirstOrDefault();
+                    var val = reportValorizzazione.Where(r => r.PatientName == adi.Patient && r.FiscalCode == adi.FiscalCode && r.ASL == adi.ASL && r.District == adi.District && r.ActivityDate == adi.Date).FirstOrDefault();
                     if (val == null)
                     {
                         val = new Valorizzazione { PatientName = adi.Patient, FiscalCode = adi.FiscalCode, ASL = adi.ASL, District = adi.District, ActivityDate = adi.Date };
@@ -125,7 +125,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
                             var prestazione = prestazioni.Where((dynamic hs) => ((string)hs.HealthWorkerType).ToUpper() == ((string)oss.WorkType).ToUpper()).FirstOrDefault();
                             if (prestazione == null)
                             {
-                                prestazione = prestazioni.Where((dynamic hs) =>  string.IsNullOrEmpty(hs.HealthWorkerType)).FirstOrDefault();
+                                prestazione = prestazioni.Where((dynamic hs) => string.IsNullOrEmpty(hs.HealthWorkerType)).FirstOrDefault();
                                 if (prestazione == null) throw new Exception($"[{adi.Activity}] non ha un corrispettivo nel file delle Prestazioni!");
                             }
                             worktype = prestazione.WorkType;
@@ -295,7 +295,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
                             val.SampleNumber = val.SampleNumber2 += 1;
                             break;
                         case "TRASPORTO CON INFERMIERE":
-                        // Modifica 17/04/2024 su Tk #1506
+                            // Modifica 17/04/2024 su Tk #1506
                             val.TransInfNumberTotal += 1;
                             //val.TransInfNumber += 1;
                             break;
@@ -334,7 +334,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
                 }
 
                 //Arrotondamenti sulle attività a durata
-                foreach(var val in reportValorizzazione)
+                foreach (var val in reportValorizzazione)
                 {
                     val.HourFktNumberTotal = RoundValue(val.HourFktNumberTotal);
                     val.HourOssNumber = RoundValue(val.HourOssNumber);
@@ -538,10 +538,10 @@ namespace DO.VIVICARE.Report.Valorizzazione
                 foreach (var patient in patients)
                 {
                     int counter = 0;
-                    var items = (from r in reportValorizzazione where r.PatientName == patient && r.AccessAneNumber+r.AccessChiNumber > 0 select r).ToList();
+                    var items = (from r in reportValorizzazione where r.PatientName == patient && r.AccessAneNumber + r.AccessChiNumber > 0 select r).ToList();
                     bool havepack = (from r in reportValorizzazione where r.PatientName == patient select r).Any(r => r.BasePacketNumber > 0);
 
-                    foreach(var item in items)
+                    foreach (var item in items)
                     {
                         var specnumber = item.AccessAneNumber + item.AccessChiNumber;
                         for (int i = 1; i <= specnumber; i++)
@@ -662,7 +662,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         [ReportMemberReference(Column = "D", Position = 4, ColumnName = "DISTRETTO", Length = 50, FieldName = "District")]
         public string District { get; set; }
 
-        [ReportMemberReference(Column = "E", Position = 5, ColumnName = "DATA ATTIVITA'", FieldName = "ActivityDate", Format ="dd/MM/yyyy")]
+        [ReportMemberReference(Column = "E", Position = 5, ColumnName = "DATA ATTIVITA'", FieldName = "ActivityDate", Format = "dd/MM/yyyy")]
         public DateTime ActivityDate { get; set; }
 
         [ReportMemberReference(Column = "F", Position = 6, ColumnName = "VALORE TOTALE CALCOLATO", FieldName = "TotalValue")]
@@ -711,7 +711,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         #region ORE RIABILITAZIONE (R-T)
         [ReportMemberReference(Column = "R", Position = 18, ColumnName = "NUMERO ORE RIAB. (FKT/LOGO/TPNEE/TO)", FieldName = "HourRehabNumber")]
         public decimal HourRehabNumber { get; set; }
-        
+
         [ReportMemberReference(Column = "S", Position = 19, ColumnName = "VALORE ORE RIAB.", FieldName = "HourRehabValue")]
         public decimal HourRehabValue { get; set; }
 
@@ -722,7 +722,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         #region ORE OSS (U-W)
         [ReportMemberReference(Column = "U", Position = 21, ColumnName = "NUMERO ORE OSS", FieldName = "HourOssNumber")]
         public decimal HourOssNumber { get; set; }
-        
+
         [ReportMemberReference(Column = "V", Position = 22, ColumnName = "VALORE ORE OSS", FieldName = "HourOssValue")]
         public decimal HourOssValue { get; set; }
 
@@ -733,7 +733,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         #region ORE PSICOLOGO (X-Z)
         [ReportMemberReference(Column = "X", Position = 24, ColumnName = "NUMERO ORE PSICOLOGO", FieldName = "HourPsyNumber")]
         public decimal HourPsyNumber { get; set; }
-        
+
         [ReportMemberReference(Column = "Y", Position = 25, ColumnName = "VALORE ORE PSICOLOGO", FieldName = "HourPsyValue")]
         public decimal HourPsyValue { get; set; }
 
@@ -744,7 +744,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         #region PRELIEVI (AA-AC)
         [ReportMemberReference(Column = "AA", Position = 27, ColumnName = "NUMERO PRELIEVI", FieldName = "SampleNumber")]
         public decimal SampleNumber { get; set; }
-        
+
         [ReportMemberReference(Column = "AB", Position = 28, ColumnName = "VALORE PRELIEVO", FieldName = "SampleValue")]
         public decimal SampleValue { get; set; }
 
@@ -755,7 +755,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         #region TRASPORTI CON INF (AD-AF)
         [ReportMemberReference(Column = "AD", Position = 30, ColumnName = "NUMERO TRASPORTI CON INF", FieldName = "TransInfNumber")]
         public decimal TransInfNumber { get; set; }
-        
+
         [ReportMemberReference(Column = "AE", Position = 31, ColumnName = "VALORE TRASPORTO CON INF", FieldName = "TransInfValue")]
         public decimal TransInfValue { get; set; }
 
@@ -766,7 +766,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         #region TRASPORTI CON MED (AG-AI)
         [ReportMemberReference(Column = "AG", Position = 33, ColumnName = "NUMERO TRASPORTI CON MED", FieldName = "TransDocNumber")]
         public decimal TransDocNumber { get; set; }
-        
+
         [ReportMemberReference(Column = "AH", Position = 34, ColumnName = "VALORE TRASPORTO CON MED", FieldName = "TransDocValue")]
         public decimal TransDocValue { get; set; }
 
@@ -777,7 +777,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
         #region ACCESSI SPECIALISTICI (AJ-AL)
         [ReportMemberReference(Column = "AJ", Position = 36, ColumnName = "NUMERO ACCESSI SPECIALISTICI", FieldName = "SpecialistAccessNumber")]
         public decimal SpecialistAccessNumber { get; set; }
-        
+
         [ReportMemberReference(Column = "AK", Position = 37, ColumnName = "VALORE ACCESSI SPECIALISTICI", FieldName = "SpecialistAccessValue")]
         public decimal SpecialistAccessValue { get; set; }
 
@@ -887,22 +887,22 @@ namespace DO.VIVICARE.Report.Valorizzazione
         #region ORE TOTALI (BN-BT)
         [ReportMemberReference(Column = "BN", Position = 66, ColumnName = "NR ORE INF TOTALI", FieldName = "HourInfNumberTotal")]
         public decimal HourInfNumberTotal { get; set; }
-        
+
         [ReportMemberReference(Column = "BO", Position = 67, ColumnName = "Nr ORE FKT TOTALI", FieldName = "HourFktNumberTotal")]
         public decimal HourFktNumberTotal { get; set; }
-        
+
         [ReportMemberReference(Column = "BP", Position = 68, ColumnName = "NR ORE LOGOPEDISTA TOTALI", FieldName = "HourLogNumberTotal")]
         public decimal HourLogNumberTotal { get; set; }
-        
+
         [ReportMemberReference(Column = "BQ", Position = 69, ColumnName = "Nr ORE TPNEE TOTALI", FieldName = "HourTpnNumberTotal")]
         public decimal HourTpnNumberTotal { get; set; }
-        
+
         [ReportMemberReference(Column = "BR", Position = 70, ColumnName = "NR ORE TO TOTALI", FieldName = "HourTerNumberTotal")]
         public decimal HourTerNumberTotal { get; set; }
-        
+
         [ReportMemberReference(Column = "BS", Position = 71, ColumnName = "Nr ORE PSICOLOGO TOTALI", FieldName = "HourPsiNumberTotal")]
         public decimal HourPsiNumberTotal { get; set; }
-        
+
         [ReportMemberReference(Column = "BT", Position = 72, ColumnName = "NR ORE OSS TOTALI", FieldName = "HourOssNumbertotal")]
         public decimal HourOssNumbertotal { get; set; }
         #endregion
@@ -910,10 +910,10 @@ namespace DO.VIVICARE.Report.Valorizzazione
         #region NUMERO ACCESSI, PRELIEVI, TRASPORTI (BU-BY)
         [ReportMemberReference(Column = "BU", Position = 73, ColumnName = "NR ACCESSI ANESTESISTA TOTALI", FieldName = "AccessAneNumber")]
         public decimal AccessAneNumber { get; set; }
-        
+
         [ReportMemberReference(Column = "BV", Position = 74, ColumnName = "NR ACCESSI MEDICO CHIRURGO TOTALI", FieldName = "AccessChiNumber")]
         public decimal AccessChiNumber { get; set; }
-        
+
         [ReportMemberReference(Column = "BW", Position = 75, ColumnName = "NR PRELIEVI", FieldName = "SampleNumber2")]
         public decimal SampleNumber2 { get; set; }
 

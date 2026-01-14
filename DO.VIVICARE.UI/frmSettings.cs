@@ -1,10 +1,6 @@
-using DO.VIVICARE.Reporter;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -84,15 +80,15 @@ namespace DO.VIVICARE.UI
             {
                 // Cerca se il plugin è già installato usando l'ID del plugin
                 var installedVersion = _pluginManager.GetInstalledPluginVersion(plugin.Id) ?? "Non installato";
-                
-                var hasUpdate = installedVersion != "Non installato" && 
+
+                var hasUpdate = installedVersion != "Non installato" &&
                     _pluginManager.HasUpdate(
                         new PluginInfo { Version = installedVersion },
                         plugin
                     );
 
-                var status = installedVersion == "Non installato" 
-                    ? "Download" 
+                var status = installedVersion == "Non installato"
+                    ? "Download"
                     : (hasUpdate ? "⬇️ Aggiorna" : "✓ Aggiornato");
 
                 var updateStatus = installedVersion == "Non installato"
@@ -125,14 +121,14 @@ namespace DO.VIVICARE.UI
                 // Cerca se il plugin è già installato usando l'ID del plugin
                 var installedVersion = _pluginManager.GetInstalledPluginVersion(plugin.Id) ?? "Non installato";
 
-                var hasUpdate = installedVersion != "Non installato" && 
+                var hasUpdate = installedVersion != "Non installato" &&
                     _pluginManager.HasUpdate(
                         new PluginInfo { Version = installedVersion },
                         plugin
                     );
 
-                var status = installedVersion == "Non installato" 
-                    ? "Download" 
+                var status = installedVersion == "Non installato"
+                    ? "Download"
                     : (hasUpdate ? "⬇️ Aggiorna" : "✓ Aggiornato");
 
                 var updateStatus = installedVersion == "Non installato"

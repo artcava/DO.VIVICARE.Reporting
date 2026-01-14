@@ -7,7 +7,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Security.Cryptography;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -102,9 +101,9 @@ namespace DO.VIVICARE.UI
                 {
                     client.DefaultRequestHeaders.Add("User-Agent", "DO.VIVICARE");
                     client.Timeout = TimeSpan.FromSeconds(30);
-                    
+
                     var response = await client.GetAsync(MANIFEST_URL);
-                    
+
                     LogDebug($"HTTP Status: {response.StatusCode}");
 
                     if (!response.IsSuccessStatusCode)
@@ -119,7 +118,7 @@ namespace DO.VIVICARE.UI
                     LogDebug($"Manifest JSON received: {json.Length} bytes");
 
                     var manifest = JsonConvert.DeserializeObject<PluginManifest>(json);
-                    
+
                     if (manifest == null)
                     {
                         LogError("Failed to deserialize manifest JSON");
@@ -289,7 +288,7 @@ namespace DO.VIVICARE.UI
             try
             {
                 setupZipPath = Path.Combine(_pluginDirectory, "setup_temp.zip");
-                
+
                 LogDebug($"Downloading setup package from {plugin.DownloadUrl}");
 
                 using (var client = new HttpClient())
@@ -340,7 +339,7 @@ namespace DO.VIVICARE.UI
                 using (var archive = System.IO.Compression.ZipFile.OpenRead(setupZipPath))
                 {
                     // Cerca il DLL nel ZIP (potrebbe essere in sottocartelle)
-                    var entry = archive.Entries.FirstOrDefault(e => 
+                    var entry = archive.Entries.FirstOrDefault(e =>
                         e.Name.Equals(plugin.FileName, StringComparison.OrdinalIgnoreCase) ||
                         e.FullName.EndsWith(plugin.FileName, StringComparison.OrdinalIgnoreCase));
 
@@ -503,7 +502,7 @@ namespace DO.VIVICARE.UI
                     {
                         var fileName = Path.GetFileNameWithoutExtension(file);
                         var assembly = AssemblyName.GetAssemblyName(file);
-                        
+
                         installed.Add(new InstalledPlugin
                         {
                             Name = assembly.Name,

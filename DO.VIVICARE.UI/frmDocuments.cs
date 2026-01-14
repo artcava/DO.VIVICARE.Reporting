@@ -9,7 +9,7 @@ using System.Windows.Forms;
 namespace DO.VIVICARE.UI
 {
     public partial class frmDocuments : Form
-    { 
+    {
         public frmDocuments()
         {
             InitializeComponent();

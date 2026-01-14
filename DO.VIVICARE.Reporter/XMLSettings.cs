@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Xml;
 using System.Linq;
+using System.Xml;
 
 namespace DO.VIVICARE.Reporter
 {
@@ -82,7 +82,7 @@ namespace DO.VIVICARE.Reporter
             XmlNode node = Documents.SelectSingleNode($"DOCUMENT[@name='{name}']");
 
             var extAttr = node.Attributes["ext"];
-            if(extAttr==null) extAttr = node.Attributes.Append(CreateAttribute("ext"));
+            if (extAttr == null) extAttr = node.Attributes.Append(CreateAttribute("ext"));
             extAttr.Value = extension;
 
             var origAttr = node.Attributes["orig"];
@@ -91,7 +91,7 @@ namespace DO.VIVICARE.Reporter
 
             var lastAttr = node.Attributes["last"];
             if (lastAttr == null) lastAttr = node.Attributes.Append(CreateAttribute("last"));
-            if(upload!=null) lastAttr.Value = upload.Value.ToString("yyyy-MM-dd HH:mm");
+            if (upload != null) lastAttr.Value = upload.Value.ToString("yyyy-MM-dd HH:mm");
 
             var modAttr = node.Attributes["mod"];
             if (modAttr == null) modAttr = node.Attributes.Append(CreateAttribute("mod"));
@@ -106,11 +106,11 @@ namespace DO.VIVICARE.Reporter
             statusAttr.Value = ((int)status).ToString();
         }
 
-       
+
         public void UpdateReport(string name, string report, string extension, string destination, DateTime? create, ReportStatus status)
         {
             XmlNode node = Reports.SelectSingleNode($"REPORT[@name='{name}']");
-            if (node==null)
+            if (node == null)
             {
                 node = Reports.AppendChild(CreateElement("REPORT"));
                 var nameAttr = node.Attributes.Append(CreateAttribute("name"));
@@ -199,7 +199,7 @@ namespace DO.VIVICARE.Reporter
             try
             {
                 List<string> attributes = new List<string>();
-                IEnumerable<XmlNode> nodes = Reports.SelectNodes($"REPORT[@report='{report}']").Cast<XmlNode>().OrderByDescending(r=> Convert.ToDateTime(r.Attributes["create"].Value));
+                IEnumerable<XmlNode> nodes = Reports.SelectNodes($"REPORT[@report='{report}']").Cast<XmlNode>().OrderByDescending(r => Convert.ToDateTime(r.Attributes["create"].Value));
 
                 if (nodes == null) return null;
                 if (nodes.Count() == 0) return null;

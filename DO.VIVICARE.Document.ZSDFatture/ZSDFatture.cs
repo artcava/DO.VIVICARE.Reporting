@@ -3,8 +3,8 @@ using System;
 
 namespace DO.VIVICARE.Document.ZSDFatture
 {
-    [DocumentReference(Name = "ZSDFatture", Description = "File delle fatture", RowStart =2)]
-    public class ZSDFatture:BaseDocument
+    [DocumentReference(Name = "ZSDFatture", Description = "File delle fatture", RowStart = 2)]
+    public class ZSDFatture : BaseDocument
     {
         [DocumentMemberReference(Column = "A", Position = 1, FieldName = "Customer")]
         public string Customer { get; set; }

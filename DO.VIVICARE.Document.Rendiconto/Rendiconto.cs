@@ -3,7 +3,7 @@
 namespace DO.VIVICARE.Document.Rendiconto
 {
     [DocumentReference(Name = "Rendiconto", Description = "Rendiconto prelievi da conto deposito", RowStart = 2)]
-    public class Rendiconto:BaseDocument
+    public class Rendiconto : BaseDocument
     {
         [DocumentMemberReference(Column = "D", Position = 4, FieldName = "CompanyName")]
         public string CompanyName { get; set; }

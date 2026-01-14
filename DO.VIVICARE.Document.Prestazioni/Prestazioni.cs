@@ -3,7 +3,7 @@
 namespace DO.VIVICARE.Document.Prestazioni
 {
     [DocumentReference(Name = "Prestazioni", Description = "Elenco delle Prestazioni", RowStart = 2)]
-    public class Prestazioni: BaseDocument
+    public class Prestazioni : BaseDocument
     {
         [DocumentMemberReference(Column = "A", Position = 1, FieldName = "HealthService")]
         public string HealthService { get; set; }

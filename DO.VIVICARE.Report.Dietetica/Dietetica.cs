@@ -71,7 +71,7 @@ namespace DO.VIVICARE.Report.Dietetica
                     if (document.Attribute.Name == "Report16" || document.Attribute.Name == "Prezzi")
                     {
                         var objASST = GetParamValue("ASST");
-                        if (objASST!=null)
+                        if (objASST != null)
                         {
                             var ASST = (BaseDocument)objASST;
                             var propField = ASST.GetType().GetProperty("IDSintesi");
@@ -131,7 +131,7 @@ namespace DO.VIVICARE.Report.Dietetica
             }
             var now = DateTime.Now;
             var nameFileWithoutExt = "Dietetica";
-         
+
             try
             {
                 #region Caricamento Documenti
@@ -238,9 +238,10 @@ namespace DO.VIVICARE.Report.Dietetica
                     w.ErogationDate.Month == month &&
                     (w.FamilyCode == "F0103" || w.FamilyCode == "F0157" || w.FamilyCode == "F0158" || w.FamilyCode == "F0159")).ToList();
                 List<Dietetica> reportFromReport16 = new List<Dietetica>();
-                if (listReport16Filtered.Count()!=0)
+                if (listReport16Filtered.Count() != 0)
                 {
-                    reportFromReport16 = listReport16Filtered.Select((dynamic r) => new {
+                    reportFromReport16 = listReport16Filtered.Select((dynamic r) => new
+                    {
                         REP16 = r,
                         REN = listRendiconto.Where((dynamic x) => x.ContractId == r.ContractId && x.FiscalCode == r.FiscalCode).FirstOrDefault(),
                         MINSAN = listMinSan.Where((dynamic m) => m.IDVivisol == r.ArticleCode).FirstOrDefault(),
@@ -294,9 +295,10 @@ namespace DO.VIVICARE.Report.Dietetica
 
                 var listZSDFattureFiltered = listZSDFatture.Where((dynamic w) => w.Customer == SAPCode && w.ErogationDate.Year == year & w.ErogationDate.Month == month);
                 List<Dietetica> reportFromZSDFatture = new List<Dietetica>();
-                if (listZSDFattureFiltered.Count()!=0)
+                if (listZSDFattureFiltered.Count() != 0)
                 {
-                    reportFromZSDFatture = listZSDFattureFiltered.Select((dynamic f) => {
+                    reportFromZSDFatture = listZSDFattureFiltered.Select((dynamic f) =>
+                    {
                         var istatCode = Manager.Space(6);
                         var userHost = Manager.Space(1);
                         DateTime dtmDateOfBirth = DateTime.MinValue;
@@ -334,7 +336,7 @@ namespace DO.VIVICARE.Report.Dietetica
                     Select((dynamic fa) => new Dietetica()
                     {
                         ATSCode = Manager.Left(ATSCode.ToString(), 3, ' '),
-                        ASSTCode =ASSTCode.ToString("000000"),
+                        ASSTCode = ASSTCode.ToString("000000"),
                         Year = year.ToString("0000"),
                         Month = month.ToString("00"),
                         FiscalCode = fa.ZSDF.FiscalCode,
@@ -372,7 +374,7 @@ namespace DO.VIVICARE.Report.Dietetica
                         list.Add(Tuple.Create("Report", "Elaborazione report dietetica", $"Errore ZSDFatture ID {item.ID} : UserHost mancante"));
                     }
                 }
-                var errorDateOfBirthZSDFatture = reportFromZSDFatture.Where(r => r.DateOfBirth == null ? true : (int.Parse(r.DateOfBirth.Substring(0, 4)) - now.Year)>100);
+                var errorDateOfBirthZSDFatture = reportFromZSDFatture.Where(r => r.DateOfBirth == null ? true : (int.Parse(r.DateOfBirth.Substring(0, 4)) - now.Year) > 100);
                 if (errorDateOfBirthZSDFatture != null)
                 {
                     foreach (var item in errorDateOfBirthZSDFatture)
@@ -383,11 +385,11 @@ namespace DO.VIVICARE.Report.Dietetica
 
 
                 ResultRecords.AddRange(reportFromZSDFatture);
-                
+
                 Manager.CreateExcelFile(this, nameFileWithoutExt); //crea file excel xlsx
                 Manager.CreateFile(this, nameFileWithoutExt); //crea file txt
                 Manager.CreateFile(this, nameFileWithoutExt, true); //crea file csv
-                
+
                 var destinationFilePath = Path.Combine(Manager.Reports, $"{nameFileWithoutExt}.xlsx");
                 Manager.Settings.UpdateReport(nameFileWithoutExt, nameReport, "xlsx", destinationFilePath, now, XMLSettings.ReportStatus.FileOK);
                 Manager.Settings.Save();
@@ -432,7 +434,7 @@ namespace DO.VIVICARE.Report.Dietetica
                 UnitOfMeasure = Manager.Left(r.UnitOfMeasure, 9, ' '),
                 Quantity = int.Parse(r.Quantity).ToString("0000"),
                 ManagementChannel = ManagementChannel,
-                PurchaseAmount = decimal.Parse(r.PurchaseAmount).ToString("0000000000.00").Substring(0, 10)+
+                PurchaseAmount = decimal.Parse(r.PurchaseAmount).ToString("0000000000.00").Substring(0, 10) +
                                  decimal.Parse(r.PurchaseAmount).ToString("0000000000.00").Substring(11, 2),
                 ServiceChargeAmount = decimal.Parse(r.ServiceChargeAmount).ToString("0000000000.00").Substring(0, 10) +
                                  decimal.Parse(r.ServiceChargeAmount).ToString("0000000000.00").Substring(11, 2),

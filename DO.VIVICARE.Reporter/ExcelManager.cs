@@ -151,7 +151,7 @@ namespace DO.VIVICARE.Reporter
                 {
                     throw new ArgumentException(String.Format("Sheet with name {0} not found", _sheet.Name));
                 }
-                
+
                 return true;
             }
             catch (Exception ex)
@@ -169,7 +169,7 @@ namespace DO.VIVICARE.Reporter
             if (filePath != null) _document = SpreadsheetDocument.Open(filePath, isEditable);
             else _document = SpreadsheetDocument.Open(msExcel, isEditable);
 
-           
+
 
             // Retrieve a reference to the workbook part.
             _wbPart = _document.WorkbookPart;
@@ -189,7 +189,7 @@ namespace DO.VIVICARE.Reporter
             //SheetData sheetData = workSheet.GetFirstChild<SheetData>();
             //Columns columns = workSheet.GetFirstChild<Columns>();
             //IEnumerable<Row> rows = sheetData.Descendants<Row>();
-            
+
 
             //Row firstRow = rows.FirstOrDefault();
 
@@ -291,26 +291,26 @@ namespace DO.VIVICARE.Reporter
         {
             try
             {
-                    // Add a blank WorksheetPart.
-                    WorksheetPart newWorksheetPart = _document.WorkbookPart.AddNewPart<WorksheetPart>();
+                // Add a blank WorksheetPart.
+                WorksheetPart newWorksheetPart = _document.WorkbookPart.AddNewPart<WorksheetPart>();
 
-                    SheetData sheetData = new SheetData();
-                    newWorksheetPart.Worksheet = new Worksheet(sheetData);
+                SheetData sheetData = new SheetData();
+                newWorksheetPart.Worksheet = new Worksheet(sheetData);
 
-                    //Sheets sheets = spreadSheet.WorkbookPart.Workbook.GetFirstChild<Sheets>();
-                    string relationshipId = _document.WorkbookPart.GetIdOfPart(newWorksheetPart);
+                //Sheets sheets = spreadSheet.WorkbookPart.Workbook.GetFirstChild<Sheets>();
+                string relationshipId = _document.WorkbookPart.GetIdOfPart(newWorksheetPart);
 
-                    // Get a unique ID for the new worksheet.
-                    uint sheetId = 1;
-                    if (_sheets.Elements<Sheet>().Count() > 0)
-                    {
-                        sheetId = _sheets.Elements<Sheet>().Select(s => s.SheetId.Value).Max() + 1;
-                    }
+                // Get a unique ID for the new worksheet.
+                uint sheetId = 1;
+                if (_sheets.Elements<Sheet>().Count() > 0)
+                {
+                    sheetId = _sheets.Elements<Sheet>().Select(s => s.SheetId.Value).Max() + 1;
+                }
 
-                    // Append the new worksheet and associate it with the workbook.
-                    Sheet sheet = new Sheet() { Id = relationshipId, SheetId = sheetId, Name = sheetName };
-                    _sheets.Append(sheet);
-                    if (current) _sheetData = sheetData;
+                // Append the new worksheet and associate it with the workbook.
+                Sheet sheet = new Sheet() { Id = relationshipId, SheetId = sheetId, Name = sheetName };
+                _sheets.Append(sheet);
+                if (current) _sheetData = sheetData;
 
                 return true;
             }
@@ -325,7 +325,7 @@ namespace DO.VIVICARE.Reporter
         /// <param name="cells"></param>
         /// <param name="rowIndex"></param>
         /// <returns></returns>
-        public bool AddRow(List<Cell> cells, UInt32Value rowIndex )
+        public bool AddRow(List<Cell> cells, UInt32Value rowIndex)
         {
             try
             {
@@ -391,15 +391,15 @@ namespace DO.VIVICARE.Reporter
             Worksheet workSheet = worksheetPart.Worksheet;
             SheetData sheetData = workSheet.GetFirstChild<SheetData>();
             IEnumerable<Row> rows = sheetData.Descendants<Row>();
-            if (filters==null) return rows;
-            if (filters.Count()==0) return rows;
+            if (filters == null) return rows;
+            if (filters.Count() == 0) return rows;
             var filteredRows = rows.Where(row =>
             {
-                var cells = row.Descendants<Cell>();               
+                var cells = row.Descendants<Cell>();
                 foreach (var f in filters)
                 {
                     var cell = cells.FirstOrDefault(c => GetColumnName(c.CellReference) == f.Column);
-                    if (cell!=null)
+                    if (cell != null)
                     {
                         string value = GetCellValue(cell);
                         if (value != f.Value) return false;
@@ -522,7 +522,7 @@ namespace DO.VIVICARE.Reporter
                 value = theCell.InnerText;
                 if (theCell.DataType != null)
                 {
-                    if(theCell.DataType.Value == CellValues.SharedString)
+                    if (theCell.DataType.Value == CellValues.SharedString)
                     {
                         // For shared strings, look up the value in the
                         // shared strings table.
@@ -755,7 +755,7 @@ namespace DO.VIVICARE.Reporter
             // close file
             // close Excel Workbook
             // and release all library refs
-            if (_document!=null)
+            if (_document != null)
             {
                 _document.Dispose();
                 _document = null;

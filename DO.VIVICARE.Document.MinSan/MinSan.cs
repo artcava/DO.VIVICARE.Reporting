@@ -3,7 +3,7 @@
 namespace DO.VIVICARE.Document.MinSan
 {
     [DocumentReference(Name = "MinSan", Description = "Fle dei codici del Ministero della Sanità", RowStart = 2)]
-    public class MinSan: BaseDocument
+    public class MinSan : BaseDocument
     {
         [DocumentMemberReference(Column = "A", Position = 1, FieldName = "Producer")]
         public string Producer { get; set; }

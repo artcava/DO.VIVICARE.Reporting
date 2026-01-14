@@ -1,13 +1,8 @@
 ﻿using DO.VIVICARE.Reporter;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DO.VIVICARE.UI
@@ -49,7 +44,7 @@ namespace DO.VIVICARE.UI
                         DisplayMember = "Text"
                     };
                     c.Tag = p.Name;
-                    dgvParameters.Rows[i].Cells["ParameterValue"] = c; 
+                    dgvParameters.Rows[i].Cells["ParameterValue"] = c;
                 }
                 else
                 {
@@ -106,7 +101,7 @@ namespace DO.VIVICARE.UI
                 var cell = row.Cells["ParameterName"];
                 var parameterName = (string)cell.Value;
                 var param = Parameters.FirstOrDefault(p => p.Name == parameterName);
-                if (param!=null)
+                if (param != null)
                 {
                     if (param.Type == "Document")
                     {
