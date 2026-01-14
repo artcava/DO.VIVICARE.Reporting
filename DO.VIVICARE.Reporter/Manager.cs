@@ -1,4 +1,4 @@
-﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Collections.Generic;
@@ -20,11 +20,11 @@ namespace DO.VIVICARE.Reporter
         public static string Documents { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Reporting", "Documents"); } }
         public static string Reports { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Reporting", "Reports"); } }
         /// <summary>
-        /// 
+        /// XML settings instance
         /// </summary>
         private static XMLSettings _settings = null;
         /// <summary>
-        /// 
+        /// Gets the XML settings singleton instance
         /// </summary>
         public static XMLSettings Settings
         {
@@ -35,7 +35,7 @@ namespace DO.VIVICARE.Reporter
             }
         }
         /// <summary>
-        /// 
+        /// Gets all BaseDocument types from DocumentLibraries folder
         /// </summary>
         /// <returns></returns>
         public static List<ReportingDocument> GetDocuments()
@@ -62,9 +62,8 @@ namespace DO.VIVICARE.Reporter
             return list;
         }
         /// <summary>
-        /// Search for every BaseReport in the path
+        /// Search for every BaseReport in the ReportLibraries folder
         /// </summary>
-        /// <param name="path"></param>
         /// <returns></returns>
         public static List<ReportingReport> GetReports()
         {
@@ -89,7 +88,7 @@ namespace DO.VIVICARE.Reporter
             return list;
         }
         /// <summary>
-        /// 
+        /// Gets document columns from DocumentMemberReferenceAttribute
         /// </summary>
         /// <param name="document"></param>
         /// <returns></returns>
@@ -105,7 +104,7 @@ namespace DO.VIVICARE.Reporter
             return list;
         }
         /// <summary>
-        /// 
+        /// Gets report columns from ReportMemberReferenceAttribute
         /// </summary>
         /// <param name="report"></param>
         /// <returns></returns>
@@ -121,7 +120,7 @@ namespace DO.VIVICARE.Reporter
             return list;
         }
         /// <summary>
-        /// 
+        /// Gets sheet report columns from ReportMemberReferenceAttribute
         /// </summary>
         /// <param name="sheet"></param>
         /// <returns></returns>
@@ -138,7 +137,7 @@ namespace DO.VIVICARE.Reporter
             return list;
         }
         /// <summary>
-        /// 
+        /// Creates an Excel file for the specified report
         /// </summary>
         /// <param name="report"></param>
         /// <param name="fileWithoutExt"></param>
@@ -165,9 +164,9 @@ namespace DO.VIVICARE.Reporter
                 int rowCount = report.ResultRecords.Count();
                 int colCount = columns.Count();
                 int rowStart = 2;
-                // totals to write above last row
+                // Totals to write above last row
                 var totals = new Dictionary<ReportMemberReferenceAttribute, decimal>();
-                // header row excel sheet
+                // Header row excel sheet
                 List<Cell> cells = new List<Cell>();
                 foreach (var col in columns)
                 {
@@ -187,7 +186,7 @@ namespace DO.VIVICARE.Reporter
                 {
                     var records = report.ResultRecords;
 
-                    // data rows excel sheet
+                    // Data rows excel sheet
                     UInt32Value rowIndex = 2;
                     for (int i = rowStart; i <= (rowCount + 1); i++)
                     {
@@ -236,7 +235,7 @@ namespace DO.VIVICARE.Reporter
                 }
                 #endregion
 
-                #region other sheets
+                #region Other sheets
                 if (report.Phantom != null)
                 {
                     columns = Manager.GetSheetReportColumns(report.Phantom);
@@ -249,7 +248,7 @@ namespace DO.VIVICARE.Reporter
 
                         manExcel.AddSheet(row.SheetName);
 
-                        // header row excel sheet
+                        // Header row excel sheet
                         cells = new List<Cell>();
                         totals = new Dictionary<ReportMemberReferenceAttribute, decimal>();
                         foreach (var col in columns)
@@ -270,7 +269,7 @@ namespace DO.VIVICARE.Reporter
                         {
                             var records = row.SheetRecords;
 
-                            // data rows excel sheet
+                            // Data rows excel sheet
                             DocumentFormat.OpenXml.UInt32Value rowIndex = 2;
                             for (int i = rowStart; i <= (rowCount + 1); i++)
                             {
@@ -328,7 +327,7 @@ namespace DO.VIVICARE.Reporter
             }
             catch (Exception ex)
             {
-                list.Add(Tuple.Create("Report", "Creazione file excel", $"Errore interno : {ex.Message}"));
+                list.Add(Tuple.Create("Report", "Creazione file excel", $"Internal error: {ex.Message}"));
                 return false;
             }
             finally
@@ -338,7 +337,7 @@ namespace DO.VIVICARE.Reporter
             }
         }
         /// <summary>
-        /// 
+        /// Creates a text or CSV file for the specified report
         /// </summary>
         /// <param name="report"></param>
         /// <param name="fileWithoutExt"></param>
@@ -381,15 +380,15 @@ namespace DO.VIVICARE.Reporter
                                     DateTime dateValue = DateTime.MinValue;
                                     if (DateTime.TryParseExact(stringValue, "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dateValue))
                                     {
-                                        line += $"\"{dateValue.ToString("ddMMyyyy")}\";";
+                                        line += $"\"{dateValue.ToString("ddMMyyyy")}\";";  
                                     }
                                     else
                                     {
-                                        line += $"\"{propField.GetValue(record)}\";";
+                                        line += $"\"{propField.GetValue(record)}\";";  
                                     }
                                     break;
                                 default:
-                                    line += $"\"{propField.GetValue(record)}\";";
+                                    line += $"\"{propField.GetValue(record)}\";";  
                                     break;
                             }
                         }
@@ -411,7 +410,7 @@ namespace DO.VIVICARE.Reporter
                     var line = string.Empty;
                     foreach (var col in columns)
                     {
-                        line += $"\"{col.ColumnName}\";";
+                        line += $"\"{col.ColumnName}\";";  
                     }
                     line += Environment.NewLine;
                     file.Insert(0, line);
@@ -435,7 +434,7 @@ namespace DO.VIVICARE.Reporter
             }
             catch (Exception ex)
             {
-                list.Add(Tuple.Create("Report", csv ? "Creazione file csv" : "Creazione file txt", $"Errore interno: {ex.Message}"));
+                list.Add(Tuple.Create("Report", csv ? "Creazione file csv" : "Creazione file txt", $"Internal error: {ex.Message}"));
                 return false;
             }
             finally
@@ -444,7 +443,7 @@ namespace DO.VIVICARE.Reporter
             }
         }
         /// <summary>
-        ///     Use this function to preformat a line with brackets for each param.
+        /// Use this function to preformat a line with brackets for each param
         /// </summary>
         /// <param name="fields"></param>
         /// <returns></returns>
@@ -458,7 +457,7 @@ namespace DO.VIVICARE.Reporter
             return line + Environment.NewLine;
         }
         /// <summary>
-        /// 
+        /// Writes error log to file
         /// </summary>
         /// <param name="tuples"></param>
         /// <param name="fileName"></param>
@@ -486,6 +485,7 @@ namespace DO.VIVICARE.Reporter
             catch { }
         }
         /// <summary>
+        /// Converts a string to byte array
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
@@ -496,7 +496,7 @@ namespace DO.VIVICARE.Reporter
             return bytes;
         }
         /// <summary>
-        /// 
+        /// Returns the leftmost characters from a string, optionally padded
         /// </summary>
         /// <param name="value"></param>
         /// <param name="chars"></param>
@@ -523,7 +523,7 @@ namespace DO.VIVICARE.Reporter
             }
         }
         /// <summary>
-        /// 
+        /// Returns a string of spaces with the specified count
         /// </summary>
         /// <param name="count"></param>
         /// <returns></returns>
@@ -532,7 +532,7 @@ namespace DO.VIVICARE.Reporter
             return new string(' ', count);
         }
         /// <summary>
-        /// Funzione che restituisce 1:Maschio o 2:Femmina a seconda del sesso recuperato dal CF
+        /// Returns 1:Male or 2:Female based on the gender extracted from Italian fiscal code
         /// </summary>
         /// <param name="cv"></param>
         /// <returns></returns>
@@ -553,7 +553,7 @@ namespace DO.VIVICARE.Reporter
             }
         }
         /// <summary>
-        /// Funzione che restituisce la data di nascita in formato AAAAMMGG recuperata dal CF
+        /// Returns the birth date in YYYYMMDD format extracted from Italian fiscal code
         /// </summary>
         /// <param name="cv"></param>
         /// <returns></returns>
@@ -580,7 +580,7 @@ namespace DO.VIVICARE.Reporter
             }
         }
         /// <summary>
-        /// 
+        /// Validates Italian fiscal code checksum
         /// </summary>
         /// <param name="cv"></param>
         /// <returns></returns>
@@ -588,10 +588,10 @@ namespace DO.VIVICARE.Reporter
         {
             cv = cv.ToUpper();
             if (cv.Length != 16)
-                return false; // errore
+                return false;
 
             var contatore = cv.Substring(0, 15).Select((t, i) => ValoreDelCarattere(cv.Substring(0, 15).Substring(i, 1), i)).Sum();
-            contatore %= 26; // si considera il resto
+            contatore %= 26;
             return cv.Substring(15, 1) == Convert.ToChar(contatore + 65).ToString(CultureInfo.InvariantCulture);
         }
         private static int ValoreDelCarattere(string carattere, int posizione)
@@ -665,7 +665,7 @@ namespace DO.VIVICARE.Reporter
             }
         }
         /// <summary>
-        /// Se RSA = 1, altrimenti = 2
+        /// Returns "1" if RSA, otherwise "2"
         /// </summary>
         /// <param name="hostType"></param>
         /// <returns></returns>
@@ -674,10 +674,12 @@ namespace DO.VIVICARE.Reporter
             if (string.IsNullOrEmpty(hostType)) return null;
             return hostType.ToUpper() == "RSA" ? "1" : "2";
         }
-        /// <summary>                                                                      
-        /// Funzione che in base documento e record in ingresso restituisce l'importo formattato NNNNNNNNNNDD
+        /// <summary>
+        /// Calculates and formats the amount based on document type and record (format: NNNNNNNNNNDD)
         /// </summary>
-        /// <param name="hostType"></param>
+        /// <param name="document"></param>
+        /// <param name="record"></param>
+        /// <param name="PRZPrice"></param>
         /// <returns></returns>
         public static string Amount(string document, dynamic record, decimal PRZPrice = 0)
         {
@@ -713,7 +715,7 @@ namespace DO.VIVICARE.Reporter
             return ret;
         }
         /// <summary>
-        /// Restituisce numero progressivo (ID) con in ingresso ultimo numero progressivo e anno e mese
+        /// Returns progressive number (ID) with last progressive number, year and month as input
         /// </summary>
         /// <param name="lpn"></param>
         /// <param name="y"></param>
@@ -724,7 +726,7 @@ namespace DO.VIVICARE.Reporter
             return $"VIVPEZZ{y.ToString("0000")}{m.ToString("00")}{lpn.ToString("0000000")}";
         }
         /// <summary>
-        /// 
+        /// Converts a string to TimeSpan with optional format
         /// </summary>
         /// <param name="value"></param>
         /// <param name="format"></param>
@@ -749,7 +751,7 @@ namespace DO.VIVICARE.Reporter
             return ret;
         }
         /// <summary>
-        /// 
+        /// Converts a string to DateTime with optional format
         /// </summary>
         /// <param name="value"></param>
         /// <param name="format"></param>
