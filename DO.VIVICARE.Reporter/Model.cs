@@ -1,4 +1,4 @@
-﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using Tuple = System.Tuple;
 namespace DO.VIVICARE.Reporter
 {
     /// <summary>
-    /// Classe base per la gestione dei Documenti
+    /// Base class for document management
     /// </summary>
     public class BaseDocument
     {
@@ -46,20 +46,20 @@ namespace DO.VIVICARE.Reporter
 
                 if (string.IsNullOrEmpty(name))
                 {
-                    list.Add(Tuple.Create($"Riga: 0", $"Colonna: 0", $"NameClass vuoto"));
+                    list.Add(Tuple.Create($"Row: 0", $"Column: 0", $"NameClass empty"));
                     return false;
                 }
 
                 if (string.IsNullOrEmpty(SourceFilePath))
                 {
-                    list.Add(Tuple.Create($"Riga: 0", $"Colonna: 0", $"File inesistente o campo [SourceFilePath] vuoto"));
+                    list.Add(Tuple.Create($"Row: 0", $"Column: 0", $"File does not exist or [SourceFilePath] field is empty"));
                     return false;
                 }
 
                 manExcel = new ExcelManager();
                 if (!manExcel.LoadFile(SourceFilePath, name))
                 {
-                    list.Add(Tuple.Create($"Riga: 0", $"Colonna: 0", $"File {SourceFilePath} non caricato!"));
+                    list.Add(Tuple.Create($"Row: 0", $"Column: 0", $"File {SourceFilePath} not loaded!"));
                     return false;
                 }
 
@@ -103,7 +103,7 @@ namespace DO.VIVICARE.Reporter
                         var cell = cells.FirstOrDefault(c => manExcel.GetColumnName(c.CellReference) == col.Column);
                         if (cell == null)
                         {
-                            list.Add(Tuple.Create($"Riga: {row.RowIndex}", $"Colonna: {col.Column}", $"Colonna inesistente o campo vuoto"));
+                            list.Add(Tuple.Create($"Row: {row.RowIndex}", $"Column: {col.Column}", $"Column does not exist or field is empty"));
                             SetDefault(element, propField);
                         }
                         else
@@ -121,7 +121,7 @@ namespace DO.VIVICARE.Reporter
             }
             catch (Exception ex)
             {
-                list.Add(Tuple.Create("Riga: 0", "Colonna: 0", $"Errore interno: {ex.Message}"));
+                list.Add(Tuple.Create("Row: 0", "Column: 0", $"Internal error: {ex.Message}"));
                 return false;
             }
             finally
@@ -147,19 +147,19 @@ namespace DO.VIVICARE.Reporter
                 }
                 if (string.IsNullOrEmpty(name))
                 {
-                    list.Add(Tuple.Create($"Riga: 0", $"Colonna: 0", $"NameClass vuoto"));
+                    list.Add(Tuple.Create($"Row: 0", $"Column: 0", $"NameClass empty"));
                     return false;
                 }
                 if (string.IsNullOrEmpty(SourceFilePath))
                 {
-                    list.Add(Tuple.Create($"Riga: 0", $"Colonna: 0", $"File inesistente o campo [SourceFilePath] vuoto"));
+                    list.Add(Tuple.Create($"Row: 0", $"Column: 0", $"File does not exist or [SourceFilePath] field is empty"));
                     return false;
                 }
 
                 manExcel = new ExcelManager();
                 if (!manExcel.LoadFile(SourceFilePath, name))
                 {
-                    list.Add(Tuple.Create($"Riga: 0", $"Colonna: 0", $"File {SourceFilePath} non caricato!"));
+                    list.Add(Tuple.Create($"Row: 0", $"Column: 0", $"File {SourceFilePath} not loaded!"));
                     return false;
                 }
 
@@ -180,10 +180,10 @@ namespace DO.VIVICARE.Reporter
                         {
                             var cell = cells.FirstOrDefault(c => manExcel.GetColumnName(c.CellReference) == col.Column);
                             if (cell == null)
-                                list.Add(Tuple.Create($"Riga: {row.RowIndex}", $"Colonna: {col.Column}", $"Colonna inesistente o campo vuoto"));
+                                list.Add(Tuple.Create($"Row: {row.RowIndex}", $"Column: {col.Column}", $"Column does not exist or field is empty"));
                         }
                     }
-                    //progress.Report(rowCount / i++); // PER TENER TRACCIA DELLO STATO
+                    //progress.Report(rowCount / i++); // TO KEEP TRACK OF THE STATE
                 }
 
 
@@ -193,7 +193,7 @@ namespace DO.VIVICARE.Reporter
             }
             catch (Exception ex)
             {
-                list.Add(Tuple.Create("Riga: 0", "Colonna: 0", $"Errore interno: {ex.Message}"));
+                list.Add(Tuple.Create("Row: 0", "Column: 0", $"Internal error: {ex.Message}"));
                 return false;
             }
             finally
@@ -373,6 +373,7 @@ namespace DO.VIVICARE.Reporter
             catch { }
         }
         /// <summary>
+        /// Converts a string to byte array
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
@@ -398,7 +399,7 @@ namespace DO.VIVICARE.Reporter
     }
 
     /// <summary>
-    /// Attributo a livello di classe per indicare a quale file facciamo riferimento
+    /// Class-level attribute to indicate which file we are referencing
     /// </summary>
     public class DocumentReferenceAttribute : Attribute
     {
@@ -412,7 +413,7 @@ namespace DO.VIVICARE.Reporter
         }
     }
     /// <summary>
-    /// Attributo a livello di membro per indicare la colonna da cui prelevare i dati
+    /// Member-level attribute to indicate the column from which to retrieve data
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
     public class DocumentMemberReferenceAttribute : Attribute
@@ -420,28 +421,28 @@ namespace DO.VIVICARE.Reporter
         public string Column { get; set; }
         public int Position { get; set; }
         //08-07-2020
-        //Penso che bisognerebbe aggiungere anche FieldName per poter identificare in modo diretto
-        //il campo della classe BaseDocument
+        //We should also add FieldName to be able to directly identify
+        //the BaseDocument class field
         public string FieldName { get; set; }
 
         public string Format { get; set; }
     }
     /// <summary>
-    /// 
+    /// Document reporting information
     /// </summary>
     public class ReportingDocument
     {
         /// <summary>
-        /// 
+        /// Document instance
         /// </summary>
         public BaseDocument Document { get; set; }
         /// <summary>
-        /// 
+        /// Document reference attribute
         /// </summary>
         public DocumentReferenceAttribute Attribute { get; set; }
     }
     /// <summary>
-    /// Classe base per la gestione dei Report
+    /// Base class for report management
     /// </summary>
     public class BaseReport
     {
@@ -525,7 +526,7 @@ namespace DO.VIVICARE.Reporter
 
                 if (string.IsNullOrEmpty(name))
                 {
-                    list.Add(Tuple.Create($"Riga: 0", $"Colonna: 0", $"NameClass vuoto"));
+                    list.Add(Tuple.Create($"Row: 0", $"Column: 0", $"NameClass empty"));
                     return records;
                 }
 
@@ -534,7 +535,7 @@ namespace DO.VIVICARE.Reporter
 
                 if (string.IsNullOrEmpty(sourceFilePath))
                 {
-                    list.Add(Tuple.Create($"Riga: 0", $"Colonna: 0", $"File inesistente o campo [SourceFilePath] vuoto"));
+                    list.Add(Tuple.Create($"Row: 0", $"Column: 0", $"File does not exist or [SourceFilePath] field is empty"));
                     return records;
                 }
 
@@ -562,7 +563,7 @@ namespace DO.VIVICARE.Reporter
                         var cell = cells.FirstOrDefault(c => manExcel.GetColumnName(c.CellReference) == col.Column);
                         if (cell == null)
                         {
-                            list.Add(Tuple.Create($"Riga: {row.RowIndex}", $"Colonna: {col.Column}", $"Colonna inesistente o campo vuoto"));
+                            list.Add(Tuple.Create($"Row: {row.RowIndex}", $"Column: {col.Column}", $"Column does not exist or field is empty"));
                             SetDefault(element, propField);
                         }
                         else
@@ -580,7 +581,7 @@ namespace DO.VIVICARE.Reporter
             }
             catch (Exception ex)
             {
-                list.Add(Tuple.Create("Riga: 0", "Colonna: 0", $"Errore interno: {ex.Message}"));
+                list.Add(Tuple.Create("Row: 0", "Column: 0", $"Internal error: {ex.Message}"));
                 return records;
             }
             finally
@@ -722,6 +723,7 @@ namespace DO.VIVICARE.Reporter
             catch { }
         }
         /// <summary>
+        /// Converts a string to byte array
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
@@ -736,16 +738,16 @@ namespace DO.VIVICARE.Reporter
     public class BaseSheet { }
 
     /// <summary>
-    /// 
+    /// Report reporting information
     /// </summary>
     public class ReportingReport
     {
         /// <summary>
-        /// 
+        /// Report instance
         /// </summary>
         public BaseReport Report { get; set; }
         /// <summary>
-        /// 
+        /// Report reference attribute
         /// </summary>
         public ReportReferenceAttribute Attribute { get; set; }
     }
@@ -755,7 +757,7 @@ namespace DO.VIVICARE.Reporter
         public string Description { get; set; }
         public string Name { get; set; }
         /// <summary>
-        /// value parameter type Int, Long, Decimal, String, Document(BaseDocument), Bool, DateTime
+        /// Value parameter type: Int, Long, Decimal, String, Document(BaseDocument), Bool, DateTime
         /// </summary>
         public string Type { get; set; }
         public string DocumentName { get; set; }
@@ -773,7 +775,7 @@ namespace DO.VIVICARE.Reporter
     }
 
     /// <summary>
-    /// Attributo a livello di classe per indicare a quale file facciamo riferimento
+    /// Class-level attribute to indicate which file we are referencing
     /// </summary>
     public class ReportReferenceAttribute : Attribute
     {
@@ -781,7 +783,7 @@ namespace DO.VIVICARE.Reporter
         public string Description { get; set; }
     }
     /// <summary>
-    /// Attributo a livello di membro per indicare la colonna da cui prelevare i dati
+    /// Member-level attribute to indicate the column from which to retrieve data
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
     public class ReportMemberReferenceAttribute : Attribute
@@ -794,8 +796,8 @@ namespace DO.VIVICARE.Reporter
         public string FillValue { get; set; }
         public Alignment FillAlignment { get; set; }
         //08-07-2020
-        //Penso che bisognerebbe aggiungere anche FieldName per poter identificare in modo diretto
-        //il campo della classe BaseDocument
+        //We should also add FieldName to be able to directly identify
+        //the BaseDocument class field
         public string FieldName { get; set; }
         public string Format { get; set; }
         public bool HaveSum { get; set; }
@@ -810,7 +812,7 @@ namespace DO.VIVICARE.Reporter
     public class SheetAttribute : Attribute { }
 
     /// <summary>
-    /// Direzione dell'allineamento
+    /// Alignment direction
     /// </summary>
     public enum Alignment
     {
