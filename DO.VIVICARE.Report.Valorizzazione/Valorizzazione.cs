@@ -1,4 +1,4 @@
-﻿using DO.VIVICARE.Reporter;
+using DO.VIVICARE.Reporter;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -140,20 +140,20 @@ namespace DO.VIVICARE.Report.Valorizzazione
                         //case "TELEMONITORAGGIO/TELEVISITA/TELECONSULTO (SIAT ASL FROSINONE)":
                         //    continue; // 2022/07/14 - Per queste attività non si conteggia nulla 
                         //case "PRELIEVO EMATICO (ADI ALTA INTENSITA')":
-                        //case "PRELIEVO EMATICO (ADI ALTA INTENSITA’)":
+                        //case "PRELIEVO EMATICO (ADI ALTA INTENSITA')":
                         //case "PRELIEVO VENOSO (ADI ALTA INTENSITA')":
                         //case "PRELIEVO ALTRO MATERIALE BIOLOGICO (ADI ALTA INTENSITA')":
                         //case "PRELIEVO EMATICO (ADI ALTA INTENSITA' - FROSINONE)":
                         //case "PRELIEVO VENOSO (SIAT ASL FROSINONE)":
                         //case "PRELIEVO EMATICO (ADI PRESTAZIONALE)":
                         //case "RACCOLTA DI UN CAMPIONE DI URINE (ADI ALTA INTENSITA')":
-                        //case "RACCOLTA DI UN CAMPIONE DI URINE (ADI ALTA INTENSITA’)":
+                        //case "RACCOLTA DI UN CAMPIONE DI URINE (ADI ALTA INTENSITA')":
                         //    worktype = "PRELIEVO";
                         //    break;
                         //case "SERVIZIO TRASPORTO SANITARIO (ADI ALTA INTENSITA')":
-                        //case "SERVIZIO TRASPORTO SANITARIO (ADI ALTA INTENSITA’)":
+                        //case "SERVIZIO TRASPORTO SANITARIO (ADI ALTA INTENSITA')":
                         //case "SERVIZIO TRASPORTO (ADI ALTA INTENSITA')":
-                        //case "SERVIZIO TRASPORTO (ADI ALTA INTENSITA’)":
+                        //case "SERVIZIO TRASPORTO (ADI ALTA INTENSITA')":
                         //    switch (((string)oss.WorkType).ToUpper())
                         //    {
                         //        case "ANESTESISTA":
@@ -166,24 +166,24 @@ namespace DO.VIVICARE.Report.Valorizzazione
                         //    }
                         //    break;
                         //    // Aggiunte il 14/06/2022 per difformità con l'originale
-                        //case "SERVIZIO TRASPORTO AMBULANZE INFERM. (ADI ALTA INTENSITA’)":
+                        //case "SERVIZIO TRASPORTO AMBULANZE INFERM. (ADI ALTA INTENSITA')":
                         //    worktype = "TRASPORTO CON INFERMIERE";
                         //    break;
-                        //case "SERVIZIO TRASPORTO AMBULANZE MEDICO (ADI ALTA INTENSITA’)":
+                        //case "SERVIZIO TRASPORTO AMBULANZE MEDICO (ADI ALTA INTENSITA')":
                         //    worktype = "TRASPORTO CON MEDICO";
                         //    break;
                         //    // Tutte aggiunte il 14/07/2022 per uniformità alle ASL
-                        //case "RADIOGRAFIA DOMICILIARE CON REFERTAZIONE (ADI ALTA INTENSITA’)":
                         //case "RADIOGRAFIA DOMICILIARE CON REFERTAZIONE (ADI ALTA INTENSITA')":
-                        //case "ESAMI DIAGNOSTICI RX (ADI ALTA INTENSITA’)":
+                        //case "RADIOGRAFIA DOMICILIARE CON REFERTAZIONE (ADI ALTA INTENSITA')":
+                        //case "ESAMI DIAGNOSTICI RX (ADI ALTA INTENSITA')":
                         //case "ESAMI DIAGNOSTICI RX (ADI ALTA INTENSITA')":
                         //    worktype = "RX DOMICILIARE";
                         //    break;
-                        //case "ECOGRAFIA DOMICILIARE (ADI ALTA INTENSITA’)":
+                        //case "ECOGRAFIA DOMICILIARE (ADI ALTA INTENSITA')":
                         //case "ECOGRAFIA DOMICILIARE (ADI ALTA INTENSITA')":
                         //    worktype = "ECOGRAFIA DOMICILIARE";
                         //    break;
-                        //case "EMOGASANALISI-PRELIEVO.ANALISI.REFERTO (ADI ALTA INTENSITA’)":
+                        //case "EMOGASANALISI-PRELIEVO.ANALISI.REFERTO (ADI ALTA INTENSITA')":
                         //case "EMOGASANALISI-PRELIEVO.ANALISI.REFERTO (ADI ALTA INTENSITA')":
                         //case "EMOGASANALISI-PRELIEVO.ANALISI.REFERTO (SIAT ASL FROSINONE)":
                         //    worktype = "EMOGAS DOMICILIARE";
@@ -191,25 +191,25 @@ namespace DO.VIVICARE.Report.Valorizzazione
                         //case "EMOGASANALISI-PRELIEVO.TRASPORTO.LAB":
                         //    worktype = "EMOGAS DOMICILIARE SOLO PRELIEVO E TRASP";
                         //    break;
-                        //case "EMOTRASFUSIONE (SEMP.) (ADI ALTA INTENSITA’)":
+                        //case "EMOTRASFUSIONE (SEMP.) (ADI ALTA INTENSITA')":
                         //case "EMOTRASFUSIONE (SEMP.) (ADI ALTA INTENSITA')":
                         //case "EMOTRASFUSIONE (SEMP.) (ADI PRESTAZIONALE)":
                         //case "EMOTRASFUSIONE (SEMP.) (SIAT ASL FROSINONE)":
-                        //case "EMOTRASFUSIONE DOMICILIARE (ADI ALTA INTENSITA’)":
+                        //case "EMOTRASFUSIONE DOMICILIARE (ADI ALTA INTENSITA')":
                         //case "EMOTRASFUSIONE DOMICILIARE (ADI ALTA INTENSITA')":
                         //case "EMOTRASFUSIONE DOMICILIARE (ADI PRESTAZIONALE)":
                         //case "EMOTRASFUSIONE-PREL.PROVE.RITIRO.SACCA (SIAT ASL ROMA 2)":
                         //    worktype = "EMOTRASFUSIONE DOMICILIARE";
                         //    break;
-                        //case "SOSTITUZIONE DEL CATETERE VESCICALE (ADI ALTA INTENSITA’)":
+                        //case "SOSTITUZIONE DEL CATETERE VESCICALE (ADI ALTA INTENSITA')":
                         //case "SOSTITUZIONE DEL CATETERE VESCICALE (ADI ALTA INTENSITA')":
                         //    worktype = "CAMBIO CATETERE";
                         //    break;
-                        //case "TAMPONE RAPIDO (ADI ALTA INTENSITA’)":
+                        //case "TAMPONE RAPIDO (ADI ALTA INTENSITA')":
                         //case "TAMPONE RAPIDO (ADI ALTA INTENSITA')":
                         //case "TEST ANTIGIENICO A DOMICILIO (SIAT ASL FROSINONE)":
                         //case "TEST ANTIGIENICO A DOMICILIO (SIAT ASL ROMA 2)":
-                        //case "TAMPONE RAPIDO A DOMICILIO - SINGOLO (ADI ALTA INTENSITA’)":
+                        //case "TAMPONE RAPIDO A DOMICILIO - SINGOLO (ADI ALTA INTENSITA')":
                         //case "TAMPONE RAPIDO A DOMICILIO - SINGOLO (ADI ALTA INTENSITA')":
                         //case "TAMPONE ANTIGIENICO DOMICILIARE (ADI ALTA INTENSITA')":
                         //case "TAMPONE ANTIGENICO DOMICILIARE (ADI ALTA INTENSITA')":
@@ -217,11 +217,11 @@ namespace DO.VIVICARE.Report.Valorizzazione
                         //    break;
                         //case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (SIAT ASL FROSINONE)":
                         //case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (SIAT ASL ROMA 2)":
-                        //case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (ADI ALTA INTENSITA’)":
+                        //case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (ADI ALTA INTENSITA')":
                         //case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (ADI ALTA INTENSITA')":
                         //    worktype = "PRESTAZIONI VACCINI (COVID)";
                         //    break;
-                        case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (ADI ALTA INTENSITA’)":
+                        case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (ADI ALTA INTENSITA')":
                         case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (ADI ALTA INTENSITA')":
                         case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (SIAT ASL ROMA 2)":
                             //case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (SIAT ASL FROSINONE)": // #1446 Non considerare per Frosinone
@@ -253,10 +253,10 @@ namespace DO.VIVICARE.Report.Valorizzazione
                             //switch (adi.Activity)
                             //{
                             //    case "ACCESSO OSS (ADI ALTA INTENSITA' - FROSINONE)":
-                            //    case "ACCESSO OSS (ADI ALTA INTENSITA’ - FROSINONE)":
-                            //    case "ACCESSO OSS (ADI ALTA INTENSITA’)":
+                            //    case "ACCESSO OSS (ADI ALTA INTENSITA' - FROSINONE)":
                             //    case "ACCESSO OSS (ADI ALTA INTENSITA')":
-                            //    case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (ADI ALTA INTENSITA’)":
+                            //    case "ACCESSO OSS (ADI ALTA INTENSITA')":
+                            //    case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (ADI ALTA INTENSITA')":
                             //    case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (ADI ALTA INTENSITA')":
                             //    case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (SIAT ASL FROSINONE)":
                             //    case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (SIAT ASL ROMA 6)":
@@ -353,17 +353,39 @@ namespace DO.VIVICARE.Report.Valorizzazione
 
                     decimal _pacchettiRiabilitativi = val.HourFktNumberTotal + val.HourLogNumberTotal + val.HourTpnNumberTotal + val.HourTerNumberTotal; // Prima era così
 
-                    val.BasePacketValue = 120;
-                    val.ReliefPacketValue = 108;
+                    // ⬆️ TARIFFA AGGIORNATA [01-01-2026] - Pacchetto Base
+                    // PRIMA: 120.00M | DOPO: 130.20M (+8.5%)
+                    // DESCRIZIONE: Pacchetto Base - Alta Complessità ADI
+                    // FONTE: Nuove-tariffe-ADI-Lazio-01-01-2026.xlsx
+                    val.BasePacketValue = 130.20M;
+                    
+                    // ⬆️ TARIFFA AGGIORNATA [01-01-2026] - Pacchetto Sollievo
+                    // PRIMA: 108.00M | DOPO: 117.20M (+8.5%)
+                    // DESCRIZIONE: Pacchetto Sollievo - Ore aggiuntive oltre pacchetto base
+                    // FONTE: Nuove-tariffe-ADI-Lazio-01-01-2026.xlsx
+                    val.ReliefPacketValue = 117.20M;
 
-                    val.HourInfValue = 27;
-                    val.HourRehabValue = 27;
+                    // ⬆️ TARIFFA AGGIORNATA [01-01-2026] - Ora Infermiere
+                    // PRIMA: 27.00M | DOPO: 29.30M (+8.5%)
+                    // DESCRIZIONE: Tariffa oraria Infermiere standard
+                    // FONTE: Nuove-tariffe-ADI-Lazio-01-01-2026.xlsx
+                    val.HourInfValue = 29.30M;
+                    
+                    // ⬆️ TARIFFA AGGIORNATA [01-01-2026] - Ora Riabilitazione (generico)
+                    // PRIMA: 27.00M | DOPO: 29.30M (+8.5%)
+                    // DESCRIZIONE: Tariffa oraria Riabilitazione (FKT/LOGO/TPNEE/TO)
+                    // FONTE: Nuove-tariffe-ADI-Lazio-01-01-2026.xlsx
+                    val.HourRehabValue = 29.30M;
 
                     val.HourInfNumber = val.HourInfNumberTotal;
 
                     if (val.ASL == "ASL FROSINONE")
                     {
-                        val.HourRehabValue = 30;
+                        // ⬆️ TARIFFA AGGIORNATA [01-01-2026] - Ora Riabilitazione ASL Frosinone
+                        // PRIMA: 30.00M | DOPO: 32.60M (+8.7%)
+                        // DESCRIZIONE: Tariffa oraria Riabilitazione ASL Frosinone specifica
+                        // FONTE: Nuove-tariffe-ADI-Lazio-01-01-2026.xlsx
+                        val.HourRehabValue = 32.60M;
                         val.HourRehabNumber = _pacchettiRiabilitativi;
                         if (val.HourInfNumber >= 4) // c'è il pacchetto base
                         {
@@ -382,7 +404,7 @@ namespace DO.VIVICARE.Report.Valorizzazione
                         }
                         else
                         {
-                            val.HourInfValue = 30;
+                            val.HourInfValue = 32.60M;
                             val.MonitoringKitNumber = 0; // #1446 Non considerare se non c'è pacchetto base
                         }
                     }
@@ -390,8 +412,8 @@ namespace DO.VIVICARE.Report.Valorizzazione
                     {
                         if ((_pacchettiRiabilitativi + val.HourInfNumberTotal) < 4) // non ci sono pacchetti
                         {
-                            val.HourInfValue = 30;
-                            val.HourRehabValue = 30;
+                            val.HourInfValue = 32.60M;
+                            val.HourRehabValue = 32.60M;
                             val.HourRehabNumber = _pacchettiRiabilitativi;
                             val.MonitoringKitNumber = 0; // #1446 Non considerare se non c'è pacchetto base
                         }
@@ -416,7 +438,11 @@ namespace DO.VIVICARE.Report.Valorizzazione
                                 case "ASL ROMA 5":
                                 case "ASL ROMA 6":
                                     // inf priority
-                                    val.HourRehabValue = 30; // Unica condizione particolare
+                                    // ⬆️ TARIFFA AGGIORNATA [01-01-2026] - Ora Riabilitazione ASL Roma 5/6
+                                    // PRIMA: 30.00M | DOPO: 32.60M (+8.7%)
+                                    // DESCRIZIONE: Tariffa oraria Riabilitazione ASL Roma 5/6 specifica
+                                    // FONTE: Nuove-tariffe-ADI-Lazio-01-01-2026.xlsx
+                                    val.HourRehabValue = 32.60M; // Unica condizione particolare
                                     for (int i = 1; i <= 4; i++)
                                     {
                                         if (val.HourInfNumber == 0)
@@ -450,12 +476,21 @@ namespace DO.VIVICARE.Report.Valorizzazione
                     }
                     //Per Frosinone considerare solo ore infermieristiche per il pacchetto base
 
-                    val.TotalValue += (val.BasePacketNumber * 120) + (val.ReliefPacketNumber * 108) + (val.HourInfNumber * val.HourInfValue) + (val.HourRehabNumber * val.HourRehabValue);
+                    val.TotalValue += (val.BasePacketNumber * 130.20M) + (val.ReliefPacketNumber * 117.20M) + (val.HourInfNumber * val.HourInfValue) + (val.HourRehabNumber * val.HourRehabValue);
 
                     //Valorizzazione pacchetto di ore OSS + PRELIEVI
-                    val.SampleValue = 14;
-                    val.TotalValue += (val.HourOssNumbertotal * 21.6M) + val.SampleNumber * val.SampleValue;
-                    val.HourOssValue = 21.6M;
+                    // ⬆️ TARIFFA AGGIORNATA [01-01-2026] - Prelievo
+                    // PRIMA: 14.00M | DOPO: 15.20M (+8.6%)
+                    // DESCRIZIONE: Tariffa unitaria per prelievi ematici e biologici
+                    // FONTE: Nuove-tariffe-ADI-Lazio-01-01-2026.xlsx
+                    val.SampleValue = 15.20M;
+                    
+                    // ⬆️ TARIFFA AGGIORNATA [01-01-2026] - OSS
+                    // PRIMA: 21.60M | DOPO: 23.40M (+8.3%)
+                    // DESCRIZIONE: Tariffa oraria Operatore Socio-Sanitario
+                    // FONTE: Nuove-tariffe-ADI-Lazio-01-01-2026.xlsx
+                    val.TotalValue += (val.HourOssNumbertotal * 23.40M) + val.SampleNumber * val.SampleValue;
+                    val.HourOssValue = 23.40M;
                     val.ReliefPacketNumber += (int)Math.Truncate(val.HourOssNumbertotal / 5);
                     val.HourOssNumber = val.HourOssNumbertotal - ((int)Math.Truncate(val.HourOssNumbertotal / 5) * 5);
 
@@ -472,6 +507,10 @@ namespace DO.VIVICARE.Report.Valorizzazione
                     val.TotalValue += val.TransInfTotal;
                     if (val.TransInfTotal < 1) val.TransInfValue = 0; //#1445
                     #endregion
+                    // ⬆️ TARIFFA INVARIATA [01-01-2026] - Trasporto Medico
+                    // PRIMA: 106M | DOPO: 106M (invariato)
+                    // DESCRIZIONE: Tariffa unitaria trasporto con Medico
+                    // FONTE: Nuove-tariffe-ADI-Lazio-01-01-2026.xlsx
                     val.TransDocValue = 106;
                     val.TransDocTotal = val.TransDocNumber * val.TransDocValue;
                     val.TotalValue += val.TransDocTotal;
@@ -480,54 +519,90 @@ namespace DO.VIVICARE.Report.Valorizzazione
                     // Tutte aggiunte il 14/07/2022 per uniformità alle ASL
 
                     //Valorizzazione RX DOMICILIARE
+                    // ⬆️ TARIFFA INVARIATA [01-01-2026] - RX Domiciliare
+                    // PRIMA: 120M | DOPO: 120M (invariato)
+                    // DESCRIZIONE: Tariffa unitaria radiografia domiciliare con refertazione
+                    // FONTE: Nuove-tariffe-ADI-Lazio-01-01-2026.xlsx
                     val.RXDomValue = 120;
                     val.RXDomTotal = val.RXDomNumber * val.RXDomValue;
                     val.TotalValue += val.RXDomTotal;
                     if (val.RXDomTotal < 1) val.RXDomValue = 0; //#1445
 
                     //Valorizzazione ECOGRAFIA DOMICILIARE
+                    // ⬆️ TARIFFA INVARIATA [01-01-2026] - Ecografia Domiciliare
+                    // PRIMA: 140M | DOPO: 140M (invariato)
+                    // DESCRIZIONE: Tariffa unitaria ecografia domiciliare
+                    // FONTE: Nuove-tariffe-ADI-Lazio-01-01-2026.xlsx
                     val.EcoDomValue = 140;
                     val.EcoDomTotal = val.EcoDomNumber * val.EcoDomValue;
                     val.TotalValue += val.EcoDomTotal;
                     if (val.EcoDomTotal < 1) val.EcoDomValue = 0; //#1445
 
                     //Valorizzazione EMOGAS DOMICILIARE
+                    // ⬆️ TARIFFA INVARIATA [01-01-2026] - Emogas Domiciliare (Analisi)
+                    // PRIMA: 90M | DOPO: 90M (invariato)
+                    // DESCRIZIONE: Tariffa unitaria analisi emogas domiciliare
+                    // FONTE: Nuove-tariffe-ADI-Lazio-01-01-2026.xlsx
                     val.EmoGasDomValue = 90;
                     val.EmoGasDomTotal = val.EmoGasDomNumber * val.EmoGasDomValue;
                     val.TotalValue += val.EmoGasDomTotal;
                     if (val.EmoGasDomTotal < 1) val.EmoGasDomValue = 0; //#1445
 
                     //Valorizzazione EMOGAS DOMICILIARE SOLO PRELIEVO E TRASP
-                    val.EmoGasLabDomValue = 30;
+                    // ⬆️ TARIFFA AGGIORNATA [01-01-2026] - Emogas Prelievo/Trasporto
+                    // PRIMA: 30.00M | DOPO: 32.60M (+8.7%)
+                    // DESCRIZIONE: Tariffa unitaria emogas solo prelievo e trasporto al lab
+                    // FONTE: Nuove-tariffe-ADI-Lazio-01-01-2026.xlsx
+                    val.EmoGasLabDomValue = 32.60M;
                     val.EmoGasLabDomTotal = val.EmoGasLabDomNumber * val.EmoGasLabDomValue;
                     val.TotalValue += val.EmoGasLabDomTotal;
                     if (val.EmoGasLabDomTotal < 1) val.EmoGasLabDomValue = 0; //#1445
 
                     //Valorizzazione EMOSTRASFUSIONE DOMICILIARE
-                    val.EmoTrasfDomValue = (val.ASL == "ASL FROSINONE") ? 200 : 250;
+                    // ⬆️ TARIFFA AGGIORNATA [01-01-2026] - Emotrasfusione Domiciliare
+                    // PRIMA: 200M (Frosinone) / 250M (altri) | DOPO: 250M (tutte ASL)
+                    // DESCRIZIONE: Tariffa unitaria emotrasfusione domiciliare - UNIFICATA per tutte le ASL
+                    // FONTE: Nuove-tariffe-ADI-Lazio-01-01-2026.xlsx
+                    val.EmoTrasfDomValue = 250; // Unificato per tutte le ASL (precedentemente 200 per Frosinone)
                     val.EmoTrasfDomTotal = val.EmoTrasfDomNumber * val.EmoTrasfDomValue;
                     val.TotalValue += val.EmoTrasfDomTotal;
                     if (val.EmoTrasfDomTotal < 1) val.EmoTrasfDomValue = 0; //#1445
 
                     //Valorizzazione CAMBIO CATETERE
-                    val.CatheterChangeValue = 22;
+                    // ⬆️ TARIFFA AGGIORNATA [01-01-2026] - Cambio Catetere
+                    // PRIMA: 22.00M | DOPO: 23.90M (+8.6%)
+                    // DESCRIZIONE: Tariffa unitaria cambio catetere vescicale domiciliare
+                    // FONTE: Nuove-tariffe-ADI-Lazio-01-01-2026.xlsx
+                    val.CatheterChangeValue = 23.90M;
                     val.CatheterChangeTotal = val.CatheterChangeNumber * val.CatheterChangeValue;
                     val.TotalValue += val.CatheterChangeTotal;
                     if (val.CatheterChangeTotal < 1) val.CatheterChangeValue = 0; //#1445
 
                     //Valorizzazione TAMPONI ANTIGENICI (COVID)
+                    // ⬆️ TARIFFA INVARIATA [01-01-2026] - Tamponi Antigenici COVID
+                    // PRIMA: 33M | DOPO: 33M (invariato)
+                    // DESCRIZIONE: Tariffa unitaria tampone antigenico domiciliare
+                    // FONTE: Nuove-tariffe-ADI-Lazio-01-01-2026.xlsx
                     val.SwabValue = 33;
                     val.SwabTotal = val.SwabNumber * val.SwabValue;
                     val.TotalValue += val.SwabTotal;
                     if (val.SwabTotal < 1) val.SwabValue = 0; //#1445
 
                     //Valorizzazione PRESTAZIONI VACCINI (COVID)
+                    // ⬆️ TARIFFA INVARIATA [01-01-2026] - Vaccini COVID
+                    // PRIMA: 44M | DOPO: 44M (invariato)
+                    // DESCRIZIONE: Tariffa unitaria prestazioni vaccini COVID domiciliare
+                    // FONTE: Nuove-tariffe-ADI-Lazio-01-01-2026.xlsx
                     val.VaxValue = 44;
                     val.VaxTotal = val.VaxNumber * val.VaxValue;
                     val.TotalValue += val.VaxTotal;
                     if (val.VaxTotal < 1) val.VaxValue = 0; //#1445
 
                     //Valorizzazione GESTIONE KIT PER TELEMONITORAGGIO PAZ. COVID
+                    // ⬆️ TARIFFA INVARIATA [01-01-2026] - Monitoraggio COVID
+                    // PRIMA: 40M | DOPO: 40M (invariato)
+                    // DESCRIZIONE: Tariffa unitaria gestione kit telemonitoraggio pazienti COVID
+                    // FONTE: Nuove-tariffe-ADI-Lazio-01-01-2026.xlsx
                     val.MonitoringKitValue = 40;
                     val.MonitoringKitTotal = val.MonitoringKitNumber * val.MonitoringKitValue;
                     val.TotalValue += val.MonitoringKitTotal;
@@ -551,7 +626,11 @@ namespace DO.VIVICARE.Report.Valorizzazione
                         }
                         if (item.SpecialistAccessNumber > 0)
                         {
-                            item.SpecialistAccessValue = 120;
+                            // ⬆️ TARIFFA AGGIORNATA [01-01-2026] - Accesso Specialistico
+                            // PRIMA: 120.00M | DOPO: 130.20M (+8.5%)
+                            // DESCRIZIONE: Tariffa unitaria accesso medico specialistico (Anestesista/Chirurgo)
+                            // FONTE: Nuove-tariffe-ADI-Lazio-01-01-2026.xlsx
+                            item.SpecialistAccessValue = 130.20M;
                             item.SpecialistAccessTotal = item.SpecialistAccessNumber * item.SpecialistAccessValue;
                         }
                     }
@@ -927,12 +1006,3 @@ namespace DO.VIVICARE.Report.Valorizzazione
         #endregion
     }
 }
-
-/*
-Da BN a BR trovo le ore da calcolare in pacchetto base (4 ore). Solo l'eccedenza (a multipli di 4 ore) deve confluire in Colonna L come pacchetto sollievo (riabilitazione).
-Probabilmente il problema è dovuto ad una diversa imputazione della colonna ASL (C), nello switch alla riga 644 i case sono riportati come ASL ROMA n. mentre nel file caricato trovo ASL RMn.
-Quindi lo switch non soddisfa alcun case di quelli proposti e quindi passa senza scontare le ore per i pacchetti base.
-
-Colonne AD AE AF da valorizzare sempre a 0
-Mantenere però il valore in BX
- */
