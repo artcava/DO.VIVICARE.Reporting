@@ -1,0 +1,313 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - 'v*'
+      - 'plugin/*'
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
+  checks: write
+  pull-requests: write
+
+jobs:
+  # ========================================
+  # JOB 1: BUILD & TEST (sempre eseguito)
+  # ========================================
+  build-and-test:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.3
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.2.0
+
+    - name: Restore NuGet packages
+      run: nuget restore DO.VIVICARE.Reporting.sln
+
+    - name: Build solution
+      run: |
+        msbuild DO.VIVICARE.Reporting.sln `
+          /p:Configuration=Release `
+          /p:Platform="Any CPU" `
+          /maxcpucount
+      shell: powershell
+
+    - name: Run Unit Tests
+      run: |
+        dotnet test DO.VIVICARE.Tests/DO.VIVICARE.Tests.csproj `
+          --configuration Release `
+          --no-build `
+          --logger "console;verbosity=detailed" `
+          --logger "trx;LogFileName=test-results.trx"
+      continue-on-error: false
+
+    - name: Run Integration Tests
+      run: |
+        dotnet test DO.VIVICARE.IntegrationTests/DO.VIVICARE.IntegrationTests.csproj `
+          --configuration Release `
+          --no-build `
+          --logger "console;verbosity=detailed" `
+          --logger "trx;LogFileName=integration-test-results.trx"
+      continue-on-error: false
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: '**/test-results*.trx'
+
+    - name: Publish test results
+      if: always()
+      uses: dorny/test-reporter@v1
+      with:
+        name: Test Results
+        path: '**/test-results*.trx'
+        reporter: 'dotnet-trx'
+
+    # Upload build artifacts per i job successivi
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-output
+        path: |
+          **/bin/Release/**/*.dll
+          **/bin/Release/**/*.exe
+          **/bin/Release/**/*.pdb
+        retention-days: 1
+
+  # ========================================
+  # JOB 2: RELEASE APP (solo se tag v*.*.*)
+  # ========================================
+  release-app:
+    needs: build-and-test
+    if: startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, 'plugin')
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-output
+
+    - name: Extract version from tag
+      id: version
+      shell: powershell
+      run: |
+        $tag = "${{ github.ref }}"
+        if ($tag -match "refs/tags/v(.*)$") {
+          $version = $matches[1]
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+          echo "tag=v$version" >> $env:GITHUB_OUTPUT
+        }
+
+    - name: Create application package
+      shell: powershell
+      run: |
+        $version = "${{ steps.version.outputs.version }}"
+        
+        # Create package directory
+        New-Item -ItemType Directory -Force -Path "package" | Out-Null
+        
+        # Copy UI binaries
+        if (Test-Path "DO.VIVICARE.UI\bin\Release") {
+          Copy-Item "DO.VIVICARE.UI\bin\Release\*" -Destination "package\" -Force -Recurse
+        }
+        
+        # Copy Reporter binaries
+        if (Test-Path "DO.VIVICARE.Reporter\bin\Release") {
+          Copy-Item "DO.VIVICARE.Reporter\bin\Release\*" -Destination "package\" -Force -Recurse
+        }
+        
+        # Create ZIP
+        Compress-Archive -Path "package\*" -DestinationPath "DO.VIVICARE-Setup-$version.zip" -Force
+        Write-Host "✅ Package created: DO.VIVICARE-Setup-$version.zip"
+
+    - name: Generate checksum
+      shell: powershell
+      run: |
+        $version = "${{ steps.version.outputs.version }}"
+        $fileName = "DO.VIVICARE-Setup-$version.zip"
+        $checksum = (Get-FileHash $fileName -Algorithm SHA256).Hash
+        echo "$checksum  $fileName" | Out-File -Encoding ASCII "CHECKSUM.txt"
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          DO.VIVICARE-Setup-${{ steps.version.outputs.version }}.zip
+          CHECKSUM.txt
+        body: |
+          # DO.VIVICARE Reporting v${{ steps.version.outputs.version }}
+          
+          ## 📦 What's Included
+          - ✅ UI Application
+          - ✅ Reporter Library
+          - ✅ Plugin Manager (for automatic library updates)
+          
+          ## 🚀 Installation
+          1. Download `DO.VIVICARE-Setup-${{ steps.version.outputs.version }}.zip`
+          2. Extract and run setup
+          3. Use Plugin Manager to download additional modules
+          
+          ## 🔒 Verify Integrity
+          ```
+          certutil -hashfile DO.VIVICARE-Setup-${{ steps.version.outputs.version }}.zip SHA256
+          ```
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ========================================
+  # JOB 3: RELEASE PLUGIN (solo se tag plugin/*)
+  # ========================================
+  release-plugin:
+    needs: build-and-test
+    if: startsWith(github.ref, 'refs/tags/plugin/')
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-output
+
+    - name: Extract plugin info from tag
+      id: plugin
+      shell: powershell
+      run: |
+        $tag = "${{ github.ref }}"
+        Write-Host "Processing tag: $tag"
+        
+        # Format: refs/tags/plugin/{plugin-id}/{version}
+        if ($tag -match "refs/tags/plugin/([^/]+)/([^/]+)$") {
+          $pluginId = $matches[1]
+          $version = $matches[2]
+          
+          Write-Host "Plugin ID: $pluginId"
+          Write-Host "Version: $version"
+          
+          # Map plugin ID to project folder
+          $projectMap = @{
+            "document.adialtaintensita" = "DO.VIVICARE.Document.ADIAltaIntensita"
+            "document.adibassaintensita" = "DO.VIVICARE.Document.ADIBassaIntensita"
+            "document.asst" = "DO.VIVICARE.Document.ASST"
+            "document.comuni" = "DO.VIVICARE.Document.Comuni"
+            "document.laziohealthworker" = "DO.VIVICARE.Document.LazioHealthWorker"
+            "document.minsan" = "DO.VIVICARE.Document.MinSan"
+            "document.prestazioni" = "DO.VIVICARE.Document.Prestazioni"
+            "document.prezzi" = "DO.VIVICARE.Document.Prezzi"
+            "document.rendiconto" = "DO.VIVICARE.Document.Rendiconto"
+            "document.report16" = "DO.VIVICARE.Document.Report16"
+            "document.report18" = "DO.VIVICARE.Document.Report18"
+            "document.valorizzazione" = "DO.VIVICARE.Document.Valorizzazione"
+            "document.valorizzazioniadialta" = "DO.VIVICARE.Document.ValorizzazioniADIAlta"
+            "document.zsdfatture" = "DO.VIVICARE.Document.ZSDFatture"
+            "report.allegatoadi" = "DO.VIVICARE.Report.AllegatoADI"
+            "report.dietetica" = "DO.VIVICARE.Report.Dietetica"
+            "report.valorizzazione" = "DO.VIVICARE.Report.Valorizzazione"
+          }
+          
+          $projectName = $projectMap[$pluginId]
+          
+          if (-not $projectName) {
+            Write-Error "Unknown plugin ID: $pluginId"
+            exit 1
+          }
+          
+          Write-Host "Project Name: $projectName"
+          
+          echo "pluginId=$pluginId" >> $env:GITHUB_OUTPUT
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+          echo "projectName=$projectName" >> $env:GITHUB_OUTPUT
+        } else {
+          Write-Error "Invalid tag format: $tag"
+          exit 1
+        }
+
+    - name: Package plugin DLL
+      shell: powershell
+      run: |
+        $projectName = "${{ steps.plugin.outputs.projectName }}"
+        $version = "${{ steps.plugin.outputs.version }}"
+        $dllPath = "$projectName\bin\Release\$projectName.dll"
+        $outputName = "$projectName-$version.dll"
+        
+        Write-Host "Looking for DLL at: $dllPath"
+        
+        if (Test-Path $dllPath) {
+          Copy-Item $dllPath -Destination $outputName
+          Write-Host "✅ Package created: $outputName"
+        } else {
+          Write-Error "❌ DLL not found at: $dllPath"
+          Get-ChildItem "$projectName\bin" -Recurse | Select-Object FullName
+          exit 1
+        }
+
+    - name: Generate checksum
+      shell: powershell
+      run: |
+        $projectName = "${{ steps.plugin.outputs.projectName }}"
+        $version = "${{ steps.plugin.outputs.version }}"
+        $fileName = "$projectName-$version.dll"
+        
+        $checksum = (Get-FileHash $fileName -Algorithm SHA256).Hash
+        echo "$checksum  $fileName" | Out-File -Encoding ASCII "CHECKSUM.txt"
+        Write-Host "✅ Checksum: $checksum"
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          ${{ steps.plugin.outputs.projectName }}-${{ steps.plugin.outputs.version }}.dll
+          CHECKSUM.txt
+        body: |
+          # Plugin: ${{ steps.plugin.outputs.projectName }}
+          
+          **Version**: ${{ steps.plugin.outputs.version }}
+          
+          ## 📥 Installation (In-App)
+          
+          1. Open **DO.VIVICARE UI**
+          2. Go to **Tools → Plugin Manager**
+          3. Find this plugin in **Available Plugins**
+          4. Click **Download**
+          5. ✅ Ready! (no restart needed)
+          
+          ## 📋 Manual Installation
+          
+          1. Download the `.dll` file
+          2. Place in: `C:\Program Files\DO.VIVICARE\Plugins\`
+          3. Restart the application
+          
+          ## ✅ Verify Integrity
+          ```
+          certutil -hashfile ${{ steps.plugin.outputs.projectName }}-${{ steps.plugin.outputs.version }}.dll SHA256
+          ```
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
