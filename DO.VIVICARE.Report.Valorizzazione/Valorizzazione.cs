@@ -136,96 +136,9 @@ namespace DO.VIVICARE.Report.Valorizzazione
                     // Prelievi e Trasporti sono identificati con un WorkType specifico
                     switch (((string)adi.Activity).ToUpper())
                     {
-                        //case "PRELIEVO PER EMOTRASFUSIONI (ADI ALTA INTENSITA')":
-                        //case "TELEMONITORAGGIO/TELEVISITA/TELECONSULTO (SIAT ASL FROSINONE)":
-                        //    continue; // 2022/07/14 - Per queste attività non si conteggia nulla 
-                        //case "PRELIEVO EMATICO (ADI ALTA INTENSITA')":
-                        //case "PRELIEVO EMATICO (ADI ALTA INTENSITA')":
-                        //case "PRELIEVO VENOSO (ADI ALTA INTENSITA')":
-                        //case "PRELIEVO ALTRO MATERIALE BIOLOGICO (ADI ALTA INTENSITA')":
-                        //case "PRELIEVO EMATICO (ADI ALTA INTENSITA' - FROSINONE)":
-                        //case "PRELIEVO VENOSO (SIAT ASL FROSINONE)":
-                        //case "PRELIEVO EMATICO (ADI PRESTAZIONALE)":
-                        //case "RACCOLTA DI UN CAMPIONE DI URINE (ADI ALTA INTENSITA')":
-                        //case "RACCOLTA DI UN CAMPIONE DI URINE (ADI ALTA INTENSITA')":
-                        //    worktype = "PRELIEVO";
-                        //    break;
-                        //case "SERVIZIO TRASPORTO SANITARIO (ADI ALTA INTENSITA')":
-                        //case "SERVIZIO TRASPORTO SANITARIO (ADI ALTA INTENSITA')":
-                        //case "SERVIZIO TRASPORTO (ADI ALTA INTENSITA')":
-                        //case "SERVIZIO TRASPORTO (ADI ALTA INTENSITA')":
-                        //    switch (((string)oss.WorkType).ToUpper())
-                        //    {
-                        //        case "ANESTESISTA":
-                        //        case "MEDICO CHIRURGO":
-                        //            worktype = "TRASPORTO CON MEDICO";
-                        //            break;
-                        //        default:
-                        //            worktype = "TRASPORTO CON INFERMIERE";
-                        //            break;
-                        //    }
-                        //    break;
-                        //    // Aggiunte il 14/06/2022 per difformità con l'originale
-                        //case "SERVIZIO TRASPORTO AMBULANZE INFERM. (ADI ALTA INTENSITA')":
-                        //    worktype = "TRASPORTO CON INFERMIERE";
-                        //    break;
-                        //case "SERVIZIO TRASPORTO AMBULANZE MEDICO (ADI ALTA INTENSITA')":
-                        //    worktype = "TRASPORTO CON MEDICO";
-                        //    break;
-                        //    // Tutte aggiunte il 14/07/2022 per uniformità alle ASL
-                        //case "RADIOGRAFIA DOMICILIARE CON REFERTAZIONE (ADI ALTA INTENSITA')":
-                        //case "RADIOGRAFIA DOMICILIARE CON REFERTAZIONE (ADI ALTA INTENSITA')":
-                        //case "ESAMI DIAGNOSTICI RX (ADI ALTA INTENSITA')":
-                        //case "ESAMI DIAGNOSTICI RX (ADI ALTA INTENSITA')":
-                        //    worktype = "RX DOMICILIARE";
-                        //    break;
-                        //case "ECOGRAFIA DOMICILIARE (ADI ALTA INTENSITA')":
-                        //case "ECOGRAFIA DOMICILIARE (ADI ALTA INTENSITA')":
-                        //    worktype = "ECOGRAFIA DOMICILIARE";
-                        //    break;
-                        //case "EMOGASANALISI-PRELIEVO.ANALISI.REFERTO (ADI ALTA INTENSITA')":
-                        //case "EMOGASANALISI-PRELIEVO.ANALISI.REFERTO (ADI ALTA INTENSITA')":
-                        //case "EMOGASANALISI-PRELIEVO.ANALISI.REFERTO (SIAT ASL FROSINONE)":
-                        //    worktype = "EMOGAS DOMICILIARE";
-                        //    break;
-                        //case "EMOGASANALISI-PRELIEVO.TRASPORTO.LAB":
-                        //    worktype = "EMOGAS DOMICILIARE SOLO PRELIEVO E TRASP";
-                        //    break;
-                        //case "EMOTRASFUSIONE (SEMP.) (ADI ALTA INTENSITA')":
-                        //case "EMOTRASFUSIONE (SEMP.) (ADI ALTA INTENSITA')":
-                        //case "EMOTRASFUSIONE (SEMP.) (ADI PRESTAZIONALE)":
-                        //case "EMOTRASFUSIONE (SEMP.) (SIAT ASL FROSINONE)":
-                        //case "EMOTRASFUSIONE DOMICILIARE (ADI ALTA INTENSITA')":
-                        //case "EMOTRASFUSIONE DOMICILIARE (ADI ALTA INTENSITA')":
-                        //case "EMOTRASFUSIONE DOMICILIARE (ADI PRESTAZIONALE)":
-                        //case "EMOTRASFUSIONE-PREL.PROVE.RITIRO.SACCA (SIAT ASL ROMA 2)":
-                        //    worktype = "EMOTRASFUSIONE DOMICILIARE";
-                        //    break;
-                        //case "SOSTITUZIONE DEL CATETERE VESCICALE (ADI ALTA INTENSITA')":
-                        //case "SOSTITUZIONE DEL CATETERE VESCICALE (ADI ALTA INTENSITA')":
-                        //    worktype = "CAMBIO CATETERE";
-                        //    break;
-                        //case "TAMPONE RAPIDO (ADI ALTA INTENSITA')":
-                        //case "TAMPONE RAPIDO (ADI ALTA INTENSITA')":
-                        //case "TEST ANTIGIENICO A DOMICILIO (SIAT ASL FROSINONE)":
-                        //case "TEST ANTIGIENICO A DOMICILIO (SIAT ASL ROMA 2)":
-                        //case "TAMPONE RAPIDO A DOMICILIO - SINGOLO (ADI ALTA INTENSITA')":
-                        //case "TAMPONE RAPIDO A DOMICILIO - SINGOLO (ADI ALTA INTENSITA')":
-                        //case "TAMPONE ANTIGIENICO DOMICILIARE (ADI ALTA INTENSITA')":
-                        //case "TAMPONE ANTIGENICO DOMICILIARE (ADI ALTA INTENSITA')":
-                        //    worktype = "TAMPONI ANTIGENICI (COVID)";
-                        //    break;
-                        //case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (SIAT ASL FROSINONE)":
-                        //case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (SIAT ASL ROMA 2)":
-                        //case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (ADI ALTA INTENSITA')":
-                        //case "VACCINAZIONE ANTI SARS-COV-2/COVID-19 (ADI ALTA INTENSITA')":
-                        //    worktype = "PRESTAZIONI VACCINI (COVID)";
-                        //    break;
-                        case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (ADI ALTA INTENSITA')":
+                        case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (ADI ALTA INTENSITA’)":
                         case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (ADI ALTA INTENSITA')":
                         case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (SIAT ASL ROMA 2)":
-                            //case "MONITORAGG. DOMICILIARE PAZIENTI COVID19 (SIAT ASL FROSINONE)": // #1446 Non considerare per Frosinone
-                            //worktype = "GESTIONE KIT PER TELEMONITORAGGIO PAZ. COVID"; // #1446 Mantenere le normali valorizzazioni
                             val.MonitoringKitNumber = 1; // #1446 Attribuire il costo aggiuntivo ma solo in presenza di pacchetto base da 120€. (vedi attribuzione pacchetto)
                             break;
                     }
@@ -250,24 +163,6 @@ namespace DO.VIVICARE.Report.Valorizzazione
                             {
                                 val.HourInfNumber += duration;
                             }
-                            //switch (adi.Activity)
-                            //{
-                            //    case "ACCESSO OSS (ADI ALTA INTENSITA' - FROSINONE)":
-                            //    case "ACCESSO OSS (ADI ALTA INTENSITA' - FROSINONE)":
-                            //    case "ACCESSO OSS (ADI ALTA INTENSITA')":
-                            //    case "ACCESSO OSS (ADI ALTA INTENSITA')":
-                            //    case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (ADI ALTA INTENSITA')":
-                            //    case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (ADI ALTA INTENSITA')":
-                            //    case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (SIAT ASL FROSINONE)":
-                            //    case "ASSIST. (OSS) PAZIENTE ALTA COMPLES (SIAT ASL ROMA 6)":
-                            //    case "ASSIST. (OSS) PAZIENTE ALTA COMPLES-H (SIAT ASL ROMA 2)":
-                            //    case "ATTIVITÀ DI SUPPORTO OSS (SIAT ASL FROSINONE)":
-                            //        val.HourOssNumber += duration;
-                            //        break;
-                            //    default:
-                            //        val.HourInfNumber += duration;
-                            //        break;
-                            //}
                             break;
                         case "INFERMIERE PEDIATRICO":
                             val.HourInfNumber += duration;
@@ -327,9 +222,6 @@ namespace DO.VIVICARE.Report.Valorizzazione
                         case "PRESTAZIONI VACCINI (COVID)":
                             val.VaxNumber += 1;
                             break;
-                            //case "GESTIONE KIT PER TELEMONITORAGGIO PAZ. COVID": // #1446 Da non gestire più singolarmente
-                            //    val.MonitoringKitNumber += 1;
-                            //    break;
                     }
                 }
 
