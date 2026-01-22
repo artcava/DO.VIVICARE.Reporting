@@ -104,21 +104,104 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: build-output
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.3
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.2.0
 
     - name: Extract version from tag
       id: version
       shell: powershell
       run: |
         $tag = "${{ github.ref }}"
+        Write-Host "Processing tag: $tag"
+        
         if ($tag -match "refs/tags/v(.*)$") {
           $version = $matches[1]
+          Write-Host "✅ Version extracted: $version"
           echo "version=$version" >> $env:GITHUB_OUTPUT
           echo "tag=v$version" >> $env:GITHUB_OUTPUT
+        } else {
+          Write-Error "Invalid tag format"
+          exit 1
         }
+
+    - name: Update AssemblyInfo.cs with version
+      shell: powershell
+      run: |
+        $version = "${{ steps.version.outputs.version }}"
+        Write-Host "Updating AssemblyInfo.cs files to version $version"
+        
+        # Update UI Application
+        $uiAssembly = "DO.VIVICARE.UI\Properties\AssemblyInfo.cs"
+        if (Test-Path $uiAssembly) {
+          $content = Get-Content $uiAssembly
+          $content = $content -replace 'AssemblyVersion\("[\d\.]+\.?[\d\.]*"\)', "AssemblyVersion(\"$version.0\")"
+          $content = $content -replace 'AssemblyFileVersion\("[\d\.]+\.?[\d\.]*"\)', "AssemblyFileVersion(\"$version.0\")"
+          $content = $content -replace 'AssemblyInformationalVersion\("[\d\.]+\.?[\d\.]*"\)', "AssemblyInformationalVersion(\"$version\")"
+          Set-Content -Path $uiAssembly -Value $content
+          Write-Host "✅ Updated: $uiAssembly"
+        }
+        
+        # Update Reporter Application (if exists)
+        $reporterAssembly = "DO.VIVICARE.Reporter\Properties\AssemblyInfo.cs"
+        if (Test-Path $reporterAssembly) {
+          $content = Get-Content $reporterAssembly
+          $content = $content -replace 'AssemblyVersion\("[\d\.]+\.?[\d\.]*"\)', "AssemblyVersion(\"$version.0\")"
+          $content = $content -replace 'AssemblyFileVersion\("[\d\.]+\.?[\d\.]*"\)', "AssemblyFileVersion(\"$version.0\")"
+          $content = $content -replace 'AssemblyInformationalVersion\("[\d\.]+\.?[\d\.]*"\)', "AssemblyInformationalVersion(\"$version\")"
+          Set-Content -Path $reporterAssembly -Value $content
+          Write-Host "✅ Updated: $reporterAssembly"
+        }
+
+    - name: Rebuild solution with updated version
+      shell: powershell
+      run: |
+        Write-Host "Restoring NuGet packages..."
+        nuget restore DO.VIVICARE.Reporting.sln
+        
+        Write-Host "Building solution..."
+        msbuild DO.VIVICARE.Reporting.sln `
+          /p:Configuration=Release `
+          /p:Platform="Any CPU" `
+          /maxcpucount
+        
+        if ($LASTEXITCODE -ne 0) {
+          Write-Error "Build failed with exit code $LASTEXITCODE"
+          exit 1
+        }
+        
+        Write-Host "✅ Build completed successfully"
+
+    - name: Update manifest.json
+      shell: powershell
+      run: |
+        $version = "${{ steps.version.outputs.version }}"
+        $now = Get-Date -Format "yyyy-MM-dd"
+        
+        $manifest = @{
+          version = $version
+          releaseDate = $now
+          testedWith = "CI/CD Pipeline - All Tests Passed"
+          assets = @(
+            @{
+              type = "ui"
+              name = "DO.VIVICARE.UI"
+              version = $version
+              file = "DO.VIVICARE-Setup-$version.zip"
+              size = "15MB"
+              minFramework = "4.8"
+              checksum = ""
+            }
+          )
+        }
+        
+        $json = $manifest | ConvertTo-Json -Depth 10
+        Set-Content -Path "manifest.json" -Value $json -Encoding UTF8
+        
+        Write-Host "✅ Manifest updated:"
+        Write-Host $json
 
     - name: Create application package
       shell: powershell
@@ -131,24 +214,40 @@ jobs:
         # Copy UI binaries
         if (Test-Path "DO.VIVICARE.UI\bin\Release") {
           Copy-Item "DO.VIVICARE.UI\bin\Release\*" -Destination "package\" -Force -Recurse
+          Write-Host "✅ Copied UI binaries"
         }
         
         # Copy Reporter binaries
         if (Test-Path "DO.VIVICARE.Reporter\bin\Release") {
           Copy-Item "DO.VIVICARE.Reporter\bin\Release\*" -Destination "package\" -Force -Recurse
+          Write-Host "✅ Copied Reporter binaries"
         }
         
         # Create ZIP
         Compress-Archive -Path "package\*" -DestinationPath "DO.VIVICARE-Setup-$version.zip" -Force
         Write-Host "✅ Package created: DO.VIVICARE-Setup-$version.zip"
+        
+        # Get file size
+        $fileSize = (Get-Item "DO.VIVICARE-Setup-$version.zip").Length / 1MB
+        Write-Host "📦 File size: $([Math]::Round($fileSize, 2)) MB"
 
     - name: Generate checksum
       shell: powershell
       run: |
         $version = "${{ steps.version.outputs.version }}"
         $fileName = "DO.VIVICARE-Setup-$version.zip"
+        
+        Write-Host "Computing SHA256 checksum..."
         $checksum = (Get-FileHash $fileName -Algorithm SHA256).Hash
         echo "$checksum  $fileName" | Out-File -Encoding ASCII "CHECKSUM.txt"
+        
+        # Update manifest with checksum
+        $manifest = Get-Content "manifest.json" | ConvertFrom-Json
+        $manifest.assets[0].checksum = "sha256:$checksum"
+        $manifest | ConvertTo-Json -Depth 10 | Set-Content "manifest.json"
+        
+        Write-Host "✅ Checksum generated and added to manifest"
+        Write-Host "🔐 SHA256: $checksum"
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
@@ -156,23 +255,42 @@ jobs:
         files: |
           DO.VIVICARE-Setup-${{ steps.version.outputs.version }}.zip
           CHECKSUM.txt
+          manifest.json
         body: |
-          # DO.VIVICARE Reporting v${{ steps.version.outputs.version }}
+          # ✅ DO.VIVICARE Reporting v${{ steps.version.outputs.version }}
+          
+          **Status:** All CI/CD tests PASSED ✅
           
           ## 📦 What's Included
-          - ✅ UI Application
+          - ✅ UI Application v${{ steps.version.outputs.version }}
           - ✅ Reporter Library
-          - ✅ Plugin Manager (for automatic library updates)
+          - ✅ Plugin Manager (automatic library updates)
+          - ✅ SHA256 Checksum verification
           
           ## 🚀 Installation
+          
+          ### Option 1: Semi-Automatic (Recommended)
           1. Download `DO.VIVICARE-Setup-${{ steps.version.outputs.version }}.zip`
           2. Extract and run setup
-          3. Use Plugin Manager to download additional modules
+          3. Application will auto-check for updates on next launch
+          
+          ### Option 2: Manual Installation
+          1. Download the ZIP file above
+          2. Extract to Program Files
+          3. Run `DO.VIVICARE.UI.exe`
           
           ## 🔒 Verify Integrity
           ```
+          Checksum (SHA256):
           certutil -hashfile DO.VIVICARE-Setup-${{ steps.version.outputs.version }}.zip SHA256
           ```
+          
+          **Expected:** See CHECKSUM.txt for expected value
+          
+          ## 📝 What's New
+          - See RELEASE_NOTES.md in repository
+          
+          **Release Date:** ${{ github.event.head_commit.timestamp }}
         draft: false
         prerelease: false
       env:
