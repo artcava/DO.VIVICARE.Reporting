@@ -206,6 +206,9 @@ namespace DO.VIVICARE.UI
         {
             try
             {
+                // IMPORTANTE: Prima elimina le versioni vecchie dello stesso plugin
+                DeleteOldPluginVersions(plugin.Id);
+
                 using (var client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add("User-Agent", "DO.VIVICARE");
@@ -287,6 +290,9 @@ namespace DO.VIVICARE.UI
             var setupZipPath = null as string;
             try
             {
+                // IMPORTANTE: Prima elimina le versioni vecchie dello stesso plugin
+                DeleteOldPluginVersions(plugin.Id);
+
                 setupZipPath = Path.Combine(_pluginDirectory, "setup_temp.zip");
 
                 LogDebug($"Downloading setup package from {plugin.DownloadUrl}");
@@ -443,6 +449,7 @@ namespace DO.VIVICARE.UI
 
         /// <summary>
         /// Ottiene la versione installata di un plugin specifico (ricerca per ID)
+        /// Restituisce SEMPRE la versione più recente se multiple versioni esistono
         /// </summary>
         public string GetInstalledPluginVersion(string pluginId)
         {
@@ -450,39 +457,142 @@ namespace DO.VIVICARE.UI
             {
                 // Cerca file nel formato: {pluginId-lowercase}-{version}.dll
                 var pattern = pluginId.Replace(".", "-").ToLower() + "-*.dll";
-                var file = Directory.GetFiles(_pluginDirectory, pattern).FirstOrDefault();
+                var files = Directory.GetFiles(_pluginDirectory, pattern);
 
-                if (file == null)
+                if (files.Length == 0)
                     return null;
 
-                // Estrai versione dal nome file: document-adialtaintensita-1.0.0.dll
-                var fileName = Path.GetFileNameWithoutExtension(file);
-                var parts = fileName.Split(new[] { "-" }, StringSplitOptions.None);
+                LogDebug($"Found {files.Length} file(s) matching pattern '{pattern}'");
 
-                if (parts.Length >= 2)
+                // Estrai versione da OGNI file e trova la più recente
+                var fileVersions = new List<(string filePath, Version version)>();
+
+                foreach (var file in files)
                 {
-                    // L'ultima parte è la versione
-                    var version = parts[parts.Length - 1];
-                    if (Version.TryParse(version, out var _))
+                    try
                     {
-                        return version;
+                        var fileName = Path.GetFileNameWithoutExtension(file);
+                        var version = ExtractVersionFromFileName(fileName, pluginId);
+
+                        if (version != null)
+                        {
+                            fileVersions.Add((file, version));
+                            LogDebug($"  File: {Path.GetFileName(file)} → Version: {version}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LogDebug($"Could not parse version from {Path.GetFileName(file)}: {ex.Message}");
                     }
                 }
 
-                // Se non riesco a estrarre, prova a leggere dall'assembly
-                try
-                {
-                    var assembly = AssemblyName.GetAssemblyName(file);
-                    return assembly.Version?.ToString() ?? "Unknown";
-                }
-                catch
-                {
-                    return "Unknown";
-                }
+                if (fileVersions.Count == 0)
+                    return null;
+
+                // Ordina per versione (decrescente) e prendi la più recente
+                var latestFile = fileVersions.OrderByDescending(x => x.version).First();
+                LogDebug($"Latest version found: {latestFile.version} ({Path.GetFileName(latestFile.filePath)})");
+
+                return latestFile.version.ToString();
+            }
+            catch (Exception ex)
+            {
+                LogError($"Error getting installed plugin version for {pluginId}: {ex.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Estrae la versione dal nome file
+        /// Esempio: "report-valorizzazione-1.0.6.dll" → Version("1.0.6")
+        /// </summary>
+        private Version ExtractVersionFromFileName(string fileName, string pluginId)
+        {
+            try
+            {
+                // Formato: {id-con-trattini}-{versione}.dll
+                // Es: report-valorizzazione-1.0.6
+                var idPattern = pluginId.Replace(".", "-").ToLower();
+
+                if (!fileName.StartsWith(idPattern))
+                    return null;
+
+                // Rimuovi il pattern di ID dall'inizio
+                var remainder = fileName.Substring(idPattern.Length);
+
+                // Rimuovi il trattino iniziale se presente
+                if (remainder.StartsWith("-"))
+                    remainder = remainder.Substring(1);
+
+                // Quello che rimane dovrebbe essere la versione
+                // Es: "1.0.6" oppure "1.0.6-extra" (ignora la parte extra)
+                var versionString = remainder.Split(new[] { '-' }, StringSplitOptions.None)[0];
+
+                if (Version.TryParse(versionString, out var version))
+                    return version;
+
+                return null;
             }
             catch
             {
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// Elimina tutte le versioni precedenti di un plugin
+        /// (mantiene solo la versione più recente)
+        /// </summary>
+        private void DeleteOldPluginVersions(string pluginId)
+        {
+            try
+            {
+                var pattern = pluginId.Replace(".", "-").ToLower() + "-*.dll";
+                var files = Directory.GetFiles(_pluginDirectory, pattern);
+
+                if (files.Length <= 1)
+                    return; // Niente da pulire
+
+                LogDebug($"Cleaning up old versions of {pluginId}... Found {files.Length} version(s)");
+
+                // Estrai versione da OGNI file
+                var fileVersions = new List<(string filePath, Version version)>();
+
+                foreach (var file in files)
+                {
+                    try
+                    {
+                        var fileName = Path.GetFileNameWithoutExtension(file);
+                        var version = ExtractVersionFromFileName(fileName, pluginId);
+
+                        if (version != null)
+                            fileVersions.Add((file, version));
+                    }
+                    catch { /* Skip */ }
+                }
+
+                // Ordina per versione e mantieni solo la più recente
+                var latestFile = fileVersions.OrderByDescending(x => x.version).First();
+
+                foreach (var (filePath, version) in fileVersions)
+                {
+                    if (filePath != latestFile.filePath)
+                    {
+                        try
+                        {
+                            File.Delete(filePath);
+                            LogDebug($"Deleted old version {version}: {Path.GetFileName(filePath)}");
+                        }
+                        catch (Exception ex)
+                        {
+                            LogDebug($"Could not delete {Path.GetFileName(filePath)}: {ex.Message}");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogDebug($"Error cleaning up old plugin versions: {ex.Message}");
             }
         }
 
