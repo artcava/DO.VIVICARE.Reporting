@@ -8,7 +8,7 @@
     "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.1/DO.VIVICARE-Setup-1.2.1.zip",
     "checksum": "sha256:TBD",
     "releaseDate": "2026-01-22",
-    "lastUpdate": "2026-01-22T17:45:00Z",
+    "lastUpdate": "2026-01-22T18:01:00Z",
     "minFramework": "4.8"
   },
   "documents": [
@@ -247,7 +247,7 @@
       "type": "Report",
       "size": 512000,
       "checksum": "sha256:TBD",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/report.valorizzazione/1.0.6/DO.VIVICARE.Report.Valorizzazione-1.0.6.dll",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.1/DO.VIVICARE.Report.Valorizzazione-1.0.6.dll",
       "fileName": "DO.VIVICARE.Report.Valorizzazione-1.0.6.dll",
       "dependencies": [],
       "required": false,
