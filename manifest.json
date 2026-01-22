@@ -8,7 +8,7 @@
     "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.1/DO.VIVICARE-Setup-1.2.1.zip",
     "checksum": "sha256:TBD",
     "releaseDate": "2026-01-22",
-    "lastUpdate": "2026-01-22T18:01:00Z",
+    "lastUpdate": "2026-01-22T18:11:00Z",
     "minFramework": "4.8"
   },
   "documents": [
@@ -21,7 +21,7 @@
       "type": "Document",
       "size": 1048576,
       "checksum": "sha256:TBD",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.1/DO.VIVICARE.Document.ADIAltaIntensita-1.0.0.dll",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.adialtaintensita/1.0.0/DO.VIVICARE.Document.ADIAltaIntensita-1.0.0.dll",
       "fileName": "DO.VIVICARE.Document.ADIAltaIntensita-1.0.0.dll",
       "dependencies": [],
       "required": false
@@ -35,7 +35,7 @@
       "type": "Document",
       "size": 1024000,
       "checksum": "sha256:TBD",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.1/DO.VIVICARE.Document.ADIBassaIntensita-1.0.0.dll",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.adibassaintensita/1.0.0/DO.VIVICARE.Document.ADIBassaIntensita-1.0.0.dll",
       "fileName": "DO.VIVICARE.Document.ADIBassaIntensita-1.0.0.dll",
       "dependencies": [],
       "required": false
@@ -49,7 +49,7 @@
       "type": "Document",
       "size": 1024000,
       "checksum": "sha256:TBD",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.1/DO.VIVICARE.Document.ASST-1.0.0.dll",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.asst/1.0.0/DO.VIVICARE.Document.ASST-1.0.0.dll",
       "fileName": "DO.VIVICARE.Document.ASST-1.0.0.dll",
       "dependencies": [],
       "required": false
@@ -63,7 +63,7 @@
       "type": "Document",
       "size": 1024000,
       "checksum": "sha256:TBD",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.1/DO.VIVICARE.Document.Comuni-1.0.0.dll",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.comuni/1.0.0/DO.VIVICARE.Document.Comuni-1.0.0.dll",
       "fileName": "DO.VIVICARE.Document.Comuni-1.0.0.dll",
       "dependencies": [],
       "required": false
@@ -77,7 +77,7 @@
       "type": "Document",
       "size": 1024000,
       "checksum": "sha256:TBD",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.1/DO.VIVICARE.Document.LazioHealthWorker-1.0.0.dll",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.laziohealthworker/1.0.0/DO.VIVICARE.Document.LazioHealthWorker-1.0.0.dll",
       "fileName": "DO.VIVICARE.Document.LazioHealthWorker-1.0.0.dll",
       "dependencies": [],
       "required": false
@@ -91,7 +91,7 @@
       "type": "Document",
       "size": 1024000,
       "checksum": "sha256:TBD",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.1/DO.VIVICARE.Document.MinSan-1.0.0.dll",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.minsan/1.0.0/DO.VIVICARE.Document.MinSan-1.0.0.dll",
       "fileName": "DO.VIVICARE.Document.MinSan-1.0.0.dll",
       "dependencies": [],
       "required": false
@@ -105,7 +105,7 @@
       "type": "Document",
       "size": 1024000,
       "checksum": "sha256:TBD",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.1/DO.VIVICARE.Document.Prestazioni-1.0.0.dll",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.prestazioni/1.0.0/DO.VIVICARE.Document.Prestazioni-1.0.0.dll",
       "fileName": "DO.VIVICARE.Document.Prestazioni-1.0.0.dll",
       "dependencies": [],
       "required": false
@@ -119,7 +119,7 @@
       "type": "Document",
       "size": 1024000,
       "checksum": "sha256:TBD",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.1/DO.VIVICARE.Document.Prezzi-1.0.0.dll",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.prezzi/1.0.0/DO.VIVICARE.Document.Prezzi-1.0.0.dll",
       "fileName": "DO.VIVICARE.Document.Prezzi-1.0.0.dll",
       "dependencies": [],
       "required": false
@@ -133,7 +133,7 @@
       "type": "Document",
       "size": 1024000,
       "checksum": "sha256:TBD",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.1/DO.VIVICARE.Document.Rendiconto-1.0.0.dll",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.rendiconto/1.0.0/DO.VIVICARE.Document.Rendiconto-1.0.0.dll",
       "fileName": "DO.VIVICARE.Document.Rendiconto-1.0.0.dll",
       "dependencies": [],
       "required": false
@@ -147,7 +147,7 @@
       "type": "Document",
       "size": 1024000,
       "checksum": "sha256:TBD",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.1/DO.VIVICARE.Document.Report16-1.0.0.dll",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.report16/1.0.0/DO.VIVICARE.Document.Report16-1.0.0.dll",
       "fileName": "DO.VIVICARE.Document.Report16-1.0.0.dll",
       "dependencies": [],
       "required": false
@@ -161,7 +161,7 @@
       "type": "Document",
       "size": 1024000,
       "checksum": "sha256:TBD",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.1/DO.VIVICARE.Document.Report18-1.0.0.dll",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.report18/1.0.0/DO.VIVICARE.Document.Report18-1.0.0.dll",
       "fileName": "DO.VIVICARE.Document.Report18-1.0.0.dll",
       "dependencies": [],
       "required": false
@@ -175,7 +175,7 @@
       "type": "Document",
       "size": 1024000,
       "checksum": "sha256:TBD",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.1/DO.VIVICARE.Document.Valorizzazione-1.0.0.dll",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.valorizzazione/1.0.0/DO.VIVICARE.Document.Valorizzazione-1.0.0.dll",
       "fileName": "DO.VIVICARE.Document.Valorizzazione-1.0.0.dll",
       "dependencies": [],
       "required": false
@@ -189,7 +189,7 @@
       "type": "Document",
       "size": 1024000,
       "checksum": "sha256:TBD",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.1/DO.VIVICARE.Document.ValorizzazioniADIAlta-1.0.0.dll",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.valorizzazioniadialta/1.0.0/DO.VIVICARE.Document.ValorizzazioniADIAlta-1.0.0.dll",
       "fileName": "DO.VIVICARE.Document.ValorizzazioniADIAlta-1.0.0.dll",
       "dependencies": [],
       "required": false
@@ -203,7 +203,7 @@
       "type": "Document",
       "size": 1024000,
       "checksum": "sha256:TBD",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.1/DO.VIVICARE.Document.ZSDFatture-1.0.0.dll",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.zsdfatture/1.0.0/DO.VIVICARE.Document.ZSDFatture-1.0.0.dll",
       "fileName": "DO.VIVICARE.Document.ZSDFatture-1.0.0.dll",
       "dependencies": [],
       "required": false
@@ -219,7 +219,7 @@
       "type": "Report",
       "size": 512000,
       "checksum": "sha256:TBD",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.1/DO.VIVICARE.Report.AllegatoADI-1.0.0.dll",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/report.allegatoadi/1.0.0/DO.VIVICARE.Report.AllegatoADI-1.0.0.dll",
       "fileName": "DO.VIVICARE.Report.AllegatoADI-1.0.0.dll",
       "dependencies": [],
       "required": false
@@ -233,7 +233,7 @@
       "type": "Report",
       "size": 512000,
       "checksum": "sha256:TBD",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.1/DO.VIVICARE.Report.Dietetica-1.0.0.dll",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/report.dietetica/1.0.0/DO.VIVICARE.Report.Dietetica-1.0.0.dll",
       "fileName": "DO.VIVICARE.Report.Dietetica-1.0.0.dll",
       "dependencies": [],
       "required": false
@@ -247,7 +247,7 @@
       "type": "Report",
       "size": 512000,
       "checksum": "sha256:TBD",
-      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.1/DO.VIVICARE.Report.Valorizzazione-1.0.6.dll",
+      "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/report.valorizzazione/1.0.6/DO.VIVICARE.Report.Valorizzazione-1.0.6.dll",
       "fileName": "DO.VIVICARE.Report.Valorizzazione-1.0.6.dll",
       "dependencies": [],
       "required": false,
