@@ -107,7 +107,7 @@ jobs:
         retention-days: 1
 
   # ========================================
-  # JOB 2: RELEASE APP (solo se tag v*.*..*)
+  # JOB 2: RELEASE APP (solo se tag v*.*...*)
   # ========================================
   release-app:
     needs: build-and-test
@@ -118,11 +118,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v1.3
-
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.2.0
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-output
 
     - name: Extract version from tag
       id: version
@@ -140,53 +139,6 @@ jobs:
           Write-Error "Invalid tag format"
           exit 1
         }
-
-    - name: Update AssemblyInfo.cs with version
-      shell: powershell
-      run: |
-        $version = "${{ steps.version.outputs.version }}"
-        Write-Host "Updating AssemblyInfo.cs files to version $version"
-        
-        # Update UI Application
-        $uiAssembly = "DO.VIVICARE.UI\Properties\AssemblyInfo.cs"
-        if (Test-Path $uiAssembly) {
-          $content = Get-Content $uiAssembly
-          $content = $content -replace 'AssemblyVersion\("[\d\.]+\.?[\d\.]*"\)', "AssemblyVersion(\"$version.0\")"
-          $content = $content -replace 'AssemblyFileVersion\("[\d\.]+\.?[\d\.]*"\)', "AssemblyFileVersion(\"$version.0\")"
-          $content = $content -replace 'AssemblyInformationalVersion\("[\d\.]+\.?[\d\.]*"\)', "AssemblyInformationalVersion(\"$version\")"
-          Set-Content -Path $uiAssembly -Value $content
-          Write-Host "✅ Updated: $uiAssembly"
-        }
-        
-        # Update Reporter Application (if exists)
-        $reporterAssembly = "DO.VIVICARE.Reporter\Properties\AssemblyInfo.cs"
-        if (Test-Path $reporterAssembly) {
-          $content = Get-Content $reporterAssembly
-          $content = $content -replace 'AssemblyVersion\("[\d\.]+\.?[\d\.]*"\)', "AssemblyVersion(\"$version.0\")"
-          $content = $content -replace 'AssemblyFileVersion\("[\d\.]+\.?[\d\.]*"\)', "AssemblyFileVersion(\"$version.0\")"
-          $content = $content -replace 'AssemblyInformationalVersion\("[\d\.]+\.?[\d\.]*"\)', "AssemblyInformationalVersion(\"$version\")"
-          Set-Content -Path $reporterAssembly -Value $content
-          Write-Host "✅ Updated: $reporterAssembly"
-        }
-
-    - name: Rebuild solution with updated version
-      shell: powershell
-      run: |
-        Write-Host "Restoring NuGet packages..."
-        nuget restore DO.VIVICARE.Reporting.sln
-        
-        Write-Host "Building solution..."
-        msbuild DO.VIVICARE.Reporting.sln `
-          /p:Configuration=Release `
-          /p:Platform="Any CPU" `
-          /maxcpucount
-        
-        if ($LASTEXITCODE -ne 0) {
-          Write-Error "Build failed with exit code $LASTEXITCODE"
-          exit 1
-        }
-        
-        Write-Host "✅ Build completed successfully"
 
     - name: Update manifest.json
       shell: powershell
@@ -225,20 +177,23 @@ jobs:
         # Create package directory
         New-Item -ItemType Directory -Force -Path "package" | Out-Null
         
-        # Copy UI binaries
-        if (Test-Path "DO.VIVICARE.UI\bin\Release") {
-          Copy-Item "DO.VIVICARE.UI\bin\Release\*" -Destination "package\" -Force -Recurse
+        # Copy UI binaries from downloaded artifacts
+        if (Test-Path "DO.VIVICARE.UI/bin/Release") {
+          Copy-Item "DO.VIVICARE.UI/bin/Release/*" -Destination "package/" -Force -Recurse
           Write-Host "✅ Copied UI binaries"
+        } else {
+          Write-Error "UI binaries not found in artifacts"
+          exit 1
         }
         
-        # Copy Reporter binaries
-        if (Test-Path "DO.VIVICARE.Reporter\bin\Release") {
-          Copy-Item "DO.VIVICARE.Reporter\bin\Release\*" -Destination "package\" -Force -Recurse
+        # Copy Reporter binaries if available
+        if (Test-Path "DO.VIVICARE.Reporter/bin/Release") {
+          Copy-Item "DO.VIVICARE.Reporter/bin/Release/*" -Destination "package/" -Force -Recurse
           Write-Host "✅ Copied Reporter binaries"
         }
         
         # Create ZIP
-        Compress-Archive -Path "package\*" -DestinationPath "DO.VIVICARE-Setup-$version.zip" -Force
+        Compress-Archive -Path "package/*" -DestinationPath "DO.VIVICARE-Setup-$version.zip" -Force
         Write-Host "✅ Package created: DO.VIVICARE-Setup-$version.zip"
         
         # Get file size
@@ -385,7 +340,7 @@ jobs:
       run: |
         $projectName = "${{ steps.plugin.outputs.projectName }}"
         $version = "${{ steps.plugin.outputs.version }}"
-        $dllPath = "$projectName\bin\Release\$projectName.dll"
+        $dllPath = "$projectName/bin/Release/$projectName.dll"
         $outputName = "$projectName-$version.dll"
         
         Write-Host "Looking for DLL at: $dllPath"
@@ -395,7 +350,7 @@ jobs:
           Write-Host "✅ Package created: $outputName"
         } else {
           Write-Error "❌ DLL not found at: $dllPath"
-          Get-ChildItem "$projectName\bin" -Recurse | Select-Object FullName
+          Get-ChildItem "$projectName/bin" -Recurse | Select-Object FullName
           exit 1
         }
 
