@@ -162,7 +162,7 @@ namespace DO.VIVICARE.UI
         /// <summary>
         /// Controlla se è disponibile una nuova versione dell'applicazione e notifica l'utente
         /// </summary>
-        private async System.Threading.Tasks.Task CheckForApplicationUpdatesAsync()
+        private async Task CheckForApplicationUpdatesAsync()
         {
             try
             {
@@ -201,7 +201,7 @@ namespace DO.VIVICARE.UI
         /// Scarica e installa l'aggiornamento automaticamente
         /// </summary>
         private async System.Threading.Tasks.Task DownloadAndInstallUpdateAsync(
-            PluginManager.UpdateInfo updateInfo)
+            UpdateInfo updateInfo)
         {
             try
             {
@@ -284,8 +284,7 @@ namespace DO.VIVICARE.UI
                     // Estrai il ZIP
                     System.IO.Compression.ZipFile.ExtractToDirectory(
                         tempPath,
-                        installPath,
-                        overwriteFiles: true
+                        installPath
                     );
 
                     MessageBox.Show(
@@ -344,7 +343,7 @@ namespace DO.VIVICARE.UI
                         .ToLowerInvariant();
 
                     var cleanExpected = expectedChecksum
-                        .Replace("sha256:", "", StringComparison.OrdinalIgnoreCase)
+                        .Replace("sha256:", "")
                         .ToLowerInvariant();
 
                     return computedChecksum.Equals(cleanExpected, StringComparison.OrdinalIgnoreCase);

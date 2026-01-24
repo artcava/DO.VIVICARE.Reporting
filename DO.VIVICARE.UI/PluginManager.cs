@@ -11,7 +11,7 @@ namespace DO.VIVICARE.UI
     /// <summary>
     /// Gestisce gli aggiornamenti dell'applicazione e dei plugin da GitHub
     /// </summary>
-    public class PluginManager
+    public partial class PluginManager
     {
         private const string MANIFEST_URL =
             "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/manifest.json";
@@ -20,135 +20,6 @@ namespace DO.VIVICARE.UI
             "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download";
 
         private const string PLUGINS_DIR = "Plugins";
-
-        /// <summary>
-        /// Informazioni di aggiornamento per l'app principale
-        /// </summary>
-        public class UpdateInfo
-        {
-            [JsonProperty("currentVersion")]
-            public string CurrentVersion { get; set; }
-
-            [JsonProperty("availableVersion")]
-            public string AvailableVersion { get; set; }
-
-            [JsonProperty("releaseDate")]
-            public string ReleaseDate { get; set; }
-
-            [JsonProperty("downloadUrl")]
-            public string DownloadUrl { get; set; }
-
-            [JsonProperty("checksum")]
-            public string Checksum { get; set; }
-        }
-
-        /// <summary>
-        /// Manifest completo dei plugin da GitHub
-        /// </summary>
-        public class PluginManifest
-        {
-            [JsonProperty("version")]
-            public string Version { get; set; }
-
-            [JsonProperty("releaseDate")]
-            public string ReleaseDate { get; set; }
-
-            [JsonProperty("testedWith")]
-            public string TestedWith { get; set; }
-
-            [JsonProperty("documents")]
-            public List<PluginInfo> Documents { get; set; } = new List<PluginInfo>();
-
-            [JsonProperty("reports")]
-            public List<PluginInfo> Reports { get; set; } = new List<PluginInfo>();
-        }
-
-        /// <summary>
-        /// Informazioni su un singolo plugin (document o report)
-        /// </summary>
-        public class PluginInfo
-        {
-            [JsonProperty("id")]
-            public string Id { get; set; }
-
-            [JsonProperty("name")]
-            public string Name { get; set; }
-
-            [JsonProperty("description")]
-            public string Description { get; set; }
-
-            [JsonProperty("version")]
-            public string Version { get; set; }
-
-            [JsonProperty("category")]
-            public string Category { get; set; }
-
-            [JsonProperty("type")]
-            public string Type { get; set; } // "Document" o "Report"
-
-            [JsonProperty("size")]
-            public long Size { get; set; }
-
-            [JsonProperty("checksum")]
-            public string Checksum { get; set; }
-
-            [JsonProperty("downloadUrl")]
-            public string DownloadUrl { get; set; }
-
-            [JsonProperty("fileName")]
-            public string FileName { get; set; }
-
-            [JsonProperty("dependencies")]
-            public List<string> Dependencies { get; set; } = new List<string>();
-
-            [JsonProperty("required")]
-            public bool Required { get; set; }
-
-            [JsonProperty("releaseDate")]
-            public string ReleaseDate { get; set; }
-        }
-
-        /// <summary>
-        /// Informazioni su un plugin già installato nel sistema
-        /// </summary>
-        public class InstalledPlugin
-        {
-            public string Id { get; set; }
-            public string Version { get; set; }
-            public string FilePath { get; set; }
-            public DateTime InstallDate { get; set; }
-        }
-
-        /// <summary>
-        /// Progress report per il download di un plugin
-        /// </summary>
-        public class DownloadProgress
-        {
-            public long BytesDownloaded { get; set; }
-            public long TotalBytes { get; set; }
-            public DateTime StartTime { get; set; }
-
-            public int PercentComplete =>
-                TotalBytes > 0 ? (int)((BytesDownloaded * 100) / TotalBytes) : 0;
-
-            public TimeSpan ElapsedTime =>
-                DateTime.UtcNow - StartTime;
-
-            public TimeSpan EstimatedTimeRemaining
-            {
-                get
-                {
-                    if (BytesDownloaded == 0 || ElapsedTime.TotalSeconds == 0)
-                        return TimeSpan.Zero;
-
-                    double bytesPerSecond = BytesDownloaded / ElapsedTime.TotalSeconds;
-                    long remainingBytes = TotalBytes - BytesDownloaded;
-                    double secondsRemaining = remainingBytes / bytesPerSecond;
-
-                    return TimeSpan.FromSeconds(secondsRemaining);
-                }
-            }
-        }
 
         /// <summary>
         /// Scarica il manifest completo dei plugin da GitHub
