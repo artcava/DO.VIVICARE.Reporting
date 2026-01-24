@@ -58,7 +58,7 @@ jobs:
             --logger "console;verbosity=detailed" `
             --logger "trx;LogFileName=test-results.trx"
         } else {
-          Write-Host "⚠️  Unit Test project not found, skipping..."
+          Write-Host "Unit Test project not found, skipping..."
         }
       continue-on-error: true
       shell: powershell
@@ -73,7 +73,7 @@ jobs:
             --logger "console;verbosity=detailed" `
             --logger "trx;LogFileName=integration-test-results.trx"
         } else {
-          Write-Host "⚠️  Integration Test project not found, skipping..."
+          Write-Host "Integration Test project not found, skipping..."
         }
       continue-on-error: true
       shell: powershell
@@ -132,7 +132,7 @@ jobs:
         
         if ($tag -match "refs/tags/v(.*)$") {
           $version = $matches[1]
-          Write-Host "✅ Version extracted: $version"
+          Write-Host "Version extracted: $version"
           echo "version=$version" >> $env:GITHUB_OUTPUT
           echo "tag=v$version" >> $env:GITHUB_OUTPUT
         } else {
@@ -166,7 +166,7 @@ jobs:
         $json = $manifest | ConvertTo-Json -Depth 10
         Set-Content -Path "manifest.json" -Value $json -Encoding UTF8
         
-        Write-Host "✅ Manifest updated:"
+        Write-Host "Manifest updated:"
         Write-Host $json
 
     - name: Create application package
@@ -180,7 +180,7 @@ jobs:
         # Copy UI binaries from downloaded artifacts
         if (Test-Path "DO.VIVICARE.UI/bin/Release") {
           Copy-Item "DO.VIVICARE.UI/bin/Release/*" -Destination "package/" -Force -Recurse
-          Write-Host "✅ Copied UI binaries"
+          Write-Host "Copied UI binaries"
         } else {
           Write-Error "UI binaries not found in artifacts"
           exit 1
@@ -189,16 +189,16 @@ jobs:
         # Copy Reporter binaries if available
         if (Test-Path "DO.VIVICARE.Reporter/bin/Release") {
           Copy-Item "DO.VIVICARE.Reporter/bin/Release/*" -Destination "package/" -Force -Recurse
-          Write-Host "✅ Copied Reporter binaries"
+          Write-Host "Copied Reporter binaries"
         }
         
         # Create ZIP
         Compress-Archive -Path "package/*" -DestinationPath "DO.VIVICARE-Setup-$version.zip" -Force
-        Write-Host "✅ Package created: DO.VIVICARE-Setup-$version.zip"
+        Write-Host "Package created: DO.VIVICARE-Setup-$version.zip"
         
         # Get file size
         $fileSize = (Get-Item "DO.VIVICARE-Setup-$version.zip").Length / 1MB
-        Write-Host "📦 File size: $([Math]::Round($fileSize, 2)) MB"
+        Write-Host "File size: $([Math]::Round($fileSize, 2)) MB"
 
     - name: Generate checksum
       shell: powershell
@@ -215,8 +215,8 @@ jobs:
         $manifest.assets[0].checksum = "sha256:$checksum"
         $manifest | ConvertTo-Json -Depth 10 | Set-Content "manifest.json"
         
-        Write-Host "✅ Checksum generated and added to manifest"
-        Write-Host "🔐 SHA256: $checksum"
+        Write-Host "Checksum generated and added to manifest"
+        Write-Host "SHA256: $checksum"
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
@@ -226,17 +226,17 @@ jobs:
           CHECKSUM.txt
           manifest.json
         body: |
-          # ✅ DO.VIVICARE Reporting v${{ steps.version.outputs.version }}
+          # DO.VIVICARE Reporting v${{ steps.version.outputs.version }}
           
-          **Status:** Build successful ✅
+          **Status:** Build successful
           
-          ## 📦 What's Included
-          - ✅ UI Application v${{ steps.version.outputs.version }}
-          - ✅ Reporter Library
-          - ✅ Plugin Manager (automatic library updates)
-          - ✅ SHA256 Checksum verification
+          ## What's Included
+          - UI Application v${{ steps.version.outputs.version }}
+          - Reporter Library
+          - Plugin Manager (automatic library updates)
+          - SHA256 Checksum verification
           
-          ## 🚀 Installation
+          ## Installation
           
           ### Option 1: Semi-Automatic (Recommended)
           1. Download `DO.VIVICARE-Setup-${{ steps.version.outputs.version }}.zip`
@@ -248,7 +248,7 @@ jobs:
           2. Extract to Program Files
           3. Run `DO.VIVICARE.UI.exe`
           
-          ## 🔒 Verify Integrity
+          ## Verify Integrity
           ```
           Checksum (SHA256):
           certutil -hashfile DO.VIVICARE-Setup-${{ steps.version.outputs.version }}.zip SHA256
@@ -256,7 +256,7 @@ jobs:
           
           **Expected:** See CHECKSUM.txt for expected value
           
-          ## 📝 What's New
+          ## What's New
           - See RELEASE_NOTES.md in repository
           
           **Release Date:** 2026-01-24
@@ -347,9 +347,9 @@ jobs:
         
         if (Test-Path $dllPath) {
           Copy-Item $dllPath -Destination $outputName
-          Write-Host "✅ Package created: $outputName"
+          Write-Host "Package created: $outputName"
         } else {
-          Write-Error "❌ DLL not found at: $dllPath"
+          Write-Error "DLL not found at: $dllPath"
           Get-ChildItem "$projectName/bin" -Recurse | Select-Object FullName
           exit 1
         }
@@ -363,7 +363,7 @@ jobs:
         
         $checksum = (Get-FileHash $fileName -Algorithm SHA256).Hash
         echo "$checksum  $fileName" | Out-File -Encoding ASCII "CHECKSUM.txt"
-        Write-Host "✅ Checksum: $checksum"
+        Write-Host "Checksum: $checksum"
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
@@ -376,21 +376,21 @@ jobs:
           
           **Version**: ${{ steps.plugin.outputs.version }}
           
-          ## 📥 Installation (In-App)
+          ## Installation (In-App)
           
           1. Open **DO.VIVICARE UI**
           2. Go to **Tools → Plugin Manager**
           3. Find this plugin in **Available Plugins**
           4. Click **Download**
-          5. ✅ Ready! (no restart needed)
+          5. Ready! (no restart needed)
           
-          ## 📋 Manual Installation
+          ## Manual Installation
           
           1. Download the `.dll` file
           2. Place in: `C:\Program Files\DO.VIVICARE\Plugins\`
           3. Restart the application
           
-          ## ✅ Verify Integrity
+          ## Verify Integrity
           ```
           certutil -hashfile ${{ steps.plugin.outputs.projectName }}-${{ steps.plugin.outputs.version }}.dll SHA256
           ```
