@@ -17,17 +17,6 @@
 
 ---
 
-## ℹ️ NOTE FRAMEWORK COMPATIBILITY
-
-Velopack supporta nativamente .NET Framework 4.8 tramite il runtime `Runtimes.NETFRAMEWORK48`:
-
-- **La tua app resta .NET Framework 4.8** (zero cambamenti architetturali)
-- **Velopack gestisce tutto** (installer, updates, packaging)
-- **Lo SDK moderno (.NET 6+) serve solo** per il tool `vpk` durante il build
-- **Gli utenti non hanno bisogno di .NET SDK** (solo .NET Framework 4.8 che già hanno)
-
----
-
 ## FASE 1: SETUP VELOPACK (2 ore)
 
 ### Step 1.1: Installa Velopack NuGet
