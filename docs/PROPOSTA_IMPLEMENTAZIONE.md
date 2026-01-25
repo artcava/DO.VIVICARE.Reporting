@@ -14,7 +14,6 @@ Il progetto DO.VIVICARE.Reporting attualmente:
 - ❌ Non può essere installato da utenti non-tecnici
 - ❌ Non ha sistema di aggiornamento automatico
 - ❌ Non è distribuibile per utenti finali
-- ✅ Ha plugin system completamente funzionante
 
 **Proposta:** Integrare **Velopack** come framework di distribuzione e aggiornamento automatico, trasformando l'app in un prodotto professionalmente distribuibile.
 
@@ -22,7 +21,6 @@ Il progetto DO.VIVICARE.Reporting attualmente:
 - ✅ Installer MSI standard Windows
 - ✅ Aggiornamenti trasparenti automatici
 - ✅ Zero intervento IT su aggiornamenti
-- ✅ Plugin system continua a funzionare normalmente
 
 **Sforzo stimato:** 4-5 giorni (part-time)  
 **ROI:** Altissimo (elimina manualità distribuzione)
