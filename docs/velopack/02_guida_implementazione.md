@@ -97,44 +97,316 @@ Se usi `app.config` (più tipico per .NET 4.8):
 
 ---
 
-## FASE 2: AGGIORNA ConfigurationService (1 ora)
+## FASE 2: PREPARA CONFIGURAZIONE PER VELOPACK (1 ora)
 
-Sposta la cartella dati da app directory a `%AppData%`:
+> **⚠️ IMPORTANTE:** Questa fase non riguarda un inesistente "ConfigurationService", ma il refactor della classe **XMLSettings.cs** già presente nel progetto.
+
+### Step 2.1: Refactor XMLSettings.cs - Aggiorna Percorso Config (20 minuti)
+
+**File da modificare:** `DO.VIVICARE.Reporter/XMLSettings.cs`
+
+Localizza il costruttore:
 
 ```csharp
-using System;
-using System.IO;
-
-public static class ConfigurationService
+public XMLSettings()
 {
-    // PRIMA (SBAGLIATO):
-    // public static string DataFolder => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
+    _XmlFilePath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), 
+        "Reporting", 
+        "Settings.xml"
+    );
+    LoadDocument();
+}
+```
+
+**Sostituisci con:**
+
+```csharp
+private string _XmlFilePath { get; }
+
+public XMLSettings()
+{
+    // Percorso portable in AppData (persiste tra aggiornamenti)
+    string appDataPath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        "DO.VIVICARE.Reporting"
+    );
     
-    // DOPO (CORRETTO):
-    public static string DataFolder => 
-        Path.Combine(
-            Environment.GetFolderPath(
-                Environment.SpecialFolder.LocalApplicationData
-            ),
-            "DO.VIVICARE"
-        );
+    // Assicura directory esista
+    if (!Directory.Exists(appDataPath))
+        Directory.CreateDirectory(appDataPath);
     
-    public static string ConfigFilePath => 
-        Path.Combine(DataFolder, "config.json");
+    _XmlFilePath = Path.Combine(appDataPath, "Settings.xml");
     
-    public static string DatabasePath => 
-        Path.Combine(DataFolder, "database.db");
-    
-    // Assicurati che cartella esista
-    static ConfigurationService()
+    LoadDocument();
+}
+```
+
+**Perché:** 
+- ✅ AppData persiste tra aggiornamenti Velopack
+- ✅ Percorso standard Windows
+- ✅ Non dipende da MyDocuments
+- ✅ Funziona con auto-updates
+
+### Step 2.2: Aggiungi Backup Automatico (15 minuti)
+
+**Nel metodo `Save()` di XMLSettings.cs:**
+
+Sostituisci:
+
+```csharp
+public void Save()
+{
+    if (File.Exists(_XmlFilePath))
+        Save(_XmlFilePath);
+}
+```
+
+**Con:**
+
+```csharp
+public void Save()
+{
+    try
     {
-        if (!Directory.Exists(DataFolder))
-            Directory.CreateDirectory(DataFolder);
+        if (File.Exists(_XmlFilePath))
+        {
+            // Crea backup prima di salvare (protezione corruzione)
+            string backupPath = _XmlFilePath + ".backup";
+            if (File.Exists(backupPath))
+                File.Delete(backupPath);
+            
+            // Backup del file corrente
+            File.Copy(_XmlFilePath, backupPath, overwrite: true);
+            
+            // Salva nuovo config
+            Save(_XmlFilePath);
+            
+            // Cleanup: elimina backup vecchi (> 30 giorni)
+            CleanOldBackups(maxDays: 30);
+        }
+    }
+    catch (Exception ex)
+    {
+        Debug.WriteLine($"Errore durante Save: {ex.Message}");
+        throw;
+    }
+}
+
+private void CleanOldBackups(int maxDays = 30)
+{
+    string backupPath = _XmlFilePath + ".backup";
+    if (File.Exists(backupPath))
+    {
+        var fileInfo = new FileInfo(backupPath);
+        if ((DateTime.Now - fileInfo.LastWriteTime).TotalDays > maxDays)
+        {
+            try
+            {
+                File.Delete(backupPath);
+            }
+            catch { /* silent */ }
+        }
     }
 }
 ```
 
-**Perché:** Così i dati utente persistono tra aggiornamenti.
+**Perché:**
+- ✅ Protezione da corruzione file
+- ✅ Rollback a versione precedente disponibile
+- ✅ Cleanup automatico per evitare bloat disco
+
+### Step 2.3: Aggiungi Versionamento Configurazione (15 minuti)
+
+**Nel metodo `LoadDocument()` di XMLSettings.cs:**
+
+Sostituisci:
+
+```csharp
+private void LoadDocument()
+{
+    if (DocumentElement != null) return;
+
+    if (!File.Exists(_XmlFilePath))
+    {
+        LoadXml("<SETTINGS></SETTINGS>");
+        Libraries = DocumentElement.AppendChild(CreateElement("LIBRARIES"));
+        Documents = Libraries.AppendChild(CreateElement("DOCUMENTS"));
+        Reports = Libraries.AppendChild(CreateElement("REPORTS"));
+        Save(_XmlFilePath);
+    }
+    else
+    {
+        base.Load(_XmlFilePath);
+        Libraries = DocumentElement.FirstChild;
+        Documents = Libraries.SelectSingleNode("DOCUMENTS");
+        Reports = Libraries.SelectSingleNode("REPORTS");
+    }
+}
+```
+
+**Con:**
+
+```csharp
+private const string CONFIG_VERSION = "1.0";
+
+private void LoadDocument()
+{
+    if (DocumentElement != null) return;
+
+    if (!File.Exists(_XmlFilePath))
+    {
+        // Crea nuovo config con versione
+        LoadXml($"<SETTINGS VERSION='{CONFIG_VERSION}'></SETTINGS>");
+        Libraries = DocumentElement.AppendChild(CreateElement("LIBRARIES"));
+        Documents = Libraries.AppendChild(CreateElement("DOCUMENTS"));
+        Reports = Libraries.AppendChild(CreateElement("REPORTS"));
+        Save(_XmlFilePath);
+    }
+    else
+    {
+        base.Load(_XmlFilePath);
+        
+        // Verifica versione config
+        string version = DocumentElement.GetAttribute("VERSION");
+        if (string.IsNullOrEmpty(version))
+        {
+            // Config legacy senza versione - aggiorna
+            version = "0.0";
+            MigrateConfiguration(version);
+        }
+        else if (version != CONFIG_VERSION)
+        {
+            // Config da versione diversa - esegui migration
+            MigrateConfiguration(version);
+        }
+        
+        Libraries = DocumentElement.FirstChild;
+        Documents = Libraries.SelectSingleNode("DOCUMENTS");
+        Reports = Libraries.SelectSingleNode("REPORTS");
+    }
+}
+
+private void MigrateConfiguration(string oldVersion)
+{
+    // Logica per migrare config da versioni precedenti
+    Debug.WriteLine($"Config migrated from v{oldVersion} to {CONFIG_VERSION}");
+    
+    // Aggiungi versione al root se mancante
+    if (DocumentElement.GetAttribute("VERSION") == "")
+        DocumentElement.SetAttribute("VERSION", CONFIG_VERSION);
+    
+    // Salva config migrato
+    Save();
+}
+```
+
+**Perché:**
+- ✅ Supporta aggiornamenti app future
+- ✅ Previene errori di parsing
+- ✅ Consente rollback intelligente
+
+### Step 2.4: TEST - Verifica Persistenza Config (10 minuti)
+
+**Test Case 1: Config persiste in AppData**
+
+```csharp
+// Aggiungi questo test in DO.VIVICARE.Tests o crea un test simple
+
+[Test]
+public void TestConfigPersistsInAppData()
+{
+    // Arrange
+    var settings = new XMLSettings();
+    settings.AddLibrary(XMLSettings.LibraryType.Document, "TestDoc");
+    settings.Save();
+    
+    // Verifica file esiste in AppData
+    string appDataPath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        "DO.VIVICARE.Reporting",
+        "Settings.xml"
+    );
+    
+    // Assert
+    Assert.IsTrue(File.Exists(appDataPath), "Settings.xml non trovato in AppData");
+    
+    // Verifica contenuto
+    var loadedSettings = new XMLSettings();
+    var values = loadedSettings.GetDocumentValues(XMLSettings.LibraryType.Document, "TestDoc");
+    Assert.IsNotNull(values, "Document non trovato dopo reload");
+}
+
+[Test]
+public void TestBackupCreated()
+{
+    // Arrange
+    var settings = new XMLSettings();
+    settings.AddLibrary(XMLSettings.LibraryType.Document, "TestDoc1");
+    settings.Save();
+    
+    string backupPath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        "DO.VIVICARE.Reporting",
+        "Settings.xml.backup"
+    );
+    
+    // Assert
+    Assert.IsTrue(File.Exists(backupPath), "Backup file non creato");
+}
+
+[Test]
+public void TestConfigVersioning()
+{
+    // Arrange
+    var settings = new XMLSettings();
+    settings.Save();
+    
+    // Ricarica e verifica versione
+    var reloadedSettings = new XMLSettings();
+    string version = reloadedSettings.DocumentElement.GetAttribute("VERSION");
+    
+    // Assert
+    Assert.AreEqual("1.0", version, "Versione config non corretta");
+}
+```
+
+**Eseguire i test:**
+
+```bash
+cd DO.VIVICARE.Tests
+dotnet test --filter "ConfigPersist or BackupCreated or Versioning"
+```
+
+**Checklist Verifica:**
+- [ ] ✅ Settings.xml creato in `AppData\DO.VIVICARE.Reporting`
+- [ ] ✅ Settings.xml.backup creato dopo primo save
+- [ ] ✅ Versione config è "1.0"
+- [ ] ✅ Test superati
+
+### Step 2.5: Aggiorna app.config (10 minuti)
+
+**File:** `DO.VIVICARE.Reporter/app.config`
+
+Aggiungi sezione Velopack:
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <appSettings>
+    <!-- Velopack Configuration -->
+    <add key="Velopack:Enabled" value="true" />
+    <add key="Velopack:UpdateCheckInterval" value="3600" />
+    <!-- 3600 secondi = 1 ora tra controlli aggiornamenti -->
+    
+    <add key="Velopack:UpdateUrl" 
+         value="https://github.com/artcava/DO.VIVICARE.Reporting/releases/download" />
+    
+    <!-- Existing Configuration -->
+    <!-- ... altre config ... -->
+  </appSettings>
+</configuration>
+```
 
 ---
 
@@ -381,9 +653,12 @@ vpk --version
 
 - [ ] Velopack NuGet aggiunto
 - [ ] Program.cs modificato con `VelopackApp.Build().Run()`
-- [ ] ConfigurationService punta a `%AppData%`
+- [ ] XMLSettings.cs refactored con percorso AppData
+- [ ] Backup automatico implementato in XMLSettings
+- [ ] Versionamento config aggiunto
+- [ ] Test persistenza config creati e superati
+- [ ] app.config configurato con Velopack settings
 - [ ] UpdateService creato
-- [ ] appsettings.json configurato
 - [ ] Certificate creato e aggiunto a GitHub Secrets
 - [ ] Workflow `.github/workflows/velopack-release.yml` creato
 - [ ] Build locale riuscito
