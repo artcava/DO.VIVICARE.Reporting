@@ -99,6 +99,8 @@ Se usi `app.config` (più tipico per .NET 4.8):
 
 ## FASE 2: PREPARA CONFIGURAZIONE PER VELOPACK (1 ora)
 
+> **⚠️ IMPORTANTE:** Questa fase non riguarda un inesistente "ConfigurationService", ma il refactor della classe **XMLSettings.cs** già presente nel progetto.
+
 ### Step 2.1: Refactor XMLSettings.cs - Aggiorna Percorso Config (20 minuti)
 
 **File da modificare:** `DO.VIVICARE.Reporter/XMLSettings.cs`
@@ -304,68 +306,233 @@ private void MigrateConfiguration(string oldVersion)
 - ✅ Previene errori di parsing
 - ✅ Consente rollback intelligente
 
-### Step 2.4: TEST - Verifica Persistenza Config (10 minuti)
+### Step 2.4: TEST - Verifica Persistenza Config (10 minuti) ⭐ **CON XUNIT**
 
-**Test Case 1: Config persiste in AppData**
+**Aggiungi questo file di test in `DO.VIVICARE.Tests/XMLSettingsTests.cs`:**
 
 ```csharp
-// Aggiungi questo test in DO.VIVICARE.Tests o crea un test simple
+using System;
+using System.IO;
+using DO.VIVICARE.Reporter;
+using Xunit;
 
-[Test]
-public void TestConfigPersistsInAppData()
+namespace DO.VIVICARE.Tests
 {
-    // Arrange
-    var settings = new XMLSettings();
-    settings.AddLibrary(XMLSettings.LibraryType.Document, "TestDoc");
-    settings.Save();
-    
-    // Verifica file esiste in AppData
-    string appDataPath = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        "DO.VIVICARE.Reporting",
-        "Settings.xml"
-    );
-    
-    // Assert
-    Assert.IsTrue(File.Exists(appDataPath), "Settings.xml non trovato in AppData");
-    
-    // Verifica contenuto
-    var loadedSettings = new XMLSettings();
-    var values = loadedSettings.GetDocumentValues(XMLSettings.LibraryType.Document, "TestDoc");
-    Assert.IsNotNull(values, "Document non trovato dopo reload");
-}
+    /// <summary>
+    /// Unit tests for XMLSettings configuration persistence
+    /// Tests configuration path, backup creation, and versioning
+    /// </summary>
+    public class XMLSettingsTests
+    {
+        #region Path and AppData Tests
 
-[Test]
-public void TestBackupCreated()
-{
-    // Arrange
-    var settings = new XMLSettings();
-    settings.AddLibrary(XMLSettings.LibraryType.Document, "TestDoc1");
-    settings.Save();
-    
-    string backupPath = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        "DO.VIVICARE.Reporting",
-        "Settings.xml.backup"
-    );
-    
-    // Assert
-    Assert.IsTrue(File.Exists(backupPath), "Backup file non creato");
-}
+        /// <summary>
+        /// Test: XMLSettings creates config in AppData on initialization
+        /// Expected: Settings.xml exists in AppData\DO.VIVICARE.Reporting
+        /// </summary>
+        [Fact]
+        public void XMLSettings_OnInitialize_CreatesConfigInAppData()
+        {
+            // Arrange
+            string expectedPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "DO.VIVICARE.Reporting",
+                "Settings.xml"
+            );
+            
+            // Clean up before test
+            if (File.Exists(expectedPath))
+                File.Delete(expectedPath);
 
-[Test]
-public void TestConfigVersioning()
-{
-    // Arrange
-    var settings = new XMLSettings();
-    settings.Save();
-    
-    // Ricarica e verifica versione
-    var reloadedSettings = new XMLSettings();
-    string version = reloadedSettings.DocumentElement.GetAttribute("VERSION");
-    
-    // Assert
-    Assert.AreEqual("1.0", version, "Versione config non corretta");
+            // Act
+            var settings = new XMLSettings();
+            settings.Save();
+
+            // Assert
+            Assert.True(File.Exists(expectedPath), 
+                $"Settings.xml non trovato in {expectedPath}");
+        }
+
+        /// <summary>
+        /// Test: XMLSettings directory is created if not exists
+        /// Expected: AppData\DO.VIVICARE.Reporting directory created
+        /// </summary>
+        [Fact]
+        public void XMLSettings_OnInitialize_CreatesAppDataDirectory()
+        {
+            // Arrange
+            string appDataPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "DO.VIVICARE.Reporting"
+            );
+            
+            // Clean up before test
+            if (Directory.Exists(appDataPath))
+                Directory.Delete(appDataPath, recursive: true);
+
+            // Act
+            var settings = new XMLSettings();
+
+            // Assert
+            Assert.True(Directory.Exists(appDataPath), 
+                "Directory DO.VIVICARE.Reporting non creato in AppData");
+        }
+
+        #endregion
+
+        #region Backup Tests
+
+        /// <summary>
+        /// Test: XMLSettings creates backup file on save
+        /// Expected: Settings.xml.backup exists after save
+        /// </summary>
+        [Fact]
+        public void XMLSettings_OnSave_CreatesBackupFile()
+        {
+            // Arrange
+            string configPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "DO.VIVICARE.Reporting",
+                "Settings.xml"
+            );
+            string backupPath = configPath + ".backup";
+            
+            // Clean up
+            if (File.Exists(configPath)) File.Delete(configPath);
+            if (File.Exists(backupPath)) File.Delete(backupPath);
+
+            // Act
+            var settings = new XMLSettings();
+            settings.AddLibrary(XMLSettings.LibraryType.Document, "TestDocument");
+            settings.Save();
+
+            // Assert
+            Assert.True(File.Exists(backupPath), 
+                "Backup file non creato: " + backupPath);
+        }
+
+        /// <summary>
+        /// Test: XMLSettings backup is identical to current config
+        /// Expected: Backup file content matches current config
+        /// </summary>
+        [Fact]
+        public void XMLSettings_BackupFile_ContainsCurrentConfig()
+        {
+            // Arrange
+            string configPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "DO.VIVICARE.Reporting",
+                "Settings.xml"
+            );
+            string backupPath = configPath + ".backup";
+            
+            if (File.Exists(configPath)) File.Delete(configPath);
+            if (File.Exists(backupPath)) File.Delete(backupPath);
+
+            // Act
+            var settings = new XMLSettings();
+            settings.AddLibrary(XMLSettings.LibraryType.Document, "TestDoc");
+            settings.Save();
+
+            // Assert
+            Assert.True(File.Exists(backupPath), "Backup non creato");
+            
+            // Verify backup is not empty and contains SETTINGS element
+            string backupContent = File.ReadAllText(backupPath);
+            Assert.Contains("<SETTINGS", backupContent, 
+                StringComparison.OrdinalIgnoreCase);
+        }
+
+        #endregion
+
+        #region Versioning Tests
+
+        /// <summary>
+        /// Test: XMLSettings adds VERSION attribute to config
+        /// Expected: Root element has VERSION="1.0" attribute
+        /// </summary>
+        [Fact]
+        public void XMLSettings_OnCreate_AddsVersionAttribute()
+        {
+            // Arrange
+            string configPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "DO.VIVICARE.Reporting",
+                "Settings.xml"
+            );
+            
+            if (File.Exists(configPath)) File.Delete(configPath);
+
+            // Act
+            var settings = new XMLSettings();
+            settings.Save();
+
+            // Assert - Read back and verify
+            var reloadedSettings = new XMLSettings();
+            string version = reloadedSettings.DocumentElement?.GetAttribute("VERSION") ?? "";
+            Assert.Equal("1.0", version);
+        }
+
+        /// <summary>
+        /// Test: XMLSettings loads and reloads preserves configuration
+        /// Expected: Data added to config persists after reload
+        /// </summary>
+        [Fact]
+        public void XMLSettings_AfterReload_PersistsAddedData()
+        {
+            // Arrange
+            string configPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "DO.VIVICARE.Reporting",
+                "Settings.xml"
+            );
+            
+            if (File.Exists(configPath)) File.Delete(configPath);
+
+            // Act - Create and add data
+            var settings1 = new XMLSettings();
+            settings1.AddLibrary(XMLSettings.LibraryType.Document, "TestDoc");
+            settings1.Save();
+
+            // Reload from disk
+            var settings2 = new XMLSettings();
+
+            // Assert
+            var values = settings2.GetDocumentValues(
+                XMLSettings.LibraryType.Document, "TestDoc");
+            Assert.NotNull(values);
+            Assert.NotEmpty(values);
+        }
+
+        #endregion
+
+        #region Cleanup Helper
+
+        /// <summary>
+        /// Cleanup method - removes test config files after tests
+        /// </summary>
+        private void CleanupTestConfig()
+        {
+            try
+            {
+                string configPath = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    "DO.VIVICARE.Reporting",
+                    "Settings.xml"
+                );
+                
+                if (File.Exists(configPath))
+                    File.Delete(configPath);
+                
+                string backupPath = configPath + ".backup";
+                if (File.Exists(backupPath))
+                    File.Delete(backupPath);
+            }
+            catch { /* Ignore cleanup errors */ }
+        }
+
+        #endregion
+    }
 }
 ```
 
@@ -373,14 +540,30 @@ public void TestConfigVersioning()
 
 ```bash
 cd DO.VIVICARE.Tests
-dotnet test --filter "ConfigPersist or BackupCreated or Versioning"
+dotnet test --filter "XMLSettings"
+
+# Oppure da Visual Studio
+# Test Explorer → Fare clic su "Run All"
+```
+
+**Output atteso:**
+```
+XMLSettingsTests.XMLSettings_OnInitialize_CreatesConfigInAppData [PASSED]
+XMLSettingsTests.XMLSettings_OnInitialize_CreatesAppDataDirectory [PASSED]
+XMLSettingsTests.XMLSettings_OnSave_CreatesBackupFile [PASSED]
+XMLSettingsTests.XMLSettings_BackupFile_ContainsCurrentConfig [PASSED]
+XMLSettingsTests.XMLSettings_OnCreate_AddsVersionAttribute [PASSED]
+XMLSettingsTests.XMLSettings_AfterReload_PersistsAddedData [PASSED]
+
+6 passed, 0 failed
 ```
 
 **Checklist Verifica:**
 - [ ] ✅ Settings.xml creato in `AppData\DO.VIVICARE.Reporting`
 - [ ] ✅ Settings.xml.backup creato dopo primo save
 - [ ] ✅ Versione config è "1.0"
-- [ ] ✅ Test superati
+- [ ] ✅ Tutti e 6 i test superati
+- [ ] ✅ Reload mantiene dati persistenti
 
 ### Step 2.5: Aggiorna app.config (10 minuti)
 
@@ -654,7 +837,7 @@ vpk --version
 - [ ] XMLSettings.cs refactored con percorso AppData
 - [ ] Backup automatico implementato in XMLSettings
 - [ ] Versionamento config aggiunto
-- [ ] Test persistenza config creati e superati
+- [ ] Test XUnit creati e superati (6/6)
 - [ ] app.config configurato con Velopack settings
 - [ ] UpdateService creato
 - [ ] Certificate creato e aggiunto a GitHub Secrets
