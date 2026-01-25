@@ -99,8 +99,6 @@ Se usi `app.config` (più tipico per .NET 4.8):
 
 ## FASE 2: PREPARA CONFIGURAZIONE PER VELOPACK (1 ora)
 
-> **⚠️ IMPORTANTE:** Questa fase non riguarda un inesistente "ConfigurationService", ma il refactor della classe **XMLSettings.cs** già presente nel progetto.
-
 ### Step 2.1: Refactor XMLSettings.cs - Aggiorna Percorso Config (20 minuti)
 
 **File da modificare:** `DO.VIVICARE.Reporter/XMLSettings.cs`
