@@ -13,17 +13,16 @@
 Il progetto DO.VIVICARE.Reporting attualmente:
 - ❌ Non può essere installato da utenti non-tecnici
 - ❌ Non ha sistema di aggiornamento automatico
-- ❌ Non è distribuibile in ambienti enterprise
-- ❌ Non supporta gestione plugins in-app
+- ❌ Non è distribuibile per utenti finali
+- ✅ Ha plugin system completamente funzionante
 
-**Proposta:** Integrare **Velopack** come framework di distribuzione e aggiornamento automatico, trasformando l'app in un prodotto professionale installabile.
+**Proposta:** Integrare **Velopack** come framework di distribuzione e aggiornamento automatico, trasformando l'app in un prodotto professionalmente distribuibile.
 
 **Impatto:**
 - ✅ Installer MSI standard Windows
 - ✅ Aggiornamenti trasparenti automatici
-- ✅ Compatibile GPO/Intune per aziende
-- ✅ Plugin manager integrato
 - ✅ Zero intervento IT su aggiornamenti
+- ✅ Plugin system continua a funzionare normalmente
 
 **Sforzo stimato:** 4-5 giorni (part-time)  
 **ROI:** Altissimo (elimina manualità distribuzione)
@@ -38,11 +37,10 @@ Il progetto DO.VIVICARE.Reporting attualmente:
 |---|----------|---------|----------|
 | **P1** | ❌ Nessun installer MSI | 🔴 CRITICA | Job release-app |
 | **P2** | ❌ No auto-update system | 🔴 CRITICA | Intero workflow |
-| **P3** | ❌ No dati utente persistenti | 🟡 ALTA | Packaging |
+| **P3** | ❌ No dati utente persistenti | 🟠 ALTA | Packaging |
 | **P4** | ❌ Versioning non sincronizzato | 🟡 MEDIA | Build process |
 | **P5** | ❌ No firma codice | 🟡 MEDIA | Binari/MSI |
 | **P6** | ❌ No verifica integrità | 🟡 MEDIA | Download |
-| **P7** | ❌ Plugin system incompleto | 🟡 MEDIA | Architettura |
 
 ### Conseguenze Attuali
 ```
@@ -52,7 +50,7 @@ Sviluppatore           Utente Finale
     ├─→ GitHub Actions    │
     │   └─→ ZIP file      │
     │                      │
-    └────────────→ ???    │
+    └──────────────────→ ???    │
                    │      │
                    └─→ Utente scarica ZIP
                        ├─→ Non sa come installare
@@ -75,19 +73,19 @@ Framework di distribuzione desktop moderno per Windows:
 
 ### Vantaggi Competitivi Velopack
 ```
-┌─────────────────────────────────────────┐
-│ VELOPACK vs Soluzioni Alternative       │
-├─────────────────────────────────────────┤
-│ Feature              │ Velopack │ Others │
-├──────────────────────┼──────────┼────────┤
-│ Linguaggio core      │ Rust     │ .NET   │
-│ Performance          │ ⭐⭐⭐⭐⭐│ ⭐⭐⭐  │
-│ Delta binari         │ ✓ Auto   │ Manuale│
-│ MSI nativo           │ ✓ Si     │ Wrapper│
-│ Per-user install     │ ✓ Si     │ No UAC │
-│ GitHub nativo        │ ✓ Si     │ XML    │
-│ Setup time           │ 5 min    │ 30+ min│
-└─────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│ VELOPACK - Framework Moderno di Distribuzione              │
+├─────────────────────────────────────────────────────────────┤
+│ Feature              │ Beneficio                            │
+├─────────────────────────────────────────────────────────────┤
+│ MSI nativo           │ Installazione standard Windows       │
+│ Auto-update          │ Zero intervento utente              │
+│ Delta binari         │ Download piccolo (20-30 MB vs 80)   │
+│ Per-user install     │ No admin needed post-install        │
+│ Code signing         │ Zero SmartScreen warnings (dopo 2w) │
+│ GitHub nativo        │ Zero costi server aggiornamenti     │
+│ Setup time           │ 5 minuti vs 30+ manuali            │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ### Flusso Utente POST-IMPLEMENTAZIONE
@@ -96,26 +94,27 @@ Sviluppatore              Velopack CI/CD          Utente Finale
     │                          │                       │
     │ git tag v1.0.0           │                       │
     ├──────────────────→ Build                         │
-    │                  ├→ vpk pack windows             │
-    │                  ├→ Generate .msi                │
-    │                  ├→ Generate .exe                │
-    │                  └→ Sign binaries                │
-    │                          │                       │
-    │                    GitHub Release                │
-    │                      Upload to                   │
-    │                   Releases Assets                │
-    │                          │                       │
-    │                          └──────────→ Download MSI
-    │                                      │
-    │                                      ├→ Install (admin una volta)
-    │                                      │
-    │                                      ├→ App starts
-    │                                      │   └→ Controlla update
-    │                                      │   └→ Scarica in background
-    │                                      │   └→ Chiede conferma
-    │                                      │   └→ Riavvia e aggiorna
-    │                                      │
-    │                                      ✅ ZERO INTERVENTO MANUALE
+    │          ├─→ vpk pack windows                    │
+    │          ├─→ Generate .msi                       │
+    │          ├─→ Generate .exe                       │
+    │          └─→ Sign binaries                       │
+    │                  │                               │
+    │            GitHub Release                        │
+    │              Upload to                           │
+    │           Releases Assets                        │
+    │                  │                               │
+    │                  └───────────────→ Download MSI
+    │                          │      │
+    │                          └─→ Utente scarica ZIP
+    │                              ├─→ Install (admin una volta)
+    │                              │
+    │                              ├─→ App starts
+    │                              │   └─→ Controlla update
+    │                              │   └─→ Scarica in background
+    │                              │   └─→ Chiede conferma
+    │                              │   └─→ Riavvia e aggiorna
+    │                              │
+    │                              ✅ ZERO INTERVENTO MANUALE
 ```
 
 ---
@@ -135,7 +134,6 @@ Abbiamo analizzato il documento "Aggiornamenti-Automatici-.NET-Framework-GitHub.
 | Code signing | ✅ | Integrazione certificati |
 | Data persistence %AppData% | ✅ | ConfigurationService |
 | Delta binary updates | ✅ | Velopack ottimizzato |
-| Future .NET 10 migration | ✅ | Velopack cross-platform |
 
 **Conclusione:** La proposta è 100% coerente con le best practice descritte nel documento.
 
@@ -174,7 +172,7 @@ public async Task CheckForUpdatesAsync()
 
 ### 2️⃣ GITHUB ACTIONS WORKFLOW
 
-**File:** `.github/workflows/ci-cd.yml` (replace totale)
+**File:** `.github/workflows/ci-cd.yml` (update)
 
 ```yaml
 name: CI/CD Pipeline - Velopack Distribution
@@ -192,9 +190,6 @@ jobs:
       - vpk pack windows --msiDeploymentTool
       - Sign binaries
       - Create GitHub Release
-      
-  release-plugin:
-    # [Plugin system - come attuale]
 ```
 
 **Sforzo:** ~3-4 ore  
@@ -223,10 +218,6 @@ CODESIGN_PASSWORD            ← Password certificato
 git tag v1.0.0
 git tag v1.0.1
 git tag v1.1.0
-
-# Versioni plugin (trigger release-plugin job)
-git tag plugin/document.adialta/1.0.0
-git tag plugin/report.allegatoadi/2.1.0
 ```
 
 **Sforzo:** ~15 minuti  
@@ -267,7 +258,7 @@ Total: 4-5 giorni (part-time) ≈ 20-25 ore
 
 ---
 
-## 🎯 DELIVERABLES
+## 📦 DELIVERABLES
 
 ### Fase Sviluppo Completata:
 1. ✅ Velopack NuGet packages integrati
@@ -279,15 +270,13 @@ Total: 4-5 giorni (part-time) ≈ 20-25 ore
 ### Fase CI/CD Completata:
 1. ✅ Workflow GitHub Actions aggiornato
 2. ✅ Job release-app completo (MSI + Setup.exe)
-3. ✅ Job release-plugin completo
-4. ✅ Code signing integrato
-5. ✅ Versionamento semantico implementato
+3. ✅ Code signing integrato
+4. ✅ Versionamento semantico implementato
 
 ### Fase Documentazione Completata:
 1. ✅ RELEASE_NOTES.md
 2. ✅ INSTALLATION_GUIDE.md
 3. ✅ FAQ.md (troubleshooting)
-4. ✅ Guida configurazione admin aziendali
 
 ---
 
@@ -329,7 +318,6 @@ Benefici tangibili:
 ✅ 98% riduzione "come installo?"
 ✅ Zero blocchi SmartScreen
 ✅ Zero problemi versione vecchia
-✅ Enterprise compliance (GPO/Intune)
 ```
 
 ---
@@ -360,37 +348,13 @@ Benefici tangibili:
 - Setup reminder in calendar
 - Documentazione renovazione
 
-### Rischio 4: Utenti perdono configurazioni
+### Rischio 4: Utenti perdono dati/configurazioni
 **Probabilità:** Bassa (se ConfigurationService implementato bene)  
 **Impatto:** Alto  
 **Mitigazione:**
 - Salvare config in %AppData% (fuori dalla app dir)
 - Backup automatico prima aggiornamento
 - Migration script se schema cambia
-
----
-
-## ✨ VANTAGGI COMPETITIVI
-
-### Prima (Stato Attuale)
-```
-Concorrente A: "Abbiamo auto-update integrato"
-Concorrente B: "Supportiamo distribuzione enterprise"
-Voi: "Ehm... dovete fare tutto manualmente"
-```
-
-### Dopo (Con Soluzione)
-```
-Concorrente A: "Auto-update"
-Concorrente B: "Enterprise GPO/Intune"
-Voi: "✅ ENTRAMBI + Delta binari ottimizzati + Per-user + Zero UAC"
-```
-
-### Differenziatori Velopack:
-1. **Delta binari** - Solo cambiamenti scaricati (vs competitor che scarica tutto)
-2. **Per-user install** - No admin needed dopo primo install
-3. **GitHub nativo** - Zero costi server aggiornamenti
-4. **Performance** - Core in Rust (vs concorrenti in .NET puro)
 
 ---
 
@@ -451,14 +415,6 @@ Prima di procedere con implementazione, verificare:
 
 ---
 
-## 📎 ALLEGATI
-
-1. **analisi_progetto.md** - Dettagli tecnici problemi attuali
-2. **guida_implementazione.md** - Step-by-step implementazione completa
-3. **PROPOSTA_IMPLEMENTAZIONE.md** - Questo documento
-
----
-
 ## 🎬 CONCLUSIONE
 
 La proposta di implementazione Velopack per DO.VIVICARE.Reporting:
@@ -466,8 +422,8 @@ La proposta di implementazione Velopack per DO.VIVICARE.Reporting:
 ✅ **È tecnicamente sound** - Tutte raccomandazioni del PDF sono implementabili  
 ✅ **Ha ROI positivo** - Break-even in 1.5 anni, poi savings illimitati  
 ✅ **È a basso rischio** - Velopack maturo, docs eccellenti, rollback facile  
-✅ **Crea vantaggio competitivo** - Auto-update + enterprise compliance  
-✅ **È feasibile** - 4-5 giorni part-time, implementazione modulare  
+✅ **È feasible** - 4-5 giorni part-time, implementazione modulare  
+✅ **Plugin system** - Continua a funzionare normalmente senza cambiamenti  
 
 **Raccomandazione:** Proceedi con implementazione al prossimo sprint.
 
@@ -475,4 +431,4 @@ La proposta di implementazione Velopack per DO.VIVICARE.Reporting:
 
 **Documento preparato:** 25 Gennaio 2026  
 **Status:** ✅ Pronto per Revisione e Approvazione  
-**Versione:** 1.0 Final
+**Versione:** 1.1 Refined (Plugins, GPO, .NET10, Competitors removed)
