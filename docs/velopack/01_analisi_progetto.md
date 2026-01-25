@@ -49,20 +49,6 @@ Il progetto è architetturalmente solido come **applicazione WinForms**, ma ha *
 
 ---
 
-## 💰 IMPATTO ECONOMICO SCALING
-
-**500 utenti × 3 release/anno (Manuale):**
-- Sforzo: 250 ore/anno IT
-- Costo: €10,000/anno
-- Frustrazione utenti: incalcolabile
-
-**Con Velopack:**
-- Sforzo: ~0 ore (automated)
-- Costo: Quasi zero
-- ROI: 200x su scaling
-
----
-
 ## 📊 METRICHE QUALITÀ ATTUALE
 
 | Metrica | Valore | Target | Gap |
