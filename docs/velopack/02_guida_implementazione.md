@@ -304,7 +304,7 @@ private void MigrateConfiguration(string oldVersion)
 - ✅ Previene errori di parsing
 - ✅ Consente rollback intelligente
 
-### Step 2.4: TEST - Verifica Persistenza Config (10 minuti) ⭐ **CON XUNIT**
+### Step 2.4: TEST - Verifica Persistenza Config (10 minuti) 
 
 **Aggiungi questo file di test in `DO.VIVICARE.Tests/XMLSettingsTests.cs`:**
 
