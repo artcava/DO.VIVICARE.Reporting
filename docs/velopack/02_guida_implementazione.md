@@ -609,8 +609,11 @@ public class UpdateService
             
             if (update != null)
             {
+                string currentVersion = update.BaseRelease?.Version ?? "sconosciuta";
+                string targetVersion = update.TargetFullRelease.Version;
+                
                 var result = MessageBox.Show(
-                    $"Nuova versione disponibile: {update.TargetFullRelease.Version}\n\nTua versione: {update.CurrentlyInstalledVersion}\n\nScaricare e installare adesso?",
+                    $"Nuova versione disponibile: {targetVersion}\n\nTua versione: {currentVersion}\n\nScaricare e installare adesso?",
                     "Aggiornamento Disponibile",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Information
