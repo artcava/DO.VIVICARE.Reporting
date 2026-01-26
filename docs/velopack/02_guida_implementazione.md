@@ -44,30 +44,82 @@ dotnet add package Velopack
 
 **Verifica:** Nel tuo .csproj o packages.config deve apparire Velopack.
 
-### Step 1.2: Modifica Program.cs o Program.Main()
+### Step 1.2: Modifica Program.cs (Entry Point Applicazione)
 
-Aggiungi all'inizio del main:
+**⚠️ IMPORTANTE:** La finestra principale dell'app è **MDIParent.cs**, non MainForm.
+
+**File da modificare:** `DO.VIVICARE.UI/Program.cs`
+
+**Localizza:**
 
 ```csharp
-using Velopack;
-
 static class Program
 {
+    static MDIParent Global_formPadre;
+
     [STAThread]
     static void Main()
     {
-        // AGGIUNGI QUESTA RIGA
-        VelopackApp.Build().Run();
-        
-        // POI IL RESTO DEL TUO CODE
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
-        Application.Run(new MainForm());
+
+        ManageFolders();
+
+        Global_formPadre = new MDIParent();
+        Application.Run(Global_formPadre);
     }
 }
 ```
 
-**Cosa fa:** Integra il gestore di aggiornamenti di Velopack direttamente nell'app.
+**Sostituisci con:**
+
+```csharp
+static class Program
+{
+    static MDIParent Global_formPadre;
+
+    [STAThread]
+    static void Main()
+    {
+        // ✅ AGGIUNGI: Inizializzazione Velopack PRIMA di UI
+        InitializeVelopack();
+        
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
+
+        ManageFolders();
+
+        Global_formPadre = new MDIParent();
+        Application.Run(Global_formPadre);
+    }
+
+    // ✅ AGGIUNGI: Metodo per inizializzare Velopack
+    private static void InitializeVelopack()
+    {
+        try
+        {
+            // Velopack hook per gestione aggiornamenti
+            VelopackApp.Build().Run();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Velopack init error: {ex.Message}");
+            // Non bloccare l'app se Velopack fallisce
+        }
+    }
+}
+```
+
+**Cosa fa:**
+- ✅ Integra Velopack PRIMA dell'UI
+- ✅ Gestisce auto-updates senza bloccare UI
+- ✅ Non interrompe app se Velopack fallisce
+
+**Aggiungi using:**
+
+```csharp
+using Velopack;  // ← AGGIUNGI
+```
 
 ### Step 1.3: Configura appsettings.json (o Settings)
 
@@ -589,68 +641,103 @@ Aggiungi sezione Velopack:
 
 ---
 
-## FASE 3: IMPLEMENTA UpdateService (1.5 ore)
+## FASE 3: IMPLEMENTA CHECK AGGIORNAMENTI IN MDIParent.cs (1.5 ore)
 
-Crea una nuova classe per gestire gli aggiornamenti:
+**⚠️ NOTA ARCHITETTURALE:** La finestra principale è **MDIParent.cs** (non MainForm). Qui avviene il check per gli aggiornamenti.
+
+### Step 3.1: Aggiungi UpdateService (nuova classe)
+
+**Crea nuovo file:** `DO.VIVICARE.UI/UpdateService.cs`
 
 ```csharp
 using Velopack;
+using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-public class UpdateService
+namespace DO.VIVICARE.UI
 {
-    public async Task CheckForUpdatesAsync()
+    /// <summary>
+    /// Service per gestire aggiornamenti applicazione tramite Velopack
+    /// </summary>
+    public class UpdateService
     {
-        try
+        public async Task CheckForUpdatesAsync()
         {
-            var manager = new UpdateManager("https://github.com/artcava/DO.VIVICARE.Reporting");
-            var update = await manager.CheckForUpdatesAsync();
-            
-            if (update != null)
+            try
             {
-                string currentVersion = update.BaseRelease?.Version.ToString() ?? "sconosciuta";
-                string targetVersion = update.TargetFullRelease.Version.ToString();
+                var manager = new UpdateManager("https://github.com/artcava/DO.VIVICARE.Reporting");
+                var update = await manager.CheckForUpdatesAsync();
                 
-                var result = MessageBox.Show(
-                    $"Nuova versione disponibile: {targetVersion}\n\nTua versione: {currentVersion}\n\nScaricare e installare adesso?",
-                    "Aggiornamento Disponibile",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Information
-                );
-
-                if (result == DialogResult.Yes)
+                if (update != null)
                 {
-                    await manager.DownloadUpdatesAsync(update);
-                    manager.ApplyUpdatesAndRestart(update);
+                    string currentVersion = update.BaseRelease?.Version.ToString() ?? "sconosciuta";
+                    string targetVersion = update.TargetFullRelease.Version.ToString();
+                    
+                    var result = MessageBox.Show(
+                        $"Nuova versione disponibile: {targetVersion}\n\nTua versione: {currentVersion}\n\nScaricare e installare adesso?",
+                        "Aggiornamento Disponibile",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Information
+                    );
+
+                    if (result == DialogResult.Yes)
+                    {
+                        await manager.DownloadUpdatesAsync(update);
+                        manager.ApplyUpdatesAndRestart(update);
+                    }
                 }
             }
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Update check failed: {ex.Message}");
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Update check failed: {ex.Message}");
+                // Non interrompere l'app se update check fallisce
+            }
         }
     }
 }
 ```
 
-**Nel MainForm, aggiungi:**
+### Step 3.2: Modifica MDIParent.cs - Aggiungi check aggiornamenti
+
+**File:** `DO.VIVICARE.UI/MDIParent.cs`
+
+Localizza il metodo `MDIParent_Load`:
+
+```csharp
+private async void MDIParent_Load(object sender, EventArgs e)
+{
+    if (ApplicationDeployment.IsNetworkDeployed)
+        Text = $"Reporting [{ApplicationDeployment.CurrentDeployment.CurrentVersion}]";
+    else
+        Text = $"Reporting [{GetApplicationVersion()}]";
+}
+```
+
+**Sostituisci con:**
 
 ```csharp
 private UpdateService _updateService;
 
-public MainForm()
+private async void MDIParent_Load(object sender, EventArgs e)
 {
-    InitializeComponent();
-    _updateService = new UpdateService();
-}
+    if (ApplicationDeployment.IsNetworkDeployed)
+        Text = $"Reporting [{ApplicationDeployment.CurrentDeployment.CurrentVersion}]";
+    else
+        Text = $"Reporting [{GetApplicationVersion()}]";
 
-private async void MainForm_Load(object sender, EventArgs e)
-{
-    _ = _updateService.CheckForUpdatesAsync();
+    // ✅ AGGIUNGI: Inizializza UpdateService
+    _updateService = new UpdateService();
     
-    // ... resto del load code
+    // ✅ AGGIUNGI: Check aggiornamenti in background (senza bloccare UI)
+    _ = _updateService.CheckForUpdatesAsync();
 }
+```
+
+**Aggiungi using:**
+
+```csharp
+using Velopack;  // ← AGGIUNGI
 ```
 
 ---
@@ -817,14 +904,16 @@ vpk --version
 
 ## ✅ CHECKLIST FASE COMPLETAMENTO
 
-- [ ] Velopack NuGet aggiunto
-- [ ] Program.cs modificato con `VelopackApp.Build().Run()`
+- [ ] Velopack NuGet aggiunto al progetto UI
+- [ ] Program.cs modificato con `InitializeVelopack()` method
+- [ ] Usando `VelopackApp.Build().Run()` in Program.cs
 - [ ] XMLSettings.cs refactored con percorso AppData
 - [ ] Backup automatico implementato in XMLSettings
-- [ ] Versionamento config aggiunto
+- [ ] Versionamento config aggiunto a XMLSettings
 - [ ] Test XUnit creati e superati (6/6)
 - [ ] app.config configurato con Velopack settings
-- [ ] UpdateService creato
+- [ ] UpdateService creato in DO.VIVICARE.UI
+- [ ] MDIParent.cs modificato con `_updateService.CheckForUpdatesAsync()`
 - [ ] Certificate creato e aggiunto a GitHub Secrets
 - [ ] Workflow `.github/workflows/velopack-release.yml` creato
 - [ ] Build locale riuscito
