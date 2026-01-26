@@ -240,10 +240,18 @@ jobs:
         Write-Host "Installing Velopack CLI..."
         
         try {
-          dotnet tool install -g Velopack.Cli -ErrorAction Stop
+          dotnet tool install -g Velopack.Cli
+          if ($LASTEXITCODE -ne 0) {
+              Write-Error "Error installing Velopack CLI"
+              exit 1
+          }
           Write-Host "Velopack CLI installed"
+
+          $toolsPath = [IO.Path]::Combine($env:USERPROFILE, ".dotnet", "tools")
+          $env:PATH = "$toolsPath;$env:PATH"
+          Write-Host "Tools path added to PATH: $toolsPath"
           
-          $velopackVersion = velopack --version 2>&1
+          $velopackVersion = velopack --version
           Write-Host "Version: $velopackVersion"
         }
         catch {
