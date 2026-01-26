@@ -600,14 +600,12 @@ using System.Windows.Forms;
 
 public class UpdateService
 {
-    private UpdateManager _updateManager;
-
     public async Task InitializeAsync()
     {
         try
         {
-            _updateManager = new UpdateManager("https://github.com/artcava/DO.VIVICARE.Reporting");
-            await CheckForUpdatesAsync();
+            var manager = new UpdateManager("https://github.com/artcava/DO.VIVICARE.Reporting");
+            await CheckForUpdatesAsync(manager);
         }
         catch (Exception ex)
         {
@@ -615,11 +613,10 @@ public class UpdateService
         }
     }
 
-    public async Task CheckForUpdatesAsync()
+    public async Task CheckForUpdatesAsync(UpdateManager manager)
     {
         try
         {
-            using var manager = new UpdateManager("https://github.com/artcava/DO.VIVICARE.Reporting");
             var update = await manager.CheckForUpdatesAsync();
             
             if (update != null)
@@ -639,7 +636,6 @@ public class UpdateService
         }
         catch (Exception ex)
         {
-            // Silent fail - non bloccare app
             System.Diagnostics.Debug.WriteLine($"Update check failed: {ex.Message}");
         }
     }
@@ -659,7 +655,6 @@ public MainForm()
 
 private async void MainForm_Load(object sender, EventArgs e)
 {
-    // Controlla aggiornamenti al caricamento (background)
     _ = _updateService.InitializeAsync();
     
     // ... resto del load code
