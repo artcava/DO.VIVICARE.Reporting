@@ -251,8 +251,12 @@ jobs:
           $env:PATH = "$toolsPath;$env:PATH"
           Write-Host "Tools path added to PATH: $toolsPath"
           
-          $velopackVersion = vpk --version
-          Write-Host "Version: $velopackVersion"
+          $vpkHelp = & vpk --help 2>&1
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "Velopack CLI installed successfully"
+          } else {
+            Write-Host "Velopack CLI installed but help command returned: $vpkHelp"
+          }
         }
         catch {
           Write-Error "Error installing Velopack CLI: $_"
@@ -279,9 +283,11 @@ jobs:
           
           $velopackCmd = @(
             "pack",
-            "--packdir", "velopack-release",
-            "--outdir", "releases",
-            "--releaseName", "$version",
+            "--packId", "DO.VIVICARE.Reporting",
+            "--packVersion", "$version",
+            "--packDir", "velopack-release",
+            "--mainExe", "DO.VIVICARE.UI.exe",
+            "--outputDir", "releases",
             "--signParams", "/sha256 /td sha256 /t http://timestamp.digicert.com /f $certThumbprint"
           )
           
@@ -293,7 +299,7 @@ jobs:
           }
           
           Write-Host "Executing: velopack $($velopackCmd -join ' ')"
-          & velopack @velopackCmd
+          & vpk @velopackCmd
           
           if ($LASTEXITCODE -ne 0) {
             Write-Error "Velopack pack failed with exit code: $LASTEXITCODE"
