@@ -1,16 +1,4 @@
 {
-  "version": "1.2.2",
-  "releaseDate": "2026-01-24",
-  "testedWith": "CI/CD Pipeline - All Tests Passed",
-  "app": {
-    "name": "DO.VIVICARE Reporting",
-    "version": "1.2.2",
-    "downloadUrl": "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/v1.2.2/DO.VIVICARE-Setup-1.2.2.zip",
-    "checksum": "sha256:TBD",
-    "releaseDate": "2026-01-24",
-    "lastUpdate": "2026-01-24T13:42:00Z",
-    "minFramework": "4.8"
-  },
   "documents": [
     {
       "id": "document.adialtaintensita",
