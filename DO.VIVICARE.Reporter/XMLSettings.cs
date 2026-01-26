@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -13,12 +14,25 @@ namespace DO.VIVICARE.Reporter
         private XmlNode Libraries;
         private XmlNode Documents;
         private XmlNode Reports;
+        private const string CONFIG_VERSION = "1.0";
         /// <summary>
         /// Costruttore.
         /// </summary>
         public XMLSettings()
         {
-            _XmlFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Reporting", "Settings.xml");
+            //_XmlFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Reporting", "Settings.xml");
+            // Percorso portable in AppData (persiste tra aggiornamenti)
+            string appDataPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "DO.VIVICARE.Reporting"
+            );
+
+            // Assicura directory esista
+            if (!Directory.Exists(appDataPath))
+                Directory.CreateDirectory(appDataPath);
+
+            _XmlFilePath = Path.Combine(appDataPath, "Settings.xml");
+
             LoadDocument();
         }
 
@@ -31,10 +45,55 @@ namespace DO.VIVICARE.Reporter
 
         #region Public functions
 
+        //public void Save()
+        //{
+        //    if (File.Exists(_XmlFilePath))
+        //        Save(_XmlFilePath);
+        //}
+
         public void Save()
         {
-            if (File.Exists(_XmlFilePath))
-                Save(_XmlFilePath);
+            try
+            {
+                if (File.Exists(_XmlFilePath))
+                {
+                    // Crea backup prima di salvare (protezione corruzione)
+                    string backupPath = _XmlFilePath + ".backup";
+                    if (File.Exists(backupPath))
+                        File.Delete(backupPath);
+
+                    // Backup del file corrente
+                    File.Copy(_XmlFilePath, backupPath, overwrite: true);
+
+                    // Salva nuovo config
+                    Save(_XmlFilePath);
+
+                    // Cleanup: elimina backup vecchi (> 30 giorni)
+                    CleanOldBackups(maxDays: 30);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Errore durante Save: {ex.Message}");
+                throw;
+            }
+        }
+
+        private void CleanOldBackups(int maxDays = 30)
+        {
+            string backupPath = _XmlFilePath + ".backup";
+            if (File.Exists(backupPath))
+            {
+                var fileInfo = new FileInfo(backupPath);
+                if ((DateTime.Now - fileInfo.LastWriteTime).TotalDays > maxDays)
+                {
+                    try
+                    {
+                        File.Delete(backupPath);
+                    }
+                    catch { /* silent */ }
+                }
+            }
         }
 
         public bool AddLibrary(LibraryType library, string name)
@@ -258,13 +317,36 @@ namespace DO.VIVICARE.Reporter
         #endregion
 
         #region Private functions
+        //private void LoadDocument()
+        //{
+        //    if (DocumentElement != null) return;
+
+        //    if (!File.Exists(_XmlFilePath))
+        //    {
+        //        LoadXml("<SETTINGS></SETTINGS>");
+        //        Libraries = DocumentElement.AppendChild(CreateElement("LIBRARIES"));
+        //        Documents = Libraries.AppendChild(CreateElement("DOCUMENTS"));
+        //        Reports = Libraries.AppendChild(CreateElement("REPORTS"));
+        //        Save(_XmlFilePath);
+        //    }
+        //    else
+        //    {
+        //        base.Load(_XmlFilePath);
+        //        Libraries = DocumentElement.FirstChild;
+        //        Documents = Libraries.SelectSingleNode("DOCUMENTS");
+        //        Reports = Libraries.SelectSingleNode("REPORTS");
+        //    }
+
+        //}
+
         private void LoadDocument()
         {
             if (DocumentElement != null) return;
 
             if (!File.Exists(_XmlFilePath))
             {
-                LoadXml("<SETTINGS></SETTINGS>");
+                // Crea nuovo config con versione
+                LoadXml($"<SETTINGS VERSION='{CONFIG_VERSION}'></SETTINGS>");
                 Libraries = DocumentElement.AppendChild(CreateElement("LIBRARIES"));
                 Documents = Libraries.AppendChild(CreateElement("DOCUMENTS"));
                 Reports = Libraries.AppendChild(CreateElement("REPORTS"));
@@ -273,11 +355,38 @@ namespace DO.VIVICARE.Reporter
             else
             {
                 base.Load(_XmlFilePath);
+
+                // Verifica versione config
+                string version = DocumentElement.GetAttribute("VERSION");
+                if (string.IsNullOrEmpty(version))
+                {
+                    // Config legacy senza versione - aggiorna
+                    version = "0.0";
+                    MigrateConfiguration(version);
+                }
+                else if (version != CONFIG_VERSION)
+                {
+                    // Config da versione diversa - esegui migration
+                    MigrateConfiguration(version);
+                }
+
                 Libraries = DocumentElement.FirstChild;
                 Documents = Libraries.SelectSingleNode("DOCUMENTS");
                 Reports = Libraries.SelectSingleNode("REPORTS");
             }
+        }
 
+        private void MigrateConfiguration(string oldVersion)
+        {
+            // Logica per migrare config da versioni precedenti
+            Debug.WriteLine($"Config migrated from v{oldVersion} to {CONFIG_VERSION}");
+
+            // Aggiungi versione al root se mancante
+            if (DocumentElement.GetAttribute("VERSION") == "")
+                DocumentElement.SetAttribute("VERSION", CONFIG_VERSION);
+
+            // Salva config migrato
+            Save();
         }
         #endregion
 

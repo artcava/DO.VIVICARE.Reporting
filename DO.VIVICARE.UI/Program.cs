@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using Velopack;
 
 namespace DO.VIVICARE.UI
 {
@@ -14,6 +15,8 @@ namespace DO.VIVICARE.UI
         [STAThread]
         static void Main()
         {
+            VelopackApp.Build().Run();
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
