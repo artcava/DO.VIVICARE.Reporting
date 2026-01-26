@@ -267,7 +267,7 @@ jobs:
       shell: powershell
       run: |
         $version = "${{ steps.version.outputs.version }}"
-        $certThumbprint = $env.CERT_THUMBPRINT
+        $certThumbprint = $env:CERT_THUMBPRINT
         
         Write-Host "Creating and signing Velopack release..."
         
