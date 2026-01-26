@@ -643,8 +643,6 @@ Aggiungi sezione Velopack:
 
 ## FASE 3: IMPLEMENTA CHECK AGGIORNAMENTI IN MDIParent.cs (1.5 ore)
 
-**⚠️ NOTA ARCHITETTURALE:** La finestra principale è **MDIParent.cs** (non MainForm). Qui avviene il check per gli aggiornamenti.
-
 ### Step 3.1: Aggiungi UpdateService (nuova classe)
 
 **Crea nuovo file:** `DO.VIVICARE.UI/UpdateService.cs`
