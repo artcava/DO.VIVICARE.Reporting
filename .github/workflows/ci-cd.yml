@@ -473,6 +473,52 @@ jobs:
         echo "$checksum  $fileName" | Out-File -Encoding ASCII "CHECKSUM.txt"
         Write-Host "Checksum: $checksum"
 
+    - name: Update manifest.json with plugin checksum
+      shell: powershell
+      run: |
+        $pluginId = "${{ steps.plugin.outputs.pluginId }}"
+        $version = "${{ steps.plugin.outputs.version }}"
+        $projectName = "${{ steps.plugin.outputs.projectName }}"
+        $dllFileName = "$projectName-$version.dll"
+    
+        # Carica manifest
+        $manifest = Get-Content "manifest.json" | ConvertFrom-Json
+    
+        # Calcola checksum
+        $checksum = (Get-FileHash $dllFileName -Algorithm SHA256).Hash
+        $checksumWithPrefix = "sha256:$checksum"
+    
+        # Trova il plugin (documents o reports)
+        $isDocument = $pluginId.StartsWith("document.")
+        $targetArray = if ($isDocument) { $manifest.documents } else { $manifest.reports }
+        $pluginEntry = $targetArray | Where-Object { $_.id -eq $pluginId }
+    
+        if ($null -eq $pluginEntry) {
+            Write-Error "Plugin $pluginId not found in manifest.json"
+            exit 1
+        }
+    
+        # Aggiorna i campi
+        $pluginEntry.checksum = $checksumWithPrefix
+        $pluginEntry.releaseDate = (Get-Date -Format "yyyy-MM-dd")
+        $pluginEntry.version = $version
+    
+        # Salva manifest aggiornato
+        $manifest | ConvertTo-Json -Depth 10 | Set-Content "manifest.json" -Encoding UTF8
+        Write-Host "Manifest aggiornato: $pluginId -> $checksumWithPrefix"
+
+    - name: Commit and push manifest update
+      shell: powershell
+      run: |
+        $pluginId = "${{ steps.plugin.outputs.pluginId }}"
+        $version = "${{ steps.plugin.outputs.version }}"
+    
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git add manifest.json
+        git commit -m "chore: Update manifest.json checksum for $pluginId v$version"
+        git push origin master
+
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
