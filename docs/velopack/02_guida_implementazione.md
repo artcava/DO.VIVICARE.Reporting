@@ -600,29 +600,17 @@ using System.Windows.Forms;
 
 public class UpdateService
 {
-    public async Task InitializeAsync()
+    public async Task CheckForUpdatesAsync()
     {
         try
         {
             var manager = new UpdateManager("https://github.com/artcava/DO.VIVICARE.Reporting");
-            await CheckForUpdatesAsync(manager);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"Errore inizializzazione update: {ex.Message}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-    }
-
-    public async Task CheckForUpdatesAsync(UpdateManager manager)
-    {
-        try
-        {
             var update = await manager.CheckForUpdatesAsync();
             
             if (update != null)
             {
                 var result = MessageBox.Show(
-                    $"Nuova versione disponibile: {update.TargetFullRelease.Version}\n\nTua versione: {update.CurrentlyInstalledVersion}\n\nAggiornare adesso?",
+                    $"Nuova versione disponibile: {update.TargetFullRelease.Version}\n\nTua versione: {update.CurrentlyInstalledVersion}\n\nScaricare e installare adesso?",
                     "Aggiornamento Disponibile",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Information
@@ -630,7 +618,8 @@ public class UpdateService
 
                 if (result == DialogResult.Yes)
                 {
-                    await manager.ApplyUpdatesAndRestartAsync(update);
+                    await manager.DownloadUpdatesAsync(update);
+                    manager.ApplyUpdatesAndRestart(update);
                 }
             }
         }
@@ -655,7 +644,7 @@ public MainForm()
 
 private async void MainForm_Load(object sender, EventArgs e)
 {
-    _ = _updateService.InitializeAsync();
+    _ = _updateService.CheckForUpdatesAsync();
     
     // ... resto del load code
 }
