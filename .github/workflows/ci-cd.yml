@@ -288,14 +288,14 @@ jobs:
             "--packDir", "velopack-release",
             "--mainExe", "DO.VIVICARE.UI.exe",
             "--outputDir", "releases",
-            "--signParams", "/sha256 /td sha256 /t http://timestamp.digicert.com /f $certThumbprint"
+            "--signParams", "/fd sha256 /td sha256 /tr http://timestamp.digicert.com /sha1 $certThumbprint"
           )
           
-          if (Test-Path "DO.VIVICARE.UI/icon.ico") {
-            $velopackCmd += @("--icon", "DO.VIVICARE.UI/icon.ico")
-            Write-Host "Using icon from DO.VIVICARE.UI/icon.ico"
+          if (Test-Path "DO.VIVICARE.UI/DO-logo-2.ico") {
+            $velopackCmd += @("--icon", "DO.VIVICARE.UI/DO-logo-2.ico")
+            Write-Host "Using icon from DO.VIVICARE.UI/DO-logo-2.ico"
           } else {
-            Write-Warning "Icon not found at DO.VIVICARE.UI/icon.ico"
+            Write-Warning "Icon not found at DO.VIVICARE.UI/DO-logo-2.ico"
           }
           
           Write-Host "Executing: velopack $($velopackCmd -join ' ')"
