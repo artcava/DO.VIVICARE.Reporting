@@ -140,131 +140,239 @@ jobs:
           exit 1
         }
 
-    - name: Update manifest.json
+    - name: Import Code Signing Certificate
       shell: powershell
       run: |
-        $version = "${{ steps.version.outputs.version }}"
-        $now = Get-Date -Format "yyyy-MM-dd"
+        Write-Host "Importing code signing certificate..."
         
-        $manifest = @{
-          version = $version
-          releaseDate = $now
-          testedWith = "CI/CD Pipeline - Build Successful"
-          assets = @(
-            @{
-              type = "ui"
-              name = "DO.VIVICARE.UI"
-              version = $version
-              file = "DO.VIVICARE-Setup-$version.zip"
-              size = "15MB"
-              minFramework = "4.8"
-              checksum = ""
-            }
-          )
+        try {
+          $cert_base64 = "${{ secrets.CODESIGN_CERTIFICATE_BASE64 }}"
+          if ([string]::IsNullOrEmpty($cert_base64)) {
+            Write-Error "CODESIGN_CERTIFICATE_BASE64 secret not found"
+            exit 1
+          }
+          
+          $cert_bytes = [Convert]::FromBase64String($cert_base64)
+          [IO.File]::WriteAllBytes("certificate.pfx", $cert_bytes)
+          Write-Host "PFX file created"
+          
+          $password = "${{ secrets.CODESIGN_PASSWORD }}"
+          if ([string]::IsNullOrEmpty($password)) {
+            Write-Error "CODESIGN_PASSWORD secret not found"
+            exit 1
+          }
+          
+          $securePassword = ConvertTo-SecureString -String $password -AsPlainText -Force
+          
+          $cert = Import-PfxCertificate -FilePath "certificate.pfx" `
+            -CertStoreLocation "Cert:\CurrentUser\My" `
+            -Password $securePassword `
+            -ErrorAction Stop
+          
+          Write-Host "Certificate imported successfully"
+          Write-Host "Thumbprint: $($cert.Thumbprint)"
+          Write-Host "Subject: $($cert.Subject)"
+          
+          echo "CERT_THUMBPRINT=$($cert.Thumbprint)" >> $env:GITHUB_ENV
+          
+          Remove-Item "certificate.pfx" -Force
+          Write-Host "Temporary certificate file removed"
         }
-        
-        $json = $manifest | ConvertTo-Json -Depth 10
-        Set-Content -Path "manifest.json" -Value $json -Encoding UTF8
-        
-        Write-Host "Manifest updated:"
-        Write-Host $json
+        catch {
+          Write-Error "Error importing certificate: $_"
+          exit 1
+        }
 
-    - name: Create application package
+    - name: Create Velopack Release Package
       shell: powershell
       run: |
         $version = "${{ steps.version.outputs.version }}"
         
-        # Create package directory
-        New-Item -ItemType Directory -Force -Path "package" | Out-Null
+        Write-Host "Creating Velopack release package..."
         
-        # Copy UI binaries from downloaded artifacts
-        if (Test-Path "DO.VIVICARE.UI/bin/Release") {
-          Copy-Item "DO.VIVICARE.UI/bin/Release/*" -Destination "package/" -Force -Recurse
-          Write-Host "Copied UI binaries"
-        } else {
-          Write-Error "UI binaries not found in artifacts"
+        try {
+          $packageDir = "velopack-release"
+          New-Item -ItemType Directory -Force -Path $packageDir | Out-Null
+          Write-Host "Package directory created: $packageDir"
+          
+          $uiSource = "DO.VIVICARE.UI/bin/Release"
+          if (Test-Path $uiSource) {
+            Copy-Item "$uiSource/*" -Destination "$packageDir/" -Force -Recurse -ErrorAction Stop
+            Write-Host "Copied UI binaries"
+            
+            if (-not (Test-Path "$packageDir/DO.VIVICARE.UI.exe")) {
+              Write-Error "DO.VIVICARE.UI.exe not found after copy"
+              exit 1
+            }
+            Write-Host "   • DO.VIVICARE.UI.exe"
+          } else {
+            Write-Error "UI binaries not found at: $uiSource"
+            exit 1
+          }
+          
+          $reporterSource = "DO.VIVICARE.Reporter/bin/Release"
+          if (Test-Path $reporterSource) {
+            Copy-Item "$reporterSource/*" -Destination "$packageDir/" -Force -Recurse -ErrorAction Stop
+            Write-Host "Copied Reporter binaries"
+            
+            if (Test-Path "$packageDir/DO.VIVICARE.Reporter.dll") {
+              Write-Host "   • DO.VIVICARE.Reporter.dll"
+            }
+          } else {
+            Write-Warning "Reporter binaries not found at: $reporterSource (optional)"
+          }
+          
+          Write-Host "`n Package contents:"
+          Get-ChildItem -Path $packageDir -Recurse -File | ForEach-Object {
+            Write-Host "   • $($_.Name)"
+          }
+          
+          Write-Host "`n Release package created successfully"
+        }
+        catch {
+          Write-Error "Error creating package: $_"
+          exit 1
+        }
+
+    - name: Install Velopack CLI
+      shell: powershell
+      run: |
+        Write-Host "Installing Velopack CLI..."
+        
+        try {
+          dotnet tool install -g Velopack.Cli -ErrorAction Stop
+          Write-Host "Velopack CLI installed"
+          
+          $velopackVersion = velopack --version 2>&1
+          Write-Host "Version: $velopackVersion"
+        }
+        catch {
+          Write-Error "Error installing Velopack CLI: $_"
+          exit 1
+        }
+
+    - name: Create Velopack Release (Pack & Sign)
+      shell: powershell
+      run: |
+        $version = "${{ steps.version.outputs.version }}"
+        $certThumbprint = $env.CERT_THUMBPRINT
+        
+        Write-Host "Creating and signing Velopack release..."
+        
+        try {
+          if ([string]::IsNullOrEmpty($certThumbprint)) {
+            Write-Error "Certificate thumbprint not found"
+            exit 1
+          }
+          
+          Write-Host "Using certificate: $certThumbprint"
+          
+          New-Item -ItemType Directory -Force -Path "releases" | Out-Null
+          
+          $velopackCmd = @(
+            "pack",
+            "--packdir", "velopack-release",
+            "--outdir", "releases",
+            "--releaseName", "$version",
+            "--signParams", "/sha256 /td sha256 /t http://timestamp.digicert.com /f $certThumbprint"
+          )
+          
+          if (Test-Path "DO.VIVICARE.UI/icon.ico") {
+            $velopackCmd += @("--icon", "DO.VIVICARE.UI/icon.ico")
+            Write-Host "Using icon from DO.VIVICARE.UI/icon.ico"
+          } else {
+            Write-Warning "Icon not found at DO.VIVICARE.UI/icon.ico"
+          }
+          
+          Write-Host "Executing: velopack $($velopackCmd -join ' ')"
+          & velopack @velopackCmd
+          
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "Velopack pack failed with exit code: $LASTEXITCODE"
+            exit 1
+          }
+          
+          Write-Host "Velopack release created successfully"
+          
+          Write-Host "`n Generated files:"
+          Get-ChildItem "releases" -Recurse -File | ForEach-Object {
+            $size = [Math]::Round($_.Length / 1MB, 2)
+            Write-Host "   • $($_.Name) ($size MB)"
+          }
+        }
+        catch {
+          Write-Error "Error creating Velopack release: $_"
+          exit 1
+        }
+
+    - name: Generate Release Notes
+      shell: powershell
+      run: |
+        $version = "${{ steps.version.outputs.version }}"
+        $now = Get-Date -Format "yyyy-MM-dd HH:mm"
+        
+        Write-Host "Generating release notes..."
+        
+        try {
+          $releaseNotes = "# DO.VIVICARE Reporting v$version`n`n" +
+            "**Release Date:** $now`n" +
+            "**Packager:** Velopack (Code Signed)`n`n" +
+            "## What's New`n`n" +
+            "- Velopack integration (automatic updates and delta patching)`n" +
+            "- Code-signed installer and binaries (SHA256)`n" +
+            "- Configuration migrated to AppData (persistent across updates)`n`n" +
+            "## Installation`n`n" +
+            "1. Download the installer from the release assets`n" +
+            "2. Run the installer`n" +
+            "3. Start DO.VIVICARE Reporting`n`n" +
+            "## Updates`n`n" +
+            "- The app checks for updates automatically (interval configured in app.config)`n" +
+            "- When an update is available, the user is notified and can install with one click`n"
+          
+          Set-Content -Path "RELEASE_NOTES_GENERATED.md" -Value $releaseNotes -Encoding UTF8
+          Write-Host "Release notes generated: RELEASE_NOTES_GENERATED.md"
+        }
+        catch {
+          Write-Error "Error generating release notes: $_"
           exit 1
         }
         
-        # Copy Reporter binaries if available
-        if (Test-Path "DO.VIVICARE.Reporter/bin/Release") {
-          Copy-Item "DO.VIVICARE.Reporter/bin/Release/*" -Destination "package/" -Force -Recurse
-          Write-Host "Copied Reporter binaries"
-        }
-        
-        # Create ZIP
-        Compress-Archive -Path "package/*" -DestinationPath "DO.VIVICARE-Setup-$version.zip" -Force
-        Write-Host "Package created: DO.VIVICARE-Setup-$version.zip"
-        
-        # Get file size
-        $fileSize = (Get-Item "DO.VIVICARE-Setup-$version.zip").Length / 1MB
-        Write-Host "File size: $([Math]::Round($fileSize, 2)) MB"
-
-    - name: Generate checksum
-      shell: powershell
-      run: |
-        $version = "${{ steps.version.outputs.version }}"
-        $fileName = "DO.VIVICARE-Setup-$version.zip"
-        
-        Write-Host "Computing SHA256 checksum..."
-        $checksum = (Get-FileHash $fileName -Algorithm SHA256).Hash
-        echo "$checksum  $fileName" | Out-File -Encoding ASCII "CHECKSUM.txt"
-        
-        # Update manifest with checksum
-        $manifest = Get-Content "manifest.json" | ConvertFrom-Json
-        $manifest.assets[0].checksum = "sha256:$checksum"
-        $manifest | ConvertTo-Json -Depth 10 | Set-Content "manifest.json"
-        
-        Write-Host "Checksum generated and added to manifest"
-        Write-Host "SHA256: $checksum"
-
-    - name: Create GitHub Release
+    - name: Upload Velopack Artifacts to Release
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          DO.VIVICARE-Setup-${{ steps.version.outputs.version }}.zip
-          CHECKSUM.txt
-          manifest.json
-        body: |
-          # DO.VIVICARE Reporting v${{ steps.version.outputs.version }}
-          
-          **Status:** Build successful
-          
-          ## What's Included
-          - UI Application v${{ steps.version.outputs.version }}
-          - Reporter Library
-          - Plugin Manager (automatic library updates)
-          - SHA256 Checksum verification
-          
-          ## Installation
-          
-          ### Option 1: Semi-Automatic (Recommended)
-          1. Download `DO.VIVICARE-Setup-${{ steps.version.outputs.version }}.zip`
-          2. Extract and run setup
-          3. Application will auto-check for updates on next launch
-          
-          ### Option 2: Manual Installation
-          1. Download the ZIP file above
-          2. Extract to Program Files
-          3. Run `DO.VIVICARE.UI.exe`
-          
-          ## Verify Integrity
-          ```
-          Checksum (SHA256):
-          certutil -hashfile DO.VIVICARE-Setup-${{ steps.version.outputs.version }}.zip SHA256
-          ```
-          
-          **Expected:** See CHECKSUM.txt for expected value
-          
-          ## What's New
-          - See RELEASE_NOTES.md in repository
-          
-          **Release Date:** 2026-01-24
+          releases/**
+          RELEASE_NOTES_GENERATED.md
+        body_path: RELEASE_NOTES_GENERATED.md
         draft: false
         prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Cleanup Signing Certificate
+      if: always()
+      shell: powershell
+      run: |
+        Write-Host "Cleaning up signing certificate from certificate store..."
+        
+        try {
+          $certs = Get-ChildItem -Path Cert:\CurrentUser\My | Where-Object { $_.Subject -eq "CN=DO.VIVICARE.Reporting" }
+          
+          if ($certs) {
+            foreach ($cert in $certs) {
+              Remove-Item "Cert:\CurrentUser\My\$($cert.Thumbprint)" -Force -ErrorAction Stop
+              Write-Host "Certificate removed: $($cert.Thumbprint)"
+            }
+          } else {
+            Write-Host "No DO.VIVICARE.Reporting certificates found in store"
+          }
+        }
+        catch {
+          Write-Warning "Error during certificate cleanup: $_"
+        }
+        
+        Write-Host "Cleanup completed"
+        
   # ========================================
   # JOB 3: RELEASE PLUGIN (solo se tag plugin/*)
   # ========================================
