@@ -4,18 +4,18 @@
                           "id":  "document.adialtaintensita",
                           "name":  "ADI Alta Intensita",
                           "description":  "Modulo per la gestione di documentazioni ADI ad alta intensita",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1048576,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.ADIAltaIntensita/bin/Release/DO.VIVICARE.Document.ADIAltaIntensita.dll",
-                          "fileName":  "DO.VIVICARE.Document.ADIAltaIntensita-1.0.0.dll",
+                          "size":  6656,
+                          "checksum":  "sha256:3E80391E072F63E4B58A252A52497233C0C1F33F4D1021F636B8509C95825EC5",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.adialtaintensita/1.1.0/DO.VIVICARE.Document.ADIAltaIntensita-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.ADIAltaIntensita-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       },
                       {
                           "id":  "document.adibassaintensita",
