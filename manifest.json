@@ -244,18 +244,18 @@
                         "id":  "report.allegatoadi",
                         "name":  "Allegato ADI",
                         "description":  "Report Allegato ADI",
-                        "version":  "1.0.0",
+                        "version":  "1.1.0",
                         "category":  "Reports",
                         "type":  "Report",
-                        "size":  512000,
-                        "checksum":  "sha256:TBD",
-                        "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Report.AllegatoADI/bin/Release/DO.VIVICARE.Report.AllegatoADI.dll",
-                        "fileName":  "DO.VIVICARE.Report.AllegatoADI-1.0.0.dll",
+                        "size":  27648,
+                        "checksum":  "sha256:871E3F13029567DF9FFF77F71941D3DCFB06049F9023E669EF97AD4FA46A4B1D",
+                        "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/report.allegatoadi/1.1.0/DO.VIVICARE.Report.AllegatoADI-1.1.0.dll",
+                        "fileName":  "DO.VIVICARE.Report.AllegatoADI-1.1.0.dll",
                         "dependencies":  [
 
                                          ],
                         "required":  false,
-                        "releaseDate":  "2026-01-22"
+                        "releaseDate":  "2026-01-27"
                     },
                     {
                         "id":  "report.dietetica",
