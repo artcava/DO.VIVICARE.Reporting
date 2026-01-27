@@ -244,52 +244,52 @@
                         "id":  "report.allegatoadi",
                         "name":  "Allegato ADI",
                         "description":  "Report Allegato ADI",
-                        "version":  "1.0.0",
+                        "version":  "1.1.0",
                         "category":  "Reports",
                         "type":  "Report",
-                        "size":  512000,
-                        "checksum":  "sha256:TBD",
-                        "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Report.AllegatoADI/bin/Release/DO.VIVICARE.Report.AllegatoADI.dll",
-                        "fileName":  "DO.VIVICARE.Report.AllegatoADI-1.0.0.dll",
+                        "size":  27648,
+                        "checksum":  "sha256:871E3F13029567DF9FFF77F71941D3DCFB06049F9023E669EF97AD4FA46A4B1D",
+                        "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/report.allegatoadi/1.1.0/DO.VIVICARE.Report.AllegatoADI-1.1.0.dll",
+                        "fileName":  "DO.VIVICARE.Report.AllegatoADI-1.1.0.dll",
                         "dependencies":  [
 
                                          ],
                         "required":  false,
-                        "releaseDate":  "2026-01-22"
+                        "releaseDate":  "2026-01-27"
                     },
                     {
                         "id":  "report.dietetica",
                         "name":  "Dietetica",
                         "description":  "Report Dietetica",
-                        "version":  "1.0.0",
+                        "version":  "1.1.0",
                         "category":  "Reports",
                         "type":  "Report",
-                        "size":  512000,
-                        "checksum":  "sha256:TBD",
-                        "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Report.Dietetica/bin/Release/DO.VIVICARE.Report.Dietetica.dll",
-                        "fileName":  "DO.VIVICARE.Report.Dietetica-1.0.0.dll",
+                        "size":  55296,
+                        "checksum":  "sha256:CE78E311B859F1DB5D8D3D1FB0A7BF97F7EA7FD2EC72F9AE2213F9DE1A40BF99",
+                        "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/report.dietetica/1.1.0/DO.VIVICARE.Report.Dietetica-1.1.0.dll",
+                        "fileName":  "DO.VIVICARE.Report.Dietetica-1.1.0.dll",
                         "dependencies":  [
 
                                          ],
                         "required":  false,
-                        "releaseDate":  "2026-01-22"
+                        "releaseDate":  "2026-01-27"
                     },
                     {
                         "id":  "report.valorizzazione",
                         "name":  "Valorizzazione",
                         "description":  "Report Valorizzazione",
-                        "version":  "1.0.6",
+                        "version":  "1.2.0",
                         "category":  "Reports",
                         "type":  "Report",
-                        "size":  512000,
-                        "checksum":  "sha256:TBD",
-                        "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Report.Valorizzazione/bin/Release/DO.VIVICARE.Report.Valorizzazione.dll",
-                        "fileName":  "DO.VIVICARE.Report.Valorizzazione-1.0.6.dll",
+                        "size":  45568,
+                        "checksum":  "sha256:F5CDD6B261DCA7CBFE547CB7540A299AA33C65CB94B3719877FCACCE3DA0BE31",
+                        "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/report.valorizzazione/1.2.0/DO.VIVICARE.Report.Valorizzazione-1.2.0.dll",
+                        "fileName":  "DO.VIVICARE.Report.Valorizzazione-1.2.0.dll",
                         "dependencies":  [
 
                                          ],
                         "required":  false,
-                        "releaseDate":  "2026-01-22"
+                        "releaseDate":  "2026-01-27"
                     }
                 ]
 }
