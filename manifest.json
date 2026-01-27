@@ -41,10 +41,10 @@
                           "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1024000,
+                          "size":  5632,
                           "checksum":  "sha256:2506A712C8FEC3C02217C0F2F881DEB14C8090DC177CDDFBFDAD156AD1E25F70",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.ASST/bin/Release/DO.VIVICARE.Document.ASST.dll",
-                          "fileName":  "DO.VIVICARE.Document.ASST-1.0.0.dll",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.asst/1.1.0/DO.VIVICARE.Document.ASST-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.ASST-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
