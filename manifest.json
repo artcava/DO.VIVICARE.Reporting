@@ -89,18 +89,18 @@
                           "id":  "document.minsan",
                           "name":  "Ministero Sanita",
                           "description":  "Modulo per la gestione Ministero della Sanita",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1024000,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.MinSan/bin/Release/DO.VIVICARE.Document.MinSan.dll",
-                          "fileName":  "DO.VIVICARE.Document.MinSan-1.0.0.dll",
+                          "size":  5632,
+                          "checksum":  "sha256:6E31F5F05829A9BC1FCE63C88DB7F24BA55B1893E5D8F0B11F96E71ED2F01A0E",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.minsan/1.1.0/DO.VIVICARE.Document.MinSan-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.MinSan-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       },
                       {
                           "id":  "document.prestazioni",
