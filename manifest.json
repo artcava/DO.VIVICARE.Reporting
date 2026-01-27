@@ -157,18 +157,18 @@
                           "id":  "document.report16",
                           "name":  "Report 16",
                           "description":  "Modulo per la gestione Report 16",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1024000,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.Report16/bin/Release/DO.VIVICARE.Document.Report16.dll",
-                          "fileName":  "DO.VIVICARE.Document.Report16-1.0.0.dll",
+                          "size":  7168,
+                          "checksum":  "sha256:9E7C592C62B583BD622B8336F16DAFFE21B8141258CFFDE35618845091112C94",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.report16/1.1.0/DO.VIVICARE.Document.Report16-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.Report16-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       },
                       {
                           "id":  "document.report18",
