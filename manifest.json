@@ -55,18 +55,18 @@
                           "id":  "document.comuni",
                           "name":  "Comuni",
                           "description":  "Modulo per la gestione Comuni",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1024000,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.Comuni/bin/Release/DO.VIVICARE.Document.Comuni.dll",
-                          "fileName":  "DO.VIVICARE.Document.Comuni-1.0.0.dll",
+                          "size":  5120,
+                          "checksum":  "sha256:8390E6C64344FD278CE42CA4DFC0F6C84A26348DF1E9B21D078D2BD643B959FE",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.comuni/1.1.0/DO.VIVICARE.Document.Comuni-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.Comuni-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       },
                       {
                           "id":  "document.laziohealthworker",
