@@ -21,18 +21,18 @@
                           "id":  "document.adibassaintensita",
                           "name":  "ADI Bassa Intensita",
                           "description":  "Modulo per la gestione di documentazioni ADI a bassa intensita",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1024000,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.ADIBassaIntensita/bin/Release/DO.VIVICARE.Document.ADIBassaIntensita.dll",
-                          "fileName":  "DO.VIVICARE.Document.ADIBassaIntensita-1.0.0.dll",
+                          "size":  6656,
+                          "checksum":  "sha256:B2DC35C5AF2FC1A970374114826AC61899F7386942FF26B79A579A67C16C7F0E",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.adibassaintensita/1.1.0/DO.VIVICARE.Document.ADIBassaIntensita-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.ADIBassaIntensita-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       },
                       {
                           "id":  "document.asst",
