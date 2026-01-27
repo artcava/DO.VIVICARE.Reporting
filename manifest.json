@@ -106,18 +106,18 @@
                           "id":  "document.prestazioni",
                           "name":  "Prestazioni",
                           "description":  "Modulo per la gestione Prestazioni",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1024000,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.Prestazioni/bin/Release/DO.VIVICARE.Document.Prestazioni.dll",
-                          "fileName":  "DO.VIVICARE.Document.Prestazioni-1.0.0.dll",
+                          "size":  5632,
+                          "checksum":  "sha256:18B697F6915962ADE462FC9DF49C9B2DF6711F2EF1259750B8AC4722417D63A8",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.prestazioni/1.1.0/DO.VIVICARE.Document.Prestazioni-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.Prestazioni-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       },
                       {
                           "id":  "document.prezzi",
