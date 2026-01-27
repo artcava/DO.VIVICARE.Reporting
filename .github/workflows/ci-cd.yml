@@ -501,6 +501,7 @@ jobs:
         $version = "${{ steps.plugin.outputs.version }}"
         $projectName = "${{ steps.plugin.outputs.projectName }}"
         $dllFileName = "$projectName-$version.dll"
+        $tag = "${{ github.ref_name }}"  # Es: plugin/type.any/1.0.0
     
         # Carica manifest
         $manifestPath = "master-repo/manifest.json"
@@ -509,6 +510,9 @@ jobs:
         # Calcola checksum
         $checksum = (Get-FileHash $dllFileName -Algorithm SHA256).Hash
         $checksumWithPrefix = "sha256:$checksum"
+
+        $downloadUrl = "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/$tag/$dllFileName"
+        $fileSize = (Get-Item $dllFileName).Length
     
         # Trova il plugin (documents o reports)
         $isDocument = $pluginId.StartsWith("document.")
@@ -524,6 +528,9 @@ jobs:
         $pluginEntry.checksum = $checksumWithPrefix
         $pluginEntry.releaseDate = (Get-Date -Format "yyyy-MM-dd")
         $pluginEntry.version = $version
+        $pluginEntry.downloadUrl = $downloadUrl
+        $pluginEntry.fileName = $dllFileName
+        $pluginEntry.size = $fileSize
     
         # Salva manifest aggiornato
         $manifest | ConvertTo-Json -Depth 10 | Set-Content $manifestPath -Encoding UTF8
