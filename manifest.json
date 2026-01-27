@@ -174,18 +174,18 @@
                           "id":  "document.report18",
                           "name":  "Report 18",
                           "description":  "Modulo per la gestione Report 18",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1024000,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.Report18/bin/Release/DO.VIVICARE.Document.Report18.dll",
-                          "fileName":  "DO.VIVICARE.Document.Report18-1.0.0.dll",
+                          "size":  5632,
+                          "checksum":  "sha256:FA5F0067951A282027492805762D77C24774AEC19118B09A864FB43953A34881",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.report18/1.1.0/DO.VIVICARE.Document.Report18-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.Report18-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       },
                       {
                           "id":  "document.valorizzazione",
