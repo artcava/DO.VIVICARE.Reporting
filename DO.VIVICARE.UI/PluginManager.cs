@@ -59,7 +59,7 @@ namespace DO.VIVICARE.UI
                     return null;
 
                 // Cerca file DLL che corrisponda al pluginId
-                var dllFiles = Directory.GetFiles(pluginsPath, "*.dll");
+                var dllFiles = Directory.GetFiles(pluginsPath, $"*{pluginId}*.dll");
 
                 foreach (var dllFile in dllFiles)
                 {

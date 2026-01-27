@@ -14,11 +14,13 @@ namespace DO.VIVICARE.Reporter
 {
     public static class Manager
     {
-        public static string ReportingRoot { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Reporting"); } }
-        public static string DocumentLibraries { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Reporting", "DocumentLibraries"); } }
-        public static string ReportLibraries { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Reporting", "ReportLibraries"); } }
-        public static string Documents { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Reporting", "Documents"); } }
-        public static string Reports { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Reporting", "Reports"); } }
+        private const string PLUGINS_DIR = "Plugins";
+        private const string DOCUMENTS_DIR = "Plugins";
+        private const string REPORTS_DIR = "Plugins";
+
+        public static string Plugins { get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, PLUGINS_DIR); } }
+        public static string Documents { get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, DOCUMENTS_DIR); } }
+        public static string Reports { get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, REPORTS_DIR); } }
         /// <summary>
         /// 
         /// </summary>
@@ -41,7 +43,7 @@ namespace DO.VIVICARE.Reporter
         public static List<ReportingDocument> GetDocuments()
         {
             var list = new List<ReportingDocument>();
-            foreach (var file in Directory.GetFiles(DocumentLibraries))
+            foreach (var file in Directory.GetFiles(Plugins))
             {
                 FileInfo f = new FileInfo(file);
                 if (!f.Exists) continue;
@@ -69,7 +71,7 @@ namespace DO.VIVICARE.Reporter
         public static List<ReportingReport> GetReports()
         {
             var list = new List<ReportingReport>();
-            foreach (var file in Directory.GetFiles(ReportLibraries))
+            foreach (var file in Directory.GetFiles(Plugins))
             {
                 FileInfo f = new FileInfo(file);
                 if (!f.Exists) continue;
