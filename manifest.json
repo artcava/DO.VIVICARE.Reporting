@@ -208,18 +208,18 @@
                           "id":  "document.valorizzazioniadialta",
                           "name":  "Valorizzazioni ADI Alta",
                           "description":  "Modulo per la gestione Valorizzazioni ADI Alta Intensita",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1024000,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.ValorizzazioniADIAlta/bin/Release/DO.VIVICARE.Document.ValorizzazioniADIAlta.dll",
-                          "fileName":  "DO.VIVICARE.Document.ValorizzazioniADIAlta-1.0.0.dll",
+                          "size":  4608,
+                          "checksum":  "sha256:2FCD8115BFA4BE4B3745D2C45032B624BBBE6131D6F3208EFDFE7AD55B8AB748",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.valorizzazioniadialta/1.1.0/DO.VIVICARE.Document.ValorizzazioniADIAlta-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.ValorizzazioniADIAlta-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       },
                       {
                           "id":  "document.zsdfatture",
