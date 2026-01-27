@@ -43,25 +43,49 @@ namespace DO.VIVICARE.Reporter
         public static List<ReportingDocument> GetDocuments()
         {
             var list = new List<ReportingDocument>();
+            var pluginsByName = new Dictionary<string, (string FilePath, Version Version)>();
+
             foreach (var file in Directory.GetFiles(Plugins))
             {
                 FileInfo f = new FileInfo(file);
                 if (f.Extension.ToLower() != ".dll") continue;
                 if (!f.Exists) continue;
 
-                var a = Assembly.LoadFile(f.FullName);
-                var objList = (from type in a.GetExportedTypes()
-                               where type.BaseType.Name.Equals("BaseDocument")
-                               select (BaseDocument)a.CreateInstance(type.FullName)).ToList();
+                var fileName = Path.GetFileNameWithoutExtension(file);
+                var pluginId = ExtractPluginId(fileName, out Version version);
 
-                foreach (var obj in objList)
+                // Mantieni solo la versione più recente di ogni plugin
+                if (!pluginsByName.ContainsKey(pluginId) || version > pluginsByName[pluginId].Version)
                 {
-                    var ua = (DocumentReferenceAttribute)obj.GetType().GetCustomAttribute(typeof(DocumentReferenceAttribute));
-                    if (ua == null) continue;
-                    list.Add(new ReportingDocument { Document = obj, Attribute = ua });
-                    Settings.AddLibrary(XMLSettings.LibraryType.Document, ua.Name);
+                    pluginsByName[pluginId] = (file, version);
                 }
             }
+
+            // Secondo passaggio: carica solo i plugin con versione più recente
+            foreach (var kvp in pluginsByName)
+            {
+                var file = kvp.Value.FilePath;
+                try
+                {
+                    var a = Assembly.LoadFile(file);
+                    var objList = (from type in a.GetExportedTypes()
+                                   where type.BaseType.Name.Equals("BaseDocument")
+                                   select (BaseDocument)a.CreateInstance(type.FullName)).ToList();
+
+                    foreach (var obj in objList)
+                    {
+                        var ua = (DocumentReferenceAttribute)obj.GetType().GetCustomAttribute(typeof(DocumentReferenceAttribute));
+                        if (ua == null) continue;
+                        list.Add(new ReportingDocument { Document = obj, Attribute = ua });
+                        Settings.AddLibrary(XMLSettings.LibraryType.Document, ua.Name);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error loading document from {file}: {ex.Message}");
+                }
+            }
+
             return list;
         }
         /// <summary>
@@ -72,24 +96,48 @@ namespace DO.VIVICARE.Reporter
         public static List<ReportingReport> GetReports()
         {
             var list = new List<ReportingReport>();
+            var pluginsByName = new Dictionary<string, (string FilePath, Version Version)>();
+
             foreach (var file in Directory.GetFiles(Plugins))
             {
                 FileInfo f = new FileInfo(file);
                 if (f.Extension.ToLower() != ".dll") continue;
                 if (!f.Exists) continue;
 
-                var a = Assembly.LoadFile(f.FullName);
-                var objList = (from type in a.GetExportedTypes()
-                               where type.BaseType.Name.Equals("BaseReport")
-                               select (BaseReport)a.CreateInstance(type.FullName)).ToList();
+                var fileName = Path.GetFileNameWithoutExtension(file);
+                var pluginId = ExtractPluginId(fileName, out Version version);
 
-                foreach (var obj in objList)
+                // Mantieni solo la versione più recente di ogni plugin
+                if (!pluginsByName.ContainsKey(pluginId) || version > pluginsByName[pluginId].Version)
                 {
-                    var ua = (ReportReferenceAttribute)obj.GetType().GetCustomAttribute(typeof(ReportReferenceAttribute));
-                    if (ua == null) continue;
-                    list.Add(new ReportingReport { Report = obj, Attribute = ua });
+                    pluginsByName[pluginId] = (file, version);
                 }
             }
+
+            // Secondo passaggio: carica solo i plugin con versione più recente
+            foreach (var kvp in pluginsByName)
+            {
+                var file = kvp.Value.FilePath;
+                try
+                {
+                    var a = Assembly.LoadFile(file);
+                    var objList = (from type in a.GetExportedTypes()
+                                    where type.BaseType.Name.Equals("BaseReport")
+                                    select (BaseReport)a.CreateInstance(type.FullName)).ToList();
+
+                    foreach (var obj in objList)
+                    {
+                        var ua = (ReportReferenceAttribute)obj.GetType().GetCustomAttribute(typeof(ReportReferenceAttribute));
+                        if (ua == null) continue;
+                        list.Add(new ReportingReport { Report = obj, Attribute = ua });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error loading report from {file}: {ex.Message}");
+                }
+            }
+
             return list;
         }
         /// <summary>
@@ -447,6 +495,34 @@ namespace DO.VIVICARE.Reporter
                 WriteLog(list, fileWithoutExt);
             }
         }
+        /// <summary>
+        /// Estrae il plugin ID dal nome file e la versione.
+        /// Formati supportati:
+        /// - "PluginName-1.2.3.dll" → ID: "PluginName", Version: 1.2.3
+        /// - "PluginName.dll" → ID: "PluginName", Version: 0.0.0
+        /// </summary>
+        private static string ExtractPluginId(string fileName, out Version version)
+        {
+            version = new Version(0, 0, 0);
+
+            // Se il nome contiene "-", prova a estrarre versione
+            if (fileName.Contains("-"))
+            {
+                var parts = fileName.Split('-');
+                var potentialVersion = parts[parts.Length - 1];
+
+                if (Version.TryParse(potentialVersion, out var parsedVersion))
+                {
+                    version = parsedVersion;
+                    // Il plugin ID è tutto tranne l'ultima parte (che è la versione)
+                    return string.Join("-", parts.Take(parts.Length - 1));
+                }
+            }
+
+            // Se non trova "-" o non riesce a parsare, restituisce il nome intero
+            return fileName;
+        }
+
         /// <summary>
         ///     Use this function to preformat a line with brackets for each param.
         /// </summary>
