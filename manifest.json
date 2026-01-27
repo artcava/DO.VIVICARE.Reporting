@@ -261,18 +261,18 @@
                         "id":  "report.dietetica",
                         "name":  "Dietetica",
                         "description":  "Report Dietetica",
-                        "version":  "1.0.0",
+                        "version":  "1.1.0",
                         "category":  "Reports",
                         "type":  "Report",
-                        "size":  512000,
-                        "checksum":  "sha256:TBD",
-                        "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Report.Dietetica/bin/Release/DO.VIVICARE.Report.Dietetica.dll",
-                        "fileName":  "DO.VIVICARE.Report.Dietetica-1.0.0.dll",
+                        "size":  55296,
+                        "checksum":  "sha256:CE78E311B859F1DB5D8D3D1FB0A7BF97F7EA7FD2EC72F9AE2213F9DE1A40BF99",
+                        "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/report.dietetica/1.1.0/DO.VIVICARE.Report.Dietetica-1.1.0.dll",
+                        "fileName":  "DO.VIVICARE.Report.Dietetica-1.1.0.dll",
                         "dependencies":  [
 
                                          ],
                         "required":  false,
-                        "releaseDate":  "2026-01-22"
+                        "releaseDate":  "2026-01-27"
                     },
                     {
                         "id":  "report.valorizzazione",
