@@ -278,18 +278,18 @@
                         "id":  "report.valorizzazione",
                         "name":  "Valorizzazione",
                         "description":  "Report Valorizzazione",
-                        "version":  "1.0.6",
+                        "version":  "1.2.0",
                         "category":  "Reports",
                         "type":  "Report",
-                        "size":  512000,
-                        "checksum":  "sha256:TBD",
-                        "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Report.Valorizzazione/bin/Release/DO.VIVICARE.Report.Valorizzazione.dll",
-                        "fileName":  "DO.VIVICARE.Report.Valorizzazione-1.0.6.dll",
+                        "size":  45568,
+                        "checksum":  "sha256:F5CDD6B261DCA7CBFE547CB7540A299AA33C65CB94B3719877FCACCE3DA0BE31",
+                        "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/report.valorizzazione/1.2.0/DO.VIVICARE.Report.Valorizzazione-1.2.0.dll",
+                        "fileName":  "DO.VIVICARE.Report.Valorizzazione-1.2.0.dll",
                         "dependencies":  [
 
                                          ],
                         "required":  false,
-                        "releaseDate":  "2026-01-22"
+                        "releaseDate":  "2026-01-27"
                     }
                 ]
 }
