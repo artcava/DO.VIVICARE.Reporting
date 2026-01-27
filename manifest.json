@@ -12,7 +12,8 @@
       "downloadUrl": "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.ADIAltaIntensita/bin/Release/DO.VIVICARE.Document.ADIAltaIntensita.dll",
       "fileName": "DO.VIVICARE.Document.ADIAltaIntensita-1.0.0.dll",
       "dependencies": [],
-      "required": false
+      "required": false,
+      "releaseDate": "2026-01-22"
     },
     {
       "id": "document.adibassaintensita",
@@ -26,7 +27,8 @@
       "downloadUrl": "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.ADIBassaIntensita/bin/Release/DO.VIVICARE.Document.ADIBassaIntensita.dll",
       "fileName": "DO.VIVICARE.Document.ADIBassaIntensita-1.0.0.dll",
       "dependencies": [],
-      "required": false
+      "required": false,
+      "releaseDate": "2026-01-22"
     },
     {
       "id": "document.asst",
@@ -40,7 +42,8 @@
       "downloadUrl": "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.ASST/bin/Release/DO.VIVICARE.Document.ASST.dll",
       "fileName": "DO.VIVICARE.Document.ASST-1.0.0.dll",
       "dependencies": [],
-      "required": false
+      "required": false,
+      "releaseDate": "2026-01-22"
     },
     {
       "id": "document.comuni",
@@ -54,7 +57,8 @@
       "downloadUrl": "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.Comuni/bin/Release/DO.VIVICARE.Document.Comuni.dll",
       "fileName": "DO.VIVICARE.Document.Comuni-1.0.0.dll",
       "dependencies": [],
-      "required": false
+      "required": false,
+      "releaseDate": "2026-01-22"
     },
     {
       "id": "document.laziohealthworker",
@@ -68,7 +72,8 @@
       "downloadUrl": "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.LazioHealthWorker/bin/Release/DO.VIVICARE.Document.LazioHealthWorker.dll",
       "fileName": "DO.VIVICARE.Document.LazioHealthWorker-1.0.0.dll",
       "dependencies": [],
-      "required": false
+      "required": false,
+      "releaseDate": "2026-01-22"
     },
     {
       "id": "document.minsan",
@@ -82,7 +87,8 @@
       "downloadUrl": "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.MinSan/bin/Release/DO.VIVICARE.Document.MinSan.dll",
       "fileName": "DO.VIVICARE.Document.MinSan-1.0.0.dll",
       "dependencies": [],
-      "required": false
+      "required": false,
+      "releaseDate": "2026-01-22"
     },
     {
       "id": "document.prestazioni",
@@ -96,7 +102,8 @@
       "downloadUrl": "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.Prestazioni/bin/Release/DO.VIVICARE.Document.Prestazioni.dll",
       "fileName": "DO.VIVICARE.Document.Prestazioni-1.0.0.dll",
       "dependencies": [],
-      "required": false
+      "required": false,
+      "releaseDate": "2026-01-22"
     },
     {
       "id": "document.prezzi",
@@ -110,7 +117,8 @@
       "downloadUrl": "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.Prezzi/bin/Release/DO.VIVICARE.Document.Prezzi.dll",
       "fileName": "DO.VIVICARE.Document.Prezzi-1.0.0.dll",
       "dependencies": [],
-      "required": false
+      "required": false,
+      "releaseDate": "2026-01-22"
     },
     {
       "id": "document.rendiconto",
@@ -124,7 +132,8 @@
       "downloadUrl": "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.Rendiconto/bin/Release/DO.VIVICARE.Document.Rendiconto.dll",
       "fileName": "DO.VIVICARE.Document.Rendiconto-1.0.0.dll",
       "dependencies": [],
-      "required": false
+      "required": false,
+      "releaseDate": "2026-01-22"
     },
     {
       "id": "document.report16",
@@ -138,7 +147,8 @@
       "downloadUrl": "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.Report16/bin/Release/DO.VIVICARE.Document.Report16.dll",
       "fileName": "DO.VIVICARE.Document.Report16-1.0.0.dll",
       "dependencies": [],
-      "required": false
+      "required": false,
+      "releaseDate": "2026-01-22"
     },
     {
       "id": "document.report18",
@@ -152,7 +162,8 @@
       "downloadUrl": "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.Report18/bin/Release/DO.VIVICARE.Document.Report18.dll",
       "fileName": "DO.VIVICARE.Document.Report18-1.0.0.dll",
       "dependencies": [],
-      "required": false
+      "required": false,
+      "releaseDate": "2026-01-22"
     },
     {
       "id": "document.valorizzazione",
@@ -166,7 +177,8 @@
       "downloadUrl": "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.Valorizzazione/bin/Release/DO.VIVICARE.Document.Valorizzazione.dll",
       "fileName": "DO.VIVICARE.Document.Valorizzazione-1.0.0.dll",
       "dependencies": [],
-      "required": false
+      "required": false,
+      "releaseDate": "2026-01-22"
     },
     {
       "id": "document.valorizzazioniadialta",
@@ -180,7 +192,8 @@
       "downloadUrl": "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.ValorizzazioniADIAlta/bin/Release/DO.VIVICARE.Document.ValorizzazioniADIAlta.dll",
       "fileName": "DO.VIVICARE.Document.ValorizzazioniADIAlta-1.0.0.dll",
       "dependencies": [],
-      "required": false
+      "required": false,
+      "releaseDate": "2026-01-22"
     },
     {
       "id": "document.zsdfatture",
@@ -194,7 +207,8 @@
       "downloadUrl": "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.ZSDFatture/bin/Release/DO.VIVICARE.Document.ZSDFatture.dll",
       "fileName": "DO.VIVICARE.Document.ZSDFatture-1.0.0.dll",
       "dependencies": [],
-      "required": false
+      "required": false,
+      "releaseDate": "2026-01-22"
     }
   ],
   "reports": [
@@ -210,7 +224,8 @@
       "downloadUrl": "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Report.AllegatoADI/bin/Release/DO.VIVICARE.Report.AllegatoADI.dll",
       "fileName": "DO.VIVICARE.Report.AllegatoADI-1.0.0.dll",
       "dependencies": [],
-      "required": false
+      "required": false,
+      "releaseDate": "2026-01-22"
     },
     {
       "id": "report.dietetica",
@@ -224,7 +239,8 @@
       "downloadUrl": "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Report.Dietetica/bin/Release/DO.VIVICARE.Report.Dietetica.dll",
       "fileName": "DO.VIVICARE.Report.Dietetica-1.0.0.dll",
       "dependencies": [],
-      "required": false
+      "required": false,
+      "releaseDate": "2026-01-22"
     },
     {
       "id": "report.valorizzazione",
