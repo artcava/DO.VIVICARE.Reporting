@@ -123,18 +123,18 @@
                           "id":  "document.prezzi",
                           "name":  "Prezzi",
                           "description":  "Modulo per la gestione Prezzi",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1024000,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.Prezzi/bin/Release/DO.VIVICARE.Document.Prezzi.dll",
-                          "fileName":  "DO.VIVICARE.Document.Prezzi-1.0.0.dll",
+                          "size":  6656,
+                          "checksum":  "sha256:DD12BB2A668DF5C4B633EBA0713240ACEE6BD94A626972BDE32B361E5AC3968F",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.prezzi/1.1.0/DO.VIVICARE.Document.Prezzi-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.Prezzi-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       },
                       {
                           "id":  "document.rendiconto",
