@@ -487,6 +487,13 @@ jobs:
         echo "$checksum  $fileName" | Out-File -Encoding ASCII "CHECKSUM.txt"
         Write-Host "Checksum: $checksum"
 
+    - name: Checkout master for manifest update
+      uses: actions/checkout@v4
+      with:
+          ref: master
+          fetch-depth: 0
+          path: master-repo  # ← Checkout in una directory separata 
+    
     - name: Update manifest.json with plugin checksum
       shell: powershell
       run: |
@@ -496,7 +503,8 @@ jobs:
         $dllFileName = "$projectName-$version.dll"
     
         # Carica manifest
-        $manifest = Get-Content "manifest.json" | ConvertFrom-Json
+        $manifestPath = "master-repo/manifest.json"
+        $manifest = Get-Content $manifestPath | ConvertFrom-Json
     
         # Calcola checksum
         $checksum = (Get-FileHash $dllFileName -Algorithm SHA256).Hash
@@ -518,20 +526,28 @@ jobs:
         $pluginEntry.version = $version
     
         # Salva manifest aggiornato
-        $manifest | ConvertTo-Json -Depth 10 | Set-Content "manifest.json" -Encoding UTF8
+        $manifest | ConvertTo-Json -Depth 10 | Set-Content $manifestPath -Encoding UTF8
         Write-Host "Manifest aggiornato: $pluginId -> $checksumWithPrefix"
 
     - name: Commit and push manifest update
       shell: powershell
+      working-directory: master-repo  # ← Lavora nella directory master
       run: |
         $pluginId = "${{ steps.plugin.outputs.pluginId }}"
         $version = "${{ steps.plugin.outputs.version }}"
     
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
+        
         git add manifest.json
-        git commit -m "chore: Update manifest.json checksum for $pluginId v$version"
-        git push origin master
+        $status = git status --porcelain
+        if ($status) {
+          git commit -m "chore: Update manifest.json checksum for $pluginId v$version [skip ci]"
+          git push origin master
+          Write-Host "Manifest pushed to master"
+        } else {
+          Write-Host "No changes to manifest.json"
+        }
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
