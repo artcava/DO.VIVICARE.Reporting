@@ -55,7 +55,15 @@ namespace DO.VIVICARE.Tests
 
             // Clean up before test
             if (Directory.Exists(appDataPath))
-                Directory.Delete(appDataPath, recursive: true);
+            {
+                // Elimina tutti i file nella directory
+                foreach (string file in Directory.GetFiles(appDataPath))
+                {
+                    File.Delete(file);
+                }
+                // Ora elimina la directory (che dovrebbe essere vuota)
+                Directory.Delete(appDataPath, recursive: false);
+            }
 
             // Act
             var settings = new XMLSettings();
