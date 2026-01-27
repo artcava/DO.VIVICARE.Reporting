@@ -4,6 +4,7 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using DO.VIVICARE.Reporter;
 using Newtonsoft.Json;
 
 namespace DO.VIVICARE.UI
@@ -18,8 +19,6 @@ namespace DO.VIVICARE.UI
 
         private const string GITHUB_RELEASES_URL =
             "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download";
-
-        private const string PLUGINS_DIR = "Plugins";
 
         /// <summary>
         /// Scarica il manifest completo dei plugin da GitHub
@@ -53,13 +52,11 @@ namespace DO.VIVICARE.UI
         {
             try
             {
-                var pluginsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, PLUGINS_DIR);
-
-                if (!Directory.Exists(pluginsPath))
+                if (!Directory.Exists(Manager.Plugins))
                     return null;
 
                 // Cerca file DLL che corrisponda al pluginId
-                var dllFiles = Directory.GetFiles(pluginsPath, $"*{pluginId}*.dll");
+                var dllFiles = Directory.GetFiles(Manager.Plugins, $"*{pluginId}*.dll");
 
                 foreach (var dllFile in dllFiles)
                 {
@@ -137,13 +134,11 @@ namespace DO.VIVICARE.UI
                 if (plugin == null || string.IsNullOrEmpty(plugin.DownloadUrl))
                     return false;
 
-                var pluginsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, PLUGINS_DIR);
-
                 // Crea directory se non esiste
-                if (!Directory.Exists(pluginsPath))
-                    Directory.CreateDirectory(pluginsPath);
+                if (!Directory.Exists(Manager.Plugins))
+                    Directory.CreateDirectory(Manager.Plugins);
 
-                var outputPath = Path.Combine(pluginsPath, plugin.FileName ?? $"{plugin.Id}.dll");
+                var outputPath = Path.Combine(Manager.Plugins, plugin.FileName ?? $"{plugin.Id}.dll");
 
                 using (var client = new HttpClient())
                 {
