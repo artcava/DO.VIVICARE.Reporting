@@ -4,35 +4,35 @@
                           "id":  "document.adialtaintensita",
                           "name":  "ADI Alta Intensita",
                           "description":  "Modulo per la gestione di documentazioni ADI ad alta intensita",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1048576,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.ADIAltaIntensita/bin/Release/DO.VIVICARE.Document.ADIAltaIntensita.dll",
-                          "fileName":  "DO.VIVICARE.Document.ADIAltaIntensita-1.0.0.dll",
+                          "size":  6656,
+                          "checksum":  "sha256:3E80391E072F63E4B58A252A52497233C0C1F33F4D1021F636B8509C95825EC5",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.adialtaintensita/1.1.0/DO.VIVICARE.Document.ADIAltaIntensita-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.ADIAltaIntensita-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       },
                       {
                           "id":  "document.adibassaintensita",
                           "name":  "ADI Bassa Intensita",
                           "description":  "Modulo per la gestione di documentazioni ADI a bassa intensita",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1024000,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.ADIBassaIntensita/bin/Release/DO.VIVICARE.Document.ADIBassaIntensita.dll",
-                          "fileName":  "DO.VIVICARE.Document.ADIBassaIntensita-1.0.0.dll",
+                          "size":  6656,
+                          "checksum":  "sha256:B2DC35C5AF2FC1A970374114826AC61899F7386942FF26B79A579A67C16C7F0E",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.adibassaintensita/1.1.0/DO.VIVICARE.Document.ADIBassaIntensita-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.ADIBassaIntensita-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       },
                       {
                           "id":  "document.asst",
@@ -55,188 +55,188 @@
                           "id":  "document.comuni",
                           "name":  "Comuni",
                           "description":  "Modulo per la gestione Comuni",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1024000,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.Comuni/bin/Release/DO.VIVICARE.Document.Comuni.dll",
-                          "fileName":  "DO.VIVICARE.Document.Comuni-1.0.0.dll",
+                          "size":  5120,
+                          "checksum":  "sha256:8390E6C64344FD278CE42CA4DFC0F6C84A26348DF1E9B21D078D2BD643B959FE",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.comuni/1.1.0/DO.VIVICARE.Document.Comuni-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.Comuni-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       },
                       {
                           "id":  "document.laziohealthworker",
                           "name":  "Lazio Health Worker",
                           "description":  "Modulo per la gestione Lazio Health Worker",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1024000,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.LazioHealthWorker/bin/Release/DO.VIVICARE.Document.LazioHealthWorker.dll",
-                          "fileName":  "DO.VIVICARE.Document.LazioHealthWorker-1.0.0.dll",
+                          "size":  5632,
+                          "checksum":  "sha256:704E32F04DC98F86D5CE8594834EF561D4F8EEE0F728DBE78F8112CD5E731ABD",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.laziohealthworker/1.1.0/DO.VIVICARE.Document.LazioHealthWorker-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.LazioHealthWorker-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       },
                       {
                           "id":  "document.minsan",
                           "name":  "Ministero Sanita",
                           "description":  "Modulo per la gestione Ministero della Sanita",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1024000,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.MinSan/bin/Release/DO.VIVICARE.Document.MinSan.dll",
-                          "fileName":  "DO.VIVICARE.Document.MinSan-1.0.0.dll",
+                          "size":  5632,
+                          "checksum":  "sha256:6E31F5F05829A9BC1FCE63C88DB7F24BA55B1893E5D8F0B11F96E71ED2F01A0E",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.minsan/1.1.0/DO.VIVICARE.Document.MinSan-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.MinSan-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       },
                       {
                           "id":  "document.prestazioni",
                           "name":  "Prestazioni",
                           "description":  "Modulo per la gestione Prestazioni",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1024000,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.Prestazioni/bin/Release/DO.VIVICARE.Document.Prestazioni.dll",
-                          "fileName":  "DO.VIVICARE.Document.Prestazioni-1.0.0.dll",
+                          "size":  5632,
+                          "checksum":  "sha256:18B697F6915962ADE462FC9DF49C9B2DF6711F2EF1259750B8AC4722417D63A8",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.prestazioni/1.1.0/DO.VIVICARE.Document.Prestazioni-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.Prestazioni-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       },
                       {
                           "id":  "document.prezzi",
                           "name":  "Prezzi",
                           "description":  "Modulo per la gestione Prezzi",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1024000,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.Prezzi/bin/Release/DO.VIVICARE.Document.Prezzi.dll",
-                          "fileName":  "DO.VIVICARE.Document.Prezzi-1.0.0.dll",
+                          "size":  6656,
+                          "checksum":  "sha256:DD12BB2A668DF5C4B633EBA0713240ACEE6BD94A626972BDE32B361E5AC3968F",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.prezzi/1.1.0/DO.VIVICARE.Document.Prezzi-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.Prezzi-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       },
                       {
                           "id":  "document.rendiconto",
                           "name":  "Rendiconto",
                           "description":  "Modulo per la gestione Rendiconto",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1024000,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.Rendiconto/bin/Release/DO.VIVICARE.Document.Rendiconto.dll",
-                          "fileName":  "DO.VIVICARE.Document.Rendiconto-1.0.0.dll",
+                          "size":  5632,
+                          "checksum":  "sha256:82FBF7ABC30812A7F90D0C1EBD71DA3C0FB13615F5830EFB8E38879D9CEC7FDF",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.rendiconto/1.1.0/DO.VIVICARE.Document.Rendiconto-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.Rendiconto-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       },
                       {
                           "id":  "document.report16",
                           "name":  "Report 16",
                           "description":  "Modulo per la gestione Report 16",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1024000,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.Report16/bin/Release/DO.VIVICARE.Document.Report16.dll",
-                          "fileName":  "DO.VIVICARE.Document.Report16-1.0.0.dll",
+                          "size":  7168,
+                          "checksum":  "sha256:9E7C592C62B583BD622B8336F16DAFFE21B8141258CFFDE35618845091112C94",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.report16/1.1.0/DO.VIVICARE.Document.Report16-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.Report16-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       },
                       {
                           "id":  "document.report18",
                           "name":  "Report 18",
                           "description":  "Modulo per la gestione Report 18",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1024000,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.Report18/bin/Release/DO.VIVICARE.Document.Report18.dll",
-                          "fileName":  "DO.VIVICARE.Document.Report18-1.0.0.dll",
+                          "size":  5632,
+                          "checksum":  "sha256:FA5F0067951A282027492805762D77C24774AEC19118B09A864FB43953A34881",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.report18/1.1.0/DO.VIVICARE.Document.Report18-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.Report18-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       },
                       {
                           "id":  "document.valorizzazione",
                           "name":  "Valorizzazione",
                           "description":  "Modulo per la gestione Valorizzazione",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1024000,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.Valorizzazione/bin/Release/DO.VIVICARE.Document.Valorizzazione.dll",
-                          "fileName":  "DO.VIVICARE.Document.Valorizzazione-1.0.0.dll",
+                          "size":  22528,
+                          "checksum":  "sha256:941B9DD31349A6A5DDBC17D7712DAE9E2E99F1BBD3945D9F7C4FCB2EB0DF5C36",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.valorizzazione/1.1.0/DO.VIVICARE.Document.Valorizzazione-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.Valorizzazione-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       },
                       {
                           "id":  "document.valorizzazioniadialta",
                           "name":  "Valorizzazioni ADI Alta",
                           "description":  "Modulo per la gestione Valorizzazioni ADI Alta Intensita",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1024000,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.ValorizzazioniADIAlta/bin/Release/DO.VIVICARE.Document.ValorizzazioniADIAlta.dll",
-                          "fileName":  "DO.VIVICARE.Document.ValorizzazioniADIAlta-1.0.0.dll",
+                          "size":  4608,
+                          "checksum":  "sha256:2FCD8115BFA4BE4B3745D2C45032B624BBBE6131D6F3208EFDFE7AD55B8AB748",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.valorizzazioniadialta/1.1.0/DO.VIVICARE.Document.ValorizzazioniADIAlta-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.ValorizzazioniADIAlta-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       },
                       {
                           "id":  "document.zsdfatture",
                           "name":  "ZSD Fatture",
                           "description":  "Modulo per la gestione ZSD Fatture",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1024000,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.ZSDFatture/bin/Release/DO.VIVICARE.Document.ZSDFatture.dll",
-                          "fileName":  "DO.VIVICARE.Document.ZSDFatture-1.0.0.dll",
+                          "size":  6656,
+                          "checksum":  "sha256:9CCB1FD127B0C60BB688B1F79E6C9AAF09D112A8EF267267045D9740F7D66DAB",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.zsdfatture/1.1.0/DO.VIVICARE.Document.ZSDFatture-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.ZSDFatture-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       }
                   ],
     "reports":  [
