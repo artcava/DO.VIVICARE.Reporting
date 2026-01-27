@@ -191,18 +191,18 @@
                           "id":  "document.valorizzazione",
                           "name":  "Valorizzazione",
                           "description":  "Modulo per la gestione Valorizzazione",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1024000,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.Valorizzazione/bin/Release/DO.VIVICARE.Document.Valorizzazione.dll",
-                          "fileName":  "DO.VIVICARE.Document.Valorizzazione-1.0.0.dll",
+                          "size":  22528,
+                          "checksum":  "sha256:941B9DD31349A6A5DDBC17D7712DAE9E2E99F1BBD3945D9F7C4FCB2EB0DF5C36",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.valorizzazione/1.1.0/DO.VIVICARE.Document.Valorizzazione-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.Valorizzazione-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       },
                       {
                           "id":  "document.valorizzazioniadialta",
