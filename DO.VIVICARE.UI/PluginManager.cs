@@ -1,11 +1,12 @@
+using DO.VIVICARE.Reporter;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using DO.VIVICARE.Reporter;
-using Newtonsoft.Json;
 
 namespace DO.VIVICARE.UI
 {
@@ -55,12 +56,17 @@ namespace DO.VIVICARE.UI
                 if (!Directory.Exists(Manager.Plugins))
                     return null;
 
+                Version latestVersion = null;
+                string latestVersionString = null;
+
                 // Cerca file DLL che corrisponda al pluginId
                 var dllFiles = Directory.GetFiles(Manager.Plugins, $"*{pluginId}*.dll");
 
                 foreach (var dllFile in dllFiles)
                 {
                     var fileName = Path.GetFileNameWithoutExtension(dllFile);
+
+                    Version currentVersion = null;
 
                     // Prova a estrarre versione dal nome file
                     // Formato atteso: PluginName-Version.dll
@@ -70,25 +76,34 @@ namespace DO.VIVICARE.UI
                         if (parts.Length >= 2)
                         {
                             // Ultimo elemento è la versione
-                            var version = parts[parts.Length - 1];
+                            var versionStr = parts[parts.Length - 1];
 
-                            if (System.Version.TryParse(version, out _))
-                                return version;
+                            Version.TryParse(versionStr, out currentVersion);
                         }
                     }
 
-                    // Fallback: prova a leggere version da AssemblyVersion
-                    try
+                    if (currentVersion==null)
                     {
-                        var assembly = System.Reflection.Assembly.LoadFrom(dllFile);
-                        var versionAttr = assembly.GetName().Version;
-                        if (versionAttr != null)
-                            return $"{versionAttr.Major}.{versionAttr.Minor}.{versionAttr.Build}";
+                        // Fallback: prova a leggere version da AssemblyVersion
+                        try
+                        {
+                            var assembly = System.Reflection.Assembly.LoadFrom(dllFile);
+                            currentVersion = assembly.GetName().Version;
+                        }
+                        catch { continue; }
                     }
-                    catch { }
+
+                    if (currentVersion != null)
+                    {
+                        if (latestVersion == null || currentVersion > latestVersion)
+                        {
+                            latestVersion = currentVersion;
+                            latestVersionString = $"{currentVersion.Major}.{currentVersion.Minor}.{currentVersion.Build}";
+                        }
+                    }
                 }
 
-                return null;
+                return latestVersionString;
             }
             catch (Exception ex)
             {
@@ -107,10 +122,10 @@ namespace DO.VIVICARE.UI
                 if (installed?.Version == null || available?.Version == null)
                     return false;
 
-                if (!System.Version.TryParse(installed.Version, out var installedVer))
+                if (!Version.TryParse(installed.Version, out var installedVer))
                     return false;
 
-                if (!System.Version.TryParse(available.Version, out var availableVer))
+                if (!Version.TryParse(available.Version, out var availableVer))
                     return false;
 
                 return installedVer < availableVer;
@@ -188,6 +203,19 @@ namespace DO.VIVICARE.UI
                             File.Delete(outputPath);
                         return false;
                     }
+                }
+
+                try
+                {
+                    int deleted = CleanupOldVersions(plugin.Id, plugin.Version);
+                    if (deleted > 0)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Cleaned up {deleted} old version(s) of {plugin.Id}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Warning: Failed to cleanup old versions: {ex.Message}");
                 }
 
                 return true;
@@ -287,11 +315,11 @@ namespace DO.VIVICARE.UI
             try
             {
                 // Normalizza versioni (es: 1.2.1 -&gt; 1.2.1.0)
-                if (!System.Version.TryParse(v1, out var version1))
-                    version1 = new System.Version("1.0.0.0");
+                if (!Version.TryParse(v1, out var version1))
+                    version1 = new Version("1.0.0.0");
 
-                if (!System.Version.TryParse(v2, out var version2))
-                    version2 = new System.Version("1.0.0.0");
+                if (!Version.TryParse(v2, out var version2))
+                    version2 = new Version("1.0.0.0");
 
                 return version1.CompareTo(version2);
             }
@@ -301,6 +329,106 @@ namespace DO.VIVICARE.UI
             }
         }
 
+        #region CleanUpOldPlugins
+        // DO.VIVICARE.UI/PluginManager.cs
+
+        /// <summary>
+        /// Rimuove tutte le versioni obsolete di un plugin, mantenendo solo l'ultima
+        /// </summary>
+        /// <param name="pluginId">ID del plugin</param>
+        /// <param name="pluginType">Tipo di plugin ("Document" o "Report")</param>
+        /// <param name="keepVersion">Versione da mantenere (opzionale, se null mantiene solo la più recente)</param>
+        /// <returns>Numero di file rimossi</returns>
+        public int CleanupOldVersions(string pluginId, string keepVersion = null)
+        {
+            try
+            {
+                // Determina directory
+                string pluginDirectory = Manager.Plugins;
+                if (!Directory.Exists(pluginDirectory))
+                    return 0;
+
+                var dllFiles = Directory.GetFiles(pluginDirectory, $"*{pluginId}*.dll");
+
+                // Lista di file con le loro versioni
+                var fileVersions = new List<(string Plugin, Version Version)>();
+
+                foreach (var dllFile in dllFiles)
+                {
+                    var fileName = Path.GetFileNameWithoutExtension(dllFile);
+                    Version version = null;
+
+                    // Estrai versione dal nome
+                    if (fileName.Contains("-"))
+                    {
+                        var parts = fileName.Split('-');
+                        if (parts.Length >= 2)
+                        {
+                            var versionString = parts[parts.Length - 1];
+                            Version.TryParse(versionString, out version);
+                        }
+                    }
+
+                    // Fallback: leggi da assembly
+                    if (version == null)
+                    {
+                        try
+                        {
+                            var assembly = System.Reflection.Assembly.LoadFrom(dllFile);
+                            version = assembly.GetName().Version;
+                        }
+                        catch { }
+                    }
+
+                    if (version != null)
+                    {
+                        fileVersions.Add((dllFile, version));
+                    }
+                }
+
+                if (fileVersions.Count == 0)
+                    return 0;
+
+                // Determina quale versione mantenere
+                Version versionToKeep;
+                if (!string.IsNullOrEmpty(keepVersion) && Version.TryParse(keepVersion, out versionToKeep))
+                {
+                    // Mantieni versione specifica
+                }
+                else
+                {
+                    // Mantieni la più recente
+                    versionToKeep = fileVersions.Max(fv => fv.Version);
+                }
+
+                // Elimina tutte le versioni tranne quella da mantenere
+                int deletedCount = 0;
+                foreach (var (filePath, version) in fileVersions)
+                {
+                    if (version < versionToKeep)
+                    {
+                        try
+                        {
+                            File.Delete(filePath);
+                            deletedCount++;
+                            System.Diagnostics.Debug.WriteLine($"Deleted old version: {Path.GetFileName(filePath)}");
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Failed to delete {filePath}: {ex.Message}");
+                        }
+                    }
+                }
+
+                return deletedCount;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error cleaning up old versions: {ex.Message}");
+                return 0;
+            }
+        }
+        #endregion
         /// <summary>
         /// Ottieni versione corrente dell'applicazione
         /// </summary>

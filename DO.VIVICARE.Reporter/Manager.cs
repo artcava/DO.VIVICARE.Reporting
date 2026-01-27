@@ -46,6 +46,7 @@ namespace DO.VIVICARE.Reporter
             foreach (var file in Directory.GetFiles(Plugins))
             {
                 FileInfo f = new FileInfo(file);
+                if (f.Extension.ToLower() != ".dll") continue;
                 if (!f.Exists) continue;
 
                 var a = Assembly.LoadFile(f.FullName);
@@ -74,6 +75,7 @@ namespace DO.VIVICARE.Reporter
             foreach (var file in Directory.GetFiles(Plugins))
             {
                 FileInfo f = new FileInfo(file);
+                if (f.Extension.ToLower() != ".dll") continue;
                 if (!f.Exists) continue;
 
                 var a = Assembly.LoadFile(f.FullName);
