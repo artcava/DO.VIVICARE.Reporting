@@ -225,18 +225,18 @@
                           "id":  "document.zsdfatture",
                           "name":  "ZSD Fatture",
                           "description":  "Modulo per la gestione ZSD Fatture",
-                          "version":  "1.0.0",
+                          "version":  "1.1.0",
                           "category":  "Healthcare",
                           "type":  "Document",
-                          "size":  1024000,
-                          "checksum":  "sha256:TBD",
-                          "downloadUrl":  "https://raw.githubusercontent.com/artcava/DO.VIVICARE.Reporting/master/DO.VIVICARE.Document.ZSDFatture/bin/Release/DO.VIVICARE.Document.ZSDFatture.dll",
-                          "fileName":  "DO.VIVICARE.Document.ZSDFatture-1.0.0.dll",
+                          "size":  6656,
+                          "checksum":  "sha256:9CCB1FD127B0C60BB688B1F79E6C9AAF09D112A8EF267267045D9740F7D66DAB",
+                          "downloadUrl":  "https://github.com/artcava/DO.VIVICARE.Reporting/releases/download/plugin/document.zsdfatture/1.1.0/DO.VIVICARE.Document.ZSDFatture-1.1.0.dll",
+                          "fileName":  "DO.VIVICARE.Document.ZSDFatture-1.1.0.dll",
                           "dependencies":  [
 
                                            ],
                           "required":  false,
-                          "releaseDate":  "2026-01-22"
+                          "releaseDate":  "2026-01-27"
                       }
                   ],
     "reports":  [
