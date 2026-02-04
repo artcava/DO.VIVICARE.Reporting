@@ -1,4 +1,4 @@
-﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Collections.Generic;
@@ -212,7 +212,7 @@ namespace DO.VIVICARE.Reporter
                 switch (p.PropertyType.Name)
                 {
                     case "Decimal":
-                        var decimalValue = Convert.ToDecimal(value, CultureInfo.InvariantCulture.NumberFormat);
+                        var decimalValue = Math.Round(Convert.ToDecimal(value, CultureInfo.InvariantCulture.NumberFormat), 2);
                         p.SetValue(el, decimalValue);
                         break;
                     case "Int32":
@@ -224,7 +224,7 @@ namespace DO.VIVICARE.Reporter
                         p.SetValue(el, int64Value);
                         break;
                     case "Double":
-                        var intDoubleValue = Convert.ToDouble(value, CultureInfo.InvariantCulture.NumberFormat);
+                        var intDoubleValue = Math.Round(Convert.ToDouble(value, CultureInfo.InvariantCulture.NumberFormat), 2);
                         p.SetValue(el, intDoubleValue);
                         break;
                     case "String":
@@ -257,7 +257,7 @@ namespace DO.VIVICARE.Reporter
                                  value.GetType().FullName == "System.String"
                                  ))
                 {
-                    var decimalValue = Convert.ToDecimal(value, CultureInfo.InvariantCulture.NumberFormat);
+                    var decimalValue = Math.Round(Convert.ToDecimal(value, CultureInfo.InvariantCulture.NumberFormat), 2);
                     p.SetValue(el, decimalValue);
                 }
                 else if (p.PropertyType.FullName == "System.Int32" &&
@@ -287,7 +287,7 @@ namespace DO.VIVICARE.Reporter
                                      value.GetType().FullName == "System.String"
                                      ))
                 {
-                    var intDoubleValue = Convert.ToDouble(value, CultureInfo.InvariantCulture.NumberFormat);
+                    var intDoubleValue = Math.Round(Convert.ToDouble(value, CultureInfo.InvariantCulture.NumberFormat), 2);
                     p.SetValue(el, intDoubleValue);
                 }
                 else if (p.PropertyType.FullName == "System.String" &&

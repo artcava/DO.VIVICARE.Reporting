@@ -1,4 +1,4 @@
-﻿using DO.VIVICARE.Reporter;
+using DO.VIVICARE.Reporter;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -229,7 +229,7 @@ namespace DO.VIVICARE.Report.AllegatoADI
             public decimal DiscountBase { get { return (TotalValue > 300) ? TotalValue - 300 : 0; } }
 
             [ReportMemberReference(Column = "O", Position = 15, ColumnName = "€ 0,10", FieldName = "Discount", HeaderStyleIndex = 4, CellStyleIndex = 1)]
-            public decimal Discount { get { return DiscountBase * 0.1M; } }
+            public decimal Discount { get { return Math.Round(DiscountBase * 0.1M, 2); } }
 
             [ReportMemberReference(Column = "P", Position = 16, ColumnName = "TOTALE NETTO", FieldName = "NetTotal", HeaderStyleIndex = 7, CellStyleIndex = 6, TotalStyleIndex = 5, HaveSum = true)]
             public decimal NetTotal { get { return TotalValue - Discount; } }
