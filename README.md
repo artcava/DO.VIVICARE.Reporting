@@ -213,17 +213,16 @@ Implement generation logic, combining document data into formatted Excel output:
 
 ## Documentation
 
-Complete documentation is available in separate guides:
+Complete documentation is available in the `docs/` folder:
 
 | Document | Purpose |
 |----------|---------|
-| [INSTALLATION.md](INSTALLATION.md) | Setup, installation and plugin management |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | Technical architecture and design patterns |
-| [DEPLOYMENT.md](DEPLOYMENT.md) | Release process and versioning |
-| [ROADMAP.md](ROADMAP.md) | Future development plans (in progress) |
-| [MIGRATION.md](MIGRATION.md) | Migration from previous systems |
-| [TROUBLESHOOTING.md](TROUBLESHOOTING.md) | Common issues and solutions |
-| [PLUGIN_MANAGER.md](PLUGIN_MANAGER.md) | Plugin management guide |
+| [INSTALLATION_GUIDE.md](docs/INSTALLATION_GUIDE.md) | Setup, installation and plugin management |
+| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | Technical architecture and design patterns |
+| [DEPLOYMENT.md](docs/DEPLOYMENT.md) | Release process and versioning |
+| [RELEASE_COMMANDS.md](docs/RELEASE_COMMANDS.md) | Quick reference for release commands |
+| [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | Common issues and solutions |
+| [PLUGIN_MANAGER_GUIDE.md](docs/PLUGIN_MANAGER_GUIDE.md) | Plugin management guide |
 
 ---
 
@@ -231,9 +230,9 @@ Complete documentation is available in separate guides:
 
 ### Documentation
 - Start with [Quick Start](#quick-start) section above
-- Review [INSTALLATION.md](INSTALLATION.md) for setup issues
-- Check [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for common problems
-- See [ARCHITECTURE.md](ARCHITECTURE.md) for technical details
+- Review [INSTALLATION_GUIDE.md](docs/INSTALLATION_GUIDE.md) for setup issues
+- Check [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) for common problems
+- See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for technical details
 
 ### Report Issues
 
@@ -282,5 +281,5 @@ Specify your license here. Examples:
 
 ---
 
-**Last Updated**: January 13, 2026  
+**Last Updated**: February 8, 2026  
 **Maintained by**: Marco Cavallo
