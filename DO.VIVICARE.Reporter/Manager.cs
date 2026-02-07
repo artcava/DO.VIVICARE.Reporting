@@ -1,4 +1,4 @@
-﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Collections.Generic;
@@ -267,12 +267,12 @@ namespace DO.VIVICARE.Reporter
                                     break;
                                 case "Double":
                                     double doubleValue = (double)propField.GetValue(element);
-                                    cell.CellValue = new CellValue(doubleValue.ToString());
+                                    cell.CellValue = new CellValue(doubleValue.ToString(CultureInfo.InvariantCulture));
                                     if (col.HaveSum) totals[col] += (decimal)doubleValue;
                                     break;
                                 case "Decimal":
                                     decimal decimalValue = (decimal)propField.GetValue(element);
-                                    cell.CellValue = new CellValue(decimalValue.ToString());
+                                    cell.CellValue = new CellValue(decimalValue.ToString(CultureInfo.InvariantCulture));
                                     if (col.HaveSum) totals[col] += decimalValue;
                                     break;
                                 default:
@@ -350,12 +350,12 @@ namespace DO.VIVICARE.Reporter
                                             break;
                                         case "Double":
                                             double doubleValue = (double)propField.GetValue(element);
-                                            cell.CellValue = new CellValue(doubleValue.ToString());
+                                            cell.CellValue = new CellValue(doubleValue.ToString(CultureInfo.InvariantCulture));
                                             if (col.HaveSum) totals[col] += (decimal)doubleValue;
                                             break;
                                         case "Decimal":
                                             decimal decimalValue = (decimal)propField.GetValue(element);
-                                            cell.CellValue = new CellValue(decimalValue.ToString());
+                                            cell.CellValue = new CellValue(decimalValue.ToString(CultureInfo.InvariantCulture));
                                             if (col.HaveSum) totals[col] += decimalValue;
                                             break;
                                         default:
