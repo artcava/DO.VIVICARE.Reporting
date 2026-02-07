@@ -332,10 +332,10 @@ dir DO.VIVICARE.UI\bin\Release\DO.VIVICARE.UI.exe
 ## Support & Resources
 
 ### Documentation
-- [README.md](README.md) - Project overview
+- [README.md](../README.md) - Project overview
 - [ARCHITECTURE.md](ARCHITECTURE.md) - Technical architecture
 - [DEPLOYMENT.md](DEPLOYMENT.md) - Release and versioning
-- [PLUGIN_MANAGER.md](PLUGIN_MANAGER.md) - Detailed plugin guide
+- [PLUGIN_MANAGER_GUIDE.md](PLUGIN_MANAGER_GUIDE.md) - Detailed plugin guide
 
 ### Getting Help
 1. Check [GitHub Issues](https://github.com/artcava/DO.VIVICARE.Reporting/issues)
