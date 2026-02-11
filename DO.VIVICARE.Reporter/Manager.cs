@@ -126,8 +126,7 @@ namespace DO.VIVICARE.Reporter
                                     select (BaseReport)a.CreateInstance(type.FullName)).ToList();
 
                     foreach (var obj in objList)
-                    {
-                        var ua = (ReportReferenceAttribute)obj.GetType().GetCustomAttribute(typeof(ReportReferenceAttribute));
+                    {                        var ua = (ReportReferenceAttribute)obj.GetType().GetCustomAttribute(typeof(ReportReferenceAttribute));
                         if (ua == null) continue;
                         list.Add(new ReportingReport { Report = obj, Attribute = ua });
                     }
@@ -267,12 +266,16 @@ namespace DO.VIVICARE.Reporter
                                     break;
                                 case "Double":
                                     double doubleValue = (double)propField.GetValue(element);
-                                    cell.CellValue = new CellValue(doubleValue.ToString(CultureInfo.InvariantCulture));
+                                    // CLIENT REQUEST: Use CurrentCulture to display comma as decimal separator
+                                    // WARNING: This may cause Excel to detect the file as corrupted
+                                    cell.CellValue = new CellValue(doubleValue.ToString(CultureInfo.CurrentCulture));
                                     if (col.HaveSum) totals[col] += (decimal)doubleValue;
                                     break;
                                 case "Decimal":
                                     decimal decimalValue = (decimal)propField.GetValue(element);
-                                    cell.CellValue = new CellValue(decimalValue.ToString(CultureInfo.InvariantCulture));
+                                    // CLIENT REQUEST: Use CurrentCulture to display comma as decimal separator
+                                    // WARNING: This may cause Excel to detect the file as corrupted
+                                    cell.CellValue = new CellValue(decimalValue.ToString(CultureInfo.CurrentCulture));
                                     if (col.HaveSum) totals[col] += decimalValue;
                                     break;
                                 default:
@@ -350,12 +353,16 @@ namespace DO.VIVICARE.Reporter
                                             break;
                                         case "Double":
                                             double doubleValue = (double)propField.GetValue(element);
-                                            cell.CellValue = new CellValue(doubleValue.ToString(CultureInfo.InvariantCulture));
+                                            // CLIENT REQUEST: Use CurrentCulture to display comma as decimal separator
+                                            // WARNING: This may cause Excel to detect the file as corrupted
+                                            cell.CellValue = new CellValue(doubleValue.ToString(CultureInfo.CurrentCulture));
                                             if (col.HaveSum) totals[col] += (decimal)doubleValue;
                                             break;
                                         case "Decimal":
                                             decimal decimalValue = (decimal)propField.GetValue(element);
-                                            cell.CellValue = new CellValue(decimalValue.ToString(CultureInfo.InvariantCulture));
+                                            // CLIENT REQUEST: Use CurrentCulture to display comma as decimal separator
+                                            // WARNING: This may cause Excel to detect the file as corrupted
+                                            cell.CellValue = new CellValue(decimalValue.ToString(CultureInfo.CurrentCulture));
                                             if (col.HaveSum) totals[col] += decimalValue;
                                             break;
                                         default:
