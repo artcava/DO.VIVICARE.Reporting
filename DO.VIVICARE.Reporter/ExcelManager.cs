@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -365,7 +366,8 @@ namespace DO.VIVICARE.Reporter
                     {
                         CellReference = $"{col.Column}{rowIndex}",
                         StyleIndex = col.TotalStyleIndex,
-                        CellValue = new CellValue(col.HaveSum ? totals[col].ToString() : col.TextForSum),
+                        // CLIENT REQUEST: Explicit CurrentCulture for consistency with Manager.cs
+                        CellValue = new CellValue(col.HaveSum ? totals[col].ToString(CultureInfo.CurrentCulture) : col.TextForSum),
                         DataType = CellValues.String
                     };
                     row.Append(cell);
